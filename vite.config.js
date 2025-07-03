@@ -4,6 +4,7 @@ export default defineConfig({
   server: {
     port: 5000,
     host: '0.0.0.0',
+    allowedHosts: 'all',
     hmr: {
       port: 5000,
       clientPort: 5000
