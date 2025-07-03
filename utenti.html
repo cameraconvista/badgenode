@@ -538,23 +538,36 @@
       caricaUtenti();
     });
 
+    // Variabile globale per memorizzare i dati originali
+    let datiOriginali = {};
+    let utenteCorrente = null;
+
     // Funzioni per il modale dettagli dipendente
     window.apriModalDettagli = (utente) => {
       const modal = document.getElementById('modalDettagli');
       const modalTitolo = document.getElementById('modalTitolo');
       
+      // Memorizza l'utente corrente e i dati originali
+      utenteCorrente = utente;
+      datiOriginali = {
+        nome: utente.nome,
+        cognome: utente.cognome,
+        email: utente.email,
+        telefono: utente.telefono || '',
+        descrizioneContratto: utente.descrizione_contratto || '',
+        oreGiornaliere: utente.ore_giornaliere || ''
+      };
+      
       // Aggiorna il titolo del modale
       modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
       
       // Popola i campi con i dati del dipendente
-      document.getElementById('dettagli-nome').value = utente.nome;
-      document.getElementById('dettagli-cognome').value = utente.cognome;
-      document.getElementById('dettagli-email').value = utente.email;
-      
-      // Per ora i campi aggiuntivi rimangono vuoti (da implementare con Supabase)
-      document.getElementById('dettagli-telefono').value = '';
-      document.getElementById('dettagli-descrizione-contratto').value = '';
-      document.getElementById('dettagli-ore-giornaliere').value = '';
+      document.getElementById('dettagli-nome').value = datiOriginali.nome;
+      document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
+      document.getElementById('dettagli-email').value = datiOriginali.email;
+      document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
+      document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
+      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
       
       // Mostra il modale
       modal.style.display = 'flex';
@@ -590,12 +603,88 @@
 
     // Funzioni per pulsanti modale
     window.annullaModifiche = () => {
+      // Ripristina i valori originali nei campi
+      if (datiOriginali) {
+        document.getElementById('dettagli-nome').value = datiOriginali.nome;
+        document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
+        document.getElementById('dettagli-email').value = datiOriginali.email;
+        document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
+        document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
+        document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
+      }
+      
+      // Chiudi il modale
       chiudiModalDettagli();
     };
 
     window.salvaModifiche = async () => {
-      // TODO: Implementare salvataggio su Supabase
-      alert('Funzione salvataggio da implementare');
+      if (!utenteCorrente) {
+        alert('Errore: nessun utente selezionato');
+        return;
+      }
+
+      try {
+        // Raccogli i dati dai campi del modale
+        const datiAggiornati = {
+          nome: document.getElementById('dettagli-nome').value.trim(),
+          cognome: document.getElementById('dettagli-cognome').value.trim(),
+          email: document.getElementById('dettagli-email').value.trim(),
+          telefono: document.getElementById('dettagli-telefono').value.trim(),
+          descrizione_contratto: document.getElementById('dettagli-descrizione-contratto').value.trim(),
+          ore_giornaliere: document.getElementById('dettagli-ore-giornaliere').value.trim()
+        };
+
+        // Validazione base
+        if (!datiAggiornati.nome || !datiAggiornati.cognome || !datiAggiornati.email) {
+          alert('I campi Nome, Cognome ed Email sono obbligatori');
+          return;
+        }
+
+        // Validazione email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(datiAggiornati.email)) {
+          alert('Inserisci un indirizzo email valido');
+          return;
+        }
+
+        // Aggiorna i dati su Supabase
+        const { error } = await supabase
+          .from('utenti')
+          .update(datiAggiornati)
+          .eq('id', utenteCorrente.id);
+
+        if (error) {
+          console.error('Errore durante il salvataggio:', error);
+          alert('Errore durante il salvataggio: ' + error.message);
+          return;
+        }
+
+        // Successo - aggiorna i dati locali
+        datiOriginali = {
+          nome: datiAggiornati.nome,
+          cognome: datiAggiornati.cognome,
+          email: datiAggiornati.email,
+          telefono: datiAggiornati.telefono,
+          descrizioneContratto: datiAggiornati.descrizione_contratto,
+          oreGiornaliere: datiAggiornati.ore_giornaliere
+        };
+
+        // Aggiorna l'oggetto utente corrente
+        Object.assign(utenteCorrente, datiAggiornati);
+
+        // Ricarica la lista utenti per riflettere le modifiche
+        caricaUtenti();
+
+        // Mostra messaggio di successo
+        alert('✅ Dati salvati con successo!');
+
+        // Chiudi il modale
+        chiudiModalDettagli();
+
+      } catch (error) {
+        console.error('Errore imprevisto:', error);
+        alert('Errore imprevisto durante il salvataggio');
+      }
     };
 
     // Funzionalità Upload File
