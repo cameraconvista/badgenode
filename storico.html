@@ -16,7 +16,6 @@
       overflow-x: hidden;
       touch-action: manipulation;
     }
-
     /* Stili tabella */
     .titolo-piccolo {
       text-align: center;
@@ -45,7 +44,6 @@
       position: relative;
       padding: 0 15px;
     }
-
     .filtro-temporale select {
       flex: 0 0 210px;
       padding: 12px 16px;
@@ -80,13 +78,11 @@
       background-color: #1e293b;
       color: white;
     }
-
     /* Nasconde l'icona calendario nativa del browser */
     .filtro-temporale input[type="date"]::-webkit-calendar-picker-indicator {
       opacity: 0;
       pointer-events: none;
     }
-
     .filtro-temporale input[type="date"]::-moz-calendar-picker-indicator {
       opacity: 0;
       pointer-events: none;
@@ -101,7 +97,6 @@
       cursor: pointer;
       z-index: 10;
     }
-
     /* Stili calendario datepicker */
     .menu-calendario {
       position: absolute;
@@ -117,7 +112,6 @@
       margin-top: 2px;
       font-family: Arial, sans-serif;
     }
-
     .calendario-header {
       display: flex;
       justify-content: space-between;
@@ -125,7 +119,6 @@
       margin-bottom: 12px;
       padding: 0 4px;
     }
-
     .calendario-nav {
       background: none;
       border: none;
@@ -136,11 +129,9 @@
       border-radius: 4px;
       transition: background-color 0.2s;
     }
-
     .calendario-nav:hover {
       background-color: #334155;
     }
-
     .calendario-mese-anno {
       color: white;
       font-weight: 600;
@@ -148,14 +139,12 @@
       text-align: center;
       min-width: 120px;
     }
-
     .calendario-giorni-settimana {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 2px;
       margin-bottom: 6px;
     }
-
     .giorno-settimana {
       text-align: center;
       font-size: 11px;
@@ -163,14 +152,12 @@
       font-weight: 600;
       padding: 4px 0;
     }
-
     .calendario-griglia {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 2px;
       margin-bottom: 10px;
     }
-
     .giorno-calendario {
       width: 32px;
       height: 28px;
@@ -185,27 +172,22 @@
       border: none;
       background: none;
     }
-
     .giorno-calendario:hover {
       background-color: #334155;
     }
-
     .giorno-calendario.oggi {
       background-color: #dc2626;
       color: white;
       font-weight: bold;
     }
-
     .giorno-calendario.selezionato {
       background-color: #1e90ff;
       color: white;
       font-weight: bold;
     }
-
     .giorno-calendario.altro-mese {
       color: #64748b;
     }
-
     .calendario-footer {
       display: flex;
       justify-content: space-between;
@@ -213,7 +195,6 @@
       padding-top: 8px;
       border-top: 1px solid #334155;
     }
-
     .btn-oggi {
       background: #16a34a;
       color: white;
@@ -224,11 +205,9 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-
     .btn-oggi:hover {
       background: #15803d;
     }
-
     .btn-chiudi-calendario {
       background: #64748b;
       color: white;
@@ -239,12 +218,9 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-
     .btn-chiudi-calendario:hover {
       background: #475569;
     }
-
-
     .container {
       padding-bottom: 20px;
       max-width: 900px;
@@ -302,14 +278,10 @@
     table td {
       background-color: #1e293b;
     }
-
     /* Stile per sabati e domeniche */
     table tr.weekend td {
       background-color: #19202F;
     }
-
-
-
     table tr:last-child td {
       border-bottom: none;
     }
@@ -446,7 +418,6 @@
       width: 24px;
       height: 24px;
     }
-
     /* Icona PDF personalizzata */
     .pdf-icon {
       display: inline-block;
@@ -461,7 +432,6 @@
       line-height: 1.2;
       letter-spacing: 0.5px;
     }
-
     /* Media query per tablet e schermi medi */
     @media (max-width: 1024px) and (min-width: 768px) {
       .filtro-temporale {
@@ -473,7 +443,6 @@
         max-width: 100%;
         margin-bottom: 20px;
       }
-
       .filtro-temporale select {
         width: 100%;
         max-width: 400px;
@@ -482,14 +451,12 @@
         height: 52px;
         box-sizing: border-box;
       }
-
       .data-container {
         width: 100%;
         max-width: 400px;
         position: relative;
         box-sizing: border-box;
       }
-
       .filtro-temporale input[type="date"] {
         width: 100%;
         font-size: 16px;
@@ -497,14 +464,12 @@
         height: 52px;
         box-sizing: border-box;
       }
-
       .icona-calendario-campo {
         right: 12px;
         width: 22px;
         height: 22px;
       }
     }
-
     /* Media query per schermi piccoli/mobile */
     @media (max-width: 767px) {
       .filtro-temporale {
@@ -514,7 +479,6 @@
         padding: 0 10px;
         max-width: 100%;
       }
-
       .filtro-temporale select,
       .data-container {
         flex: none;
@@ -522,24 +486,19 @@
         max-width: 100%;
         margin: 0;
       }
-
       .filtro-temporale input[type="date"] {
         width: 100%;
       }
-
       .container {
         padding: 15px;
       }
-
       .titolo-grande {
         font-size: 32px;
       }
-
       .titolo-piccolo {
         font-size: 16px;
       }
     }
-
     /* Media query per schermi molto piccoli */
     @media (max-width: 480px) {
       .filtro-temporale {
@@ -547,94 +506,76 @@
         padding: 0 10px;
         margin-bottom: 20px;
       }
-
       .filtro-temporale select,
       .filtro-temporale input[type="date"] {
         font-size: 15px;
         padding: 12px 14px;
         height: 48px;
       }
-
       .container {
         padding: 10px;
       }
-
       .titolo-grande {
         font-size: 24px;
         margin-bottom: 12px;
       }
-
       .titolo-piccolo {
         font-size: 14px;
       }
-
       /* Colonne più strette per mobile con EXTRA */
     table th:first-child, table td:first-child {
       width: 22%;
       font-size: 11px;
     }
-
     table th:nth-child(2), table td:nth-child(2),
     table th:nth-child(3) {
       width: 16%;
     }
-
     table th:nth-child(4), table td:nth-child(4) {
       width: 18%;
     }
-
     table th:nth-child(5), table td:nth-child(5) {
       width: 12%;
     }
-
     table th:last-child, table td:last-child {
       width: 16%;
     }
-
       /* Ottimizzazioni tabella per mobile */
       .tabella-wrapper {
         padding: 8px;
         margin-bottom: 15px;
       }
-
       table th, table td {
         padding: 6px 4px;
         font-size: 12px;
         line-height: 1.2;
       }
-
       /* Colonne più strette per mobile */
       table th:first-child, table td:first-child {
         width: 25%;
         font-size: 11px;
       }
-
       table th:nth-child(2), table td:nth-child(2),
       table th:nth-child(3), table td:nth-child(3) {
         width: 18%;
       }
-
       table th:nth-child(4), table td:nth-child(4) {
         width: 20%;
       }
-
       table th:last-child, table td:last-child {
         width: 19%;
       }
-
       /* Testo ore più piccolo su mobile */
       table td:nth-child(4) {
         font-size: 11px;
         font-weight: bold;
       }
-
       .pulsanti-basso {
         flex-wrap: wrap;
         gap: 8px;
         margin-top: 12px;
         padding: 0 10px;
       }
-
       .pulsanti-basso button {
         flex: 1;
         min-width: 70px;
@@ -642,58 +583,48 @@
         font-size: 12px;
         height: 40px;
       }
-
       .modifica-icon {
         width: 16px;
         height: 16px;
       }
-
       .icona-calendario-campo {
         width: 18px;
         height: 18px;
         right: 8px;
       }
-
       /* Menu calendario responsive per mobile */
       .menu-calendario {
         min-width: 140px;
         font-size: 13px;
       }
-
       .menu-item {
         padding: 6px 10px;
         font-size: 13px;
       }
-
       /* Modale più adatto a mobile */
       #modal {
         width: 95%;
         padding: 15px;
         max-height: 85vh;
       }
-
       #modal h2 {
         font-size: 18px;
         margin-bottom: 12px;
       }
-
-      #modal input[type="time"], 
+      #modal input[type="time"],
       #modal input[type="date"] {
         font-size: 16px;
         padding: 8px 10px;
       }
-
       .modal-btns {
         margin-top: 15px;
         gap: 8px;
       }
-
       .modal-btns button {
         padding: 8px 12px;
         font-size: 13px;
       }
     }
-
     /* Media query per tablet - layout pulsanti */
     @media (max-width: 1024px) and (min-width: 768px) {
       .pulsanti-basso {
@@ -707,36 +638,28 @@
     function mostraMenuCalendario(campoId, event) {
       event.preventDefault();
       event.stopPropagation();
-
       const menu = document.getElementById(`menu-calendario-${campoId === 'data-inizio' ? 'inizio' : 'fine'}`);
       if (menu) {
         const isVisible = menu.style.display !== 'none';
-
         // Nascondi tutti i menu calendario
         document.querySelectorAll('.menu-calendario').forEach(m => m.style.display = 'none');
-
         if (!isVisible) {
           menu.style.display = 'block';
           aggiornaCalendario(campoId);
         }
       }
     }
-
     function cambiaCalendarioMese(campoId, direzione) {
       const suffisso = campoId === 'data-inizio' ? 'inizio' : 'fine';
       const meseAnnoEl = document.getElementById(`calendario-mese-anno-${suffisso}`);
-
       if (meseAnnoEl) {
         const testoCorrente = meseAnnoEl.textContent;
         const [meseNome, anno] = testoCorrente.split(' ');
         const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
                       'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-
         let meseIndex = mesi.indexOf(meseNome);
         let annoNum = parseInt(anno);
-
         meseIndex += direzione;
-
         if (meseIndex < 0) {
           meseIndex = 11;
           annoNum--;
@@ -744,40 +667,32 @@
           meseIndex = 0;
           annoNum++;
         }
-
         meseAnnoEl.textContent = `${mesi[meseIndex]} ${annoNum}`;
         aggiornaCalendario(campoId);
       }
     }
-
     function aggiornaCalendario(campoId) {
       // Implementazione base del calendario
       console.log('Aggiornamento calendario per:', campoId);
     }
-
     function selezionaGiornoCalendario(campoId, giorno) {
       const suffisso = campoId === 'data-inizio' ? 'inizio' : 'fine';
       const meseAnnoEl = document.getElementById(`calendario-mese-anno-${suffisso}`);
-
       if (meseAnnoEl) {
         const [meseNome, anno] = meseAnnoEl.textContent.split(' ');
         const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
                       'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-
         const meseNum = (mesi.indexOf(meseNome) + 1).toString().padStart(2, '0');
         const giornoStr = giorno.toString().padStart(2, '0');
         const dataISO = `${anno}-${meseNum}-${giornoStr}`;
-
         const campo = document.getElementById(campoId);
         if (campo) {
           campo.value = dataISO;
         }
-
         // Nascondi il menu
         document.getElementById(`menu-calendario-${suffisso}`).style.display = 'none';
       }
     }
-
     // Chiudi i menu quando si clicca fuori
     document.addEventListener('click', function(event) {
       if (!event.target.closest('.menu-calendario') && !event.target.closest('.icona-calendario-campo')) {
@@ -800,7 +715,6 @@
         <option value="corrente">Mese corrente</option>
         <option value="precedente">Mese precedente</option>
         <option value="due-precedenti">2 mesi precedenti</option>
-
       </select>
       <div class="data-container">
         <input type="date" id="data-inizio" />
@@ -870,7 +784,6 @@
         </table>
       </div>
     </div>
-    <!-- Pulsanti in fondo tabella -->
     <div class="pulsanti-basso">
       <button id="torna-archivio" title="Torna Archivio">
         <img src="assets/icons/freccia.png" alt="Torna Archivio" />
@@ -883,7 +796,6 @@
       </button>
     </div>
   </div>
-  <!-- Modale -->
   <div id="modalOverlay">
     <div id="modal">
       <h2>Modifica Timbrature</h2>
@@ -904,39 +816,30 @@
   </div>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-
-
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
     const supabase = createClient(
       "https://txmjqrnitfsiytbytxlc.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
     );
-
     const intestazione = document.getElementById("intestazione");
   </script>
-
   <script>
     // Stato calendario globale
     let calendarioCorrente = {
       'data-inizio': new Date(),
       'data-fine': new Date()
     };
-
     // Nomi mesi in italiano
     const nomiMesi = [
       'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
       'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
     ];
-
     // Funzioni globali per il calendario datepicker - devono essere definite prima dell'HTML
     function mostraMenuCalendario(campoId, event) {
       event.stopPropagation();
-
       // Nascondi tutti i menu
       window.nascondiMenuCalendario();
-
       // Inizializza calendario con data corrente del campo
       const campo = document.getElementById(campoId);
       if (campo.value) {
@@ -944,89 +847,71 @@
       } else {
         calendarioCorrente[campoId] = new Date();
       }
-
       // Mostra il menu corrispondente
       const menuId = campoId === 'data-inizio' ? 'menu-calendario-inizio' : 'menu-calendario-fine';
       const menu = document.getElementById(menuId);
       menu.style.display = 'block';
-
       // Genera il calendario
       generaCalendario(campoId);
     };
-
     function nascondiMenuCalendario() {
       document.getElementById('menu-calendario-inizio').style.display = 'none';
       document.getElementById('menu-calendario-fine').style.display = 'none';
     }
-
     function cambiaCalendarioMese(campoId, direzione) {
       calendarioCorrente[campoId].setMonth(calendarioCorrente[campoId].getMonth() + direzione);
       generaCalendario(campoId);
     }
-
     function impostaDataOggi(campoId) {
       const oggi = new Date();
       const campo = document.getElementById(campoId);
       campo.value = oggi.toISOString().split('T')[0];
-
       // Emetti evento personalizzato
       const eventoPersonalizzato = new CustomEvent('dataImpostata', {
         detail: { campoId, aggiornaDati: true }
       });
       document.dispatchEvent(eventoPersonalizzato);
-
       nascondiMenuCalendario();
     }
-
     function selezionaGiornoCalendario(campoId, anno, mese, giorno) {
       const data = new Date(anno, mese, giorno);
       const campo = document.getElementById(campoId);
       campo.value = data.toISOString().split('T')[0];
-
       // Emetti evento personalizzato
       const eventoPersonalizzato = new CustomEvent('dataImpostata', {
         detail: { campoId, aggiornaDati: true }
       });
       document.dispatchEvent(eventoPersonalizzato);
-
       nascondiMenuCalendario();
     }
-
     // Esponi le funzioni a livello globale per compatibilità con onclick HTML
     window.mostraMenuCalendario = mostraMenuCalendario;
     window.nascondiMenuCalendario = nascondiMenuCalendario;
     window.cambiaCalendarioMese = cambiaCalendarioMese;
     window.impostaDataOggi = impostaDataOggi;
     window.selezionaGiornoCalendario = selezionaGiornoCalendario;
-
     function generaCalendario(campoId) {
       const data = calendarioCorrente[campoId];
       const anno = data.getFullYear();
       const mese = data.getMonth();
-
       // Aggiorna header
       const headerId = campoId === 'data-inizio' ? 'calendario-mese-anno-inizio' : 'calendario-mese-anno-fine';
       document.getElementById(headerId).textContent = `${nomiMesi[mese]} ${anno}`;
-
       // Genera griglia giorni
       const grigliaId = campoId === 'data-inizio' ? 'calendario-griglia-inizio' : 'calendario-griglia-fine';
       const griglia = document.getElementById(grigliaId);
       griglia.innerHTML = '';
-
       // Primo giorno del mese e numero di giorni
       const primoGiorno = new Date(anno, mese, 1);
       const ultimoGiorno = new Date(anno, mese + 1, 0);
       const giorniMese = ultimoGiorno.getDate();
-
       // Calcola offset (domenica = 0)
       const offset = primoGiorno.getDay();
-
       // Data di oggi per evidenziarla
       const oggi = new Date();
       const oggiAnno = oggi.getFullYear();
       const oggiMese = oggi.getMonth();
       const oggiGiorno = oggi.getDate();
-
       // Data selezionata
       const campo = document.getElementById(campoId);
       let dataSelezionata = null;
@@ -1038,7 +923,6 @@
           giorno: dataSelezionataObj.getDate()
         };
       }
-
       // Giorni del mese precedente (se necessario)
       const mesePrecedente = new Date(anno, mese - 1, 0);
       for (let i = offset - 1; i >= 0; i--) {
@@ -1049,33 +933,27 @@
         btn.onclick = () => selezionaGiornoCalendario(campoId, anno, mese - 1, giornoPrec);
         griglia.appendChild(btn);
       }
-
       // Giorni del mese corrente
       for (let giorno = 1; giorno <= giorniMese; giorno++) {
         const btn = document.createElement('button');
         btn.className = 'giorno-calendario';
         btn.textContent = giorno;
-
         // Evidenzia oggi
         if (anno === oggiAnno && mese === oggiMese && giorno === oggiGiorno) {
           btn.classList.add('oggi');
         }
-
         // Evidenzia data selezionata
         if (dataSelezionata && anno === dataSelezionata.anno && mese === dataSelezionata.mese && giorno === dataSelezionata.giorno) {
           btn.classList.add('selezionato');
         }
-
         btn.onclick = () => selezionaGiornoCalendario(campoId, anno, mese, giorno);
         griglia.appendChild(btn);
       }
-
       // Giorni del mese successivo (se necessario)
       const totaleGiorni = offset + giorniMese;
       const righeNecessarie = Math.ceil(totaleGiorni / 7);
       const giorniTotaliGriglia = righeNecessarie * 7;
       const giorniMeseSuccessivo = giorniTotaliGriglia - totaleGiorni;
-
       for (let giorno = 1; giorno <= giorniMeseSuccessivo; giorno++) {
         const btn = document.createElement('button');
         btn.className = 'giorno-calendario altro-mese';
@@ -1084,12 +962,10 @@
         griglia.appendChild(btn);
       }
     }
-
     // Chiudi menu quando si clicca altrove
     document.addEventListener('click', function(event) {
       const isCalendarioIcon = event.target.classList.contains('icona-calendario-campo');
       const isMenuCalendario = event.target.closest('.menu-calendario');
-
       if (!isCalendarioIcon && !isMenuCalendario) {
         nascondiMenuCalendario();
       }
@@ -1101,7 +977,6 @@
       "https://txmjqrnitfsiytbytxlc.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
     );
-
     const intestazione = document.getElementById("intestazione");
     const tbody = document.getElementById("storico-body");
     const selectFiltro = document.getElementById("filtro-mese");
@@ -1113,7 +988,6 @@
     console.log("URL completa:", window.location.href);
     console.log("Query string:", window.location.search);
     console.log("PIN dalla URL:", pin);
-
     // Debug per Netlify
     if (!pin) {
       console.warn("PIN non trovato nella URL, possibile problema di routing");
@@ -1125,7 +999,6 @@
       const oggi = new Date();
       let anno = oggi.getFullYear();
       let meseIndice = oggi.getMonth();
-
       if (mese === "precedente") {
         meseIndice -= 1;
         if (meseIndice < 0) {
@@ -1139,17 +1012,13 @@
           anno -= 1;
         }
       }
-
       // Forza il primo giorno del mese alle 12:00 per evitare problemi di timezone
       const primoGiorno = new Date(anno, meseIndice, 1, 12, 0, 0);
       const ultimoGiorno = new Date(anno, meseIndice + 1, 0, 12, 0, 0);
-
       const dataInizioString = primoGiorno.toISOString().split('T')[0];
       const dataFineString = ultimoGiorno.toISOString().split('T')[0];
-
       dataInizio.value = dataInizioString;
       dataFine.value = dataFineString;
-
       console.log(`Range aggiornato: dal ${dataInizioString} al ${dataFineString}`);
       console.log(`Mese: ${meseIndice + 1}/${anno}, Primo giorno: ${primoGiorno.getDate()}, Ultimo giorno: ${ultimoGiorno.getDate()}`);
     }
@@ -1167,7 +1036,6 @@
       }
       caricaDati();
     });
-
     // Quando l'utente modifica manualmente le date, passa a "personalizzato"
     function aggiungiOpzionePersonalizzato() {      let opzionePersonalizzato = selectFiltro.querySelector('option[value="personalizzato"]');
       if (!opzionePersonalizzato) {
@@ -1180,22 +1048,18 @@
         selectFiltro.appendChild(opzionePersonalizzato);
       }
       selectFiltro.value = "personalizzato";
-
       // Feedback visivo aggiuntivo - cambia colore del select
       selectFiltro.style.borderColor = '#90EE90';
       selectFiltro.style.color = '#90EE90';
     }
-
     dataInizio.addEventListener("change", () => {
       aggiungiOpzionePersonalizzato();
       caricaDati();
     });
-
     dataFine.addEventListener("change", () => {
       aggiungiOpzionePersonalizzato();
       caricaDati();
     });
-
     // Ascolta gli eventi personalizzati dal menu calendario
     document.addEventListener('dataImpostata', function(event) {
       const { campoId, aggiornaDati } = event.detail;
@@ -1206,7 +1070,6 @@
     });
     async function caricaDati() {
       if (!pin) return;
-
       try {
         // Recupera dati utente con ore_giornaliere
         const { data: datiUtente, error: errUtente } = await supabase
@@ -1215,20 +1078,17 @@
           .or(`pin.eq.${pin},pin.eq.${parseInt(pin)}`)
           .limit(1)
           .single();
-
         if (errUtente) {
           console.error("Errore recupero utente:", errUtente.message);
           alert("Errore recupero utente: " + errUtente.message);
           return;
         }
-
         if (datiUtente) {
           dipendente = datiUtente;
           intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
           console.log("Dati utente caricati:", dipendente);
           console.log("Ore giornaliere contratto:", dipendente.ore_giornaliere);
         }
-
         // Query unica più robusta che recupera TUTTE le timbrature per il PIN
         const { data, error } = await supabase
           .from("timbrature")
@@ -1236,63 +1096,49 @@
           .eq("pin", parseInt(pin))
           .order("data", { ascending: true })
           .order("ore", { ascending: true });
-
         if (error) {
           console.error("Errore nel recupero timbrature:", error);
           alert("Errore nel recupero timbrature: " + error.message);
           return;
         }
-
         // Filtra le timbrature lato client per maggiore controllo
         timbrature = (data || []).filter(t => {
           // Determina la data di riferimento per il filtro
           let dataRiferimento = t.giornologico || t.data;
-
           // Normalizza la data in formato YYYY-MM-DD
           if (typeof dataRiferimento !== 'string') {
             dataRiferimento = new Date(dataRiferimento).toISOString().split('T')[0];
           } else if (dataRiferimento.includes('T')) {
             dataRiferimento = dataRiferimento.split('T')[0];
           }
-
           // Confronta le date
           const dentroRange = dataRiferimento >= dataInizio.value && dataRiferimento <= dataFine.value;
-
           if (dentroRange) {
             console.log(`✓ Timbratura inclusa: ID=${t.id}, Tipo=${t.tipo}, Data=${dataRiferimento}, Ore=${t.ore}`);
           }
-
           return dentroRange;
         });
-
         console.log(`FILTRO APPLICATO: ${timbrature.length} timbrature nel periodo ${dataInizio.value} - ${dataFine.value}`);
-
       } catch (error) {
         console.error("Errore caricamento dati:", error);
         alert("Errore durante il caricamento dei dati");
       }
-
       renderizzaTabella();
     }
     function renderizzaTabella() {
       tbody.innerHTML = "";
-
       if (!dataInizio.value || !dataFine.value) {
         console.log("Date non impostate correttamente");
         return;
       }
-
       const start = new Date(dataInizio.value + 'T00:00:00');
       const end = new Date(dataFine.value + 'T00:00:00');
       const giorniSettimana = ["Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato"];
       let totaleMensileOre = 0;
-
       console.log(`Rendering tabella dal ${start.toISOString().split('T')[0]} al ${end.toISOString().split('T')[0]}`);
-
       // Corregge il problema del timezone per il rendering tabella
       const startDateFixed = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 12, 0, 0);
       const endDateFixed = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 12, 0, 0);
-
       for (let d = new Date(startDateFixed); d <= endDateFixed; d.setDate(d.getDate() + 1)) {
         const current = new Date(d);
         const dataISO = current.toISOString().split("T")[0];
@@ -1300,44 +1146,36 @@
         const giornoNumero = current.getDate().toString().padStart(2, "0");
         // Versione più compatta per mobile
         const isMobile = window.innerWidth <= 480;
-        const dataFormattata = isMobile ? 
-          `${giornoNumero} ${giornoSettimana.slice(0,3)}` : 
+        const dataFormattata = isMobile ?
+          `${giornoNumero} ${giornoSettimana.slice(0,3)}` :
           `${giornoNumero}  ${giornoSettimana}`;
-
         // Raggruppa timbrature per giorno con logica corretta
         const timbratureOggi = timbrature.filter(t => {
           // Usa giornologico se presente, altrimenti data
           let dataRiferimento = t.giornologico || t.data;
-
           // Normalizza la data in formato YYYY-MM-DD
           if (typeof dataRiferimento !== 'string') {
             dataRiferimento = new Date(dataRiferimento).toISOString().split('T')[0];
           } else if (dataRiferimento.includes('T')) {
             dataRiferimento = dataRiferimento.split('T')[0];
           }
-
           const match = dataRiferimento === dataISO;
           if (match) {
             console.log(`✓ Timbratura per ${dataISO}: ID=${t.id}, Tipo=${t.tipo}, Ore=${t.ore}`);
           }
-
           return match;
         });
-
         // Separa timbrature per tipo e ordina per ora
         const timbratureEntrata = timbratureOggi.filter(t => t.tipo === "entrata").sort((a, b) => a.ore.localeCompare(b.ore));
         const timbratureUscita = timbratureOggi.filter(t => t.tipo === "uscita").sort((a, b) => a.ore.localeCompare(b.ore));
-
         // Algoritmo di abbinamento cronologico delle timbrature
         const tutteTimbrature = [];
-
         // Aggiungi tutte le timbrature con timestamp per ordinamento
         timbratureEntrata.forEach(t => {
           const oraArray = t.ore.split(':').map(Number);
           let timestamp = oraArray[0] * 60 + oraArray[1];
           tutteTimbrature.push({ timbratura: t, tipo: 'entrata', timestamp });
         });
-
         timbratureUscita.forEach(t => {
           const oraArray = t.ore.split(':').map(Number);
           let timestamp = oraArray[0] * 60 + oraArray[1];
@@ -1347,20 +1185,17 @@
           }
           tutteTimbrature.push({ timbratura: t, tipo: 'uscita', timestamp });
         });
-
         // Ordina per timestamp
         tutteTimbrature.sort((a, b) => a.timestamp - b.timestamp);
-
         // GESTIONE SESSIONI MULTIPLE: Crea coppie entrata-uscita indipendenti
         const coppieTimbrature = [];
         let entrataCorrente = null;
-
         tutteTimbrature.forEach(item => {
           if (item.tipo === 'entrata') {
             // Se c'era già un'entrata senza uscita, la chiude
             if (entrataCorrente) {
-              coppieTimbrature.push({ 
-                entrata: entrataCorrente, 
+              coppieTimbrature.push({
+                entrata: entrataCorrente,
                 uscita: null,
                 sessione: coppieTimbrature.length + 1
               });
@@ -1370,54 +1205,47 @@
           } else { // uscita
             if (entrataCorrente) {
               // Completa la sessione corrente
-              coppieTimbrature.push({ 
-                entrata: entrataCorrente, 
+              coppieTimbrature.push({
+                entrata: entrataCorrente,
                 uscita: item.timbratura,
                 sessione: coppieTimbrature.length + 1
               });
               entrataCorrente = null;
             } else {
               // Uscita senza entrata (sessione orfana)
-              coppieTimbrature.push({ 
-                entrata: null, 
+              coppieTimbrature.push({
+                entrata: null,
                 uscita: item.timbratura,
                 sessione: coppieTimbrature.length + 1
               });
             }
           }
         });
-
         // Chiude l'ultima sessione se rimasta aperta
         if (entrataCorrente) {
-          coppieTimbrature.push({ 
-            entrata: entrataCorrente, 
+          coppieTimbrature.push({
+            entrata: entrataCorrente,
             uscita: null,
             sessione: coppieTimbrature.length + 1
           });
         }
-
         let oreTotaliGiorno = 0;
         const maxTimbrature = Math.max(coppieTimbrature.length, 1);
-
         for (let i = 0; i < maxTimbrature; i++) {
           const riga = document.createElement("tr");
           if (current.getDay() === 0 || current.getDay() === 6) {
             riga.classList.add('weekend');
           }
-
           const coppia = coppieTimbrature[i] || {};
           const timbraturaEntrata = coppia.entrata || null;
           const timbraturaUscita = coppia.uscita || null;
-
           // Display orari senza indicatori sessione
-          const entrataDisplay = timbraturaEntrata ? 
+          const entrataDisplay = timbraturaEntrata ?
             `${timbraturaEntrata.ore.slice(0,5)}` : '—';
-          const uscitaDisplay = timbraturaUscita ? 
+          const uscitaDisplay = timbraturaUscita ?
             `${timbraturaUscita.ore.slice(0,5)}` : '—';
-
           // Calcola ore lavorate per questa coppia
           let oreLavorateDisplay = '—';
-
           if (timbraturaEntrata && timbraturaUscita) {
             const oraEntrata = timbraturaEntrata.ore;
             const oraUscita = timbraturaUscita.ore;
@@ -1434,19 +1262,15 @@
               }
             }
           }
-
           // Determina quale ID usare per la modifica
           const timbraturaId = timbraturaEntrata ? timbraturaEntrata.id : (timbraturaUscita ? timbraturaUscita.id : 'nuovo');
-
           // Mostra il nome del giorno solo nella prima riga
           const dataDisplay = i === 0 ? dataFormattata : '';
-
           // Calcola contenuto colonna EXTRA solo per la prima riga
           let extraContent = '';
           if (i === 0) {
             const oreContrattuali = parseFloat(dipendente?.ore_contrattuali) || 8.00;
             const oreExtra = oreTotaliGiorno - oreContrattuali;
-            
             if (oreExtra > 0) {
               const oreExtraInt = Math.floor(oreExtra);
               const minutiExtra = Math.round((oreExtra - oreExtraInt) * 60);
@@ -1455,10 +1279,8 @@
               extraContent = '';  // Campo vuoto se non c'è eccedenza
             }
           }
-
           // Cella EXTRA: mostra solo nella prima riga con rowspan e contenuto calcolato
           const extraCell = i === 0 ? `<td rowspan="${maxTimbrature}" style="text-align: center;">${extraContent}</td>` : '';
-
           riga.innerHTML = `
             <td style="text-align: left;">${dataDisplay}</td>
             <td>${entrataDisplay}</td>
@@ -1480,7 +1302,6 @@
           `;
           tbody.appendChild(riga);
         }
-
         totaleMensileOre += oreTotaliGiorno;
       }
       const rigaTotale = document.createElement("tr");
@@ -1496,7 +1317,6 @@
         <td style="background-color: #1f3a56 !important;"></td>
       `;
       tbody.appendChild(rigaTotale);
-
       // Aggiungi event listeners per modifica timbrature
       aggiungiListenerModifica();
     }
@@ -1505,16 +1325,13 @@
       document.removeEventListener("click", gestisciClickModifica);
       document.addEventListener("click", gestisciClickModifica);
     }
-
     function gestisciClickModifica(event) {
       if (event.target.classList.contains("modifica-icon")) {
         event.preventDefault();
         event.stopPropagation();
-
         const icon = event.target;
         const dataSelezionata = icon.dataset.data;
         const timbraturaId = icon.dataset.timbraturaId;
-
         console.log("Clic su modifica:", dataSelezionata, "timbraturaId:", timbraturaId);
         apriModale(dataSelezionata, timbraturaId);
       }
@@ -1522,7 +1339,6 @@
     const modalOverlay = document.getElementById("modalOverlay");
     let dataCorrenteModale = null;
     let timbraturaCorrente = null;
-
     // Funzione per convertire da YYYY-MM-DD a DD/MM/YYYY
     function formatDataIT(dataISO) {
       if (!dataISO) return '';
@@ -1531,7 +1347,6 @@
     }
     async function apriModale(dataSelezionata, timbraturaId) {
       dataCorrenteModale = dataSelezionata;
-
       // Verifica e corregge il formato della data se necessario
       let dataISO = dataSelezionata;
       if (dataSelezionata && dataSelezionata.includes('/')) {
@@ -1542,20 +1357,15 @@
         }
       }
       dataCorrenteModale = dataISO;
-
       console.log("Apertura modale per data:", dataISO, "timbraturaId:", timbraturaId);
-
       // Cerca l'elemento cliccato per ottenere gli ID entrata/uscita
       const iconaCliccata = document.querySelector(`[data-timbratura-id="${timbraturaId}"]`);
       const entrataId = iconaCliccata ? iconaCliccata.dataset.entrataId : '';
       const uscitaId = iconaCliccata ? iconaCliccata.dataset.uscitaId : '';
-
       // Trova le timbrature corrispondenti
       const timbraturaEntrata = entrataId ? timbrature.find(t => t.id == entrataId) : null;
       const timbraturaUscita = uscitaId ? timbrature.find(t => t.id == uscitaId) : null;
-
       console.log("Timbrature trovate - Entrata:", timbraturaEntrata, "Uscita:", timbraturaUscita);
-
       // Modale con entrata e uscita - assicura formato data corretto
       const dataFormattataISO = dataISO; // usa la data corretta in formato ISO
       const modal = document.getElementById("modal");
@@ -1575,56 +1385,46 @@
           </div>
         </form>
       `;
-
       // Memorizza le timbrature correnti per il salvataggio
       window.timbraturaEntrataCorrente = timbraturaEntrata;
       window.timbraturaUscitaCorrente = timbraturaUscita;
-
       // Event listeners
       document.getElementById("btnSalva").addEventListener("click", salvaModificheCoppia);
       if (timbraturaEntrata || timbraturaUscita) {
         document.getElementById("btnElimina").addEventListener("click", eliminaCoppiaTimbrature);
       }
       document.getElementById("btnChiudi").addEventListener("click", chiudiModale);
-
       modalOverlay.style.display = "flex";
     }
     function chiudiModale() {
       modalOverlay.style.display = "none";
     }
-
     async function salvaModificheCoppia() {
       const entrataInput = document.getElementById("modale-entrata");
       const uscitaInput = document.getElementById("modale-uscita");
-
       const oraEntrata = entrataInput.value;
       const oraUscita = uscitaInput.value;
       const pinVal = pin;
       const nomeVal = dipendente ? dipendente.nome : "";
       const cognomeVal = dipendente ? dipendente.cognome : "";
-
       if (!dataCorrenteModale) {
         alert("Data non valida");
         return;
       }
-
       // Conferma salvataggio
       if (!confirm("CONFERMI MODIFICHE?")) {
         return;
       }
-
       try {
         // Salva entrata se presente
         if (oraEntrata) {
           let dataEntrataUsare = dataCorrenteModale;
           const [hEntrata] = oraEntrata.split(":").map(Number);
-
           if (hEntrata >= 0 && hEntrata <= 4) {
             let d = new Date(dataCorrenteModale);
             d.setDate(d.getDate() + 1);
             dataEntrataUsare = d.toISOString().split("T")[0];
           }
-
           if (window.timbraturaEntrataCorrente && window.timbraturaEntrataCorrente.id) {
             // Aggiorna entrata esistente
             await supabase
@@ -1656,18 +1456,15 @@
             .delete()
             .eq("id", window.timbraturaEntrataCorrente.id);
         }
-
         // Salva uscita se presente
         if (oraUscita) {
           let dataUscitaUsare = dataCorrenteModale;
           const [hUscita] = oraUscita.split(":").map(Number);
-
           if (hUscita >= 0 && hUscita <= 4) {
             let d = new Date(dataCorrenteModale);
             d.setDate(d.getDate() + 1);
             dataUscitaUsare = d.toISOString().split("T")[0];
           }
-
           if (window.timbraturaUscitaCorrente && window.timbraturaUscitaCorrente.id) {
             // Aggiorna uscita esistente
             await supabase
@@ -1699,7 +1496,6 @@
             .delete()
             .eq("id", window.timbraturaUscitaCorrente.id);
         }
-
         await caricaDati();
         chiudiModale();
       } catch (error) {
@@ -1707,10 +1503,8 @@
         alert("Errore salvataggio: " + error.message);
       }
     }
-
     async function eliminaCoppiaTimbrature() {
       if (!confirm("CONFERMI ELIMINAZIONE DI ENTRAMBE LE TIMBRATURE?")) return;
-
       try {
         if (window.timbraturaEntrataCorrente && window.timbraturaEntrataCorrente.id) {
           await supabase
@@ -1718,14 +1512,12 @@
             .delete()
             .eq("id", window.timbraturaEntrataCorrente.id);
         }
-
         if (window.timbraturaUscitaCorrente && window.timbraturaUscitaCorrente.id) {
           await supabase
             .from("timbrature")
             .delete()
             .eq("id", window.timbraturaUscitaCorrente.id);
         }
-
         await caricaDati();
         chiudiModale();
       } catch (error) {
@@ -1733,38 +1525,31 @@
         alert("Errore eliminazione: " + error.message);
       }
     }
-
     // Event listeners ora gestiti dinamicamente nella funzione ricostruisciModale
     document.getElementById("torna-archivio").addEventListener("click", () => {
       window.location.href = "utenti.html";
     });
-
     // Funzione per scaricare PDF
     document.getElementById("btn-invia").addEventListener("click", () => {
       scaricaPDF();
     });
-
     async function scaricaPDF() {
       try {
         const btnInvia = document.getElementById("btn-invia");
         const originalText = btnInvia.innerHTML;
         btnInvia.innerHTML = '<span style="color: orange;">⏳ Generando...</span>';
         btnInvia.disabled = true;
-
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-
         // Header del documento
         doc.setFontSize(18);
         doc.setFont(undefined, 'bold');
         doc.text('STORICO TIMBRATURE', 105, 20, { align: 'center' });
-
         doc.setFontSize(12);
         doc.setFont(undefined, 'normal');
         doc.text(`Dipendente: ${dipendente.nome} ${dipendente.cognome}`, 20, 35);
         doc.text(`Periodo: ${formatDataIT(dataInizio.value)} - ${formatDataIT(dataFine.value)}`, 20, 45);
         doc.text(`Generato il: ${new Date().toLocaleDateString('it-IT')}`, 20, 55);
-
         // Intestazioni tabella
         doc.setFont(undefined, 'bold');
         doc.text('Data', 20, 70);
@@ -1772,10 +1557,8 @@
         doc.text('Uscita', 90, 70);
         doc.text('Ore Lavorate', 120, 70);
         doc.line(20, 72, 180, 72);
-
         let yPosition = 80;
         let totaleOre = 0;
-
         // Genera PDF con i dati filtrati
         const timbraturaPerGiorno = {};
         const timbraturaFiltrate = timbrature.filter(t => {
@@ -1784,7 +1567,6 @@
           const dataFineObj = new Date(dataFine.value);
           return dataTimbratura >= dataInizioObj && dataTimbratura <= dataFineObj;
         });
-
         timbraturaFiltrate.forEach(t => {
           const dataKey = typeof t.giornologico === 'string' ? t.giornologico : new Date(t.giornologico).toISOString().split('T')[0];
           if (!timbraturaPerGiorno[dataKey]) {
@@ -1792,19 +1574,15 @@
           }
           timbraturaPerGiorno[dataKey][t.tipo] = t;
         });
-
         Object.keys(timbraturaPerGiorno).sort().forEach(data => {
           const timbraturaEntrata = timbraturaPerGiorno[data].entrata;
           const timbraturaUscita = timbraturaPerGiorno[data].uscita;
-
           const dataFormattata = formatDataIT(data);
           let oreLavorate = '—';
-
           if (timbraturaEntrata && timbraturaUscita && timbraturaEntrata.ore && timbraturaUscita.ore) {
             const entrata = new Date(`1970-01-01T${timbraturaEntrata.ore}`);
             const uscita = new Date(`1970-01-01T${timbraturaUscita.ore}`);
             if (uscita < entrata) uscita.setDate(uscita.getDate() + 1);
-
             const diffMs = uscita - entrata;
             if (diffMs > 0) {
               const h = Math.floor(diffMs / (1000 * 60 * 60));
@@ -1813,19 +1591,15 @@
               totaleOre += h + m / 60;
             }
           }
-
           doc.setFont(undefined, 'normal');
           const oraEntrataDisplay = timbraturaEntrata && timbraturaEntrata.ore ? timbraturaEntrata.ore.slice(0,5) : '—';
           const oraUscitaDisplay = timbraturaUscita && timbraturaUscita.ore ? timbraturaUscita.ore.slice(0,5) : '—';
-
           doc.text(dataFormattata, 20, yPosition);
           doc.text(oraEntrataDisplay, 60, yPosition);
           doc.text(oraUscitaDisplay, 90, yPosition);
           doc.text(oreLavorate, 120, yPosition);
-
           yPosition += 8;
         });
-
         // Totale
         yPosition += 5;
         doc.line(20, yPosition, 180, yPosition);
@@ -1833,34 +1607,26 @@
         doc.setFont(undefined, 'bold');
         doc.text('TOTALE MENSILE:', 20, yPosition);
         doc.text(`${totaleOre.toFixed(2)} ore`, 120, yPosition);
-
         // Scarica il PDF
         const filename = `StoricoTimbrature_${dipendente.nome}_${dipendente.cognome}_${dataInizio.value}_to_${dataFine.value}.pdf`;
         doc.save(filename);
-
         // Feedback successo
         btnInvia.innerHTML = '<span style="color: green;">✓ Scaricato!</span>';
         setTimeout(() => {
           btnInvia.innerHTML = originalText;
           btnInvia.disabled = false;
         }, 3000);
-
       } catch (error) {
         console.error('Errore generazione PDF:', error);
         alert('Errore durante la generazione del PDF.');
-
         const btnInvia = document.getElementById("btn-invia");
         btnInvia.innerHTML = '<img src="assets/icons/pdf.png" alt="PDF" />';
         btnInvia.disabled = false;
       }
     }
-
-
-
     document.getElementById("btn-esporta").addEventListener("click", () => {
       esportaExcel();
     });
-
     // Funzione esporta Excel aggiornata con formattazione e totali
     function esportaExcel() {
       if (!dipendente) {
@@ -1888,7 +1654,6 @@
       // Ciclo per data nel range corretto (con timezone fix)
       const startDate = new Date(dataInizio.value + 'T12:00:00');
       const endDate = new Date(dataFine.value + 'T12:00:00');
-
       for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const current = new Date(d);
         const dataISO = current.toISOString().split("T")[0];
@@ -1897,19 +1662,15 @@
         const dataFormattata = `${giornoNumero} ${giornoSettimana}`;
         const timbratureOggi = timbrature.filter(t => {
           if (!t.giornologico && !t.data) return false;
-
           // Usa giornologico se presente, altrimenti usa data
           let gLogico = t.giornologico || t.data;
-
           if (typeof gLogico !== "string") {
             gLogico = new Date(gLogico).toISOString().split("T")[0];
           }
-
           // Se giornologico non è presente, usa la data della timbratura
           if (!t.giornologico) {
             gLogico = new Date(t.data).toISOString().split("T")[0];
           }
-
           console.log(`Confronto: ${gLogico} === ${dataISO} per PIN ${t.pin}`);
           return gLogico === dataISO;
         });
@@ -1952,9 +1713,7 @@
     window.addEventListener("load", () => {
       // Imposta il range per il mese corrente usando la funzione aggiornaRange
       aggiornaRange("corrente");
-
       console.log(`Mese corrente impostato: ${dataInizio.value} - ${dataFine.value}`);
-
       caricaDati();
     });
   </script>
