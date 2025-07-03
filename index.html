@@ -299,6 +299,12 @@
       try {
         mostraStatus("Verifica in corso...", "loading");
 
+        // Verifica connessione Supabase
+        if (!window.supabase) {
+          mostraStatus("Errore: connessione database non disponibile", "error");
+          return;
+        }
+
         const { data: utente, error: erroreUtente } = await supabase
           .from("utenti")
           .select("*")
@@ -318,13 +324,13 @@
           .order("created_at", { ascending: false })
           .limit(1);
 
-        if (erroreUltima) {
+        if (erroreUltima && erroreUltima.code !== 'PGRST116') {
           console.error("Errore verifica ultima timbratura:", erroreUltima);
           mostraStatus("Errore di sistema", "error");
           return;
         }
 
-        // Blocca timbrature consecutive dello stesso tipo
+        // Blocca timbrature consecutive dello stesso tipo (solo se ci sono timbrature precedenti)
         if (ultimaTimbratura && ultimaTimbratura.length > 0) {
           const ultimoTipo = ultimaTimbratura[0].tipo;
           if (ultimoTipo === tipo) {
@@ -359,12 +365,16 @@
 
         const { error } = await supabase.from("timbrature").insert([nuovaTimbratura]);
 
-        if (error) throw new Error("Errore durante la registrazione");
+        if (error) {
+          console.error("Errore inserimento timbratura:", error);
+          throw new Error("Errore durante la registrazione: " + error.message);
+        }
 
         mostraStatus(`${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${ora.toFormat("HH:mm")}`, tipo === "uscita" ? "uscita-status" : "success", 6000);
         pulisciPin();
       } catch (e) {
-        mostraStatus(e.message, "error", 6000);
+        console.error("Errore generale:", e);
+        mostraStatus(e.message || "Errore di connessione", "error", 6000);
       }
     }
 
