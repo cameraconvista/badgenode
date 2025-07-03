@@ -1,0 +1,10 @@
+
+# Gestione routing specifico per Netlify
+/storico.html /storico.html 200
+/utenti.html /utenti.html 200
+/assets/* /assets/:splat 200
+/*.png /assets/icons/:splat 200
+/*.jpg /assets/icons/:splat 200
+/storico.html* /storico.html 200
+/utenti.html* /utenti.html 200
+/* /index.html 200

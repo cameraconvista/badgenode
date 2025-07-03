@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BADGEBOX - Sistema Timbrature</title>
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0d1b2b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
+
+    <!-- Icons per PWA -->
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/logo home.png" />
+    <link rel="apple-touch-icon" href="assets/icons/logo home.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/logo home.png" />
+    <link rel="manifest" href="manifest.json" />
+    <style>
+      body {
+        background-color: #0d1b2b;
+        font-family: 'Arial', sans-serif;
+        color: white;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        height: 100vh;
+        overflow: hidden;
+        touch-action: none;
+        position: fixed;
+        width: 100%;
+      }
+      .container {
+        background-color: #1e293b;
+        padding: 37.5px;
+        border-radius: 31.25px;
+        width: 437.5px;
+        max-width: 90%;
+        text-align: center;
+        box-shadow: 0 0 37.5px rgba(0, 0, 0, 0.8);
+      }
+      h1 {
+        margin-bottom: 18.75px;
+        font-size: 3.5rem;
+        color: white;
+        font-weight: bold;
+        letter-spacing: 2.5px;
+      }
+      .data-time {
+        margin-bottom: 31.25px;
+      }
+      .data-giorno {
+        font-size: 30px;
+        color: #a0aec0;
+        margin-bottom: 6.25px;
+        font-weight: 600;
+      }
+      .ora {
+        font-size: 27.5px;
+        color: white;
+        font-weight: bold;
+      }
+      input#pinInput {
+        width: 275px;
+        margin: 0 auto 37.5px auto;
+        padding: 18.75px;
+        font-size: 40px;
+        font-weight: bold;
+        border-radius: 18.75px;
+        border: none;
+        text-align: center;
+        letter-spacing: 2.5px;
+        user-select: none;
+        color: #333;
+        background: #e2e8f0;
+        transition: all 0.3s ease;
+        box-shadow: 0 2.5px 10px rgba(0, 0, 0, 0.2);
+      }
+      input#pinInput:focus {
+        outline: none;
+        background: #f1f5f9;
+      }
+      input#pinInput::placeholder {
+        font-size: 35px;
+        font-weight: bold;
+        color: #666;
+      }
+      #status {
+        display: none;
+        margin-bottom: 25px;
+        background-color: #374151;
+        padding: 18.75px;
+        border-radius: 12.5px;
+        min-height: 75px;
+        font-weight: bold;
+        font-size: 20px;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        white-space: pre-line;
+        text-align: center;
+      }
+
+      #status.visible {
+        display: flex;
+        opacity: 1;
+      }
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18.75px;
+        margin-bottom: 37.5px;
+        width: 100%;
+        justify-items: center;
+      }
+      button.key {
+        background-color: #2d3748;
+        border: 2.5px solid #4a5568;
+        border-radius: 50%;
+        color: white;
+        font-size: 35px;
+        font-weight: 400;
+        width: 93.75px;
+        height: 93.75px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      button.key:hover {
+        background-color: #4a5568;
+        border-color: #718096;
+        transform: scale(1.05);
+      }
+      button.key:active {
+        transform: scale(0.98);
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 18.75px;
+        margin-top: 25px;
+      }
+      button.action-btn {
+        flex: 1;
+        padding: 22.5px 0;
+        border: none;
+        border-radius: 18.75px;
+        font-size: 22.5px;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+        color: white;
+        text-transform: capitalize;
+        letter-spacing: 0.625px;
+      }
+      button.action-btn.entrata {
+        background: #15803d;
+      }
+      button.action-btn.entrata:hover {
+        background: #166534;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(21, 128, 61, 0.4);
+      }
+      button.action-btn.uscita {
+        background: #dc2626;
+      }
+      button.action-btn.uscita:hover {
+        background: #b91c1c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(220, 38, 38, 0.4);
+      }
+      .admin-link {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #6366f1;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      }
+      .admin-link:hover {
+        background-color: #4f46e5;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+      }
+      .success {
+        background-color: #15803d !important;
+        color: white;
+      }
+      .error {
+        background-color: #b45309 !important;
+        color: white;
+        border: 1px solid #ef4444 !important;
+      }
+      .warning {
+        background-color: #f59e0b !important;
+        color: white;
+      }
+      .uscita-status {
+        background-color: #dc2626 !important;
+        color: white;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+      window.supabase = createClient(
+        "https://pylfpqitdogatlsndxtf.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bGZwcWl0ZG9nYXRsc25keHRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNzU5OTcsImV4cCI6MjA2Mzk1MTk5N30.GXWmglDP7WcLSozta8UT6Ktd9XzIXSCxC5pJ4oWX3LU"
+      );
+    </script>
+</head>
+<body>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 5px; padding: 10px;">
+      <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="width: 150px; height: auto; margin-bottom: 6.25px;" />
+      <div class="container" style="margin: 0;">
+      <div class="data-time">
+        <div class="data-giorno" id="dataGiorno"></div>
+        <div class="ora" id="ora"></div>
+      </div>
+      <input
+        type="text"
+        id="pinInput"
+        placeholder="PIN"
+        readonly
+        maxlength="2"
+      />
+      <div id="status"></div>
+      <div class="keypad">
+        <button class="key">1</button>
+        <button class="key">2</button>
+        <button class="key">3</button>
+        <button class="key">4</button>
+        <button class="key">5</button>
+        <button class="key">6</button>
+        <button class="key">7</button>
+        <button class="key">8</button>
+        <button class="key">9</button>
+        <button class="key">C</button>
+        <button class="key">0</button>
+        <button class="key" style="color: #ffff99;">⚙️</button>
+      </div>
+      <div class="actions">
+        <button class="action-btn entrata">Entrata</button>
+        <button class="action-btn uscita">Uscita</button>
+      </div>
+    </div>
+
+    <script>
+      const { DateTime } = luxon;
+
+      function verificaAccessoAdmin() {
+        const pinAdmin = prompt("Inserisci il PIN amministratore:");
+        if (pinAdmin === "1909") {
+          window.location.href = "utenti.html";
+        } else if (pinAdmin !== null) {
+          alert("PIN non valido. Accesso negato.");
+        }
+      }
+      const pinInput = document.getElementById("pinInput");
+      const status = document.getElementById("status");
+      const keys = document.querySelectorAll(".key");
+      const entrataBtn = document.querySelector(".action-btn.entrata");
+      const uscitaBtn = document.querySelector(".action-btn.uscita");
+
+      function aggiornaDataOra() {
+        const ora = DateTime.now().setZone("Europe/Rome");
+        const dataGiornoElement = document.getElementById("dataGiorno");
+        const oraElement = document.getElementById("ora");
+
+        // Giorni della settimana in italiano
+        const giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+        const mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
+                     "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+
+        const giornoSettimana = giorni[ora.weekday % 7];
+        const numeroGiorno = ora.day;
+        const nomeMese = mesi[ora.month - 1];
+
+        dataGiornoElement.textContent = `${giornoSettimana} ${numeroGiorno} ${nomeMese}`;
+        oraElement.textContent = ora.toFormat("HH:mm");
+      }
+
+      function mostraStatus(messaggio, tipo = "info", durata = 3000) {
+        status.textContent = messaggio;
+        status.className = `${tipo} visible`;
+
+        setTimeout(() => {
+          status.classList.remove("visible");
+          status.className = "";
+        }, durata);
+      }
+
+      function pulisciPin() {
+        pinInput.value = "";
+      }
+
+      keys.forEach((key) => {
+        key.addEventListener("click", () => {
+          const valore = key.textContent;
+
+          if (valore === "C") {
+            pulisciPin();
+          } else if (valore === "←") {
+            pinInput.value = pinInput.value.slice(0, -1);
+          } else if (valore === "⚙️") {
+            verificaAccessoAdmin();
+          } else if (pinInput.value.length < 2) {
+            pinInput.value += valore;
+          }
+        });
+      });
+
+      async function verificaUtente(pin) {
+        try {
+          const { data, error } = await window.supabase
+            .from("utenti")
+            .select("nome, cognome")
+            .eq("pin", pin)
+            .single();
+
+          if (error) {
+            throw new Error("PIN non trovato");
+          }
+
+          return data;
+        } catch (error) {
+          throw new Error("PIN non valido");
+        }
+      }
+
+      async function verificaUltimaTimbratura(pin) {
+        try {
+          const { data, error } = await window.supabase
+            .from("timbrature")
+            .select("tipo, data, ore")
+            .eq("pin", parseInt(pin))
+            .order("data", { ascending: false })
+            .order("ore", { ascending: false })
+            .limit(1);
+
+          if (error) {
+            throw new Error("Errore durante la verifica");
+          }
+
+          return data.length > 0 ? data[0].tipo : null;
+        } catch (error) {
+          throw new Error("Errore durante la verifica dell'ultima timbratura");
+        }
+      }
+
+      async function registraTimbratura(pin, tipo) {
+        try {
+          const utente = await verificaUtente(pin);
+
+          // Verifica l'ultima timbratura per evitare consecutive dello stesso tipo
+          const ultimaTimbratura = await verificaUltimaTimbratura(pin);
+
+          if (ultimaTimbratura === tipo) {
+            const tipoOpposto = tipo === "entrata" ? "USCITA" : "ENTRATA";
+            throw new Error(`ATTENZIONE!\nProssima timbratura: ${tipoOpposto}`);
+          }
+
+          const ora = DateTime.now().setZone("Europe/Rome");
+
+          const { data, error } = await window.supabase
+            .from("timbrature")
+            .insert([
+              {
+                tipo: tipo,
+                pin: parseInt(pin),
+                nome: utente.nome,
+                cognome: utente.cognome,
+                data: ora.toISODate(),
+                ore: ora.toFormat("HH:mm:ss"),
+                giornologico: ora.toISODate()
+              }
+            ])
+            .select();
+
+          if (error) {
+            throw new Error("Errore durante la registrazione");
+          }
+
+          const tipoClasse = tipo === "uscita" ? "uscita-status" : "success";
+          mostraStatus(
+            `${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${ora.toFormat("HH:mm")}`,
+            tipoClasse,
+            6000
+          );
+
+          pulisciPin();
+        } catch (error) {
+          mostraStatus(error.message, "error", 6000);
+        }
+      }
+
+      entrataBtn.addEventListener("click", () => {
+        const pin = pinInput.value.trim();
+        if (pin.length === 0) {
+          mostraStatus("Inserisci il PIN", "warning");
+          return;
+        }
+        registraTimbratura(pin, "entrata");
+      });
+
+      uscitaBtn.addEventListener("click", () => {
+        const pin = pinInput.value.trim();
+        if (pin.length === 0) {
+          mostraStatus("Inserisci il PIN", "warning");
+          return;
+        }
+        registraTimbratura(pin, "uscita");
+      });
+
+      // Aggiorna l'ora ogni secondo
+      aggiornaDataOra();
+      setInterval(aggiornaDataOra, 1000);
+
+      // Focus automatico sull'input PIN (per accessibilità)
+      pinInput.focus();
+    </script>
+</body>
+</html>

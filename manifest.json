@@ -1,0 +1,19 @@
+
+{
+  "name": "BADGEBOX - Sistema Timbrature",
+  "short_name": "BADGEBOX",
+  "description": "Sistema di timbrature dipendenti",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1b2b",
+  "theme_color": "#0d1b2b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icons/logo home.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
