@@ -349,12 +349,12 @@ async function salvaModifiche() {
       if (window.timbraturaEntrataCorrente) {
         await supabaseClient
           .from("timbrature")
-          .update({ ore: modaleEntrata })
+          .update({ ore: modaleEntrata + ":00" })
           .eq("id", window.timbraturaEntrataCorrente.id);
       } else {
         await supabaseClient
           .from("timbrature")
-          .insert([{ pin: parseInt(pin), data: dataISO, ore: modaleEntrata, tipo: "entrata" }]);
+          .insert([{ pin: parseInt(pin), data: dataISO, ore: modaleEntrata + ":00", tipo: "entrata" }]);
       }
     }
 
@@ -367,12 +367,12 @@ async function salvaModifiche() {
       if (window.timbraturaUscitaCorrente) {
         await supabaseClient
           .from("timbrature")
-          .update({ ore: modaleUscita })
+          .update({ ore: modaleUscita + ":00" })
           .eq("id", window.timbraturaUscitaCorrente.id);
       } else {
         await supabaseClient
           .from("timbrature")
-          .insert([{ pin: parseInt(pin), data: dataISO, ore: modaleUscita, tipo: "uscita" }]);
+          .insert([{ pin: parseInt(pin), data: dataISO, ore: modaleUscita + ":00", tipo: "uscita" }]);
       }
     }
 
