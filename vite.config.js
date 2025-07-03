@@ -5,7 +5,11 @@ export default defineConfig({
     port: 5000,
     host: '0.0.0.0',
     hmr: {
-      overlay: false
+      port: 5000,
+      clientPort: 5000
+    },
+    watch: {
+      usePolling: true
     }
   },
   build: {

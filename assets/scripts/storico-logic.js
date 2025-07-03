@@ -87,7 +87,7 @@ async function caricaDati() {
     // Recupera dati utente
     const { data: datiUtente, error: errUtente } = await supabaseClient
       .from("utenti")
-      .select("nome, cognome, email, ore_contrattuali")
+      .select("nome, cognome, email, ore_giornaliere")
       .eq("pin", parseInt(pin))
       .single();
 
@@ -213,7 +213,7 @@ function renderizzaTabella() {
     const oreDisplay = oreTotaliGiorno > 0 ? `${Math.floor(oreTotaliGiorno)}:${Math.round((oreTotaliGiorno % 1) * 60).toString().padStart(2, '0')}` : '—';
 
     // Calcola EXTRA
-    const oreContrattuali = parseFloat(dipendente?.ore_contrattuali) || 8.00;
+    const oreContrattuali = parseFloat(dipendente?.ore_giornaliere) || 8.00;
     const oreExtra = oreTotaliGiorno - oreContrattuali;
     let extraContent = '';
     if (oreExtra > 0) {

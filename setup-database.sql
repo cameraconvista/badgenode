@@ -28,7 +28,7 @@ CREATE TABLE public.timbrature (
   cognome TEXT NOT NULL,
   tipo TEXT NOT NULL CHECK (tipo IN ('entrata', 'uscita')),
   data DATE NOT NULL,
-  ore TIME NOT NULL,
+  ore TIME NOT NULL CHECK (ore >= '00:00:00' AND ore <= '23:59:59'),
   giornologico DATE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
