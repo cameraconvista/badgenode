@@ -113,7 +113,12 @@
       const pin = urlParams.get("pin");
       window.location.href = "index.html" + (pin ? "?pin=" + pin : "");
     }
-    
+
+    // Funzione per tornare alla home
+    function torna() {
+      window.location.href = 'index.html';
+    }
+
     // Event listener per il pulsante torna
     document.addEventListener('DOMContentLoaded', function() {
       const tornaBtn = document.getElementById("torna-archivio");
