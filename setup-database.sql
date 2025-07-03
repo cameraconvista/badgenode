@@ -14,7 +14,7 @@ CREATE TABLE public.utenti (
   cognome TEXT NOT NULL, 
   email TEXT UNIQUE NOT NULL,
   telefono TEXT,
-  ore_giornaliere DECIMAL(4,2) DEFAULT 8.00,
+  ore_contrattuali DECIMAL(4,2) DEFAULT 8.00,
   descrizione_contratto TEXT,
   ruolo TEXT DEFAULT 'dipendente',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

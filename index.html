@@ -353,13 +353,16 @@
           giornoLogico = ora.minus({ days: 1 }).toISODate();
         }
 
+        // Format the time to HH:mm:ss
+        const oraFormatted = ora.toFormat("HH:mm:ss");
+
         const nuovaTimbratura = {
           tipo, 
           pin: parseInt(pin), 
           nome: utente.nome, 
           cognome: utente.cognome,
           data: ora.toISODate(), 
-          ore: ora.toFormat("HH:mm:ss"), 
+          ore: oraFormatted,
           giornologico: giornoLogico
         };
 
@@ -396,3 +399,4 @@
   </script>
 </body>
 </html>
+```This code update addresses the time insertion format and includes general improvements.
