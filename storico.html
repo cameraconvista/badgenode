@@ -679,6 +679,91 @@
       }
     }
   </style>
+  <script>
+    // Funzioni per il calendario personalizzato
+    function mostraMenuCalendario(campoId, event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const menu = document.getElementById(`menu-calendario-${campoId === 'data-inizio' ? 'inizio' : 'fine'}`);
+      if (menu) {
+        const isVisible = menu.style.display !== 'none';
+        
+        // Nascondi tutti i menu calendario
+        document.querySelectorAll('.menu-calendario').forEach(m => m.style.display = 'none');
+        
+        if (!isVisible) {
+          menu.style.display = 'block';
+          aggiornaCalendario(campoId);
+        }
+      }
+    }
+
+    function cambiaCalendarioMese(campoId, direzione) {
+      const suffisso = campoId === 'data-inizio' ? 'inizio' : 'fine';
+      const meseAnnoEl = document.getElementById(`calendario-mese-anno-${suffisso}`);
+      
+      if (meseAnnoEl) {
+        const testoCorrente = meseAnnoEl.textContent;
+        const [meseNome, anno] = testoCorrente.split(' ');
+        const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
+                      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+        
+        let meseIndex = mesi.indexOf(meseNome);
+        let annoNum = parseInt(anno);
+        
+        meseIndex += direzione;
+        
+        if (meseIndex < 0) {
+          meseIndex = 11;
+          annoNum--;
+        } else if (meseIndex > 11) {
+          meseIndex = 0;
+          annoNum++;
+        }
+        
+        meseAnnoEl.textContent = `${mesi[meseIndex]} ${annoNum}`;
+        aggiornaCalendario(campoId);
+      }
+    }
+
+    function aggiornaCalendario(campoId) {
+      // Implementazione base del calendario
+      console.log('Aggiornamento calendario per:', campoId);
+    }
+
+    function selezionaGiornoCalendario(campoId, giorno) {
+      const suffisso = campoId === 'data-inizio' ? 'inizio' : 'fine';
+      const meseAnnoEl = document.getElementById(`calendario-mese-anno-${suffisso}`);
+      
+      if (meseAnnoEl) {
+        const [meseNome, anno] = meseAnnoEl.textContent.split(' ');
+        const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
+                      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+        
+        const meseNum = (mesi.indexOf(meseNome) + 1).toString().padStart(2, '0');
+        const giornoStr = giorno.toString().padStart(2, '0');
+        const dataISO = `${anno}-${meseNum}-${giornoStr}`;
+        
+        const campo = document.getElementById(campoId);
+        if (campo) {
+          campo.value = dataISO;
+        }
+        
+        // Nascondi il menu
+        document.getElementById(`menu-calendario-${suffisso}`).style.display = 'none';
+      }
+    }
+
+    // Chiudi i menu quando si clicca fuori
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.menu-calendario') && !event.target.closest('.icona-calendario-campo')) {
+        document.querySelectorAll('.menu-calendario').forEach(menu => {
+          menu.style.display = 'none';
+        });
+      }
+    });
+  </script>
 </head>
 <body>
   <div class="container" style="position: relative;">

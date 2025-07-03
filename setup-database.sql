@@ -1,16 +1,21 @@
+
 -- SETUP DATABASE BADGEBOX - Versione corretta per il frontend
--- Data: 2025-01-03
+-- Data: 2025-01-03 - AGGIORNATA
 
 -- 1. Elimina tabelle esistenti se presenti
 DROP TABLE IF EXISTS public.timbrature CASCADE;
 DROP TABLE IF EXISTS public.utenti CASCADE;
 
--- 2. Crea tabella utenti con PIN numerico come chiave primaria
+-- 2. Crea tabella utenti con TUTTE le colonne necessarie
 CREATE TABLE public.utenti (
-  pin INTEGER PRIMARY KEY CHECK (pin BETWEEN 1 AND 99),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  pin INTEGER UNIQUE NOT NULL CHECK (pin BETWEEN 1 AND 99),
   nome TEXT NOT NULL,
   cognome TEXT NOT NULL, 
   email TEXT UNIQUE NOT NULL,
+  telefono TEXT,
+  ore_giornaliere DECIMAL(4,2) DEFAULT 8.00,
+  descrizione_contratto TEXT,
   ruolo TEXT DEFAULT 'dipendente',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -34,6 +39,7 @@ CREATE TABLE public.timbrature (
 );
 
 -- 4. Crea indici per performance
+CREATE INDEX idx_utenti_pin ON public.utenti(pin);
 CREATE INDEX idx_timbrature_pin ON public.timbrature(pin);
 CREATE INDEX idx_timbrature_data ON public.timbrature(data);
 CREATE INDEX idx_timbrature_giornologico ON public.timbrature(giornologico);
@@ -60,17 +66,17 @@ CREATE TRIGGER trg_giorno_logico
   EXECUTE FUNCTION calcola_giorno_logico();
 
 -- 6. Inserisci utenti di esempio
-INSERT INTO public.utenti (pin, nome, cognome, email) VALUES
-(1, 'Mario', 'Rossi', 'mario.rossi@example.com'),
-(2, 'Luigi', 'Verdi', 'luigi.verdi@example.com'),
-(99, 'Admin', 'System', 'admin@example.com');
+INSERT INTO public.utenti (pin, nome, cognome, email, telefono, ore_giornaliere, descrizione_contratto) VALUES
+(1, 'Mario', 'Rossi', 'mario.rossi@example.com', '+39 123 456 7890', 8.00, 'Contratto a tempo indeterminato'),
+(2, 'Luigi', 'Verdi', 'luigi.verdi@example.com', '+39 098 765 4321', 6.00, 'Contratto part-time'),
+(99, 'Admin', 'System', 'admin@example.com', '+39 000 000 0000', 8.00, 'Amministratore di sistema');
 
 -- 7. Inserisci timbrature di esempio per test
 INSERT INTO public.timbrature (pin, nome, cognome, tipo, data, ore) VALUES
 (1, 'Mario', 'Rossi', 'entrata', CURRENT_DATE, '08:00:00'),
 (1, 'Mario', 'Rossi', 'uscita', CURRENT_DATE, '17:00:00'),
 (2, 'Luigi', 'Verdi', 'entrata', CURRENT_DATE, '09:00:00'),
-(2, 'Luigi', 'Verdi', 'uscita', CURRENT_DATE, '18:00:00');
+(2, 'Luigi', 'Verdi', 'uscita', CURRENT_DATE, '15:00:00');
 
 -- 8. Abilita RLS (Row Level Security) per sicurezza
 ALTER TABLE public.utenti ENABLE ROW LEVEL SECURITY;
