@@ -895,12 +895,11 @@
           const timbraturaEntrata = coppia.entrata || null;
           const timbraturaUscita = coppia.uscita || null;
 
-          // Aggiunge indicatore sessione per più sessioni nello stesso giorno
-          const indicatoreSessione = coppieTimbrature.length > 1 ? ` (S${coppia.sessione || i+1})` : '';
+          // Display orari senza indicatori sessione
           const entrataDisplay = timbraturaEntrata ? 
-            `${timbraturaEntrata.ore.slice(0,5)}${indicatoreSessione}` : '—';
+            `${timbraturaEntrata.ore.slice(0,5)}` : '—';
           const uscitaDisplay = timbraturaUscita ? 
-            `${timbraturaUscita.ore.slice(0,5)}${indicatoreSessione}` : '—';
+            `${timbraturaUscita.ore.slice(0,5)}` : '—';
 
           // Calcola ore lavorate per questa coppia
           let oreLavorateDisplay = '—';
