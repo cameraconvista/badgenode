@@ -675,12 +675,12 @@
       <div class="data-container">
         <input type="date" id="data-inizio" />
         <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-inizio" />
-        
+
       </div>
       <div class="data-container">
         <input type="date" id="data-fine" />
         <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-fine" />
-        
+
       </div>
     </div>
     <div class="tabella-wrapper">
@@ -733,16 +733,6 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-    const supabase = create```html
-client(
-      "https://txmjqrnitfsiytbytxlc.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
-    );
-    const intestazione = document.getElementById("intestazione");
-  </script>
-  
-   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
     const supabase = createClient(
       "https://txmjqrnitfsiytbytxlc.supabase.co",
@@ -831,7 +821,7 @@ client(
       aggiungiOpzionePersonalizzato();
       caricaDati();
     });
-    
+
     async function caricaDati() {
       if (!pin) return;
       try {
@@ -846,7 +836,7 @@ client(
           alert("Errore recupero utente: " + errUtente.message);
           return;
         }
-        if (datiUtente) {
+        if (datiUtente){
           dipendente = datiUtente;
           intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
           console.log("Dati utente caricati:", dipendente);
@@ -1165,5 +1155,110 @@ client(
     function chiudiModale() {
       modalOverlay.style.display = "none";
     }
+    async function salvaModificheCoppia() {
+      const modaleData = document.getElementById("modale-data").value;
+      const modaleEntrata = document.getElementById("modale-entrata").value;
+      const modaleUscita = document.getElementById("modale-uscita").value;
+      // Converto la data locale in UTC
+      const dataUTC = new Date(modaleData);
+      dataUTC.setHours(12);
+      // Formatta la data UTC in stringa ISO
+      const dataISO = dataUTC.toISOString();
+      // Verifica e converte l'orario di entrata
+      let entrataISO = null;
+      if (modaleEntrata) {
+        const [oreE, minutiE] = modaleEntrata.split(":");
+        const entrataUTC = new Date(dataUTC);
+        entrataUTC.setHours(parseInt(oreE, 10), parseInt(minutiE, 10), 0, 0);
+        entrataISO = entrataUTC.toISOString();
+      }
+      // Verifica e converte l'orario di uscita
+      let uscitaISO = null;
+      if (modaleUscita) {
+        const [oreU, minutiU] = modaleUscita.split(":");
+        const uscitaUTC = new Date(dataUTC);
+        uscitaUTC.setHours(parseInt(oreU, 10), parseInt(minutiU, 10), 0, 0);
+        uscitaISO = uscitaUTC.toISOString();
+      }
+      try {
+        // Funzione generica per aggiornare o creare timbrature
+        async function salvaTimbratura(timbraturaEsistente, tipo, orarioISO) {
+          if (timbraturaEsistente) {
+            // Aggiorna timbratura esistente
+            const { data, error } = await supabase
+              .from("timbrature")
+              .update({ ore: orarioISO ? orarioISO.substring(11, 16) : null })
+              .eq("id", timbraturaEsistente.id)
+              .single();
+            if (error) {
+              throw new Error(`Errore aggiornamento ${tipo}: ${error.message}`);
+            }
+            return data;
+          } else if (orarioISO) {
+            // Crea nuova timbratura
+            const { data, error } = await supabase
+              .from("timbrature")
+              .insert([{ pin: parseInt(pin), data: dataISO, ore: orarioISO.substring(11, 16), tipo: tipo }])
+              .single();
+            if (error) {
+              throw new Error(`Errore creazione ${tipo}: ${error.message}`);
+            }
+            return data;
+          }
+          return null;
+        }
+        // Salva o aggiorna entrata
+        const entrataAggiornata = await salvaTimbratura(window.timbraturaEntrataCorrente, "entrata", entrataISO);
+        // Salva o aggiorna uscita
+        const uscitaAggiornata = await salvaTimbratura(window.timbraturaUscitaCorrente, "uscita", uscitaISO);
+        // Mostra feedback all'utente
+        alert("Modifiche salvate con successo!");
+      } catch (error) {
+        console.error("Errore durante il salvataggio:", error);
+        alert("Errore durante il salvataggio: " + error.message);
+      } finally {
+        chiudiModale();
+        caricaDati(); // Ricarica i dati dopo aver salvato
+      }
+    }
+    async function eliminaCoppiaTimbrature() {
+      if (confirm("Sei sicuro di voler eliminare questa timbratura?")) {
+        try {
+          // Elimina entrata se presente
+          if (window.timbraturaEntrataCorrente) {
+            const { data, error } = await supabase
+              .from("timbrature")
+              .delete()
+              .eq("id", window.timbraturaEntrataCorrente.id);
+            if (error) {
+              throw new Error("Errore eliminazione entrata: " + error.message);
+            }
+          }
+          // Elimina uscita se presente
+          if (window.timbraturaUscitaCorrente) {
+            const { data, error } = await supabase
+              .from("timbrature")
+              .delete()
+              .eq("id", window.timbraturaUscitaCorrente.id);
+            if (error) {
+              throw new Error("Errore eliminazione uscita: " + error.message);
+            }
+          }
+          alert("Timbratura eliminata con successo!");
+        } catch (error) {
+          console.error("Errore durante l'eliminazione:", error);
+          alert("Errore durante l'eliminazione: " + error.message);
+        } finally {
+          chiudiModale();
+          caricaDati(); // Ricarica i dati dopo aver eliminato
+        }
+      }
+    }
+    torna-archivio.addEventListener("click", function() {
+        window.location.href = "archivio.html?pin=" + pin; // Aggiungi il parametro pin
+    });
+    // Carica i dati al caricamento della pagina
+    caricaDati();
     </script>
-
+</body>
+</html>
