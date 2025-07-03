@@ -7,7 +7,11 @@ export default defineConfig({
     host: '0.0.0.0',
     strictPort: true,
     cors: true,
-    open: false
+    open: false,
+    hmr: {
+      port: 5000,
+      host: '0.0.0.0'
+    }
   },
   build: {
     outDir: 'dist',
