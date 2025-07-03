@@ -1257,6 +1257,8 @@
     document.getElementById("torna-archivio").addEventListener("click", function() {
         window.location.href = "archivio.html?pin=" + pin; // Aggiungi il parametro pin
     });
+    // Imposta il range iniziale per il mese corrente
+    aggiornaRange("corrente");
     // Carica i dati al caricamento della pagina
     caricaDati();
     </script>
