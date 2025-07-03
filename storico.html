@@ -568,6 +568,29 @@
         font-size: 14px;
       }
 
+      /* Colonne più strette per mobile con EXTRA */
+    table th:first-child, table td:first-child {
+      width: 22%;
+      font-size: 11px;
+    }
+
+    table th:nth-child(2), table td:nth-child(2),
+    table th:nth-child(3) {
+      width: 16%;
+    }
+
+    table th:nth-child(4), table td:nth-child(4) {
+      width: 18%;
+    }
+
+    table th:nth-child(5), table td:nth-child(5) {
+      width: 12%;
+    }
+
+    table th:last-child, table td:last-child {
+      width: 16%;
+    }
+
       /* Ottimizzazioni tabella per mobile */
       .tabella-wrapper {
         padding: 8px;
@@ -684,14 +707,14 @@
     function mostraMenuCalendario(campoId, event) {
       event.preventDefault();
       event.stopPropagation();
-      
+
       const menu = document.getElementById(`menu-calendario-${campoId === 'data-inizio' ? 'inizio' : 'fine'}`);
       if (menu) {
         const isVisible = menu.style.display !== 'none';
-        
+
         // Nascondi tutti i menu calendario
         document.querySelectorAll('.menu-calendario').forEach(m => m.style.display = 'none');
-        
+
         if (!isVisible) {
           menu.style.display = 'block';
           aggiornaCalendario(campoId);
@@ -702,18 +725,18 @@
     function cambiaCalendarioMese(campoId, direzione) {
       const suffisso = campoId === 'data-inizio' ? 'inizio' : 'fine';
       const meseAnnoEl = document.getElementById(`calendario-mese-anno-${suffisso}`);
-      
+
       if (meseAnnoEl) {
         const testoCorrente = meseAnnoEl.textContent;
         const [meseNome, anno] = testoCorrente.split(' ');
         const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
                       'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-        
+
         let meseIndex = mesi.indexOf(meseNome);
         let annoNum = parseInt(anno);
-        
+
         meseIndex += direzione;
-        
+
         if (meseIndex < 0) {
           meseIndex = 11;
           annoNum--;
@@ -721,7 +744,7 @@
           meseIndex = 0;
           annoNum++;
         }
-        
+
         meseAnnoEl.textContent = `${mesi[meseIndex]} ${annoNum}`;
         aggiornaCalendario(campoId);
       }
@@ -735,21 +758,21 @@
     function selezionaGiornoCalendario(campoId, giorno) {
       const suffisso = campoId === 'data-inizio' ? 'inizio' : 'fine';
       const meseAnnoEl = document.getElementById(`calendario-mese-anno-${suffisso}`);
-      
+
       if (meseAnnoEl) {
         const [meseNome, anno] = meseAnnoEl.textContent.split(' ');
         const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
                       'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-        
+
         const meseNum = (mesi.indexOf(meseNome) + 1).toString().padStart(2, '0');
         const giornoStr = giorno.toString().padStart(2, '0');
         const dataISO = `${anno}-${meseNum}-${giornoStr}`;
-        
+
         const campo = document.getElementById(campoId);
         if (campo) {
           campo.value = dataISO;
         }
-        
+
         // Nascondi il menu
         document.getElementById(`menu-calendario-${suffisso}`).style.display = 'none';
       }
@@ -839,6 +862,7 @@
               <th>Entrata</th>
               <th>Uscita</th>
               <th>Ore</th>
+              <th>EXTRA</th>
               <th>Modifica</th>
             </tr>
           </thead>
@@ -884,8 +908,7 @@
 
 
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-    const supabase = createClient(
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";Completing the addition of the "EXTRA" column and adjusting styles for responsiveness in the storico table.    const supabase = createClient(
       "https://txmjqrnitfsiytbytxlc.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
     );
@@ -972,7 +995,7 @@
       const data = calendarioCorrente[campoId];
       const anno = data.getFullYear();
       const mese = data.getMonth();
-      
+
       // Aggiorna header
       const headerId = campoId === 'data-inizio' ? 'calendario-mese-anno-inizio' : 'calendario-mese-anno-fine';
       document.getElementById(headerId).textContent = `${nomiMesi[mese]} ${anno}`;
@@ -986,7 +1009,7 @@
       const primoGiorno = new Date(anno, mese, 1);
       const ultimoGiorno = new Date(anno, mese + 1, 0);
       const giorniMese = ultimoGiorno.getDate();
-      
+
       // Calcola offset (domenica = 0)
       const offset = primoGiorno.getDay();
 
@@ -1413,6 +1436,7 @@
             <td>${entrataDisplay}</td>
             <td>${uscitaDisplay}</td>
             <td style="color: #ffff99;">${oreLavorateDisplay}</td>
+            <td></td>
             <td>
               <img
                 src="assets/icons/matita-colorata.png"
@@ -1440,6 +1464,7 @@
         <td style="background-color: #1f3a56 !important;"></td>
         <td style="background-color: #1f3a56 !important;"></td>
         <td style="color: #ffff99; background-color: #1f3a56 !important;">${totaleMensileOre.toFixed(2)}</td>
+		<td style="background-color: #1f3a56 !important;"></td>
         <td style="background-color: #1f3a56 !important;"></td>
       `;
       tbody.appendChild(rigaTotale);
