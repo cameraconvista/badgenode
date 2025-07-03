@@ -289,11 +289,52 @@
       return data.length > 0 ? data[0].tipo : null;
     }
 
-    async function registraTimbratura(pin, tipo) {
+    async function registraTimbratura(tipo) {
+      const pin = pinInput.value.trim();
+      if (!pin) {
+        mostraStatus("Inserisci il PIN", "error");
+        return;
+      }
+
       try {
-        const utente = await verificaUtente(pin);
-        const ultima = await verificaUltimaTimbratura(pin);
-        if (ultima === tipo) throw new Error(`ATTENZIONE!\nProssima timbratura: ${tipo === "entrata" ? "USCITA" : "ENTRATA"}`);
+        mostraStatus("Verifica in corso...", "loading");
+
+        const { data: utente, error: erroreUtente } = await supabase
+          .from("utenti")
+          .select("*")
+          .eq("pin", parseInt(pin))
+          .single();
+
+        if (erroreUtente || !utente) {
+          mostraStatus("PIN non trovato", "error");
+          return;
+        }
+
+        // CONTROLLO ANTI-DUPLICAZIONE: Verifica ultima timbratura
+        const { data: ultimaTimbratura, error: erroreUltima } = await supabase
+          .from("timbrature")
+          .select("tipo")
+          .eq("pin", parseInt(pin))
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        if (erroreUltima) {
+          console.error("Errore verifica ultima timbratura:", erroreUltima);
+          mostraStatus("Errore di sistema", "error");
+          return;
+        }
+
+        // Blocca timbrature consecutive dello stesso tipo
+        if (ultimaTimbratura && ultimaTimbratura.length > 0) {
+          const ultimoTipo = ultimaTimbratura[0].tipo;
+          if (ultimoTipo === tipo) {
+            const messaggioBlocco = tipo === "entrata" ? 
+              "⚠️ Hai già fatto l'ENTRATA.\nDevi prima fare l'USCITA." :
+              "⚠️ Hai già fatto l'USCITA.\nDevi prima fare l'ENTRATA.";
+            mostraStatus(messaggioBlocco, "error");
+            return;
+          }
+        }
 
         const ora = DateTime.now().setZone("Europe/Rome");
         const { error } = await supabase.from("timbrature").insert([{
@@ -313,13 +354,13 @@
     document.querySelector(".entrata").addEventListener("click", () => {
       const pin = pinInput.value.trim();
       if (!pin) return mostraStatus("Inserisci il PIN", "warning");
-      registraTimbratura(pin, "entrata");
+      registraTimbratura("entrata");
     });
 
     document.querySelector(".uscita").addEventListener("click", () => {
       const pin = pinInput.value.trim();
       if (!pin) return mostraStatus("Inserisci il PIN", "warning");
-      registraTimbratura(pin, "uscita");
+      registraTimbratura("uscita");
     });
 
     aggiornaDataOra();
