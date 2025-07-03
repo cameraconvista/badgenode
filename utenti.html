@@ -231,6 +231,43 @@
       font-size: 14px;
     }
 
+    .upload-area.dragover {
+      border-color: #3b82f6;
+      background-color: #1e40af;
+    }
+
+    .file-info {
+      color: #10b981;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .file-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .file-size {
+      color: #6b7280;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .remove-file-btn {
+      background-color: #dc2626;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .remove-file-btn:hover {
+      background-color: #b91c1c;
+    }
+
     .modal-actions {
       display: flex;
       justify-content: flex-end;
@@ -365,11 +402,17 @@
         
         <div class="campo-singolo">
           <div class="campo-label">Upload Contratto</div>
-          <div class="upload-area">
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="file-input" accept=".pdf,.doc,.docx" style="display: none;">
             <div class="upload-icon">📄</div>
-            <div class="upload-text">
+            <div class="upload-text" id="upload-text">
               Trascina qui il file del contratto o clicca per selezionare<br>
               <small>(PDF, DOC, DOCX - Max 5MB)</small>
+            </div>
+            <div class="file-info" id="file-info" style="display: none;">
+              <div class="file-name" id="file-name"></div>
+              <div class="file-size" id="file-size"></div>
+              <button type="button" class="remove-file-btn" id="remove-file-btn">Rimuovi</button>
             </div>
           </div>
         </div>
@@ -553,6 +596,124 @@
     window.salvaModifiche = async () => {
       // TODO: Implementare salvataggio su Supabase
       alert('Funzione salvataggio da implementare');
+    };
+
+    // Funzionalità Upload File
+    function inizializzaUploadFile() {
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('file-input');
+      const uploadText = document.getElementById('upload-text');
+      const fileInfo = document.getElementById('file-info');
+      const fileName = document.getElementById('file-name');
+      const fileSize = document.getElementById('file-size');
+      const removeFileBtn = document.getElementById('remove-file-btn');
+
+      // Click per aprire selezione file
+      uploadArea.addEventListener('click', (e) => {
+        if (!e.target.closest('.remove-file-btn')) {
+          fileInput.click();
+        }
+      });
+
+      // Gestione selezione file
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          gestisciFile(file);
+        }
+      });
+
+      // Drag & Drop events
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+
+      uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          gestisciFile(files[0]);
+        }
+      });
+
+      // Rimozione file
+      removeFileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        rimuoviFile();
+      });
+
+      function gestisciFile(file) {
+        // Validazione tipo file
+        const tipiAccettati = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!tipiAccettati.includes(file.type)) {
+          alert('Tipo di file non supportato. Seleziona un file PDF, DOC o DOCX.');
+          return;
+        }
+
+        // Validazione dimensione (5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.size > maxSize) {
+          alert('Il file è troppo grande. La dimensione massima consentita è 5MB.');
+          return;
+        }
+
+        // Mostra informazioni file
+        fileName.textContent = file.name;
+        fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+        
+        uploadText.style.display = 'none';
+        fileInfo.style.display = 'block';
+        
+        uploadArea.style.borderColor = '#10b981';
+        uploadArea.style.backgroundColor = '#064e3b';
+
+        console.log('File caricato:', file.name, 'Dimensione:', file.size, 'bytes');
+      }
+
+      function rimuoviFile() {
+        fileInput.value = '';
+        uploadText.style.display = 'block';
+        fileInfo.style.display = 'none';
+        
+        uploadArea.style.borderColor = '#4b5563';
+        uploadArea.style.backgroundColor = '#374151';
+      }
+    }
+
+    // Inizializza upload quando il modale si apre
+    window.apriModalDettagli = (utente) => {
+      const modal = document.getElementById('modalDettagli');
+      const modalTitolo = document.getElementById('modalTitolo');
+      
+      // Aggiorna il titolo del modale
+      modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
+      
+      // Popola i campi con i dati del dipendente
+      document.getElementById('dettagli-nome').value = utente.nome;
+      document.getElementById('dettagli-cognome').value = utente.cognome;
+      document.getElementById('dettagli-email').value = utente.email;
+      
+      // Per ora i campi aggiuntivi rimangono vuoti (da implementare con Supabase)
+      document.getElementById('dettagli-telefono').value = '';
+      document.getElementById('dettagli-descrizione-contratto').value = '';
+      document.getElementById('dettagli-ore-giornaliere').value = '';
+      
+      // Inizializza upload file
+      inizializzaUploadFile();
+      
+      // Mostra il modale
+      modal.style.display = 'flex';
+      
+      // Impedisce lo scroll della pagina sottostante
+      document.body.style.overflow = 'hidden';
     };
 
     caricaUtenti();
