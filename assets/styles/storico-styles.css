@@ -410,6 +410,37 @@ button#btnChiudi {
   color: white;
 }
 
+/* Pulsante torna a utenti in alto a sinistra */
+.btn-torna-utenti {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #1e90ff 0%, #4682b4 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+  z-index: 100;
+}
+
+.btn-torna-utenti:hover {
+  background: linear-gradient(135deg, #4682b4 0%, #1e90ff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(30, 144, 255, 0.4);
+}
+
+.btn-torna-utenti:active {
+  transform: translateY(0);
+}
+
 /* Contenitore pulsanti in fondo alla tabella */
 .pulsanti-basso {
   display: flex;
@@ -689,6 +720,21 @@ button#btnChiudi {
   .menu-item {
     padding: 6px 10px;
     font-size: 13px;
+  }
+
+  /* Pulsante torna a utenti responsive per mobile */
+  .btn-torna-utenti {
+    top: 10px;
+    left: 10px;
+    padding: 8px 14px;
+    font-size: 12px;
+    border-radius: 20px;
+  }
+
+  .btn-torna-utenti img {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
   }
 
   /* Modale più adatto a mobile */

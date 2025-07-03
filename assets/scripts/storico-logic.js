@@ -1,4 +1,3 @@
-
 // Logica principale per storico.html
 import { supabaseClient } from './supabase-client.js';
 import { initCalendarUtils } from './calendar-utils.js';
@@ -141,7 +140,7 @@ async function caricaDati() {
 // Renderizza la tabella
 function renderizzaTabella() {
   tbody.innerHTML = "";
-  
+
   if (!dataInizio.value || !dataFine.value) {
     console.log("Date non impostate correttamente");
     return;
@@ -150,7 +149,7 @@ function renderizzaTabella() {
   const start = new Date(dataInizio.value + 'T00:00:00');
   const end = new Date(dataFine.value + 'T00:00:00');
   const giorniSettimana = ["Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato"];
-  
+
   let totaleMensileOre = 0;
 
   const startDateFixed = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 12, 0, 0);
@@ -184,18 +183,18 @@ function renderizzaTabella() {
 
     // Resto della logica di rendering...
     // [Qui continua la logica esistente di raggruppamento e rendering]
-    
+
     let oreTotaliGiorno = 0;
     // Logica semplificata per il calcolo delle ore
     if (timbratureEntrata.length > 0 && timbratureUscita.length > 0) {
       const entrata = timbratureEntrata[0];
       const uscita = timbratureUscita[timbratureUscita.length - 1];
-      
+
       const oraInizio = new Date(`1970-01-01T${entrata.ore}`);
       const oraFine = new Date(`1970-01-01T${uscita.ore}`);
-      
+
       if (oraFine < oraInizio) oraFine.setDate(oraFine.getDate() + 1);
-      
+
       const diffMs = oraFine - oraInizio;
       if (diffMs > 0) {
         oreTotaliGiorno = diffMs / (1000 * 60 * 60);
@@ -283,7 +282,7 @@ function gestisciClickModifica(event) {
 // Apre la modale di modifica
 async function apriModale(dataSelezionata, timbraturaId) {
   dataCorrenteModale = dataSelezionata;
-  
+
   const timbratureGiorno = timbrature.filter(t => {
     let dataRiferimento = t.giornologico || t.data;
     if (typeof dataRiferimento !== 'string') {
@@ -345,7 +344,7 @@ async function salvaModifiche() {
       const [ore, minuti] = modaleEntrata.split(":");
       const entrataUTC = new Date(dataUTC);
       entrataUTC.setHours(parseInt(ore), parseInt(minuti), 0, 0);
-      
+
       if (window.timbraturaEntrataCorrente) {
         await supabaseClient
           .from("timbrature")
@@ -363,7 +362,7 @@ async function salvaModifiche() {
       const [ore, minuti] = modaleUscita.split(":");
       const uscitaUTC = new Date(dataUTC);
       uscitaUTC.setHours(parseInt(ore), parseInt(minuti), 0, 0);
-      
+
       if (window.timbraturaUscitaCorrente) {
         await supabaseClient
           .from("timbrature")
