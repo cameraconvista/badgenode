@@ -102,8 +102,8 @@
       z-index: 10;
     }
 
-    /* Stili menu calendario */
-    .menu-calendario {
+    /* Stili calendario visuale */
+    .calendario-popup {
       position: absolute;
       top: 100%;
       right: 0;
@@ -112,27 +112,82 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       z-index: 1000;
-      min-width: 160px;
-      padding: 4px 0;
+      width: 280px;
+      padding: 12px;
       margin-top: 2px;
+      display: none;
     }
 
-    .menu-item {
-      padding: 8px 12px;
+    .calendario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
       color: white;
+      font-weight: bold;
+    }
+
+    .calendario-nav {
+      background: none;
+      border: none;
+      color: #64b5f6;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 4px;
       transition: background-color 0.2s;
     }
 
-    .menu-item:hover {
+    .calendario-nav:hover {
       background-color: #334155;
     }
 
-    .menu-separator {
-      height: 1px;
-      background-color: #334155;
-      margin: 4px 0;
+    .calendario-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+
+    .calendario-giorno-settimana {
+      text-align: center;
+      padding: 6px 2px;
+      font-size: 11px;
+      color: #94a3b8;
+      font-weight: bold;
+    }
+
+    .calendario-giorno {
+      text-align: center;
+      padding: 8px 4px;
+      font-size: 12px;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .calendario-giorno:hover {
+      background-color: #4a5568;
+    }
+
+    .calendario-giorno.altro-mese {
+      color: #64748b;
+    }
+
+    .calendario-giorno.oggi {
+      background-color: #3b82f6;
+      color: white;
+      font-weight: bold;
+    }
+
+    .calendario-giorno.selezionato {
+      background-color: #22c55e;
+      color: white;
+      font-weight: bold;
     }
 
 
@@ -587,28 +642,44 @@
       </select>
       <div class="data-container">
         <input type="date" id="data-inizio" />
-        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" onclick="mostraMenuCalendario('data-inizio', event)" />
-        <div id="menu-calendario-inizio" class="menu-calendario" style="display: none;">
-          <div class="menu-item" onclick="impostaData('data-inizio', 'oggi')">Oggi</div>
-          <div class="menu-item" onclick="impostaData('data-inizio', 'ieri')">Ieri</div>
-          <div class="menu-item" onclick="impostaData('data-inizio', 'lunedi')">Inizio settimana</div>
-          <div class="menu-item" onclick="impostaData('data-inizio', 'primo-mese')">Primo del mese</div>
-          <div class="menu-item" onclick="impostaData('data-inizio', 'mese-scorso')">Mese scorso</div>
-          <div class="menu-separator"></div>
-          <div class="menu-item" onclick="document.getElementById('data-inizio').focus(); nascondiMenuCalendario()">Inserisci manualmente</div>
+        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" onclick="mostraCalendario('data-inizio', event)" />
+        <div id="calendario-popup-inizio" class="calendario-popup">
+          <div class="calendario-header">
+            <button type="button" class="calendario-nav" onclick="navigaMese('data-inizio', -1)">&lt;</button>
+            <span id="calendario-mese-anno-inizio"></span>
+            <button type="button" class="calendario-nav" onclick="navigaMese('data-inizio', 1)">&gt;</button>
+          </div>
+          <div class="calendario-grid" id="calendario-grid-inizio">
+            <!-- Intestazioni giorni settimana -->
+            <div class="calendario-giorno-settimana">Lu</div>
+            <div class="calendario-giorno-settimana">Ma</div>
+            <div class="calendario-giorno-settimana">Me</div>
+            <div class="calendario-giorno-settimana">Gi</div>
+            <div class="calendario-giorno-settimana">Ve</div>
+            <div class="calendario-giorno-settimana">Sa</div>
+            <div class="calendario-giorno-settimana">Do</div>
+          </div>
         </div>
       </div>
       <div class="data-container">
         <input type="date" id="data-fine" />
-        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" onclick="mostraMenuCalendario('data-fine', event)" />
-        <div id="menu-calendario-fine" class="menu-calendario" style="display: none;">
-          <div class="menu-item" onclick="impostaData('data-fine', 'oggi')">Oggi</div>
-          <div class="menu-item" onclick="impostaData('data-fine', 'ieri')">Ieri</div>
-          <div class="menu-item" onclick="impostaData('data-fine', 'domenica')">Fine settimana</div>
-          <div class="menu-item" onclick="impostaData('data-fine', 'ultimo-mese')">Fine del mese</div>
-          <div class="menu-item" onclick="impostaData('data-fine', 'mese-scorso-fine')">Fine mese scorso</div>
-          <div class="menu-separator"></div>
-          <div class="menu-item" onclick="document.getElementById('data-fine').focus(); nascondiMenuCalendario()">Inserisci manualmente</div>
+        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" onclick="mostraCalendario('data-fine', event)" />
+        <div id="calendario-popup-fine" class="calendario-popup">
+          <div class="calendario-header">
+            <button type="button" class="calendario-nav" onclick="navigaMese('data-fine', -1)">&lt;</button>
+            <span id="calendario-mese-anno-fine"></span>
+            <button type="button" class="calendario-nav" onclick="navigaMese('data-fine', 1)">&gt;</button>
+          </div>
+          <div class="calendario-grid" id="calendario-grid-fine">
+            <!-- Intestazioni giorni settimana -->
+            <div class="calendario-giorno-settimana">Lu</div>
+            <div class="calendario-giorno-settimana">Ma</div>
+            <div class="calendario-giorno-settimana">Me</div>
+            <div class="calendario-giorno-settimana">Gi</div>
+            <div class="calendario-giorno-settimana">Ve</div>
+            <div class="calendario-giorno-settimana">Sa</div>
+            <div class="calendario-giorno-settimana">Do</div>
+          </div>
         </div>
       </div>
     </div>
@@ -664,65 +735,135 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
   <script>
-    // Funzioni globali per il menu calendario
-    function mostraMenuCalendario(campoId, event) {
+    // Variabili globali per il calendario
+    let calendarioCorrente = {
+      'data-inizio': new Date(),
+      'data-fine': new Date()
+    };
+
+    const nomiMesi = [
+      'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
+      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
+    ];
+
+    // Funzioni globali per il calendario visuale
+    function mostraCalendario(campoId, event) {
       event.stopPropagation();
       
-      // Nascondi tutti i menu
-      nascondiMenuCalendario();
+      // Nascondi tutti i calendari
+      nascondiCalendario();
       
-      // Mostra il menu corrispondente
-      const menuId = campoId === 'data-inizio' ? 'menu-calendario-inizio' : 'menu-calendario-fine';
-      const menu = document.getElementById(menuId);
-      menu.style.display = 'block';
-    }
-
-    function nascondiMenuCalendario() {
-      document.getElementById('menu-calendario-inizio').style.display = 'none';
-      document.getElementById('menu-calendario-fine').style.display = 'none';
-    }
-
-    function impostaData(campoId, tipo) {
+      // Mostra il calendario corrispondente
+      const calendarioId = campoId === 'data-inizio' ? 'calendario-popup-inizio' : 'calendario-popup-fine';
+      const calendario = document.getElementById(calendarioId);
+      
+      // Inizializza la data del calendario con il valore del campo
       const campo = document.getElementById(campoId);
-      const oggi = new Date();
-      let dataTarget = new Date();
-
-      switch (tipo) {
-        case 'oggi':
-          dataTarget = oggi;
-          break;
-        case 'ieri':
-          dataTarget = new Date(oggi);
-          dataTarget.setDate(oggi.getDate() - 1);
-          break;
-        case 'lunedi':
-          dataTarget = new Date(oggi);
-          const giornoSettimana = oggi.getDay();
-          const giorniDaLunedi = giornoSettimana === 0 ? -6 : 1 - giornoSettimana;
-          dataTarget.setDate(oggi.getDate() + giorniDaLunedi);
-          break;
-        case 'domenica':
-          dataTarget = new Date(oggi);
-          const giornoSett = oggi.getDay();
-          const giorniADomenica = giornoSett === 0 ? 0 : 7 - giornoSett;
-          dataTarget.setDate(oggi.getDate() + giorniADomenica);
-          break;
-        case 'primo-mese':
-          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth(), 1);
-          break;
-        case 'ultimo-mese':
-          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0);
-          break;
-        case 'mese-scorso':
-          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() - 1, 1);
-          break;
-        case 'mese-scorso-fine':
-          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth(), 0);
-          break;
+      if (campo.value) {
+        calendarioCorrente[campoId] = new Date(campo.value + 'T12:00:00');
+      } else {
+        calendarioCorrente[campoId] = new Date();
       }
+      
+      calendario.style.display = 'block';
+      aggiornaCalendario(campoId);
+    }
 
+    function nascondiCalendario() {
+      document.getElementById('calendario-popup-inizio').style.display = 'none';
+      document.getElementById('calendario-popup-fine').style.display = 'none';
+    }
+
+    function navigaMese(campoId, direzione) {
+      const data = calendarioCorrente[campoId];
+      data.setMonth(data.getMonth() + direzione);
+      aggiornaCalendario(campoId);
+    }
+
+    function aggiornaCalendario(campoId) {
+      const data = calendarioCorrente[campoId];
+      const anno = data.getFullYear();
+      const mese = data.getMonth();
+      
+      // Aggiorna header
+      const headerId = campoId === 'data-inizio' ? 'calendario-mese-anno-inizio' : 'calendario-mese-anno-fine';
+      document.getElementById(headerId).textContent = `${nomiMesi[mese]} ${anno}`;
+      
+      // Aggiorna griglia giorni
+      const gridId = campoId === 'data-inizio' ? 'calendario-grid-inizio' : 'calendario-grid-fine';
+      const grid = document.getElementById(gridId);
+      
+      // Rimuovi giorni esistenti (mantieni intestazioni)
+      const giorni = grid.querySelectorAll('.calendario-giorno');
+      giorni.forEach(giorno => giorno.remove());
+      
+      // Calcola primo giorno del mese e numero di giorni
+      const primoGiorno = new Date(anno, mese, 1);
+      const ultimoGiorno = new Date(anno, mese + 1, 0);
+      const primoGiornoSettimana = primoGiorno.getDay();
+      const giornoInizioLunedi = primoGiornoSettimana === 0 ? 6 : primoGiornoSettimana - 1;
+      
+      // Giorni del mese precedente
+      const mesePrec = new Date(anno, mese, 0);
+      for (let i = giornoInizioLunedi - 1; i >= 0; i--) {
+        const giorno = mesePrec.getDate() - i;
+        const elemento = creaElementoGiorno(giorno, campoId, anno, mese - 1, true);
+        grid.appendChild(elemento);
+      }
+      
+      // Giorni del mese corrente
+      for (let giorno = 1; giorno <= ultimoGiorno.getDate(); giorno++) {
+        const elemento = creaElementoGiorno(giorno, campoId, anno, mese, false);
+        grid.appendChild(elemento);
+      }
+      
+      // Giorni del mese successivo
+      const celleRimanenti = 42 - (giornoInizioLunedi + ultimoGiorno.getDate());
+      for (let giorno = 1; giorno <= celleRimanenti; giorno++) {
+        const elemento = creaElementoGiorno(giorno, campoId, anno, mese + 1, true);
+        grid.appendChild(elemento);
+      }
+    }
+
+    function creaElementoGiorno(giorno, campoId, anno, mese, altroMese) {
+      const elemento = document.createElement('div');
+      elemento.className = 'calendario-giorno';
+      elemento.textContent = giorno;
+      
+      if (altroMese) {
+        elemento.classList.add('altro-mese');
+      }
+      
+      // Evidenzia oggi
+      const oggi = new Date();
+      if (!altroMese && anno === oggi.getFullYear() && 
+          mese === oggi.getMonth() && giorno === oggi.getDate()) {
+        elemento.classList.add('oggi');
+      }
+      
+      // Evidenzia data selezionata
+      const campo = document.getElementById(campoId);
+      if (campo.value) {
+        const dataSelezionata = new Date(campo.value + 'T12:00:00');
+        if (anno === dataSelezionata.getFullYear() && 
+            mese === dataSelezionata.getMonth() && 
+            giorno === dataSelezionata.getDate()) {
+          elemento.classList.add('selezionato');
+        }
+      }
+      
+      // Click handler
+      elemento.onclick = () => selezionaGiorno(campoId, anno, mese, giorno);
+      
+      return elemento;
+    }
+
+    function selezionaGiorno(campoId, anno, mese, giorno) {
+      const data = new Date(anno, mese, giorno);
+      const dataISO = data.toISOString().split('T')[0];
+      
       // Imposta il valore nel campo
-      campo.value = dataTarget.toISOString().split('T')[0];
+      document.getElementById(campoId).value = dataISO;
       
       // Chiama le funzioni dal modulo tramite eventi personalizzati
       const eventoPersonalizzato = new CustomEvent('dataImpostata', {
@@ -730,17 +871,17 @@
       });
       document.dispatchEvent(eventoPersonalizzato);
       
-      // Nascondi il menu
-      nascondiMenuCalendario();
+      // Nascondi il calendario
+      nascondiCalendario();
     }
 
-    // Chiudi menu quando si clicca altrove
+    // Chiudi calendario quando si clicca altrove
     document.addEventListener('click', function(event) {
       const isCalendarioIcon = event.target.classList.contains('icona-calendario-campo');
-      const isMenuCalendario = event.target.closest('.menu-calendario');
+      const isCalendarioPopup = event.target.closest('.calendario-popup');
       
-      if (!isCalendarioIcon && !isMenuCalendario) {
-        nascondiMenuCalendario();
+      if (!isCalendarioIcon && !isCalendarioPopup) {
+        nascondiCalendario();
       }
     });
   </script>
