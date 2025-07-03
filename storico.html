@@ -662,6 +662,89 @@
   </div>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <script>
+    // Funzioni globali per il menu calendario
+    function mostraMenuCalendario(campoId, event) {
+      event.stopPropagation();
+      
+      // Nascondi tutti i menu
+      nascondiMenuCalendario();
+      
+      // Mostra il menu corrispondente
+      const menuId = campoId === 'data-inizio' ? 'menu-calendario-inizio' : 'menu-calendario-fine';
+      const menu = document.getElementById(menuId);
+      menu.style.display = 'block';
+    }
+
+    function nascondiMenuCalendario() {
+      document.getElementById('menu-calendario-inizio').style.display = 'none';
+      document.getElementById('menu-calendario-fine').style.display = 'none';
+    }
+
+    function impostaData(campoId, tipo) {
+      const campo = document.getElementById(campoId);
+      const oggi = new Date();
+      let dataTarget = new Date();
+
+      switch (tipo) {
+        case 'oggi':
+          dataTarget = oggi;
+          break;
+        case 'ieri':
+          dataTarget = new Date(oggi);
+          dataTarget.setDate(oggi.getDate() - 1);
+          break;
+        case 'lunedi':
+          dataTarget = new Date(oggi);
+          const giornoSettimana = oggi.getDay();
+          const giorniDaLunedi = giornoSettimana === 0 ? -6 : 1 - giornoSettimana;
+          dataTarget.setDate(oggi.getDate() + giorniDaLunedi);
+          break;
+        case 'domenica':
+          dataTarget = new Date(oggi);
+          const giornoSett = oggi.getDay();
+          const giorniADomenica = giornoSett === 0 ? 0 : 7 - giornoSett;
+          dataTarget.setDate(oggi.getDate() + giorniADomenica);
+          break;
+        case 'primo-mese':
+          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth(), 1);
+          break;
+        case 'ultimo-mese':
+          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0);
+          break;
+        case 'mese-scorso':
+          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() - 1, 1);
+          break;
+        case 'mese-scorso-fine':
+          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth(), 0);
+          break;
+      }
+
+      // Imposta il valore nel campo
+      campo.value = dataTarget.toISOString().split('T')[0];
+      
+      // Chiama le funzioni dal modulo tramite eventi personalizzati
+      const eventoPersonalizzato = new CustomEvent('dataImpostata', {
+        detail: { campoId, aggiornaDati: true }
+      });
+      document.dispatchEvent(eventoPersonalizzato);
+      
+      // Nascondi il menu
+      nascondiMenuCalendario();
+    }
+
+    // Chiudi menu quando si clicca altrove
+    document.addEventListener('click', function(event) {
+      const isCalendarioIcon = event.target.classList.contains('icona-calendario-campo');
+      const isMenuCalendario = event.target.closest('.menu-calendario');
+      
+      if (!isCalendarioIcon && !isMenuCalendario) {
+        nascondiMenuCalendario();
+      }
+    });
+  </script>
+  
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
     const supabase = createClient(
@@ -763,81 +846,12 @@
       caricaDati();
     });
 
-    // Funzioni per gestione menu calendario
-    function mostraMenuCalendario(campoId, event) {
-      event.stopPropagation();
-      
-      // Nascondi tutti i menu
-      nascondiMenuCalendario();
-      
-      // Mostra il menu corrispondente
-      const menuId = campoId === 'data-inizio' ? 'menu-calendario-inizio' : 'menu-calendario-fine';
-      const menu = document.getElementById(menuId);
-      menu.style.display = 'block';
-    }
-
-    function nascondiMenuCalendario() {
-      document.getElementById('menu-calendario-inizio').style.display = 'none';
-      document.getElementById('menu-calendario-fine').style.display = 'none';
-    }
-
-    function impostaData(campoId, tipo) {
-      const campo = document.getElementById(campoId);
-      const oggi = new Date();
-      let dataTarget = new Date();
-
-      switch (tipo) {
-        case 'oggi':
-          dataTarget = oggi;
-          break;
-        case 'ieri':
-          dataTarget = new Date(oggi);
-          dataTarget.setDate(oggi.getDate() - 1);
-          break;
-        case 'lunedi':
-          dataTarget = new Date(oggi);
-          const giornoSettimana = oggi.getDay();
-          const giorniDaLunedi = giornoSettimana === 0 ? -6 : 1 - giornoSettimana;
-          dataTarget.setDate(oggi.getDate() + giorniDaLunedi);
-          break;
-        case 'domenica':
-          dataTarget = new Date(oggi);
-          const giornoSett = oggi.getDay();
-          const giorniADomenica = giornoSett === 0 ? 0 : 7 - giornoSett;
-          dataTarget.setDate(oggi.getDate() + giorniADomenica);
-          break;
-        case 'primo-mese':
-          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth(), 1);
-          break;
-        case 'ultimo-mese':
-          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0);
-          break;
-        case 'mese-scorso':
-          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth() - 1, 1);
-          break;
-        case 'mese-scorso-fine':
-          dataTarget = new Date(oggi.getFullYear(), oggi.getMonth(), 0);
-          break;
-      }
-
-      // Imposta il valore nel campo
-      campo.value = dataTarget.toISOString().split('T')[0];
-      
-      // Attiva l'opzione personalizzata e ricarica i dati
-      aggiungiOpzionePersonalizzato();
-      caricaDati();
-      
-      // Nascondi il menu
-      nascondiMenuCalendario();
-    }
-
-    // Chiudi menu quando si clicca altrove
-    document.addEventListener('click', function(event) {
-      const isCalendarioIcon = event.target.classList.contains('icona-calendario-campo');
-      const isMenuCalendario = event.target.closest('.menu-calendario');
-      
-      if (!isCalendarioIcon && !isMenuCalendario) {
-        nascondiMenuCalendario();
+    // Ascolta gli eventi personalizzati dal menu calendario
+    document.addEventListener('dataImpostata', function(event) {
+      const { campoId, aggiornaDati } = event.detail;
+      if (aggiornaDati) {
+        aggiungiOpzionePersonalizzato();
+        caricaDati();
       }
     });
     async function caricaDati() {
