@@ -930,8 +930,8 @@
       'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
     ];
 
-    // Funzioni globali per il calendario datepicker
-    window.mostraMenuCalendario = function(campoId, event) {
+    // Funzioni globali per il calendario datepicker - devono essere definite prima dell'HTML
+    function mostraMenuCalendario(campoId, event) {
       event.stopPropagation();
 
       // Nascondi tutti i menu
@@ -954,17 +954,17 @@
       generaCalendario(campoId);
     };
 
-    window.nascondiMenuCalendario = function() {
+    function nascondiMenuCalendario() {
       document.getElementById('menu-calendario-inizio').style.display = 'none';
       document.getElementById('menu-calendario-fine').style.display = 'none';
-    };
+    }
 
-    window.cambiaCalendarioMese = function(campoId, direzione) {
+    function cambiaCalendarioMese(campoId, direzione) {
       calendarioCorrente[campoId].setMonth(calendarioCorrente[campoId].getMonth() + direzione);
       generaCalendario(campoId);
-    };
+    }
 
-    window.impostaDataOggi = function(campoId) {
+    function impostaDataOggi(campoId) {
       const oggi = new Date();
       const campo = document.getElementById(campoId);
       campo.value = oggi.toISOString().split('T')[0];
@@ -975,10 +975,10 @@
       });
       document.dispatchEvent(eventoPersonalizzato);
 
-      window.nascondiMenuCalendario();
-    };
+      nascondiMenuCalendario();
+    }
 
-    window.selezionaGiornoCalendario = function(campoId, anno, mese, giorno) {
+    function selezionaGiornoCalendario(campoId, anno, mese, giorno) {
       const data = new Date(anno, mese, giorno);
       const campo = document.getElementById(campoId);
       campo.value = data.toISOString().split('T')[0];
@@ -989,8 +989,15 @@
       });
       document.dispatchEvent(eventoPersonalizzato);
 
-      window.nascondiMenuCalendario();
-    };
+      nascondiMenuCalendario();
+    }
+
+    // Esponi le funzioni a livello globale per compatibilità con onclick HTML
+    window.mostraMenuCalendario = mostraMenuCalendario;
+    window.nascondiMenuCalendario = nascondiMenuCalendario;
+    window.cambiaCalendarioMese = cambiaCalendarioMese;
+    window.impostaDataOggi = impostaDataOggi;
+    window.selezionaGiornoCalendario = selezionaGiornoCalendario;
 
     function generaCalendario(campoId) {
       const data = calendarioCorrente[campoId];
@@ -1084,7 +1091,7 @@
       const isMenuCalendario = event.target.closest('.menu-calendario');
 
       if (!isCalendarioIcon && !isMenuCalendario) {
-        window.nascondiMenuCalendario();
+        nascondiMenuCalendario();
       }
     });
   </script>
@@ -1437,25 +1444,15 @@
           // Calcola contenuto colonna EXTRA solo per la prima riga
           let extraContent = '';
           if (i === 0) {
-            // Debug: stampa i valori per verificare
-            console.log("DEBUG EXTRA:", {
-              dipendente: dipendente,
-              oreGiornaliere: dipendente?.ore_giornaliere,
-              oreTotaliGiorno: oreTotaliGiorno,
-              dataISO: dataISO
-            });
-
-            const oreContrattuali = parseFloat(dipendente?.ore_giornaliere) || 8.00;
+            const oreContrattuali = parseFloat(dipendente?.ore_contrattuali) || 8.00;
             const oreExtra = oreTotaliGiorno - oreContrattuali;
             
             if (oreExtra > 0) {
               const oreExtraInt = Math.floor(oreExtra);
               const minutiExtra = Math.round((oreExtra - oreExtraInt) * 60);
               extraContent = `<span style="color: #fbbf24; font-weight: bold;">+${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')}</span>`;
-              console.log(`EXTRA calcolato: ${oreExtra.toFixed(2)} ore (${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')})`);
             } else {
               extraContent = '';  // Campo vuoto se non c'è eccedenza
-              console.log("Nessuna eccedenza da mostrare");
             }
           }
 
