@@ -1,15 +1,7 @@
-
--- SETUP DATABASE BADGEBOX - Versione corretta per il frontend
--- Data: 2025-01-03 - AGGIORNATA
-
--- 1. Elimina tabelle esistenti se presenti
-DROP TABLE IF EXISTS public.timbrature CASCADE;
-DROP TABLE IF EXISTS public.utenti CASCADE;
-
--- 2. Crea tabella utenti con TUTTE le colonne necessarie
-CREATE TABLE public.utenti (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  pin INTEGER UNIQUE NOT NULL CHECK (pin BETWEEN 1 AND 99),
+-- SETUP DATABASE BADGEBOX - Versione corretta senza constraint problematici
+-- Solo per tabelle: utenti e timbrature
+CREATE TABLE IF NOT EXISTS public.utenti (
+  pin INTEGER PRIMARY KEY CHECK (pin BETWEEN 1 AND 99),
   nome TEXT NOT NULL,
   cognome TEXT NOT NULL, 
   email TEXT UNIQUE NOT NULL,
@@ -20,80 +12,44 @@ CREATE TABLE public.utenti (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 3. Crea tabella timbrature compatibile con il frontend
-CREATE TABLE public.timbrature (
+CREATE TABLE IF NOT EXISTS public.timbrature (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   pin INTEGER NOT NULL,
   nome TEXT NOT NULL,
   cognome TEXT NOT NULL,
   tipo TEXT NOT NULL CHECK (tipo IN ('entrata', 'uscita')),
   data DATE NOT NULL,
-  ore TIME NOT NULL CHECK (ore >= '00:00:00' AND ore <= '23:59:59'),
+  ore TEXT NOT NULL,
   giornologico DATE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
-  -- Foreign key verso utenti
   CONSTRAINT fk_timbrature_utenti 
     FOREIGN KEY (pin) REFERENCES public.utenti(pin) 
     ON DELETE CASCADE
 );
 
--- 4. Crea indici per performance
-CREATE INDEX idx_utenti_pin ON public.utenti(pin);
-CREATE INDEX idx_timbrature_pin ON public.timbrature(pin);
-CREATE INDEX idx_timbrature_data ON public.timbrature(data);
-CREATE INDEX idx_timbrature_giornologico ON public.timbrature(giornologico);
-CREATE INDEX idx_timbrature_pin_data ON public.timbrature(pin, data);
+CREATE INDEX IF NOT EXISTS idx_utenti_pin ON public.utenti(pin);
+CREATE INDEX IF NOT EXISTS idx_timbrature_pin ON public.timbrature(pin);
+CREATE INDEX IF NOT EXISTS idx_timbrature_data ON public.timbrature(data);
+CREATE INDEX IF NOT EXISTS idx_timbrature_giornologico ON public.timbrature(giornologico);
 
--- 5. Crea trigger per calcolo automatico giornologico
-CREATE OR REPLACE FUNCTION calcola_giorno_logico()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- Se l'ora è tra 00:00 e 04:59, il giorno logico è il giorno precedente
-  IF EXTRACT(HOUR FROM NEW.ore) BETWEEN 0 AND 4 THEN
-    NEW.giornologico := NEW.data - INTERVAL '1 day';
-  ELSE
-    NEW.giornologico := NEW.data;
-  END IF;
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_giorno_logico
-  BEFORE INSERT OR UPDATE ON public.timbrature
-  FOR EACH ROW
-  EXECUTE FUNCTION calcola_giorno_logico();
-
--- 6. Inserisci utenti di esempio
-INSERT INTO public.utenti (pin, nome, cognome, email, telefono, ore_contrattuali, descrizione_contratto) VALUES
+INSERT INTO public.utenti (pin, nome, cognome, email, telefono, ore_contrattuali, descrizione_contratto) 
+VALUES
 (1, 'Mario', 'Rossi', 'mario.rossi@example.com', '+39 123 456 7890', 8.00, 'Contratto a tempo indeterminato'),
 (2, 'Luigi', 'Verdi', 'luigi.verdi@example.com', '+39 098 765 4321', 6.00, 'Contratto part-time'),
-(99, 'Admin', 'System', 'admin@example.com', '+39 000 000 0000', 8.00, 'Amministratore di sistema');
+(99, 'Admin', 'System', 'admin@example.com', '+39 000 000 0000', 8.00, 'Amministratore di sistema')
+ON CONFLICT (pin) DO NOTHING;
 
--- 7. Inserisci timbrature di esempio per test
-INSERT INTO public.timbrature (pin, nome, cognome, tipo, data, ore) VALUES
-(1, 'Mario', 'Rossi', 'entrata', CURRENT_DATE, '08:00:00'),
-(1, 'Mario', 'Rossi', 'uscita', CURRENT_DATE, '17:00:00'),
-(2, 'Luigi', 'Verdi', 'entrata', CURRENT_DATE, '09:00:00'),
-(2, 'Luigi', 'Verdi', 'uscita', CURRENT_DATE, '15:00:00');
-
--- 8. Abilita RLS (Row Level Security) per sicurezza
 ALTER TABLE public.utenti ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.timbrature ENABLE ROW LEVEL SECURITY;
 
--- 9. Crea policy per accesso pubblico (temporaneo per sviluppo)
+DROP POLICY IF EXISTS "Allow all access to utenti" ON public.utenti;
+DROP POLICY IF EXISTS "Allow all access to timbrature" ON public.timbrature;
+
 CREATE POLICY "Allow all access to utenti" ON public.utenti
   FOR ALL USING (true) WITH CHECK (true);
 
 CREATE POLICY "Allow all access to timbrature" ON public.timbrature  
   FOR ALL USING (true) WITH CHECK (true);
 
--- 10. Verifica finale
-SELECT 'Setup completato!' as status;
-SELECT 'Utenti creati:', COUNT(*) FROM public.utenti;
-SELECT 'Timbrature create:', COUNT(*) FROM public.timbrature;
-
--- Note per il debugging:
--- Per visualizzare la struttura: \d+ utenti \d+ timbrature
--- Per testare le timbrature: SELECT * FROM timbrature WHERE pin = 1;
+SELECT 'Setup completato - Solo tabelle utenti e timbrature!' as status;
