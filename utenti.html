@@ -423,6 +423,11 @@
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
 
+        <div class="campo-singolo">
+          <div class="campo-label">Ore max giornaliere da contratto</div>
+          <input type="text" class="campo-valore" id="dettagli-ore-giornaliere" placeholder="Inserisci le ore giornaliere da contratto...">
+        </div>
+
       </div>
 
       <!-- Pulsanti Azioni -->
@@ -549,7 +554,8 @@
         cognome: utente.cognome,
         email: utente.email,
         telefono: utente.telefono || '',
-        descrizioneContratto: utente.descrizione_contratto || ''
+        descrizioneContratto: utente.descrizione_contratto || '',
+        oreGiornaliere: utente.ore_giornaliere || ''
       };
 
       // Aggiorna il titolo del modale
@@ -561,6 +567,7 @@
       document.getElementById('dettagli-email').value = datiOriginali.email;
       document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
       document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
+      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
 
       // Mostra il modale
       modal.style.display = 'flex';
@@ -603,6 +610,7 @@
         document.getElementById('dettagli-email').value = datiOriginali.email;
         document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
         document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
+        document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
       }
 
       // Chiudi il modale
@@ -622,7 +630,8 @@
           cognome: document.getElementById('dettagli-cognome').value.trim(),
           email: document.getElementById('dettagli-email').value.trim(),
           telefono: document.getElementById('dettagli-telefono').value.trim(),
-          descrizione_contratto: document.getElementById('dettagli-descrizione-contratto').value.trim()
+          descrizione_contratto: document.getElementById('dettagli-descrizione-contratto').value.trim(),
+          ore_giornaliere: document.getElementById('dettagli-ore-giornaliere').value.trim()
         };
 
         // Validazione base
@@ -656,7 +665,8 @@
           cognome: datiAggiornati.cognome,
           email: datiAggiornati.email,
           telefono: datiAggiornati.telefono,
-          descrizioneContratto: datiAggiornati.descrizione_contratto
+          descrizioneContratto: datiAggiornati.descrizione_contratto,
+          oreGiornaliere: datiAggiornati.ore_giornaliere
         };
 
         // Aggiorna l'oggetto utente corrente
@@ -779,7 +789,8 @@
         cognome: utente.cognome,
         email: utente.email,
         telefono: utente.telefono || '',
-        descrizioneContratto: utente.descrizione_contratto || ''
+        descrizioneContratto: utente.descrizione_contratto || '',
+        oreGiornaliere: utente.ore_giornaliere || ''
       };
 
       // Aggiorna il titolo del modale
@@ -791,6 +802,7 @@
       document.getElementById('dettagli-email').value = datiOriginali.email;
       document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
       document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
+      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
 
       // Inizializza upload file
       inizializzaUploadFile();
