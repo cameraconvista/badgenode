@@ -1431,12 +1431,15 @@
           // Mostra il nome del giorno solo nella prima riga
           const dataDisplay = i === 0 ? dataFormattata : '';
 
+          // Cella EXTRA: mostra solo nella prima riga con rowspan
+          const extraCell = i === 0 ? `<td rowspan="${maxTimbrature}"></td>` : '';
+
           riga.innerHTML = `
             <td style="text-align: left;">${dataDisplay}</td>
             <td>${entrataDisplay}</td>
             <td>${uscitaDisplay}</td>
             <td style="color: #ffff99;">${oreLavorateDisplay}</td>
-            <td></td>
+            ${extraCell}
             <td>
               <img
                 src="assets/icons/matita-colorata.png"
