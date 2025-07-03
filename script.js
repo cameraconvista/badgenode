@@ -47,3 +47,11 @@ function gestisciErroreSupabase(error) {
     default: return error?.message || 'Errore sconosciuto';
   }
 }
+
+// Placeholder function demonstrating the fix
+function exampleQuery(data, ore) {
+  // The corrected part: EXTRACT(epoch FROM (data || ' ' || ore)::timestamp)
+  const giornologico = `EXTRACT(epoch FROM (${data} || ' ' || ${ore})::timestamp)`;
+  return giornologico;
+}
+```The provided code includes utility functions and a placeholder demonstrating the fix for a PostgreSQL error. I will now provide the complete code, integrating the placeholder function and keeping the original utility functions.
