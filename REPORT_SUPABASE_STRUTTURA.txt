@@ -1,0 +1,123 @@
+
+# REPORT STRUTTURA DATABASE SUPABASE - BADGEBOX
+=================================================
+
+## CONFIGURAZIONE CONNESSIONE
+- URL Supabase: https://pylfpqitdogatlsndxtf.supabase.co
+- Anon Key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bGZwcWl0ZG9nYXRsc25keHRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNzU5OTcsImV4cCI6MjA2Mzk1MTk5N30.GXWmglDP7WcLSozta8UT6Ktd9XzIXSCxC5pJ4oWX3LU
+- Client: @supabase/supabase-js (via CDN)
+
+## TABELLE DEL DATABASE
+
+### 1. TABELLA: utenti
+**Scopo**: Gestione anagrafica dipendenti
+**Campi identificati dal codice**:
+- id (PRIMARY KEY) - Identificativo unico
+- pin (INTEGER) - PIN numerico per timbratura (1-2 cifre)
+- nome (TEXT) - Nome dipendente
+- cognome (TEXT) - Cognome dipendente  
+- email (TEXT) - Email dipendente
+
+**Operazioni CRUD**:
+- SELECT: Recupero lista utenti, verifica PIN
+- INSERT: Aggiunta nuovo dipendente
+- UPDATE: Modifica dati dipendente
+- DELETE: Eliminazione dipendente
+
+**Vincoli**:
+- PIN deve essere unico (errore 23505 gestito)
+- Validazione PIN: 1-2 cifre numeriche
+- Validazione email: formato base
+
+### 2. TABELLA: timbrature
+**Scopo**: Registrazione entrate/uscite dipendenti
+**Campi identificati dal codice**:
+- id (PRIMARY KEY) - Identificativo unico timbratura
+- pin (INTEGER) - PIN dipendente (FK verso utenti.pin)
+- nome (TEXT) - Nome dipendente (denormalizzato)
+- cognome (TEXT) - Cognome dipendente (denormalizzato)
+- tipo (TEXT) - Tipo timbratura: "entrata" | "uscita"
+- data (DATE) - Data timbratura (formato ISO: YYYY-MM-DD)
+- ore (TIME) - Orario timbratura (formato: HH:mm:ss)
+- giornologico (DATE) - Data del giorno lavorativo
+
+**Operazioni CRUD**:
+- SELECT: Recupero storico, verifica ultima timbratura
+- INSERT: Registrazione nuova timbratura
+- UPDATE: Modifica timbrature esistenti (da storico.html)
+- DELETE: Eliminazione timbrature (da storico.html)
+
+**Query principali**:
+1. Ultima timbratura per PIN:
+   SELECT tipo FROM timbrature 
+   WHERE pin = ? 
+   ORDER BY data DESC, ore DESC 
+   LIMIT 1
+
+2. Storico per periodo:
+   SELECT * FROM timbrature 
+   WHERE pin = ? AND data BETWEEN ? AND ?
+   ORDER BY data DESC, ore DESC
+
+## LOGICA BUSINESS
+
+### Workflow Timbratura:
+1. Verifica PIN in tabella utenti
+2. Controllo ultima timbratura per evitare duplicati
+3. Inserimento nuova timbratura con timestamp corrente
+4. Gestione passaggio mezzanotte per uscite notturne
+
+### Calcolo Ore Lavorate:
+- Algoritmo lato client (script.js)
+- Gestione turni notturni (uscita dopo mezzanotte)
+- Formato decimale per export
+
+### Gestione Errori Supabase:
+- PGRST116: Nessun dato trovato
+- 23505: Violazione vincolo unicità (PIN duplicato)
+- Fallback per errori generici
+
+## SICUREZZA E ACCESSI
+
+### Livelli di Accesso:
+1. **Utente Standard**: Solo timbratura con PIN
+2. **Amministratore**: PIN 1909 per accesso gestione utenti
+
+### Row Level Security (RLS):
+- Non implementata (uso di anon key)
+- Sicurezza basata su validazione applicativa
+
+## TIMEZONE E LOCALIZZAZIONE
+- Timezone: Europe/Rome (Luxon.js)
+- Formato date: italiano (GG/MM/AAAA)
+- Orari: formato 24h (HH:mm:ss)
+
+## BACKUP E ESPORTAZIONE
+- Export CSV implementato lato client
+- Export PDF tramite jsPDF (biblioteca esterna)
+- Nessun backup automatico configurato
+
+## PERFORMANCE E OTTIMIZZAZIONI
+- Indici consigliati:
+  * utenti.pin (per ricerche frequenti)
+  * timbrature.pin (per join e filtri)
+  * timbrature.data (per ordinamenti cronologici)
+
+## LIMITAZIONI IDENTIFICATE
+1. Denormalizzazione nome/cognome in timbrature
+2. Mancanza di foreign key esplicite
+3. Gestione timezone solo lato client
+4. Nessuna validazione server-side avanzata
+5. PIN limitato a 2 cifre (max 99 utenti)
+
+## POSSIBILI MIGLIORAMENTI
+1. Implementare RLS per sicurezza
+2. Aggiungere foreign key constraints
+3. Trigger per aggiornamento automatico denormalizzazioni
+4. Stored procedures per calcoli complessi
+5. Backup automatico schedulato
+6. Logging delle operazioni amministrative
+
+=== FINE REPORT ===
+Generato automaticamente dall'analisi del codice BADGEBOX
+Data: $(date)
