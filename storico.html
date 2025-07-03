@@ -7,27 +7,32 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="assets/styles/storico-styles.css" />
   <script>
-    // Gestione semplificata delle icone calendario
-    document.addEventListener('DOMContentLoaded', function() {
-      // Event listener per icone calendario
+    document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.icona-calendario-campo').forEach(icon => {
-        icon.addEventListener('click', function(e) {
+        icon.addEventListener('click', function (e) {
           e.preventDefault();
           const campoId = this.getAttribute('data-campo');
           const campo = document.getElementById(campoId);
           if (campo) {
-            // Usa il picker nativo del browser se disponibile
             try {
               campo.focus();
               if (campo.showPicker && typeof campo.showPicker === 'function') {
                 campo.showPicker();
               }
             } catch (err) {
-              // Fallback: mostra semplicemente il focus sul campo
               campo.focus();
             }
           }
         });
+
+        const tornaBtn = document.getElementById("torna-archivio");
+        if (tornaBtn) {
+          tornaBtn.addEventListener("click", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pin = urlParams.get("pin");
+            window.location.href = "index.html" + (pin ? "?pin=" + pin : "");
+          });
+        }
       });
     });
   </script>
@@ -39,6 +44,7 @@
       <p class="titolo-piccolo">Storico Timbrature</p>
       <h1 id="intestazione" class="titolo-grande">Nome Cognome</h1>
     </div>
+
     <div class="filtro-temporale">
       <select id="filtro-mese">
         <option value="corrente">Mese corrente</option>
@@ -48,14 +54,13 @@
       <div class="data-container">
         <input type="date" id="data-inizio" />
         <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-inizio" />
-
       </div>
       <div class="data-container">
         <input type="date" id="data-fine" />
         <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-fine" />
-
       </div>
     </div>
+
     <div class="tabella-wrapper">
       <div class="tabella-container">
         <table>
@@ -73,6 +78,7 @@
         </table>
       </div>
     </div>
+
     <div class="pulsanti-basso">
       <button id="torna-archivio" title="Torna Archivio">
         <img src="assets/icons/freccia.png" alt="Torna Archivio" />
@@ -85,6 +91,7 @@
       </button>
     </div>
   </div>
+
   <div id="modalOverlay">
     <div id="modal">
       <h2>Modifica Timbrature</h2>
@@ -103,29 +110,9 @@
       </form>
     </div>
   </div>
+
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script type="module" src="assets/scripts/storico-logic.js"></script>
-  <script>
-    // Funzione globale per il pulsante torna
-    window.torna = function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const pin = urlParams.get("pin");
-      window.location.href = "index.html" + (pin ? "?pin=" + pin : "");
-    }
-
-    // Funzione per tornare alla home
-    function torna() {
-      window.location.href = 'index.html';
-    }
-
-    // Event listener per il pulsante torna
-    document.addEventListener('DOMContentLoaded', function() {
-      const tornaBtn = document.getElementById("torna-archivio");
-      if (tornaBtn) {
-        tornaBtn.addEventListener("click", window.torna);
-      }
-    });
-  </script>
 </body>
 </html>
