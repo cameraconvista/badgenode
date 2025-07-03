@@ -465,6 +465,13 @@
         const pin = String(utente.pin).padStart(2, "0");
         const riga = document.createElement('tr');
         riga.style.cursor = 'pointer';
+        riga.style.transition = 'background-color 0.2s';
+        riga.addEventListener('mouseenter', () => {
+          riga.style.backgroundColor = '#2563eb';
+        });
+        riga.addEventListener('mouseleave', () => {
+          riga.style.backgroundColor = '#1e293b';
+        });
         riga.onclick = () => apriModalDettagli(utente);
         
         riga.innerHTML = `
