@@ -1,19 +1,16 @@
 
--- Script per correggere il database esistente
--- Esegui questo se hai già creato la tabella con il setup precedente
+-- Script per correggere il constraint del database
+-- Esegui questo in Supabase SQL Editor
 
--- 1. Rimuovi il constraint problematico se esiste
+-- 1. Rimuovi il constraint problematico
 ALTER TABLE public.timbrature DROP CONSTRAINT IF EXISTS timbrature_ore_check;
 
--- 2. Aggiungi il constraint corretto
-ALTER TABLE public.timbrature ADD CONSTRAINT timbrature_ore_check 
-  CHECK (ore >= '00:00:00' AND ore <= '23:59:59');
+-- 2. Modifica la colonna ore per accettare il formato corretto
+ALTER TABLE public.timbrature ALTER COLUMN ore TYPE TEXT;
 
--- 3. Verifica che non ci siano dati inconsistenti
-SELECT id, ore FROM public.timbrature 
-WHERE ore < '00:00:00' OR ore > '23:59:59';
+-- 3. Aggiungi un constraint più flessibile per il formato HH:MM:SS
+ALTER TABLE public.timbrature ADD CONSTRAINT timbrature_ore_format_check 
+  CHECK (ore ~ '^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$');
 
--- 4. Se ci sono righe problematiche, cancellale o correggile
--- DELETE FROM public.timbrature WHERE ore < '00:00:00' OR ore > '23:59:59';
-
+-- 4. Verifica
 SELECT 'Database constraint fixed!' as status;
