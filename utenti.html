@@ -777,23 +777,32 @@
       }
     }
 
-    // Inizializza upload quando il modale si apre
+    // Funzione unificata per aprire il modale
     window.apriModalDettagli = (utente) => {
       const modal = document.getElementById('modalDettagli');
       const modalTitolo = document.getElementById('modalTitolo');
+      
+      // Memorizza l'utente corrente e i dati originali
+      utenteCorrente = utente;
+      datiOriginali = {
+        nome: utente.nome,
+        cognome: utente.cognome,
+        email: utente.email,
+        telefono: utente.telefono || '',
+        descrizioneContratto: utente.descrizione_contratto || '',
+        oreGiornaliere: utente.ore_giornaliere || ''
+      };
       
       // Aggiorna il titolo del modale
       modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
       
       // Popola i campi con i dati del dipendente
-      document.getElementById('dettagli-nome').value = utente.nome;
-      document.getElementById('dettagli-cognome').value = utente.cognome;
-      document.getElementById('dettagli-email').value = utente.email;
-      
-      // Per ora i campi aggiuntivi rimangono vuoti (da implementare con Supabase)
-      document.getElementById('dettagli-telefono').value = '';
-      document.getElementById('dettagli-descrizione-contratto').value = '';
-      document.getElementById('dettagli-ore-giornaliere').value = '';
+      document.getElementById('dettagli-nome').value = datiOriginali.nome;
+      document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
+      document.getElementById('dettagli-email').value = datiOriginali.email;
+      document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
+      document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
+      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
       
       // Inizializza upload file
       inizializzaUploadFile();
