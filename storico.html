@@ -806,22 +806,6 @@
     );
 
     const intestazione = document.getElementById("intestazione");
-// Chiudi menu quando si clicca altrove
-      document.dispatchEvent(eventoPersonalizzato);
-
-      // Nascondi il menu
-      window.nascondiMenuCalendario();
-    };
-
-    // Chiudi menu quando si clicca altrove
-    document.addEventListener('click', function(event) {
-      const isCalendarioIcon = event.target.classList.contains('icona-calendario-campo');
-      const isMenuCalendario = event.target.closest('.menu-calendario');
-
-      if (!isCalendarioIcon && !isMenuCalendario) {
-        window.nascondiMenuCalendario();
-      }
-    });
   </script>
 
   <script>
