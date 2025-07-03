@@ -908,7 +908,8 @@
 
 
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";Completing the addition of the "EXTRA" column and adjusting styles for responsiveness in the storico table.    const supabase = createClient(
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    const supabase = createClient(
       "https://txmjqrnitfsiytbytxlc.supabase.co",
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
     );
@@ -1200,10 +1201,10 @@
       if (!pin) return;
 
       try {
-        // Recupera dati utente
+        // Recupera dati utente con ore_giornaliere
         const { data: datiUtente, error: errUtente } = await supabase
           .from("utenti")
-          .select("nome, cognome, email")
+          .select("nome, cognome, email, ore_giornaliere")
           .or(`pin.eq.${pin},pin.eq.${parseInt(pin)}`)
           .limit(1)
           .single();
@@ -1217,6 +1218,8 @@
         if (datiUtente) {
           dipendente = datiUtente;
           intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
+          console.log("Dati utente caricati:", dipendente);
+          console.log("Ore giornaliere contratto:", dipendente.ore_giornaliere);
         }
 
         // Query unica più robusta che recupera TUTTE le timbrature per il PIN
@@ -1434,15 +1437,25 @@
           // Calcola contenuto colonna EXTRA solo per la prima riga
           let extraContent = '';
           if (i === 0) {
-            const oreContrattuali = dipendente?.ore_giornaliere || 8.00;
+            // Debug: stampa i valori per verificare
+            console.log("DEBUG EXTRA:", {
+              dipendente: dipendente,
+              oreGiornaliere: dipendente?.ore_giornaliere,
+              oreTotaliGiorno: oreTotaliGiorno,
+              dataISO: dataISO
+            });
+
+            const oreContrattuali = parseFloat(dipendente?.ore_giornaliere) || 8.00;
             const oreExtra = oreTotaliGiorno - oreContrattuali;
             
             if (oreExtra > 0) {
               const oreExtraInt = Math.floor(oreExtra);
               const minutiExtra = Math.round((oreExtra - oreExtraInt) * 60);
               extraContent = `<span style="color: #fbbf24; font-weight: bold;">+${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')}</span>`;
+              console.log(`EXTRA calcolato: ${oreExtra.toFixed(2)} ore (${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')})`);
             } else {
-              extraContent = '<span style="color: #6b7280;">—</span>';
+              extraContent = '';  // Campo vuoto se non c'è eccedenza
+              console.log("Nessuna eccedenza da mostrare");
             }
           }
 
