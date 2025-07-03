@@ -436,10 +436,6 @@ dataFine.addEventListener("change", () => {
   caricaDati();
 });
 
-document.getElementById("torna-archivio").addEventListener("click", function() {
-  window.location.href = "archivio.html?pin=" + pin;
-});
-
 document.getElementById("torna-utenti").addEventListener("click", function() {
   window.location.href = "utenti.html";
 });
