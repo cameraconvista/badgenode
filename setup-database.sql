@@ -1,163 +1,93 @@
+-- SETUP DATABASE BADGEBOX - Versione corretta per il frontend
+-- Data: 2025-01-03
 
--- BADGEBOX - Script di fix database structure
--- Eseguire questo script nel SQL Editor di Supabase per aggiornare la struttura
+-- 1. Elimina tabelle esistenti se presenti
+DROP TABLE IF EXISTS public.timbrature CASCADE;
+DROP TABLE IF EXISTS public.utenti CASCADE;
 
--- STEP 1: Aggiorna tabella utenti esistente
--- Modifica il campo pin da text a integer se esiste
-DO $$
-BEGIN
-    -- Verifica se la colonna pin esiste ed è di tipo text
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'utenti' 
-        AND column_name = 'pin' 
-        AND data_type = 'text'
-    ) THEN
-        -- Converti pin da text a integer
-        ALTER TABLE public.utenti 
-        ALTER COLUMN pin TYPE integer USING pin::integer;
-        
-        -- Aggiungi constraint se non esiste
-        ALTER TABLE public.utenti 
-        ADD CONSTRAINT utenti_pin_check CHECK (pin >= 1 AND pin <= 99);
-        
-        -- Aggiungi vincolo unicità se non esiste
-        ALTER TABLE public.utenti 
-        ADD CONSTRAINT utenti_pin_unique UNIQUE (pin);
-    END IF;
-    
-    -- Se la tabella non esiste, creala
-    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'utenti') THEN
-        CREATE TABLE public.utenti (
-            id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-            pin integer UNIQUE NOT NULL CHECK (pin >= 1 AND pin <= 99),
-            nome text NOT NULL,
-            cognome text NOT NULL,
-            email text NOT NULL,
-            created_at timestamp with time zone DEFAULT now(),
-            updated_at timestamp with time zone DEFAULT now()
-        );
-    END IF;
-END $$;
+-- 2. Crea tabella utenti con PIN numerico come chiave primaria
+CREATE TABLE public.utenti (
+  pin INTEGER PRIMARY KEY CHECK (pin BETWEEN 1 AND 99),
+  nome TEXT NOT NULL,
+  cognome TEXT NOT NULL, 
+  email TEXT UNIQUE NOT NULL,
+  ruolo TEXT DEFAULT 'dipendente',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
--- STEP 2: Aggiorna tabella timbrature
--- Aggiungi campi mancanti necessari al frontend
-DO $$
-BEGIN
-    -- Aggiungi colonna pin se non esiste
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'timbrature' AND column_name = 'pin'
-    ) THEN
-        ALTER TABLE public.timbrature ADD COLUMN pin integer NOT NULL DEFAULT 0;
-    END IF;
-    
-    -- Aggiungi colonna nome se non esiste
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'timbrature' AND column_name = 'nome'
-    ) THEN
-        ALTER TABLE public.timbrature ADD COLUMN nome text NOT NULL DEFAULT '';
-    END IF;
-    
-    -- Aggiungi colonna cognome se non esiste
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'timbrature' AND column_name = 'cognome'
-    ) THEN
-        ALTER TABLE public.timbrature ADD COLUMN cognome text NOT NULL DEFAULT '';
-    END IF;
-    
-    -- Aggiungi colonna tipo se non esiste
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'timbrature' AND column_name = 'tipo'
-    ) THEN
-        ALTER TABLE public.timbrature ADD COLUMN tipo text NOT NULL DEFAULT 'entrata' CHECK (tipo IN ('entrata', 'uscita'));
-    END IF;
-    
-    -- Aggiungi colonna data se non esiste
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'timbrature' AND column_name = 'data'
-    ) THEN
-        ALTER TABLE public.timbrature ADD COLUMN data date NOT NULL DEFAULT CURRENT_DATE;
-    END IF;
-    
-    -- Aggiungi colonna ore se non esiste
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'timbrature' AND column_name = 'ore'
-    ) THEN
-        ALTER TABLE public.timbrature ADD COLUMN ore time NOT NULL DEFAULT CURRENT_TIME;
-    END IF;
-    
-    -- Aggiungi colonna giornologico se non esiste
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'timbrature' AND column_name = 'giornologico'
-    ) THEN
-        ALTER TABLE public.timbrature ADD COLUMN giornologico date NOT NULL DEFAULT CURRENT_DATE;
-    END IF;
-    
-    -- Se la tabella non esiste affatto, creala
-    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'timbrature') THEN
-        CREATE TABLE public.timbrature (
-            id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-            pin integer NOT NULL,
-            nome text NOT NULL,
-            cognome text NOT NULL,
-            tipo text NOT NULL CHECK (tipo IN ('entrata', 'uscita')),
-            data date NOT NULL,
-            ore time NOT NULL,
-            giornologico date NOT NULL,
-            created_at timestamp with time zone DEFAULT now()
-        );
-    END IF;
-END $$;
+-- 3. Crea tabella timbrature compatibile con il frontend
+CREATE TABLE public.timbrature (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  pin INTEGER NOT NULL,
+  nome TEXT NOT NULL,
+  cognome TEXT NOT NULL,
+  tipo TEXT NOT NULL CHECK (tipo IN ('entrata', 'uscita')),
+  data DATE NOT NULL,
+  ore TIME NOT NULL,
+  giornologico DATE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
--- STEP 3: Indici per performance
-CREATE INDEX IF NOT EXISTS idx_utenti_pin ON public.utenti(pin);
-CREATE INDEX IF NOT EXISTS idx_timbrature_pin ON public.timbrature(pin);
-CREATE INDEX IF NOT EXISTS idx_timbrature_data ON public.timbrature(data);
-CREATE INDEX IF NOT EXISTS idx_timbrature_giornologico ON public.timbrature(giornologico);
-CREATE INDEX IF NOT EXISTS idx_timbrature_pin_data ON public.timbrature(pin, data);
-CREATE INDEX IF NOT EXISTS idx_timbrature_tipo ON public.timbrature(tipo);
+  -- Foreign key verso utenti
+  CONSTRAINT fk_timbrature_utenti 
+    FOREIGN KEY (pin) REFERENCES public.utenti(pin) 
+    ON DELETE CASCADE
+);
 
--- STEP 4: Trigger per aggiornamento automatico timestamp
-CREATE OR REPLACE FUNCTION update_updated_at_column()
+-- 4. Crea indici per performance
+CREATE INDEX idx_timbrature_pin ON public.timbrature(pin);
+CREATE INDEX idx_timbrature_data ON public.timbrature(data);
+CREATE INDEX idx_timbrature_giornologico ON public.timbrature(giornologico);
+CREATE INDEX idx_timbrature_pin_data ON public.timbrature(pin, data);
+
+-- 5. Crea trigger per calcolo automatico giornologico
+CREATE OR REPLACE FUNCTION calcola_giorno_logico()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.updated_at = now();
-    RETURN NEW;
+  -- Se l'ora è tra 00:00 e 04:59, il giorno logico è il giorno precedente
+  IF EXTRACT(HOUR FROM NEW.ore) BETWEEN 0 AND 4 THEN
+    NEW.giornologico := NEW.data - INTERVAL '1 day';
+  ELSE
+    NEW.giornologico := NEW.data;
+  END IF;
+
+  RETURN NEW;
 END;
-$$ language plpgsql;
+$$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS update_utenti_updated_at ON public.utenti;
-CREATE TRIGGER update_utenti_updated_at 
-    BEFORE UPDATE ON public.utenti 
-    FOR EACH ROW 
-    EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_giorno_logico
+  BEFORE INSERT OR UPDATE ON public.timbrature
+  FOR EACH ROW
+  EXECUTE FUNCTION calcola_giorno_logico();
 
--- STEP 5: Aggiorna dati esistenti se necessario
--- Popola i campi pin/nome/cognome nelle timbrature esistenti tramite user_id
-UPDATE public.timbrature 
-SET pin = u.pin::integer, nome = u.nome, cognome = u.cognome
-FROM public.utenti u 
-WHERE public.timbrature.user_id = u.id 
-AND (public.timbrature.pin IS NULL OR public.timbrature.pin = 0);
+-- 6. Inserisci utenti di esempio
+INSERT INTO public.utenti (pin, nome, cognome, email) VALUES
+(1, 'Mario', 'Rossi', 'mario.rossi@example.com'),
+(2, 'Luigi', 'Verdi', 'luigi.verdi@example.com'),
+(99, 'Admin', 'System', 'admin@example.com');
 
--- STEP 6: Commenti per documentazione
-COMMENT ON TABLE public.utenti IS 'Anagrafica dipendenti del sistema BADGEBOX';
-COMMENT ON TABLE public.timbrature IS 'Registro timbrature entrate/uscite dipendenti';
-COMMENT ON COLUMN public.utenti.pin IS 'PIN numerico univoco per timbratura (1-99)';
-COMMENT ON COLUMN public.timbrature.pin IS 'PIN dipendente - duplicato per performance';
-COMMENT ON COLUMN public.timbrature.giornologico IS 'Data del giorno lavorativo (per uscite dopo mezzanotte)';
+-- 7. Inserisci timbrature di esempio per test
+INSERT INTO public.timbrature (pin, nome, cognome, tipo, data, ore) VALUES
+(1, 'Mario', 'Rossi', 'entrata', CURRENT_DATE, '08:00:00'),
+(1, 'Mario', 'Rossi', 'uscita', CURRENT_DATE, '17:00:00'),
+(2, 'Luigi', 'Verdi', 'entrata', CURRENT_DATE, '09:00:00'),
+(2, 'Luigi', 'Verdi', 'uscita', CURRENT_DATE, '18:00:00');
 
--- STEP 7: Inserimento utente di test (opzionale - decommentare se necessario)
--- INSERT INTO public.utenti (pin, nome, cognome, email) 
--- VALUES (99, 'Test', 'Utente', 'test@badgebox.com')
--- ON CONFLICT (pin) DO NOTHING;
+-- 8. Abilita RLS (Row Level Security) per sicurezza
+ALTER TABLE public.utenti ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.timbrature ENABLE ROW LEVEL SECURITY;
 
--- STEP 8: Verifica finale struttura
-SELECT 'Struttura database BADGEBOX aggiornata correttamente!' as status;
+-- 9. Crea policy per accesso pubblico (temporaneo per sviluppo)
+CREATE POLICY "Allow all access to utenti" ON public.utenti
+  FOR ALL USING (true) WITH CHECK (true);
+
+CREATE POLICY "Allow all access to timbrature" ON public.timbrature  
+  FOR ALL USING (true) WITH CHECK (true);
+
+-- 10. Verifica finale
+SELECT 'Setup completato!' as status;
+SELECT 'Utenti creati:', COUNT(*) FROM public.utenti;
+SELECT 'Timbrature create:', COUNT(*) FROM public.timbrature;
+
+-- Note per il debugging:
+-- Per visualizzare la struttura: \d+ utenti \d+ timbrature
+-- Per testare le timbrature: SELECT * FROM timbrature WHERE pin = 1;
