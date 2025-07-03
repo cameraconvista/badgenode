@@ -1072,10 +1072,10 @@ client(
     async function caricaDati() {
       if (!pin) return;
       try {
-        // Recupera dati utente con ore_giornaliere
+        // Recupera dati utente con ore_contrattuali
         const { data: datiUtente, error: errUtente } = await supabase
           .from("utenti")
-          .select("nome, cognome, email, ore_giornaliere")
+          .select("nome, cognome, email, ore_contrattuali")
           .or(`pin.eq.${pin},pin.eq.${parseInt(pin)}`)
           .limit(1)
           .single();
@@ -1088,7 +1088,7 @@ client(
           dipendente = datiUtente;
           intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
           console.log("Dati utente caricati:", dipendente);
-          console.log("Ore giornaliere contratto:", dipendente.ore_giornaliere);
+          console.log("Ore contrattuali:", dipendente.ore_contrattuali);
         }
         // Query unica più robusta che recupera TUTTE le timbrature per il PIN
         const { data, error } = await supabase
