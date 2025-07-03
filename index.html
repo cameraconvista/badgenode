@@ -203,8 +203,8 @@
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
     window.supabase = createClient(
-      "https://txmjqrnitfsiytbytxlc.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
+      "https://pylfpqitdogatlsndxtf.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5bGZwcWl0ZG9nYXRsc25keHRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNzU5OTcsImV4cCI6MjA2Mzk1MTk5N30.GXWmglDP7WcLSozta8UT6Ktd9XzIXSCxC5pJ4oWX3LU"
     );
   </script>
 </head>
@@ -219,7 +219,18 @@
       <input type="text" id="pinInput" placeholder="PIN" readonly maxlength="2" />
       <div id="status"></div>
       <div class="keypad">
-        ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 'C', 0, '⚙️'].map(n => `<button class="key">${n}</button>`).join('')}
+        <button class="key">1</button>
+        <button class="key">2</button>
+        <button class="key">3</button>
+        <button class="key">4</button>
+        <button class="key">5</button>
+        <button class="key">6</button>
+        <button class="key">7</button>
+        <button class="key">8</button>
+        <button class="key">9</button>
+        <button class="key">C</button>
+        <button class="key">0</button>
+        <button class="key">⚙️</button>
       </div>
       <div class="actions">
         <button class="action-btn entrata">Entrata</button>
