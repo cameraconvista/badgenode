@@ -837,32 +837,49 @@
         // Ordina per timestamp
         tutteTimbrature.sort((a, b) => a.timestamp - b.timestamp);
         
-        // Crea coppie entrata-uscita in ordine cronologico
+        // GESTIONE SESSIONI MULTIPLE: Crea coppie entrata-uscita indipendenti
         const coppieTimbrature = [];
         let entrataCorrente = null;
         
         tutteTimbrature.forEach(item => {
           if (item.tipo === 'entrata') {
+            // Se c'era già un'entrata senza uscita, la chiude
             if (entrataCorrente) {
-              // Entrata senza uscita precedente
-              coppieTimbrature.push({ entrata: entrataCorrente, uscita: null });
+              coppieTimbrature.push({ 
+                entrata: entrataCorrente, 
+                uscita: null,
+                sessione: coppieTimbrature.length + 1
+              });
             }
+            // Inizia una nuova sessione
             entrataCorrente = item.timbratura;
           } else { // uscita
             if (entrataCorrente) {
-              // Abbina entrata con uscita
-              coppieTimbrature.push({ entrata: entrataCorrente, uscita: item.timbratura });
+              // Completa la sessione corrente
+              coppieTimbrature.push({ 
+                entrata: entrataCorrente, 
+                uscita: item.timbratura,
+                sessione: coppieTimbrature.length + 1
+              });
               entrataCorrente = null;
             } else {
-              // Uscita senza entrata precedente
-              coppieTimbrature.push({ entrata: null, uscita: item.timbratura });
+              // Uscita senza entrata (sessione orfana)
+              coppieTimbrature.push({ 
+                entrata: null, 
+                uscita: item.timbratura,
+                sessione: coppieTimbrature.length + 1
+              });
             }
           }
         });
         
-        // Se rimane un'entrata senza uscita
+        // Chiude l'ultima sessione se rimasta aperta
         if (entrataCorrente) {
-          coppieTimbrature.push({ entrata: entrataCorrente, uscita: null });
+          coppieTimbrature.push({ 
+            entrata: entrataCorrente, 
+            uscita: null,
+            sessione: coppieTimbrature.length + 1
+          });
         }
 
         let oreTotaliGiorno = 0;
@@ -878,8 +895,12 @@
           const timbraturaEntrata = coppia.entrata || null;
           const timbraturaUscita = coppia.uscita || null;
 
-          const entrataDisplay = timbraturaEntrata ? timbraturaEntrata.ore.slice(0,5) : '—';
-          const uscitaDisplay = timbraturaUscita ? timbraturaUscita.ore.slice(0,5) : '—';
+          // Aggiunge indicatore sessione per più sessioni nello stesso giorno
+          const indicatoreSessione = coppieTimbrature.length > 1 ? ` (S${coppia.sessione || i+1})` : '';
+          const entrataDisplay = timbraturaEntrata ? 
+            `${timbraturaEntrata.ore.slice(0,5)}${indicatoreSessione}` : '—';
+          const uscitaDisplay = timbraturaUscita ? 
+            `${timbraturaUscita.ore.slice(0,5)}${indicatoreSessione}` : '—';
 
           // Calcola ore lavorate per questa coppia
           let oreLavorateDisplay = '—';

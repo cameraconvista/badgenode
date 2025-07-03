@@ -310,10 +310,10 @@
           return;
         }
 
-        // CONTROLLO ANTI-DUPLICAZIONE: Verifica ultima timbratura
+        // CONTROLLO ANTI-DUPLICAZIONE MIGLIORATO: Verifica ultima timbratura
         const { data: ultimaTimbratura, error: erroreUltima } = await supabase
           .from("timbrature")
-          .select("tipo")
+          .select("tipo, created_at, data, ore")
           .eq("pin", parseInt(pin))
           .order("created_at", { ascending: false })
           .limit(1);
@@ -328,19 +328,36 @@
         if (ultimaTimbratura && ultimaTimbratura.length > 0) {
           const ultimoTipo = ultimaTimbratura[0].tipo;
           if (ultimoTipo === tipo) {
+            const ultimaData = ultimaTimbratura[0].data;
+            const ultimaOra = ultimaTimbratura[0].ore;
             const messaggioBlocco = tipo === "entrata" ? 
-              "⚠️ Hai già fatto l'ENTRATA.\nDevi prima fare l'USCITA." :
-              "⚠️ Hai già fatto l'USCITA.\nDevi prima fare l'ENTRATA.";
-            mostraStatus(messaggioBlocco, "error");
+              `⚠️ ENTRATA già registrata!\nUltima: ${ultimaData} ${ultimaOra.slice(0,5)}\n\nDevi prima fare l'USCITA.` :
+              `⚠️ USCITA già registrata!\nUltima: ${ultimaData} ${ultimaOra.slice(0,5)}\n\nDevi prima fare l'ENTRATA.`;
+            mostraStatus(messaggioBlocco, "error", 8000);
             return;
           }
         }
 
         const ora = DateTime.now().setZone("Europe/Rome");
-        const { error } = await supabase.from("timbrature").insert([{
-          tipo, pin: parseInt(pin), nome: utente.nome, cognome: utente.cognome,
-          data: ora.toISODate(), ore: ora.toFormat("HH:mm:ss"), giornologico: ora.toISODate()
-        }]);
+        
+        // CALCOLO GIORNO LOGICO ESTESO (8:00-5:00)
+        // Se è tra 00:00 e 04:59, appartiene al giorno lavorativo precedente
+        let giornoLogico = ora.toISODate();
+        if (ora.hour >= 0 && ora.hour < 5) {
+          giornoLogico = ora.minus({ days: 1 }).toISODate();
+        }
+
+        const nuovaTimbratura = {
+          tipo, 
+          pin: parseInt(pin), 
+          nome: utente.nome, 
+          cognome: utente.cognome,
+          data: ora.toISODate(), 
+          ore: ora.toFormat("HH:mm:ss"), 
+          giornologico: giornoLogico
+        };
+
+        const { error } = await supabase.from("timbrature").insert([nuovaTimbratura]);
 
         if (error) throw new Error("Errore durante la registrazione");
 
