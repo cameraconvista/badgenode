@@ -399,7 +399,7 @@
       <!-- Sezione Contratto Attivo -->
       <div class="sezione-modal">
         <div class="sezione-titolo">📄 Contratto Attivo</div>
-        
+
         <div class="campo-singolo">
           <div class="campo-label">Upload Contratto</div>
           <div class="upload-area" id="upload-area">
@@ -423,11 +423,6 @@
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
 
-        <div class="campo-singolo">
-          <div class="campo-label">Ore Giornaliere da Contratto</div>
-          <input type="text" class="campo-valore" id="dettagli-ore-giornaliere" 
-                 placeholder="es. 8 ore">
-        </div>
       </div>
 
       <!-- Pulsanti Azioni -->
@@ -473,7 +468,7 @@
           riga.style.backgroundColor = '#1e293b';
         });
         riga.onclick = () => apriModalDettagli(utente);
-        
+
         riga.innerHTML = `
             <td><a href="storico.html?pin=${utente.pin}" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
             <td>${pin}</td>
@@ -546,7 +541,7 @@
     window.apriModalDettagli = (utente) => {
       const modal = document.getElementById('modalDettagli');
       const modalTitolo = document.getElementById('modalTitolo');
-      
+
       // Memorizza l'utente corrente e i dati originali
       utenteCorrente = utente;
       datiOriginali = {
@@ -554,24 +549,23 @@
         cognome: utente.cognome,
         email: utente.email,
         telefono: utente.telefono || '',
-        descrizioneContratto: utente.descrizione_contratto || '',
-        oreGiornaliere: utente.ore_giornaliere || ''
+        descrizioneContratto: utente.descrizione_contratto || ''
       };
-      
+
       // Aggiorna il titolo del modale
       modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
-      
+
       // Popola i campi con i dati del dipendente
       document.getElementById('dettagli-nome').value = datiOriginali.nome;
       document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
       document.getElementById('dettagli-email').value = datiOriginali.email;
       document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
       document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
-      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
-      
+      document.getElementById('dettagli-ore-giornaliere').value = '';
+
       // Mostra il modale
       modal.style.display = 'flex';
-      
+
       // Impedisce lo scroll della pagina sottostante
       document.body.style.overflow = 'hidden';
     };
@@ -579,7 +573,7 @@
     window.chiudiModalDettagli = () => {
       const modal = document.getElementById('modalDettagli');
       modal.style.display = 'none';
-      
+
       // Ripristina lo scroll della pagina
       document.body.style.overflow = 'auto';
     };
@@ -610,9 +604,9 @@
         document.getElementById('dettagli-email').value = datiOriginali.email;
         document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
         document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
-        document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
+        document.getElementById('dettagli-ore-giornaliere').value = '';
       }
-      
+
       // Chiudi il modale
       chiudiModalDettagli();
     };
@@ -630,8 +624,7 @@
           cognome: document.getElementById('dettagli-cognome').value.trim(),
           email: document.getElementById('dettagli-email').value.trim(),
           telefono: document.getElementById('dettagli-telefono').value.trim(),
-          descrizione_contratto: document.getElementById('dettagli-descrizione-contratto').value.trim(),
-          ore_giornaliere: document.getElementById('dettagli-ore-giornaliere').value.trim()
+          descrizione_contratto: document.getElementById('dettagli-descrizione-contratto').value.trim()
         };
 
         // Validazione base
@@ -665,8 +658,7 @@
           cognome: datiAggiornati.cognome,
           email: datiAggiornati.email,
           telefono: datiAggiornati.telefono,
-          descrizioneContratto: datiAggiornati.descrizione_contratto,
-          oreGiornaliere: datiAggiornati.ore_giornaliere
+          descrizioneContratto: datiAggiornati.descrizione_contratto
         };
 
         // Aggiorna l'oggetto utente corrente
@@ -726,7 +718,7 @@
       uploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
         uploadArea.classList.remove('dragover');
-        
+
         const files = e.dataTransfer.files;
         if (files.length > 0) {
           gestisciFile(files[0]);
@@ -757,10 +749,10 @@
         // Mostra informazioni file
         fileName.textContent = file.name;
         fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
-        
+
         uploadText.style.display = 'none';
         fileInfo.style.display = 'block';
-        
+
         uploadArea.style.borderColor = '#10b981';
         uploadArea.style.backgroundColor = '#064e3b';
 
@@ -771,7 +763,7 @@
         fileInput.value = '';
         uploadText.style.display = 'block';
         fileInfo.style.display = 'none';
-        
+
         uploadArea.style.borderColor = '#4b5563';
         uploadArea.style.backgroundColor = '#374151';
       }
@@ -781,7 +773,7 @@
     window.apriModalDettagli = (utente) => {
       const modal = document.getElementById('modalDettagli');
       const modalTitolo = document.getElementById('modalTitolo');
-      
+
       // Memorizza l'utente corrente e i dati originali
       utenteCorrente = utente;
       datiOriginali = {
@@ -789,27 +781,26 @@
         cognome: utente.cognome,
         email: utente.email,
         telefono: utente.telefono || '',
-        descrizioneContratto: utente.descrizione_contratto || '',
-        oreGiornaliere: utente.ore_giornaliere || ''
+        descrizioneContratto: utente.descrizione_contratto || ''
       };
-      
+
       // Aggiorna il titolo del modale
       modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
-      
+
       // Popola i campi con i dati del dipendente
       document.getElementById('dettagli-nome').value = datiOriginali.nome;
       document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
       document.getElementById('dettagli-email').value = datiOriginali.email;
       document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
       document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
-      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
-      
+      document.getElementById('dettagli-ore-giornaliere').value = '';
+
       // Inizializza upload file
       inizializzaUploadFile();
-      
+
       // Mostra il modale
       modal.style.display = 'flex';
-      
+
       // Impedisce lo scroll della pagina sottostante
       document.body.style.overflow = 'hidden';
     };
@@ -818,3 +809,4 @@
   </script>
 </body>
 </html>
+</replit_final_file>
