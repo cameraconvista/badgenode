@@ -21,7 +21,6 @@
     h1 {
       text-align: center;
       margin-bottom: 20px;
-      color: white;
       font-size: 28px;
       font-weight: bold;
     }
@@ -41,8 +40,8 @@
       font-size: 14px;
       border-radius: 8px;
       border: none;
-      text-align: center;
       font-weight: 500;
+      text-align: center;
     }
 
     .form-riga input {
@@ -50,22 +49,13 @@
       color: black;
     }
 
-    #nome,
-    #cognome,
-    #email,
-    .form-riga button {
-      width: 150px;
-    }
-
-    #pin {
-      width: 60px;
-    }
+    #nome, #cognome, #email, .form-riga button { width: 150px; }
+    #pin { width: 60px; }
 
     .form-riga button {
       background-color: #4f46e5;
       color: white;
       cursor: pointer;
-      white-space: nowrap;
       font-weight: 600;
     }
 
@@ -75,38 +65,34 @@
 
     table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
+      border-collapse: collapse;
       background-color: #1e293b;
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
     }
 
-    table th,
-    table td {
-      text-align: center;
+    th, td {
       padding: 14px 12px;
-      border: none;
-      color: white;
+      text-align: center;
       border-bottom: 1px solid #374151;
     }
 
-    table th {
+    th {
       background-color: #1f3a56;
       font-weight: 600;
       font-size: 15px;
     }
 
-    table td {
+    td {
       background-color: #1e293b;
     }
 
-    table tr:last-child td {
+    tr:last-child td {
       border-bottom: none;
     }
 
-    table td button {
+    td button {
       background: none;
       border: none;
       font-size: 16px;
@@ -117,7 +103,7 @@
 </head>
 <body>
   <div class="container">
-    <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="display: block; margin: 5px auto 0px auto; width: 120px; height: auto;" />
+    <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="display:block; margin:5px auto 0; width:120px;" />
     <h1>Archivio Dipendenti</h1>
 
     <form id="form-aggiungi" class="form-riga">
@@ -125,7 +111,7 @@
       <input type="text" id="cognome" placeholder="Cognome" required />
       <input type="text" id="pin" placeholder="PIN" maxlength="2" required />
       <input type="email" id="email" placeholder="Email" required />
-      <button type="submit" id="btn-aggiungi">Aggiungi</button>
+      <button type="submit">Aggiungi</button>
     </form>
 
     <table>
@@ -153,98 +139,87 @@
 
     const tbody = document.getElementById("lista-dipendenti");
     const form = document.getElementById("form-aggiungi");
-    const btn = document.getElementById("btn-aggiungi");
+    const nomeInput = document.getElementById("nome");
+    const cognomeInput = document.getElementById("cognome");
+    const pinInput = document.getElementById("pin");
+    const emailInput = document.getElementById("email");
+    const btn = form.querySelector("button");
 
     let idDaModificare = null;
 
     async function caricaUtenti() {
       const { data, error } = await supabase.from("utenti").select("*").order("pin", { ascending: true });
-      if (error) {
-        alert("Errore durante il caricamento utenti: " + error.message);
-        return;
-      }
+      if (error) return alert("Errore durante il caricamento utenti: " + error.message);
 
       tbody.innerHTML = "";
       data.forEach(utente => {
-        const riga = document.createElement("tr");
-
-        riga.innerHTML = `
-          <td><a href="storico.html?pin=${utente.pin}" title="Storico"><img src="assets/icons/orologio.png" alt="Storico" style="width: 24px; height: 24px;" /></a></td>
-          <td>${utente.pin.padStart(2, "0")}</td>
-          <td>${utente.nome}</td>
-          <td>${utente.cognome}</td>
-          <td>${utente.email}</td>
-          <td>
-            <button type="button" onclick="modificaUtente('${utente.id}', '${utente.nome}', '${utente.cognome}', '${utente.pin}', '${utente.email}')" title="Modifica">✏️</button>
-            <button type="button" onclick="eliminaUtente('${utente.id}')" title="Elimina">❌</button>
-          </td>
+        const pin = String(utente.pin).padStart(2, "0");
+        tbody.innerHTML += `
+          <tr>
+            <td><a href="storico.html?pin=${utente.pin}" title="Storico"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
+            <td>${pin}</td>
+            <td>${utente.nome}</td>
+            <td>${utente.cognome}</td>
+            <td>${utente.email}</td>
+            <td>
+              <button onclick="modificaUtente('${utente.id}', '${utente.nome}', '${utente.cognome}', '${utente.pin}', '${utente.email}')">✏️</button>
+              <button onclick="eliminaUtente('${utente.id}')">❌</button>
+            </td>
+          </tr>
         `;
-        tbody.appendChild(riga);
       });
     }
 
-    window.modificaUtente = function(id, nome, cognome, pin, email) {
-      document.getElementById("nome").value = nome;
-      document.getElementById("cognome").value = cognome;
-      document.getElementById("pin").value = pin;
-      document.getElementById("email").value = email;
+    window.modificaUtente = (id, nome, cognome, pin, email) => {
+      nomeInput.value = nome;
+      cognomeInput.value = cognome;
+      pinInput.value = pin;
+      emailInput.value = email;
       idDaModificare = id;
       btn.textContent = "Salva Modifica";
-    }
+    };
 
-    window.eliminaUtente = async function (id) {
-      const prima = confirm("Sei sicuro di voler eliminare questo utente?");
-      if (!prima) return;
-
-      const seconda = confirm("ATTENZIONE: questa operazione è irreversibile.\nConfermi l'eliminazione definitiva?");
-      if (!seconda) return;
+    window.eliminaUtente = async (id) => {
+      if (!confirm("Sei sicuro di voler eliminare questo utente?")) return;
+      if (!confirm("ATTENZIONE: questa operazione è irreversibile.\nConfermi l'eliminazione definitiva?")) return;
 
       const { error } = await supabase.from("utenti").delete().eq("id", id);
-      if (error) {
-        alert("Errore durante l'eliminazione: " + error.message);
-      } else {
-        caricaUtenti();
-      }
-    }
+      if (error) return alert("Errore durante l'eliminazione: " + error.message);
+      caricaUtenti();
+    };
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const nuovoUtente = {
-        nome: document.getElementById("nome").value.trim(),
-        cognome: document.getElementById("cognome").value.trim(),
-        pin: document.getElementById("pin").value.trim(),
-        email: document.getElementById("email").value.trim()
+        nome: nomeInput.value.trim(),
+        cognome: cognomeInput.value.trim(),
+        pin: pinInput.value.trim(),
+        email: emailInput.value.trim()
       };
 
-      if (!nuovoUtente.nome || !nuovoUtente.cognome || !nuovoUtente.pin || !nuovoUtente.email) {
+      if (Object.values(nuovoUtente).some(val => !val)) {
         alert("Compila tutti i campi.");
         return;
       }
 
+      let errore = null;
+
       if (idDaModificare) {
-        const { error } = await supabase.from("utenti").update(nuovoUtente).eq("id", idDaModificare);
-        if (error) {
-          alert("Errore durante la modifica: " + error.message);
-          return;
-        }
+        ({ error: errore } = await supabase.from("utenti").update(nuovoUtente).eq("id", idDaModificare));
         idDaModificare = null;
         btn.textContent = "Aggiungi";
       } else {
-        const { error } = await supabase.from("utenti").insert([nuovoUtente]);
-        if (error) {
-          alert("Errore durante l'inserimento: " + error.message);
-          return;
-        }
+        ({ error: errore } = await supabase.from("utenti").insert([nuovoUtente]));
       }
+
+      if (errore) return alert("Errore: " + errore.message);
 
       form.reset();
       caricaUtenti();
     });
 
     caricaUtenti();
-
-    
   </script>
 </body>
 </html>
