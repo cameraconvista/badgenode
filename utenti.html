@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -425,7 +426,8 @@
 
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto</div>
-          <input type="text" class="campo-valore" id="dettagli-ore-giornaliere" placeholder="Inserisci le ore giornaliere da contratto...">
+          <input type="number" class="campo-valore" id="dettagli-ore-giornaliere" 
+                 placeholder="8.00" step="0.25" min="0" max="24">
         </div>
 
       </div>
@@ -457,36 +459,49 @@
     let idDaModificare = null;
 
     async function caricaUtenti() {
-      const { data, error } = await supabase.from("utenti").select("*").order("pin", { ascending: true });
-      if (error) return alert("Errore durante il caricamento utenti: " + error.message);
+      try {
+        const { data, error } = await supabase
+          .from("utenti")
+          .select("*")
+          .order("pin", { ascending: true });
 
-      tbody.innerHTML = "";
-      data.forEach(utente => {
-        const pin = String(utente.pin).padStart(2, "0");
-        const riga = document.createElement('tr');
-        riga.style.cursor = 'pointer';
-        riga.style.transition = 'background-color 0.2s';
-        riga.addEventListener('mouseenter', () => {
-          riga.style.backgroundColor = '#2563eb';
-        });
-        riga.addEventListener('mouseleave', () => {
-          riga.style.backgroundColor = '#1e293b';
-        });
-        riga.onclick = () => apriModalDettagli(utente);
+        if (error) {
+          console.error("Errore caricamento utenti:", error);
+          alert("Errore durante il caricamento utenti: " + error.message);
+          return;
+        }
 
-        riga.innerHTML = `
-            <td><a href="storico.html?pin=${utente.pin}" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
-            <td>${pin}</td>
-            <td>${utente.nome}</td>
-            <td>${utente.cognome}</td>
-            <td>${utente.email}</td>
-            <td onclick="event.stopPropagation()">
-              <button onclick="modificaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}', '${utente.email}')">✏️</button>
-              <button onclick="eliminaUtente('${utente.pin}')">❌</button>
-            </td>
-        `;
-        tbody.appendChild(riga);
-      });
+        tbody.innerHTML = "";
+        data.forEach(utente => {
+          const pin = String(utente.pin).padStart(2, "0");
+          const riga = document.createElement('tr');
+          riga.style.cursor = 'pointer';
+          riga.style.transition = 'background-color 0.2s';
+          riga.addEventListener('mouseenter', () => {
+            riga.style.backgroundColor = '#2563eb';
+          });
+          riga.addEventListener('mouseleave', () => {
+            riga.style.backgroundColor = '#1e293b';
+          });
+          riga.onclick = () => apriModalDettagli(utente);
+
+          riga.innerHTML = `
+              <td><a href="storico.html?pin=${utente.pin}" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
+              <td>${pin}</td>
+              <td>${utente.nome}</td>
+              <td>${utente.cognome}</td>
+              <td>${utente.email}</td>
+              <td onclick="event.stopPropagation()">
+                <button onclick="modificaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}', '${utente.email}')">✏️</button>
+                <button onclick="eliminaUtente('${utente.pin}')">❌</button>
+              </td>
+          `;
+          tbody.appendChild(riga);
+        });
+      } catch (error) {
+        console.error("Errore imprevisto:", error);
+        alert("Errore durante il caricamento utenti");
+      }
     }
 
     window.modificaUtente = (pin, nome, cognome, email) => {
@@ -502,9 +517,18 @@
       if (!confirm("Sei sicuro di voler eliminare questo utente?")) return;
       if (!confirm("ATTENZIONE: questa operazione è irreversibile.\nConfermi l'eliminazione definitiva?")) return;
 
-      const { error } = await supabase.from("utenti").delete().eq("pin", pin);
-      if (error) return alert("Errore durante l'eliminazione: " + error.message);
-      caricaUtenti();
+      try {
+        const { error } = await supabase.from("utenti").delete().eq("pin", pin);
+        if (error) {
+          console.error("Errore eliminazione:", error);
+          alert("Errore durante l'eliminazione: " + error.message);
+          return;
+        }
+        caricaUtenti();
+      } catch (error) {
+        console.error("Errore imprevisto:", error);
+        alert("Errore durante l'eliminazione");
+      }
     };
 
     form.addEventListener("submit", async (e) => {
@@ -514,28 +538,43 @@
         nome: nomeInput.value.trim(),
         cognome: cognomeInput.value.trim(),
         pin: pinInput.value.trim(),
-        email: emailInput.value.trim()
+        email: emailInput.value.trim(),
+        ore_giornaliere: 8.00  // Valore di default
       };
 
-      if (Object.values(nuovoUtente).some(val => !val)) {
+      if (Object.values(nuovoUtente).some(val => val === '' || val === null)) {
         alert("Compila tutti i campi.");
         return;
       }
 
       let errore = null;
 
-      if (idDaModificare) {
-        ({ error: errore } = await supabase.from("utenti").update(nuovoUtente).eq("pin", idDaModificare));
-        idDaModificare = null;
-        btn.textContent = "Aggiungi";
-      } else {
-        ({ error: errore } = await supabase.from("utenti").insert([nuovoUtente]));
+      try {
+        if (idDaModificare) {
+          ({ error: errore } = await supabase
+            .from("utenti")
+            .update(nuovoUtente)
+            .eq("pin", idDaModificare));
+          idDaModificare = null;
+          btn.textContent = "Aggiungi";
+        } else {
+          ({ error: errore } = await supabase
+            .from("utenti")
+            .insert([nuovoUtente]));
+        }
+
+        if (errore) {
+          console.error("Errore database:", errore);
+          alert("Errore: " + errore.message);
+          return;
+        }
+
+        form.reset();
+        caricaUtenti();
+      } catch (error) {
+        console.error("Errore imprevisto:", error);
+        alert("Errore durante l'operazione");
       }
-
-      if (errore) return alert("Errore: " + errore.message);
-
-      form.reset();
-      caricaUtenti();
     });
 
     // Variabile globale per memorizzare i dati originali
@@ -550,24 +589,34 @@
       // Memorizza l'utente corrente e i dati originali
       utenteCorrente = utente;
       datiOriginali = {
-        nome: utente.nome,
-        cognome: utente.cognome,
-        email: utente.email,
+        nome: utente.nome || '',
+        cognome: utente.cognome || '',
+        email: utente.email || '',
         telefono: utente.telefono || '',
         descrizioneContratto: utente.descrizione_contratto || '',
-        oreGiornaliere: utente.ore_giornaliere || ''
+        oreGiornaliere: utente.ore_giornaliere || 8.00
       };
 
       // Aggiorna il titolo del modale
       modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
 
-      // Popola i campi con i dati del dipendente
-      document.getElementById('dettagli-nome').value = datiOriginali.nome;
-      document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
-      document.getElementById('dettagli-email').value = datiOriginali.email;
-      document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
-      document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
-      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
+      // Popola i campi con i dati del dipendente - Con controllo esistenza elementi
+      const campoNome = document.getElementById('dettagli-nome');
+      const campoCognome = document.getElementById('dettagli-cognome');
+      const campoEmail = document.getElementById('dettagli-email');
+      const campoTelefono = document.getElementById('dettagli-telefono');
+      const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
+      const campoOre = document.getElementById('dettagli-ore-giornaliere');
+
+      if (campoNome) campoNome.value = datiOriginali.nome;
+      if (campoCognome) campoCognome.value = datiOriginali.cognome;
+      if (campoEmail) campoEmail.value = datiOriginali.email;
+      if (campoTelefono) campoTelefono.value = datiOriginali.telefono;
+      if (campoDescrizione) campoDescrizione.value = datiOriginali.descrizioneContratto;
+      if (campoOre) campoOre.value = datiOriginali.oreGiornaliere;
+
+      // Inizializza upload file
+      inizializzaUploadFile();
 
       // Mostra il modale
       modal.style.display = 'flex';
@@ -603,14 +652,21 @@
 
     // Funzioni per pulsanti modale
     window.annullaModifiche = () => {
-      // Ripristina i valori originali nei campi
+      // Ripristina i valori originali nei campi con controllo esistenza
       if (datiOriginali) {
-        document.getElementById('dettagli-nome').value = datiOriginali.nome;
-        document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
-        document.getElementById('dettagli-email').value = datiOriginali.email;
-        document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
-        document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
-        document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
+        const campoNome = document.getElementById('dettagli-nome');
+        const campoCognome = document.getElementById('dettagli-cognome');
+        const campoEmail = document.getElementById('dettagli-email');
+        const campoTelefono = document.getElementById('dettagli-telefono');
+        const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
+        const campoOre = document.getElementById('dettagli-ore-giornaliere');
+
+        if (campoNome) campoNome.value = datiOriginali.nome;
+        if (campoCognome) campoCognome.value = datiOriginali.cognome;
+        if (campoEmail) campoEmail.value = datiOriginali.email;
+        if (campoTelefono) campoTelefono.value = datiOriginali.telefono;
+        if (campoDescrizione) campoDescrizione.value = datiOriginali.descrizioneContratto;
+        if (campoOre) campoOre.value = datiOriginali.oreGiornaliere;
       }
 
       // Chiudi il modale
@@ -624,14 +680,21 @@
       }
 
       try {
-        // Raccogli i dati dai campi del modale
+        // Raccogli i dati dai campi del modale con controllo esistenza
+        const campoNome = document.getElementById('dettagli-nome');
+        const campoCognome = document.getElementById('dettagli-cognome');
+        const campoEmail = document.getElementById('dettagli-email');
+        const campoTelefono = document.getElementById('dettagli-telefono');
+        const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
+        const campoOre = document.getElementById('dettagli-ore-giornaliere');
+
         const datiAggiornati = {
-          nome: document.getElementById('dettagli-nome').value.trim(),
-          cognome: document.getElementById('dettagli-cognome').value.trim(),
-          email: document.getElementById('dettagli-email').value.trim(),
-          telefono: document.getElementById('dettagli-telefono').value.trim(),
-          descrizione_contratto: document.getElementById('dettagli-descrizione-contratto').value.trim(),
-          ore_giornaliere: document.getElementById('dettagli-ore-giornaliere').value.trim()
+          nome: campoNome ? campoNome.value.trim() : '',
+          cognome: campoCognome ? campoCognome.value.trim() : '',
+          email: campoEmail ? campoEmail.value.trim() : '',
+          telefono: campoTelefono ? campoTelefono.value.trim() : '',
+          descrizione_contratto: campoDescrizione ? campoDescrizione.value.trim() : '',
+          ore_giornaliere: campoOre ? parseFloat(campoOre.value) || 8.00 : 8.00
         };
 
         // Validazione base
@@ -646,6 +709,14 @@
           alert('Inserisci un indirizzo email valido');
           return;
         }
+
+        // Validazione ore giornaliere
+        if (datiAggiornati.ore_giornaliere < 0 || datiAggiornati.ore_giornaliere > 24) {
+          alert('Le ore giornaliere devono essere comprese tra 0 e 24');
+          return;
+        }
+
+        console.log('Dati da salvare:', datiAggiornati);
 
         // Aggiorna i dati su Supabase usando PIN come chiave
         const { error } = await supabase
@@ -673,7 +744,7 @@
         Object.assign(utenteCorrente, datiAggiornati);
 
         // Ricarica la lista utenti per riflettere le modifiche
-        caricaUtenti();
+        await caricaUtenti();
 
         // Mostra messaggio di successo
         alert('✅ Dati salvati con successo!');
@@ -696,6 +767,12 @@
       const fileName = document.getElementById('file-name');
       const fileSize = document.getElementById('file-size');
       const removeFileBtn = document.getElementById('remove-file-btn');
+
+      // Verifica esistenza elementi
+      if (!uploadArea || !fileInput || !uploadText || !fileInfo || !fileName || !fileSize || !removeFileBtn) {
+        console.warn('Alcuni elementi dell\'upload non sono stati trovati');
+        return;
+      }
 
       // Click per aprire selezione file
       uploadArea.addEventListener('click', (e) => {
@@ -777,43 +854,7 @@
       }
     }
 
-    // Funzione unificata per aprire il modale
-    window.apriModalDettagli = (utente) => {
-      const modal = document.getElementById('modalDettagli');
-      const modalTitolo = document.getElementById('modalTitolo');
-
-      // Memorizza l'utente corrente e i dati originali
-      utenteCorrente = utente;
-      datiOriginali = {
-        nome: utente.nome,
-        cognome: utente.cognome,
-        email: utente.email,
-        telefono: utente.telefono || '',
-        descrizioneContratto: utente.descrizione_contratto || '',
-        oreGiornaliere: utente.ore_giornaliere || ''
-      };
-
-      // Aggiorna il titolo del modale
-      modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
-
-      // Popola i campi con i dati del dipendente
-      document.getElementById('dettagli-nome').value = datiOriginali.nome;
-      document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
-      document.getElementById('dettagli-email').value = datiOriginali.email;
-      document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
-      document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizioneContratto;
-      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.oreGiornaliere;
-
-      // Inizializza upload file
-      inizializzaUploadFile();
-
-      // Mostra il modale
-      modal.style.display = 'flex';
-
-      // Impedisce lo scroll della pagina sottostante
-      document.body.style.overflow = 'hidden';
-    };
-
+    // Carica utenti all'avvio
     caricaUtenti();
   </script>
 </body>
