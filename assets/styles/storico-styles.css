@@ -413,7 +413,7 @@ button#btnChiudi {
 /* Pulsante torna a utenti in alto a sinistra */
 .btn-torna-utenti {
   position: absolute;
-  top: 20px;
+  top: 80px;
   left: 20px;
   background: rgba(60, 60, 60, 0.9);
   color: white;
@@ -421,8 +421,8 @@ button#btnChiudi {
   border-radius: 50%;
   width: 50px;
   height: 50px;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 400;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -431,16 +431,6 @@ button#btnChiudi {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   z-index: 100;
   padding: 0;
-}
-
-.btn-torna-utenti::before {
-  content: '';
-  width: 0;
-  height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-right: 10px solid white;
-  margin-right: 2px;
 }
 
 .btn-torna-utenti:hover {
@@ -737,11 +727,11 @@ button#btnChiudi {
 
   /* Pulsante torna a utenti responsive per mobile */
   .btn-torna-utenti {
-    top: 10px;
+    top: 70px;
     left: 10px;
     width: 40px;
     height: 40px;
-    font-size: 16px;
+    font-size: 18px;
   }
 
   /* Modale più adatto a mobile */
