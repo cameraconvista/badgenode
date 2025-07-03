@@ -231,7 +231,44 @@
       font-size: 14px;
     }
 
-    
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #374151;
+    }
+
+    .btn-annulla,
+    .btn-salva {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 80px;
+    }
+
+    .btn-annulla {
+      background-color: #6b7280;
+      color: white;
+    }
+
+    .btn-annulla:hover {
+      background-color: #4b5563;
+    }
+
+    .btn-salva {
+      background-color: #16a34a;
+      color: white;
+    }
+
+    .btn-salva:hover {
+      background-color: #15803d;
+    }
 
     @media (max-width: 768px) {
       .modal-content {
@@ -247,7 +284,17 @@
         font-size: 20px;
       }
 
-      
+      .modal-actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .btn-annulla,
+      .btn-salva {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+      }
     }
   </style>
 </head>
@@ -336,11 +383,15 @@
         <div class="campo-singolo">
           <div class="campo-label">Ore Giornaliere da Contratto</div>
           <input type="text" class="campo-valore" id="dettagli-ore-giornaliere" 
-                 placeholder="es. 8 ore"></div>
+                 placeholder="es. 8 ore">
         </div>
       </div>
 
-      
+      <!-- Pulsanti Azioni -->
+      <div class="modal-actions">
+        <button class="btn-annulla" onclick="annullaModifiche()">Annulla</button>
+        <button class="btn-salva" onclick="salvaModifiche()">Salva</button>
+      </div>
     </div>
   </div>
 
@@ -493,6 +544,16 @@
         }
       }
     });
+
+    // Funzioni per pulsanti modale
+    window.annullaModifiche = () => {
+      chiudiModalDettagli();
+    };
+
+    window.salvaModifiche = async () => {
+      // TODO: Implementare salvataggio su Supabase
+      alert('Funzione salvataggio da implementare');
+    };
 
     caricaUtenti();
   </script>
