@@ -1431,8 +1431,23 @@
           // Mostra il nome del giorno solo nella prima riga
           const dataDisplay = i === 0 ? dataFormattata : '';
 
-          // Cella EXTRA: mostra solo nella prima riga con rowspan
-          const extraCell = i === 0 ? `<td rowspan="${maxTimbrature}"></td>` : '';
+          // Calcola contenuto colonna EXTRA solo per la prima riga
+          let extraContent = '';
+          if (i === 0) {
+            const oreContrattuali = dipendente?.ore_giornaliere || 8.00;
+            const oreExtra = oreTotaliGiorno - oreContrattuali;
+            
+            if (oreExtra > 0) {
+              const oreExtraInt = Math.floor(oreExtra);
+              const minutiExtra = Math.round((oreExtra - oreExtraInt) * 60);
+              extraContent = `<span style="color: #fbbf24; font-weight: bold;">+${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')}</span>`;
+            } else {
+              extraContent = '<span style="color: #6b7280;">—</span>';
+            }
+          }
+
+          // Cella EXTRA: mostra solo nella prima riga con rowspan e contenuto calcolato
+          const extraCell = i === 0 ? `<td rowspan="${maxTimbrature}" style="text-align: center;">${extraContent}</td>` : '';
 
           riga.innerHTML = `
             <td style="text-align: left;">${dataDisplay}</td>
@@ -1467,7 +1482,7 @@
         <td style="background-color: #1f3a56 !important;"></td>
         <td style="background-color: #1f3a56 !important;"></td>
         <td style="color: #ffff99; background-color: #1f3a56 !important;">${totaleMensileOre.toFixed(2)}</td>
-		<td style="background-color: #1f3a56 !important;"></td>
+        <td style="background-color: #1f3a56 !important;"></td>
         <td style="background-color: #1f3a56 !important;"></td>
       `;
       tbody.appendChild(rigaTotale);
