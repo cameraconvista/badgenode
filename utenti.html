@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -426,7 +425,7 @@
 
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto</div>
-          <input type="number" class="campo-valore" id="dettagli-ore-giornaliere" 
+          <input type="number" class="campo-valore" id="dettagli-ore-contrattuali" 
                  placeholder="8.00" step="0.25" min="0" max="24">
         </div>
 
@@ -539,7 +538,7 @@
         cognome: cognomeInput.value.trim(),
         pin: pinInput.value.trim(),
         email: emailInput.value.trim(),
-        ore_giornaliere: 8.00  // Valore di default
+        ore_contrattuali: 8.00  // Valore di default
       };
 
       if (Object.values(nuovoUtente).some(val => val === '' || val === null)) {
@@ -594,7 +593,7 @@
         email: utente.email || '',
         telefono: utente.telefono || '',
         descrizioneContratto: utente.descrizione_contratto || '',
-        oreGiornaliere: utente.ore_giornaliere || 8.00
+        oreContrattuali: utente.ore_contrattuali || 8.00
       };
 
       // Aggiorna il titolo del modale
@@ -606,14 +605,14 @@
       const campoEmail = document.getElementById('dettagli-email');
       const campoTelefono = document.getElementById('dettagli-telefono');
       const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
-      const campoOre = document.getElementById('dettagli-ore-giornaliere');
+      const campoOre = document.getElementById('dettagli-ore-contrattuali');
 
       if (campoNome) campoNome.value = datiOriginali.nome;
       if (campoCognome) campoCognome.value = datiOriginali.cognome;
       if (campoEmail) campoEmail.value = datiOriginali.email;
       if (campoTelefono) campoTelefono.value = datiOriginali.telefono;
       if (campoDescrizione) campoDescrizione.value = datiOriginali.descrizioneContratto;
-      if (campoOre) campoOre.value = datiOriginali.oreGiornaliere;
+      if (campoOre) campoOre.value = datiOriginali.oreContrattuali;
 
       // Inizializza upload file
       inizializzaUploadFile();
@@ -659,14 +658,14 @@
         const campoEmail = document.getElementById('dettagli-email');
         const campoTelefono = document.getElementById('dettagli-telefono');
         const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
-        const campoOre = document.getElementById('dettagli-ore-giornaliere');
+        const campoOre = document.getElementById('dettagli-ore-contrattuali');
 
         if (campoNome) campoNome.value = datiOriginali.nome;
         if (campoCognome) campoCognome.value = datiOriginali.cognome;
         if (campoEmail) campoEmail.value = datiOriginali.email;
         if (campoTelefono) campoTelefono.value = datiOriginali.telefono;
         if (campoDescrizione) campoDescrizione.value = datiOriginali.descrizioneContratto;
-        if (campoOre) campoOre.value = datiOriginali.oreGiornaliere;
+        if (campoOre) campoOre.value = datiOriginali.oreContrattuali;
       }
 
       // Chiudi il modale
@@ -686,7 +685,7 @@
         const campoEmail = document.getElementById('dettagli-email');
         const campoTelefono = document.getElementById('dettagli-telefono');
         const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
-        const campoOre = document.getElementById('dettagli-ore-giornaliere');
+        const campoOre = document.getElementById('dettagli-ore-contrattuali');
 
         const datiAggiornati = {
           nome: campoNome ? campoNome.value.trim() : '',
@@ -694,7 +693,7 @@
           email: campoEmail ? campoEmail.value.trim() : '',
           telefono: campoTelefono ? campoTelefono.value.trim() : '',
           descrizione_contratto: campoDescrizione ? campoDescrizione.value.trim() : '',
-          ore_giornaliere: campoOre ? parseFloat(campoOre.value) || 8.00 : 8.00
+          ore_contrattuali: campoOre ? parseFloat(campoOre.value) || 8.00 : 8.00
         };
 
         // Validazione base
@@ -711,7 +710,7 @@
         }
 
         // Validazione ore giornaliere
-        if (datiAggiornati.ore_giornaliere < 0 || datiAggiornati.ore_giornaliere > 24) {
+        if (datiAggiornati.ore_contrattuali < 0 || datiAggiornati.ore_contrattuali > 24) {
           alert('Le ore giornaliere devono essere comprese tra 0 e 24');
           return;
         }
@@ -737,7 +736,7 @@
           email: datiAggiornati.email,
           telefono: datiAggiornati.telefono,
           descrizioneContratto: datiAggiornati.descrizione_contratto,
-          oreGiornaliere: datiAggiornati.ore_giornaliere
+          oreContrattuali: datiAggiornati.ore_contrattuali
         };
 
         // Aggiorna l'oggetto utente corrente
