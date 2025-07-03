@@ -340,15 +340,7 @@
         </div>
       </div>
 
-      <!-- Pulsanti Azione -->
-      <div class="modal-footer" style="margin-top: 30px; display: flex; gap: 15px; justify-content: flex-end; border-top: 2px solid #374151; padding-top: 20px;">
-        <button class="btn-annulla" onclick="annullaModifiche()" style="background: #64748b; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">
-          Annulla
-        </button>
-        <button class="btn-salva" onclick="salvaModifiche()" style="background: #16a34a; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500;">
-          Salva Modifiche
-        </button>
-      </div>
+      
     </div>
   </div>
 
@@ -452,17 +444,10 @@
       caricaUtenti();
     });
 
-    // Variabili per gestione stato modale
-    let utenteCorrente = null;
-    let datiOriginali = {};
-
     // Funzioni per il modale dettagli dipendente
     window.apriModalDettagli = (utente) => {
       const modal = document.getElementById('modalDettagli');
       const modalTitolo = document.getElementById('modalTitolo');
-      
-      // Memorizza l'utente corrente
-      utenteCorrente = utente;
       
       // Aggiorna il titolo del modale
       modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
@@ -474,16 +459,6 @@
       document.getElementById('dettagli-telefono').value = utente.telefono || '';
       document.getElementById('dettagli-descrizione-contratto').value = utente.descrizione_contratto || '';
       document.getElementById('dettagli-ore-giornaliere').value = utente.ore_contrattuali || '';
-      
-      // Memorizza i dati originali per il ripristino
-      datiOriginali = {
-        nome: utente.nome || '',
-        cognome: utente.cognome || '',
-        email: utente.email || '',
-        telefono: utente.telefono || '',
-        descrizione_contratto: utente.descrizione_contratto || '',
-        ore_contrattuali: utente.ore_contrattuali || ''
-      };
       
       // Mostra il modale
       modal.style.display = 'flex';
@@ -517,71 +492,7 @@
       }
     });
 
-    // Funzione per annullare le modifiche
-    window.annullaModifiche = () => {
-      if (!datiOriginali) return;
-      
-      // Ripristina i valori originali
-      document.getElementById('dettagli-nome').value = datiOriginali.nome;
-      document.getElementById('dettagli-cognome').value = datiOriginali.cognome;
-      document.getElementById('dettagli-email').value = datiOriginali.email;
-      document.getElementById('dettagli-telefono').value = datiOriginali.telefono;
-      document.getElementById('dettagli-descrizione-contratto').value = datiOriginali.descrizione_contratto;
-      document.getElementById('dettagli-ore-giornaliere').value = datiOriginali.ore_contrattuali;
-      
-      alert('Modifiche annullate. Dati ripristinati.');
-    };
-
-    // Funzione per salvare le modifiche
-    window.salvaModifiche = async () => {
-      if (!utenteCorrente) return;
-      
-      try {
-        // Raccoglie i dati dal modale
-        const datiAggiornati = {
-          nome: document.getElementById('dettagli-nome').value.trim(),
-          cognome: document.getElementById('dettagli-cognome').value.trim(),
-          email: document.getElementById('dettagli-email').value.trim(),
-          telefono: document.getElementById('dettagli-telefono').value.trim(),
-          descrizione_contratto: document.getElementById('dettagli-descrizione-contratto').value.trim(),
-          ore_contrattuali: document.getElementById('dettagli-ore-giornaliere').value.trim()
-        };
-
-        // Validazione base
-        if (!datiAggiornati.nome || !datiAggiornati.cognome || !datiAggiornati.email) {
-          alert('Nome, Cognome ed Email sono obbligatori.');
-          return;
-        }
-
-        // Aggiorna su Supabase
-        const { error } = await supabase
-          .from('utenti')
-          .update(datiAggiornati)
-          .eq('id', utenteCorrente.id);
-
-        if (error) {
-          console.error('Errore aggiornamento:', error);
-          alert('Errore durante il salvataggio: ' + error.message);
-          return;
-        }
-
-        // Successo
-        alert('Dati aggiornati con successo!');
-        
-        // Aggiorna i dati originali
-        datiOriginali = { ...datiAggiornati };
-        
-        // Ricarica la lista utenti
-        caricaUtenti();
-        
-        // Chiudi il modale
-        chiudiModalDettagli();
-
-      } catch (error) {
-        console.error('Errore durante il salvataggio:', error);
-        alert('Errore durante il salvataggio. Riprova.');
-      }
-    };
+    
 
     caricaUtenti();
   </script>
