@@ -543,11 +543,11 @@
       </select>
       <div class="data-container">
         <input type="date" id="data-inizio" />
-        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" onclick="document.getElementById('data-inizio').showPicker()" />
+        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" onclick="document.getElementById('data-inizio').focus()" />
       </div>
       <div class="data-container">
         <input type="date" id="data-fine" />
-        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" onclick="document.getElementById('data-fine').showPicker()" />
+        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" onclick="document.getElementById('data-fine').focus()" />
       </div>
     </div>
     <div class="tabella-wrapper">
@@ -664,6 +664,9 @@
         if (opzionePersonalizzato) {
           opzionePersonalizzato.remove();
         }
+        // Ripristina stile normale del select
+        selectFiltro.style.borderColor = '#334155';
+        selectFiltro.style.color = 'white';
         aggiornaRange(selectFiltro.value);
       }
       caricaDati();
@@ -675,12 +678,17 @@
       if (!opzionePersonalizzato) {
         opzionePersonalizzato = document.createElement('option');
         opzionePersonalizzato.value = 'personalizzato';
-        opzionePersonalizzato.textContent = 'Personalizzato';
-        opzionePersonalizzato.style.color = '#ffffe0';
+        opzionePersonalizzato.textContent = '✓ Personalizzato';
+        opzionePersonalizzato.style.color = '#90EE90';
         opzionePersonalizzato.style.backgroundColor = '#1e293b';
+        opzionePersonalizzato.style.fontWeight = 'bold';
         selectFiltro.appendChild(opzionePersonalizzato);
       }
       selectFiltro.value = "personalizzato";
+      
+      // Feedback visivo aggiuntivo - cambia colore del select
+      selectFiltro.style.borderColor = '#90EE90';
+      selectFiltro.style.color = '#90EE90';
     }
 
     dataInizio.addEventListener("change", () => {
