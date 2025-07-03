@@ -476,28 +476,28 @@
             <td>${utente.cognome}</td>
             <td>${utente.email}</td>
             <td onclick="event.stopPropagation()">
-              <button onclick="modificaUtente('${utente.id}', '${utente.nome}', '${utente.cognome}', '${utente.pin}', '${utente.email}')">✏️</button>
-              <button onclick="eliminaUtente('${utente.id}')">❌</button>
+              <button onclick="modificaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}', '${utente.email}')">✏️</button>
+              <button onclick="eliminaUtente('${utente.pin}')">❌</button>
             </td>
         `;
         tbody.appendChild(riga);
       });
     }
 
-    window.modificaUtente = (id, nome, cognome, pin, email) => {
+    window.modificaUtente = (pin, nome, cognome, email) => {
       nomeInput.value = nome;
       cognomeInput.value = cognome;
       pinInput.value = pin;
       emailInput.value = email;
-      idDaModificare = id;
+      idDaModificare = pin;
       btn.textContent = "Salva Modifica";
     };
 
-    window.eliminaUtente = async (id) => {
+    window.eliminaUtente = async (pin) => {
       if (!confirm("Sei sicuro di voler eliminare questo utente?")) return;
       if (!confirm("ATTENZIONE: questa operazione è irreversibile.\nConfermi l'eliminazione definitiva?")) return;
 
-      const { error } = await supabase.from("utenti").delete().eq("id", id);
+      const { error } = await supabase.from("utenti").delete().eq("pin", pin);
       if (error) return alert("Errore durante l'eliminazione: " + error.message);
       caricaUtenti();
     };
@@ -520,7 +520,7 @@
       let errore = null;
 
       if (idDaModificare) {
-        ({ error: errore } = await supabase.from("utenti").update(nuovoUtente).eq("id", idDaModificare));
+        ({ error: errore } = await supabase.from("utenti").update(nuovoUtente).eq("pin", idDaModificare));
         idDaModificare = null;
         btn.textContent = "Aggiungi";
       } else {
@@ -638,11 +638,11 @@
           return;
         }
 
-        // Aggiorna i dati su Supabase
+        // Aggiorna i dati su Supabase usando PIN come chiave
         const { error } = await supabase
           .from('utenti')
           .update(datiAggiornati)
-          .eq('id', utenteCorrente.id);
+          .eq('pin', utenteCorrente.pin);
 
         if (error) {
           console.error('Errore durante il salvataggio:', error);
