@@ -66,7 +66,7 @@ CREATE TRIGGER trg_giorno_logico
   EXECUTE FUNCTION calcola_giorno_logico();
 
 -- 6. Inserisci utenti di esempio
-INSERT INTO public.utenti (pin, nome, cognome, email, telefono, ore_giornaliere, descrizione_contratto) VALUES
+INSERT INTO public.utenti (pin, nome, cognome, email, telefono, ore_contrattuali, descrizione_contratto) VALUES
 (1, 'Mario', 'Rossi', 'mario.rossi@example.com', '+39 123 456 7890', 8.00, 'Contratto a tempo indeterminato'),
 (2, 'Luigi', 'Verdi', 'luigi.verdi@example.com', '+39 098 765 4321', 6.00, 'Contratto part-time'),
 (99, 'Admin', 'System', 'admin@example.com', '+39 000 000 0000', 8.00, 'Amministratore di sistema');

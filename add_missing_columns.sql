@@ -2,7 +2,7 @@
 -- Aggiunge colonne mancanti alla tabella utenti
 ALTER TABLE public.utenti ADD COLUMN IF NOT EXISTS id UUID DEFAULT gen_random_uuid();
 ALTER TABLE public.utenti ADD COLUMN IF NOT EXISTS telefono TEXT;
-ALTER TABLE public.utenti ADD COLUMN IF NOT EXISTS ore_giornaliere DECIMAL(4,2) DEFAULT 8.00;
+ALTER TABLE public.utenti ADD COLUMN IF NOT EXISTS ore_contrattuali DECIMAL(4,2) DEFAULT 8.00;
 ALTER TABLE public.utenti ADD COLUMN IF NOT EXISTS descrizione_contratto TEXT;
 
 -- Assicura che PIN sia la chiave primaria
