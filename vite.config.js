@@ -1,17 +1,13 @@
 // vite.config.js
 import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  plugins: [react()],
   server: {
-    port: 5000,
-    host: '0.0.0.0',
-    allowedHosts: ['685027da-ef1b-43e5-827a-45a9bb2c6563-00-1v68mogrrb878.worf.replit.dev'],
-    watch: {
-      usePolling: true
-    },
-    hmr: false // 🚫 disabilita WebSocket HMR
+    host: true,
+    port: 5173, // porta standard Vite
+    strictPort: true,
+    allowedHosts: ['.replit.dev'],
   },
-  build: {
-    target: 'es2015'
-  }
 });
