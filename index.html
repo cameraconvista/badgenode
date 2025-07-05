@@ -43,187 +43,8 @@
   <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json" />
 
-  <!-- Stili -->
-  <style>
-    body {
-      background-color: #0d1b2b;
-      font-family: 'Arial', sans-serif;
-      color: white;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      height: 100vh;
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-    }
-    .container {
-      background-color: #1e293b;
-      padding: 37.5px;
-      border-radius: 31.25px;
-      width: 437.5px;
-      max-width: 90%;
-      text-align: center;
-      box-shadow: 0 0 37.5px rgba(0, 0, 0, 0.8);
-    }
-    h1 {
-      margin-bottom: 18.75px;
-      font-size: 3.5rem;
-      color: white;
-      font-weight: bold;
-      letter-spacing: 2.5px;
-    }
-    .data-time {
-      margin-bottom: 31.25px;
-    }
-    .data-giorno {
-      font-size: 30px;
-      color: #a0aec0;
-      margin-bottom: 6.25px;
-      font-weight: 600;
-    }
-    .ora {
-      font-size: 27.5px;
-      color: white;
-      font-weight: bold;
-    }
-    input#pinInput {
-      width: 275px;
-      margin: 0 auto 37.5px auto;
-      padding: 18.75px;
-      font-size: 40px;
-      font-weight: bold;
-      border-radius: 18.75px;
-      border: none;
-      text-align: center;
-      letter-spacing: 2.5px;
-      user-select: none;
-      color: #333;
-      background: #e2e8f0;
-      transition: all 0.3s ease;
-      box-shadow: 0 2.5px 10px rgba(0, 0, 0, 0.2);
-    }
-    input#pinInput:focus {
-      outline: none;
-      background: #f1f5f9;
-    }
-    input#pinInput::placeholder {
-      font-size: 35px;
-      font-weight: bold;
-      color: #666;
-    }
-    #status {
-      display: none;
-      margin-bottom: 25px;
-      background-color: #374151;
-      padding: 18.75px;
-      border-radius: 12.5px;
-      min-height: 75px;
-      font-weight: bold;
-      font-size: 20px;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      white-space: pre-line;
-      text-align: center;
-    }
-    #status.visible {
-      display: flex;
-      opacity: 1;
-    }
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18.75px;
-      margin-bottom: 37.5px;
-      width: 100%;
-      justify-items: center;
-    }
-    button.key {
-      background-color: #2d3748;
-      border: 2.5px solid #4a5568;
-      border-radius: 50%;
-      color: white;
-      font-size: 35px;
-      font-weight: 400;
-      width: 93.75px;
-      height: 93.75px;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    button.key:hover {
-      background-color: #4a5568;
-      border-color: #718096;
-      transform: scale(1.05);
-    }
-    button.key:active {
-      transform: scale(0.98);
-    }
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      gap: 18.75px;
-      margin-top: 25px;
-    }
-    button.action-btn {
-      flex: 1;
-      padding: 22.5px 0;
-      border: none;
-      border-radius: 18.75px;
-      font-size: 22.5px;
-      font-weight: 600;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.3s ease;
-      color: white;
-      text-transform: capitalize;
-      letter-spacing: 0.625px;
-    }
-    button.action-btn.entrata {
-      background: #15803d;
-    }
-    button.action-btn.entrata:hover {
-      background: #166534;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(21, 128, 61, 0.4);
-    }
-    button.action-btn.uscita {
-      background: #dc2626;
-    }
-    button.action-btn.uscita:hover {
-      background: #b91c1c;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(220, 38, 38, 0.4);
-    }
-    .admin-link {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #6366f1;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 14px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    }
-    .admin-link:hover {
-      background-color: #4f46e5;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
-    }
-    .success { background-color: #15803d !important; color: white; }
-    .error { background-color: #b45309 !important; color: white; border: 1px solid #ef4444 !important; }
-    .warning { background-color: #f59e0b !important; color: white; }
-    .uscita-status { background-color: #dc2626 !important; color: white; }
-  </style>
+  <!-- Stili dal file CSS esterno -->
+  <link rel="stylesheet" href="style.css" />
 
   <!-- Luxon + Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
@@ -236,35 +57,34 @@
   </script>
 </head>
 <body>
-  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 5px; padding: 10px;">
-    <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="width: 150px; height: auto; margin-bottom: 6.25px;" />
-    <div class="container">
-      <div class="data-time">
-        <div class="data-giorno" id="dataGiorno"></div>
-        <div class="ora" id="ora"></div>
-      </div>
-      <input type="text" id="pinInput" placeholder="PIN" readonly maxlength="2" />
-      <div id="status"></div>
-      <div class="keypad">
-        <button class="key">1</button>
-        <button class="key">2</button>
-        <button class="key">3</button>
-        <button class="key">4</button>
-        <button class="key">5</button>
-        <button class="key">6</button>
-        <button class="key">7</button>
-        <button class="key">8</button>
-        <button class="key">9</button>
-        <button class="key">C</button>
-        <button class="key">0</button>
-        <button class="key">⚙️</button>
-      </div>
-      <div class="actions">
-        <button class="action-btn entrata">Entrata</button>
-        <button class="action-btn uscita">Uscita</button>
-      </div>
+  <div class="main-container">
+    <img src="assets/icons/logo.png" alt="BadgeBox Logo" class="logo" />
+    <div class="date-time-section">
+      <div class="date-text" id="dataGiorno"></div>
+      <div class="time-text" id="ora"></div>
+    </div>
+    <input type="text" id="pinInput" class="pin-display" placeholder="PIN" readonly maxlength="2" />
+    <div id="status" class="status-message"></div>
+    <div class="keypad">
+      <button class="keypad-button">1</button>
+      <button class="keypad-button">2</button>
+      <button class="keypad-button">3</button>
+      <button class="keypad-button">4</button>
+      <button class="keypad-button">5</button>
+      <button class="keypad-button">6</button>
+      <button class="keypad-button">7</button>
+      <button class="keypad-button">8</button>
+      <button class="keypad-button">9</button>
+      <button class="keypad-button">C</button>
+      <button class="keypad-button">0</button>
+      <button class="keypad-button">⚙️</button>
+    </div>
+    <div class="action-buttons">
+      <button class="action-button entrata">Entrata</button>
+      <button class="action-button uscita">Uscita</button>
     </div>
   </div>
+  <a href="#" class="admin-link" onclick="verificaAccessoAdmin(); return false;">Admin</a>
 
   <script>
     const { DateTime } = luxon;
@@ -295,7 +115,7 @@
       else if (pinAdmin !== null) alert("PIN non valido. Accesso negato.");
     }
 
-    document.querySelectorAll(".key").forEach((key) => {
+    document.querySelectorAll(".keypad-button").forEach((key) => {
       key.addEventListener("click", () => {
         const valore = key.textContent;
         if (valore === "C") pulisciPin();
