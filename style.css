@@ -1,3 +1,4 @@
+
 /* RESET E BASE */
 * {
   margin: 0;
@@ -11,7 +12,7 @@ html, body {
   background-color: #0d1b2a;
   color: white;
   overflow-x: hidden;
-  -webkit-text-size-adjust: none;
+  -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -21,7 +22,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 20px;
+  padding: 10px;
 }
 
 /* CONTAINER PRINCIPALE */
@@ -63,7 +64,7 @@ body {
 /* DISPLAY PIN */
 .pin-display {
   width: 100%;
-  max-width: 280px;
+  max-width: 300px;
   padding: 20px;
   font-size: 36px;
   font-weight: bold;
@@ -122,21 +123,21 @@ body {
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 15px;
   width: 100%;
-  max-width: 100%;
-  margin-bottom: 20px;
+  max-width: 300px;
+  margin-bottom: 30px;
+  justify-items: center;
 }
 
 .keypad-button {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  max-width: 90px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background-color: #2d3748;
   border: 2px solid #4a5568;
   color: white;
-  font-size: clamp(20px, 6vw, 28px);
+  font-size: 24px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -145,6 +146,7 @@ body {
   transition: all 0.2s ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .keypad-button:hover {
@@ -161,7 +163,7 @@ body {
 /* AZIONI ENTRATA/USCITA */
 .action-buttons {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   width: 100%;
   max-width: 300px;
 }
@@ -180,6 +182,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   text-transform: uppercase;
   letter-spacing: 1px;
+  touch-action: manipulation;
 }
 
 .action-button.entrata {
@@ -213,13 +216,14 @@ body {
   right: 20px;
   background-color: #6366f1;
   color: white;
-  padding: 10px 16px;
-  border-radius: 20px;
+  padding: 12px 18px;
+  border-radius: 25px;
   text-decoration: none;
   font-weight: bold;
   font-size: 14px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  touch-action: manipulation;
 }
 
 .admin-link:hover {
@@ -228,14 +232,15 @@ body {
   box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
 }
 
-/* MEDIA QUERIES */
-@media (max-width: 480px) {
+/* MEDIA QUERIES RESPONSIVE */
+
+/* Mobile small (fino a 360px) */
+@media (max-width: 360px) {
   body {
-    padding: 15px;
+    padding: 8px;
   }
 
   .main-container {
-    max-width: 100%;
     gap: 15px;
   }
 
@@ -248,29 +253,31 @@ body {
   }
 
   .time-text {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .pin-display {
-    max-width: 100%;
-    padding: 18px;
-    font-size: 32px;
+    max-width: 280px;
+    padding: 16px;
+    font-size: 30px;
     margin-bottom: 15px;
   }
 
   .keypad {
     gap: 12px;
-    max-width: 100%;
+    max-width: 280px;
+    margin-bottom: 25px;
   }
 
   .keypad-button {
-    max-width: 80px;
-    font-size: 24px;
+    width: 70px;
+    height: 70px;
+    font-size: 20px;
   }
 
   .action-buttons {
-    max-width: 100%;
-    gap: 12px;
+    gap: 15px;
+    max-width: 280px;
   }
 
   .action-button {
@@ -281,36 +288,43 @@ body {
   .admin-link {
     bottom: 15px;
     right: 15px;
-    padding: 8px 14px;
+    padding: 10px 16px;
     font-size: 12px;
   }
 }
 
-@media (min-width: 481px) and (max-width: 600px) {
-  .main-container {
-    max-width: 350px;
-  }
-
-  .pin-display {
-    max-width: 300px;
-  }
-
+/* Mobile medium (361px - 480px) */
+@media (min-width: 361px) and (max-width: 480px) {
   .keypad {
-    max-width: 300px;
+    max-width: 290px;
   }
 
   .keypad-button {
     width: 75px;
     height: 75px;
-    font-size: 26px;
+    font-size: 22px;
+  }
+
+  .pin-display {
+    max-width: 290px;
+  }
+
+  .action-buttons {
+    max-width: 290px;
   }
 }
 
-@media (min-width: 601px) and (max-width: 768px) {
-  .main-container {
-    max-width: 400px;
+/* Mobile large (481px - 600px) */
+@media (min-width: 481px) and (max-width: 600px) {
+  .keypad-button {
+    width: 80px;
+    height: 80px;
+    font-size: 24px;
   }
+}
 
+/* Tablet (601px - 768px) */
+@media (min-width: 601px) and (max-width: 768px) {
   .logo {
     width: 140px;
   }
@@ -331,7 +345,7 @@ body {
   .keypad-button {
     width: 85px;
     height: 85px;
-    font-size: 30px;
+    font-size: 26px;
   }
 
   .action-button {
@@ -340,13 +354,14 @@ body {
   }
 }
 
+/* Landscape orientation per dispositivi bassi */
 @media (orientation: landscape) and (max-height: 600px) {
   body {
-    padding: 10px;
+    padding: 8px;
   }
 
   .main-container {
-    gap: 10px;
+    gap: 8px;
   }
 
   .logo {
@@ -355,26 +370,33 @@ body {
   }
 
   .date-time-section {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .pin-display {
-    padding: 15px;
-    margin-bottom: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    font-size: 28px;
   }
 
   .keypad {
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 15px;
   }
 
   .keypad-button {
     width: 60px;
     height: 60px;
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .action-button {
+    padding: 12px 0;
+    font-size: 16px;
   }
 }
 
+/* PWA e device specifici */
 @media (display-mode: standalone) {
   body {
     padding-top: env(safe-area-inset-top);
@@ -382,12 +404,7 @@ body {
   }
 }
 
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .keypad-button {
-    border-width: 1px;
-  }
-}
-
+/* Touch optimization */
 @media (pointer: coarse) {
   .keypad-button {
     min-height: 44px;
@@ -401,5 +418,12 @@ body {
   .admin-link {
     min-height: 44px;
     min-width: 44px;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .keypad-button {
+    border-width: 1px;
   }
 }
