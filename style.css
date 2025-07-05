@@ -61,7 +61,7 @@ body {
 .date-text {
   font-size: 18px;
   color: #a0aec0;
-  margin-bottom: 0;
+  margin: 0;
   font-weight: 600;
 }
 
@@ -69,6 +69,7 @@ body {
   font-size: 18px;
   color: white;
   font-weight: bold;
+  margin: 0;
 }
 
 /* DISPLAY PIN */
