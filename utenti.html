@@ -394,6 +394,27 @@
 
     
 
+    <!-- Form aggiungi utente -->
+    <form id="form-aggiungi" style="background: #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: flex; gap: 15px; flex-wrap: wrap; align-items: end;">
+      <div style="flex: 1; min-width: 120px;">
+        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8;">PIN</label>
+        <input type="text" id="pin" placeholder="PIN" required style="width: 100%; padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #374151; color: white; font-size: 14px;">
+      </div>
+      <div style="flex: 2; min-width: 150px;">
+        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8;">Nome</label>
+        <input type="text" id="nome" placeholder="Nome" required style="width: 100%; padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #374151; color: white; font-size: 14px;">
+      </div>
+      <div style="flex: 2; min-width: 150px;">
+        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8;">Cognome</label>
+        <input type="text" id="cognome" placeholder="Cognome" required style="width: 100%; padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #374151; color: white; font-size: 14px;">
+      </div>
+      <div style="flex: 2; min-width: 200px;">
+        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8;">Email</label>
+        <input type="email" id="email" placeholder="Email" required style="width: 100%; padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #374151; color: white; font-size: 14px;">
+      </div>
+      <button type="submit" style="padding: 12px 20px; background: #16a34a; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; height: 42px;">Aggiungi</button>
+    </form>
+
     <table>
       <thead>
         <tr>
@@ -411,7 +432,7 @@
           <td>Mario</td>
           <td>Rossi</td>
           <td onclick="event.stopPropagation()">
-            <button onclick="modificaUtente('1', 'Mario', 'Rossi', 'mario.rossi@example.com')">✏️</button>
+            <button onclick="apriModalDettagli({pin: 1, nome: 'Mario', cognome: 'Rossi', email: 'mario.rossi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
             <button onclick="eliminaUtente('1')">❌</button>
           </td>
         </tr>
@@ -421,7 +442,7 @@
           <td>Luigi</td>
           <td>Verdi</td>
           <td onclick="event.stopPropagation()">
-            <button onclick="modificaUtente('2', 'Luigi', 'Verdi', 'luigi.verdi@example.com')">✏️</button>
+            <button onclick="apriModalDettagli({pin: 2, nome: 'Luigi', cognome: 'Verdi', email: 'luigi.verdi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
             <button onclick="eliminaUtente('2')">❌</button>
           </td>
         </tr>
@@ -431,7 +452,7 @@
           <td>Anna</td>
           <td>Bianchi</td>
           <td onclick="event.stopPropagation()">
-            <button onclick="modificaUtente('3', 'Anna', 'Bianchi', 'anna.bianchi@example.com')">✏️</button>
+            <button onclick="apriModalDettagli({pin: 3, nome: 'Anna', cognome: 'Bianchi', email: 'anna.bianchi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
             <button onclick="eliminaUtente('3')">❌</button>
           </td>
         </tr>
@@ -565,9 +586,8 @@
               <td>${pin}</td>
               <td>${utente.nome}</td>
               <td>${utente.cognome}</td>
-              <td>${utente.email}</td>
               <td onclick="event.stopPropagation()">
-                <button onclick="modificaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}', '${utente.email}')">✏️</button>
+                <button onclick="apriModalDettagli({pin: ${utente.pin}, nome: '${utente.nome}', cognome: '${utente.cognome}', email: '${utente.email}', telefono: '${utente.telefono || ''}', descrizione_contratto: '${utente.descrizione_contratto || ''}', ore_contrattuali: ${utente.ore_contrattuali || 8.00}})" style="margin-right: 8px;">✏️</button>
                 <button onclick="eliminaUtente('${utente.pin}')">❌</button>
               </td>
           `;
@@ -579,14 +599,7 @@
       }
     }
 
-    window.modificaUtente = (pin, nome, cognome, email) => {
-      nomeInput.value = nome;
-      cognomeInput.value = cognome;
-      pinInput.value = pin;
-      emailInput.value = email;
-      idDaModificare = pin;
-      btn.textContent = "Salva Modifica";
-    };
+    // Funzione modificaUtente rimossa - ora si usa apriModalDettagli
 
     window.eliminaUtente = async (pin) => {
       if (!confirm("Sei sicuro di voler eliminare questo utente?")) return;
