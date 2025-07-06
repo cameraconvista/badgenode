@@ -398,9 +398,9 @@ body {
   background-color: #1f3a56 !important;
   font-weight: bold;
   border-bottom: none;
-  padding: 8px 7px;
-  font-size: 11px;
-  height: 35px;
+  padding: 9px 8px;
+  font-size: 13px;
+  height: 40px;
 }
 
 table {
@@ -910,11 +910,11 @@ button#btnChiudi {
     font-size: 12px;
   }
 
-  /* Footer tabella ridotto su mobile */
+  /* Footer tabella su mobile */
   .tabella-footer td {
-    padding: 6px 4px;
-    font-size: 10px;
-    height: 28px;
+    padding: 7px 5px;
+    font-size: 12px;
+    height: 32px;
   }
 
   /* Filtro e pulsanti più compatti */
@@ -1159,11 +1159,11 @@ button#btnChiudi {
     height: 22px;
   }
 
-  /* Footer tabella ridotto su desktop */
+  /* Footer tabella su desktop */
   .tabella-footer td {
-    padding: 11px 10px;
-    font-size: 13px;
-    height: 42px;
+    padding: 13px 12px;
+    font-size: 15px;
+    height: 48px;
     font-weight: 700;
   }
 
