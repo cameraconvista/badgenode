@@ -836,19 +836,8 @@ document.getElementById("btn-google-sheets").addEventListener("click", function(
   
   // Mostra istruzioni all'utente
   setTimeout(() => {
-    alert(`Google Sheets aperto!\n\nPer importare i dati:\n1. Vai su File → Importa\n2. Carica il file CSV o incolla i dati\n3. Il foglio sarà pronto per l'uso!`);
+    alert(`Google Sheets aperto!\n\nPer importare i dati:\n1. Copia i dati dalla tabella\n2. Incolla direttamente nel foglio Google\n3. Il foglio sarà pronto per l'uso!`);
   }, 1000);
-  
-  // Opzionalmente, scarica anche un file CSV per facilitare l'importazione
-  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.csv`);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 });
 
 // Inizializzazione
