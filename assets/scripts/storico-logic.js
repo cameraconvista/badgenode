@@ -162,7 +162,7 @@ function renderizzaTabella() {
     const giornoSettimana = giorniSettimana[current.getDay()];
     const giornoNumero = current.getDate().toString().padStart(2, "0");
 
-    const dataFormattata = `${giornoNumero} ${giornoSettimana.slice(0,3)}`;
+    const dataFormattata = `${giornoNumero} ${giornoSettimana}`;
 
     // Logica per le timbrature del giorno...
     const timbratureOggi = timbrature.filter(t => {
@@ -531,7 +531,7 @@ document.getElementById("btn-whatsapp").addEventListener("click", function() {
       
       // Formatta la riga solo se ci sono dati significativi
       if (entrata !== '—' || uscita !== '—') {
-        tabellaTimbrature += `${data.padEnd(10)} ${entrata.padEnd(10)} ${uscita.padEnd(10)}\n`;
+        tabellaTimbrature += `${data.padEnd(10)} ${entrata.padEnd(10)} ${uscita}\n`;
       }
     }
   });
