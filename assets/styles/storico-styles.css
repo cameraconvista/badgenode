@@ -83,24 +83,24 @@ body {
 
 .titolo-grande {
   text-align: center;
-  font-size: clamp(24px, 6vw, 39.2px);
+  font-size: clamp(20px, 5vw, 32px);
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: clamp(8px, 2vw, 10px);
+  margin-bottom: 4px;
   color: white;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .filtro-e-pulsanti {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 15px;
-  max-width: 900px;
+  margin-bottom: 8px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 15px;
-  gap: 20px;
+  padding: 0 8px;
+  gap: 12px;
 }
 
 .filtro-temporale {
@@ -321,10 +321,10 @@ body {
 
 .container {
   height: 100vh;
-  max-width: 900px;
+  max-width: 95vw;
   margin-left: auto;
   margin-right: auto;
-  padding: 20px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -334,15 +334,15 @@ body {
   flex-shrink: 0;
   background-color: #0c1a2a;
   z-index: 100;
-  padding-bottom: 15px;
+  padding-bottom: 8px;
 }
 
 .tabella-wrapper {
   background-color: #1e293b;
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
   flex: 1;
-  padding: 13px;
+  padding: 6px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -397,7 +397,8 @@ body {
   background-color: #1f3a56 !important;
   font-weight: bold;
   border-bottom: none;
-  padding: 6px 12px;
+  padding: 4px 6px;
+  font-size: 13px;
 }
 
 table {
@@ -429,13 +430,14 @@ table {
 table th, table td {
   border-bottom: 1px solid #334155;
   border-right: 1px solid #334155;
-  padding: 8px 12px;
+  padding: 4px 6px;
   text-align: center;
   color: white;
   width: 16.66% !important;
   box-sizing: border-box !important;
   min-width: 0;
   max-width: 16.66%;
+  font-size: 14px;
 }
 
 table th:first-child, table td:first-child {
@@ -446,15 +448,16 @@ table th:last-child, table td:last-child {
   border-right: 1px solid #334155;
 }
 
-/* Righe dei giorni con altezza leggermente aumentata */
+/* Righe dei giorni compatte */
 table tbody tr:not(:last-child) td {
-  padding: 6px 12px;
+  padding: 3px 6px;
 }
 
 table th {
   background-color: #1f3a56;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 13px;
+  padding: 6px 4px;
 }
 
 table td {
@@ -767,30 +770,31 @@ button#btnChiudi {
 /* Media query per schermi molto piccoli */
 @media (max-width: 480px) {
   .filtro-temporale {
-    gap: 12px;
-    padding: 0 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    padding: 0 4px;
+    margin-bottom: 6px;
   }
 
   .filtro-temporale select,
   .filtro-temporale input[type="date"] {
     font-size: 16px; /* Mantiene 16px per evitare zoom su iOS */
-    padding: 14px 16px;
-    height: 52px;
-    border-radius: 12px;
+    padding: 8px 12px;
+    height: 40px;
+    border-radius: 8px;
   }
 
   .container {
-    padding: 10px;
+    padding: 4px;
   }
 
   .titolo-grande {
-    font-size: 24px;
-    margin-bottom: 12px;
+    font-size: 20px;
+    margin-bottom: 4px;
   }
 
   .titolo-piccolo {
-    font-size: 14px;
+    font-size: 12px;
+    margin-bottom: 4px;
   }
 
   /* Colonne uguali per mobile */
@@ -798,8 +802,14 @@ button#btnChiudi {
     width: 16.66% !important;
     min-width: 0 !important;
     max-width: 16.66% !important;
-    font-size: 12px;
-    padding: 2px 4px;
+    font-size: 11px;
+    padding: 2px 3px;
+    line-height: 1.1;
+  }
+
+  table th {
+    font-size: 11px;
+    padding: 4px 3px;
   }
 
   table th:nth-child(4), table td:nth-child(4) {
@@ -808,103 +818,120 @@ button#btnChiudi {
 
   /* Ottimizzazioni tabella per mobile */
   .tabella-wrapper {
-    padding: 8px;
-    margin-bottom: 15px;
+    padding: 4px;
+    margin-bottom: 6px;
+    border-radius: 6px;
   }
-
-  table th, table td {
-    padding: 2px 4px;
-    font-size: 12px;
-    line-height: 1.2;
-  }
-
-  
 
   /* Testo ore più piccolo su mobile */
   table td:nth-child(4) {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: bold;
   }
 
   .pulsanti-basso {
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 12px;
-    padding: 0 10px;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 0 4px;
   }
 
   .pulsanti-basso button {
     flex: 1;
-    min-width: 70px;
-    padding: 8px 12px;
-    font-size: 12px;
-    height: 40px;
+    min-width: 60px;
+    padding: 6px 8px;
+    font-size: 11px;
+    height: 36px;
   }
 
   .modifica-icon {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   .icona-calendario-campo {
-    width: 18px;
-    height: 18px;
-    right: 8px;
+    width: 16px;
+    height: 16px;
+    right: 6px;
   }
 
   /* Menu calendario responsive per mobile */
   .menu-calendario {
-    min-width: 140px;
-    font-size: 13px;
+    min-width: 120px;
+    font-size: 12px;
   }
 
   .menu-item {
-    padding: 6px 10px;
-    font-size: 13px;
+    padding: 4px 8px;
+    font-size: 12px;
   }
 
   /* Pulsante torna a utenti responsive per mobile */
   .btn-torna-utenti {
-    top: 70px;
-    left: 10px;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
+    top: 40px;
+    left: 6px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
 
   /* Modale più adatto a mobile */
   #modal {
     width: 95%;
-    padding: 15px;
+    padding: 12px;
     max-height: 85vh;
   }
 
   #modal h2 {
-    font-size: 18px;
-    margin-bottom: 12px;
+    font-size: 16px;
+    margin-bottom: 8px;
   }
 
   #modal input[type="time"],
   #modal input[type="date"] {
     font-size: 16px;
-    padding: 8px 10px;
+    padding: 6px 8px;
   }
 
   .modal-btns {
-    margin-top: 15px;
-    gap: 8px;
+    margin-top: 12px;
+    gap: 6px;
   }
 
   .modal-btns button {
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  /* Riduci spazio footer tabella */
+  .tabella-footer td {
+    padding: 3px 3px;
+    font-size: 11px;
+  }
+
+  /* Filtro e pulsanti più compatti */
+  .filtro-e-pulsanti {
+    margin-bottom: 4px;
+    padding: 0 4px;
+    gap: 8px;
+  }
+
+  .pulsanti-alto button {
+    height: 36px;
+    padding: 4px 6px;
+    min-width: 40px;
+  }
+
+  .pulsanti-alto button img {
+    width: 28px;
+    height: 28px;
   }
 }
 
 /* Ottimizzazioni specifiche per desktop */
 @media (min-width: 1024px) {
   body {
-    padding: 20px;
+    padding: 8px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -913,9 +940,9 @@ button#btnChiudi {
   }
 
   .container {
-    max-width: 1200px;
+    max-width: 98vw;
     width: 100%;
-    padding: 30px;
+    padding: 12px;
     margin: 0 auto;
     position: relative;
     min-height: auto;
