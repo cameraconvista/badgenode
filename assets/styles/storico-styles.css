@@ -616,8 +616,8 @@ button#btnChiudi {
 
 .pulsanti-alto button img,
 .pulsanti-basso button img {
-  width: 24px;
-  height: 24px;
+  width: 48px;
+  height: 48px;
 }
 
 /* Icona PDF personalizzata */
@@ -1035,8 +1035,8 @@ button#btnChiudi {
   }
 
   .pulsanti-basso button img {
-    width: 28px;
-    height: 28px;
+    width: 56px;
+    height: 56px;
   }
 
   /* Modale ottimizzata per desktop */
