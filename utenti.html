@@ -87,6 +87,21 @@
       background-color: rgba(255, 255, 255, 0.1);
     }
 
+    /* Stili modale nuovo dipendente */
+    #modalNuovoDipendente {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+
     /* Stili modale dettagli dipendente */
     #modalDettagli {
       position: fixed;
@@ -462,7 +477,7 @@
 
   <!-- Pulsanti in fondo alla pagina -->
   <div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px; padding: 20px;">
-    <button onclick="window.location.href='index.html'" style="
+    <button onclick="apriModalNuovoDipendente()" style="
       background-color: #16a34a;
       color: white;
       border: none;
@@ -495,6 +510,86 @@
        onmouseout="this.style.backgroundColor='#ca8a04'; this.style.transform='translateY(0)'">
       Storico
     </button>
+  </div>
+
+  <!-- Modale Nuovo Dipendente -->
+  <div id="modalNuovoDipendente">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Aggiungi Nuovo Dipendente</h2>
+        <button class="close-btn" onclick="chiudiModalNuovoDipendente()">×</button>
+      </div>
+
+      <!-- Sezione Dati Anagrafici -->
+      <div class="sezione-modal">
+        <div class="sezione-titolo">👤 Dati Anagrafici</div>
+        <div class="campo-gruppo">
+          <div>
+            <div class="campo-label">Nome</div>
+            <input type="text" class="campo-valore" id="nuovo-nome" required>
+          </div>
+          <div>
+            <div class="campo-label">Cognome</div>
+            <input type="text" class="campo-valore" id="nuovo-cognome" required>
+          </div>
+        </div>
+        <div class="campo-gruppo">
+          <div>
+            <div class="campo-label">Email</div>
+            <input type="email" class="campo-valore" id="nuovo-email" required>
+          </div>
+          <div>
+            <div class="campo-label">Numero di Telefono</div>
+            <input type="text" class="campo-valore" id="nuovo-telefono" placeholder="Non disponibile">
+          </div>
+        </div>
+        <div class="campo-singolo">
+          <div class="campo-label">PIN (1-99)</div>
+          <input type="number" class="campo-valore" id="nuovo-pin" min="1" max="99" required>
+        </div>
+      </div>
+
+      <!-- Sezione Contratto Attivo -->
+      <div class="sezione-modal">
+        <div class="sezione-titolo">📄 Contratto Attivo</div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Upload Contratto</div>
+          <div class="upload-area" id="nuovo-upload-area">
+            <input type="file" id="nuovo-file-input" accept=".pdf,.doc,.docx" style="display: none;">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text" id="nuovo-upload-text">
+              Trascina qui il file del contratto o clicca per selezionare<br>
+              <small>(PDF, DOC, DOCX - Max 5MB)</small>
+            </div>
+            <div class="file-info" id="nuovo-file-info" style="display: none;">
+              <div class="file-name" id="nuovo-file-name"></div>
+              <div class="file-size" id="nuovo-file-size"></div>
+              <button type="button" class="remove-file-btn" id="nuovo-remove-file-btn">Rimuovi</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Descrizione Contratto in Corso</div>
+          <textarea class="campo-valore campo-textarea" id="nuovo-descrizione-contratto" 
+                    placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
+        </div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Ore max giornaliere da contratto</div>
+          <input type="number" class="campo-valore" id="nuovo-ore-contrattuali" 
+                 placeholder="8.00" step="0.25" min="0" max="24" value="8.00">
+        </div>
+
+      </div>
+
+      <!-- Pulsanti Azioni -->
+      <div class="modal-actions">
+        <button class="btn-annulla" onclick="annullaNuovoDipendente()">Annulla</button>
+        <button class="btn-salva" onclick="salvaNuovoDipendente()">Salva</button>
+      </div>
+    </div>
   </div>
 
   <!-- Modale Dettagli Dipendente -->
@@ -768,9 +863,13 @@
     // Chiudi il modale con il tasto ESC
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        const modal = document.getElementById('modalDettagli');
-        if (modal.style.display === 'flex') {
+        const modalDettagli = document.getElementById('modalDettagli');
+        const modalNuovo = document.getElementById('modalNuovoDipendente');
+        
+        if (modalDettagli.style.display === 'flex') {
           chiudiModalDettagli();
+        } else if (modalNuovo.style.display === 'flex') {
+          chiudiModalNuovoDipendente();
         }
       }
     });
@@ -883,7 +982,224 @@
       }
     };
 
-    // Funzionalità Upload File
+    // Funzioni per il modale nuovo dipendente
+    window.apriModalNuovoDipendente = () => {
+      const modal = document.getElementById('modalNuovoDipendente');
+      
+      // Reset tutti i campi
+      document.getElementById('nuovo-nome').value = '';
+      document.getElementById('nuovo-cognome').value = '';
+      document.getElementById('nuovo-email').value = '';
+      document.getElementById('nuovo-telefono').value = '';
+      document.getElementById('nuovo-pin').value = '';
+      document.getElementById('nuovo-descrizione-contratto').value = '';
+      document.getElementById('nuovo-ore-contrattuali').value = '8.00';
+
+      // Inizializza upload file per nuovo dipendente
+      inizializzaUploadFileNuovo();
+
+      // Mostra il modale
+      modal.style.display = 'flex';
+
+      // Impedisce lo scroll della pagina sottostante
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.chiudiModalNuovoDipendente = () => {
+      const modal = document.getElementById('modalNuovoDipendente');
+      modal.style.display = 'none';
+
+      // Ripristina lo scroll della pagina
+      document.body.style.overflow = 'auto';
+    };
+
+    window.annullaNuovoDipendente = () => {
+      chiudiModalNuovoDipendente();
+    };
+
+    window.salvaNuovoDipendente = async () => {
+      try {
+        // Raccogli i dati dai campi del modale
+        const nome = document.getElementById('nuovo-nome').value.trim();
+        const cognome = document.getElementById('nuovo-cognome').value.trim();
+        const email = document.getElementById('nuovo-email').value.trim();
+        const telefono = document.getElementById('nuovo-telefono').value.trim();
+        const pin = document.getElementById('nuovo-pin').value.trim();
+        const descrizioneContratto = document.getElementById('nuovo-descrizione-contratto').value.trim();
+        const oreContrattuali = parseFloat(document.getElementById('nuovo-ore-contrattuali').value) || 8.00;
+
+        // Validazione base
+        if (!nome || !cognome || !email || !pin) {
+          alert('I campi Nome, Cognome, Email e PIN sono obbligatori');
+          return;
+        }
+
+        // Validazione PIN
+        const pinNum = parseInt(pin);
+        if (isNaN(pinNum) || pinNum < 1 || pinNum > 99) {
+          alert('Il PIN deve essere un numero compreso tra 1 e 99');
+          return;
+        }
+
+        // Validazione email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          alert('Inserisci un indirizzo email valido');
+          return;
+        }
+
+        // Validazione ore giornaliere
+        if (oreContrattuali < 0 || oreContrattuali > 24) {
+          alert('Le ore giornaliere devono essere comprese tra 0 e 24');
+          return;
+        }
+
+        const nuovoDipendente = {
+          nome: nome,
+          cognome: cognome,
+          email: email,
+          telefono: telefono || null,
+          pin: pinNum,
+          descrizione_contratto: descrizioneContratto || null,
+          ore_contrattuali: oreContrattuali
+        };
+
+        console.log('Dati nuovo dipendente:', nuovoDipendente);
+
+        // Inserisci i dati su Supabase
+        const { error } = await supabase
+          .from('utenti')
+          .insert([nuovoDipendente]);
+
+        if (error) {
+          console.error('Errore durante il salvataggio:', error);
+          if (error.code === '23505') {
+            alert('Errore: PIN già esistente. Scegli un PIN diverso.');
+          } else {
+            alert('Errore durante il salvataggio: ' + error.message);
+          }
+          return;
+        }
+
+        // Successo - ricarica la lista utenti
+        await caricaUtenti();
+
+        // Mostra messaggio di successo
+        alert('✅ Nuovo dipendente aggiunto con successo!');
+
+        // Chiudi il modale
+        chiudiModalNuovoDipendente();
+
+      } catch (error) {
+        console.error('Errore imprevisto:', error);
+        alert('Errore imprevisto durante il salvataggio');
+      }
+    };
+
+    // Chiudi il modale cliccando fuori dal contenuto
+    document.getElementById('modalNuovoDipendente').addEventListener('click', (e) => {
+      if (e.target.id === 'modalNuovoDipendente') {
+        chiudiModalNuovoDipendente();
+      }
+    });
+
+    // Funzionalità Upload File per nuovo dipendente
+    function inizializzaUploadFileNuovo() {
+      const uploadArea = document.getElementById('nuovo-upload-area');
+      const fileInput = document.getElementById('nuovo-file-input');
+      const uploadText = document.getElementById('nuovo-upload-text');
+      const fileInfo = document.getElementById('nuovo-file-info');
+      const fileName = document.getElementById('nuovo-file-name');
+      const fileSize = document.getElementById('nuovo-file-size');
+      const removeFileBtn = document.getElementById('nuovo-remove-file-btn');
+
+      // Verifica esistenza elementi
+      if (!uploadArea || !fileInput || !uploadText || !fileInfo || !fileName || !fileSize || !removeFileBtn) {
+        console.warn('Alcuni elementi dell\'upload nuovo dipendente non sono stati trovati');
+        return;
+      }
+
+      // Click per aprire selezione file
+      uploadArea.addEventListener('click', (e) => {
+        if (!e.target.closest('.remove-file-btn')) {
+          fileInput.click();
+        }
+      });
+
+      // Gestione selezione file
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          gestisciFileNuovo(file);
+        }
+      });
+
+      // Drag & Drop events
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+
+      uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          gestisciFileNuovo(files[0]);
+        }
+      });
+
+      // Rimozione file
+      removeFileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        rimuoviFileNuovo();
+      });
+
+      function gestisciFileNuovo(file) {
+        // Validazione tipo file
+        const tipiAccettati = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        if (!tipiAccettati.includes(file.type)) {
+          alert('Tipo di file non supportato. Seleziona un file PDF, DOC o DOCX.');
+          return;
+        }
+
+        // Validazione dimensione (5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.size > maxSize) {
+          alert('Il file è troppo grande. La dimensione massima consentita è 5MB.');
+          return;
+        }
+
+        // Mostra informazioni file
+        fileName.textContent = file.name;
+        fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+
+        uploadText.style.display = 'none';
+        fileInfo.style.display = 'block';
+
+        uploadArea.style.borderColor = '#10b981';
+        uploadArea.style.backgroundColor = '#064e3b';
+
+        console.log('File caricato:', file.name, 'Dimensione:', file.size, 'bytes');
+      }
+
+      function rimuoviFileNuovo() {
+        fileInput.value = '';
+        uploadText.style.display = 'block';
+        fileInfo.style.display = 'none';
+
+        uploadArea.style.borderColor = '#4b5563';
+        uploadArea.style.backgroundColor = '#374151';
+      }
+    }
+
+    // Funzionalità Upload File per modifica dipendente
     function inizializzaUploadFile() {
       const uploadArea = document.getElementById('upload-area');
       const fileInput = document.getElementById('file-input');
