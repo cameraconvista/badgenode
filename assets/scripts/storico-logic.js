@@ -148,7 +148,7 @@ function renderizzaTabella() {
 
   const start = new Date(dataInizio.value + 'T00:00:00');
   const end = new Date(dataFine.value + 'T00:00:00');
-  const giorniSettimana = ["Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato"];
+  const giorniSettimana = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 
   let totaleMensileOre = 0;
   let totaleMensileExtra = 0;
@@ -162,10 +162,7 @@ function renderizzaTabella() {
     const giornoSettimana = giorniSettimana[current.getDay()];
     const giornoNumero = current.getDate().toString().padStart(2, "0");
 
-    const isMobile = window.innerWidth <= 480;
-    const dataFormattata = isMobile ?
-      `${giornoNumero} ${giornoSettimana.slice(0,3)}` :
-      `${giornoNumero}  ${giornoSettimana}`;
+    const dataFormattata = `${giornoNumero} ${giornoSettimana.slice(0,3)}`;
 
     // Logica per le timbrature del giorno...
     const timbratureOggi = timbrature.filter(t => {
