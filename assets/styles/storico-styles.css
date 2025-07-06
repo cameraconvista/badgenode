@@ -569,8 +569,8 @@ button#btnChiudi {
   padding: 10px 18px;
   font-weight: 700;
   font-size: 14px;
-  color: #222;
-  background: #ddd;
+  color: transparent;
+  background: transparent;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -598,8 +598,8 @@ button#btnChiudi {
 }
 
 .pulsanti-basso button:hover {
-  background: #1e90ff;
-  color: white;
+  background: rgba(30, 144, 255, 0.2);
+  color: transparent;
 }
 
 .pulsanti-basso button img {
