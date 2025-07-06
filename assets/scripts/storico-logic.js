@@ -641,6 +641,140 @@ document.getElementById("btn-invia").addEventListener("click", function() {
   doc.save(nomeFile);
 });
 
+// Funzionalità Excel
+document.getElementById("btn-esporta").addEventListener("click", function() {
+  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
+  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
+  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
+  
+  // Calcola le ore totali dalla tabella footer
+  const footerRow = document.querySelector('#totale-footer tr');
+  let totaleMensile = '—';
+  
+  if (footerRow) {
+    const cells = footerRow.querySelectorAll('td');
+    if (cells.length >= 4) {
+      totaleMensile = cells[3].textContent.trim();
+    }
+  }
+  
+  // Crea un nuovo workbook
+  const wb = XLSX.utils.book_new();
+  
+  // Dati per il foglio di riepilogo
+  const riepilogoData = [
+    ['CAMERA CON VISTA Bistrot'],
+    ['RIEPILOGO MENSILE TIMBRATURE'],
+    [''],
+    ['Dipendente:', `${nomeCompleto} (PIN: ${pin})`],
+    ['Periodo:', `dal ${dataInizioFormatted} al ${dataFineFormatted}`],
+    ['Ore totali:', totaleMensile],
+    [''],
+    ['Data', 'Entrata', 'Uscita', 'Ore Giornaliere']
+  ];
+  
+  // Aggiungi i dati delle timbrature
+  const righeTabella = document.querySelectorAll('#storico-body tr');
+  
+  righeTabella.forEach(riga => {
+    const cells = riga.querySelectorAll('td');
+    if (cells.length >= 4) {
+      const data = cells[0].textContent.trim();
+      const entrata = cells[1].textContent.trim();
+      const uscita = cells[2].textContent.trim();
+      const ore = cells[3].textContent.trim();
+      
+      // Aggiungi riga solo se ci sono dati significativi
+      if (entrata !== '—' || uscita !== '—') {
+        riepilogoData.push([data, entrata, uscita, ore]);
+      }
+    }
+  });
+  
+  // Aggiungi riga vuota e totale
+  riepilogoData.push(['']);
+  riepilogoData.push(['TOTALE MENSILE', '', '', totaleMensile]);
+  
+  // Aggiungi footer con data generazione
+  const dataGenerazione = new Date().toLocaleDateString('it-IT') + ' ' + new Date().toLocaleTimeString('it-IT');
+  riepilogoData.push(['']);
+  riepilogoData.push([`Generato il: ${dataGenerazione}`]);
+  
+  // Crea il foglio di lavoro
+  const ws = XLSX.utils.aoa_to_sheet(riepilogoData);
+  
+  // Imposta la larghezza delle colonne
+  ws['!cols'] = [
+    { width: 15 }, // Data
+    { width: 10 }, // Entrata
+    { width: 10 }, // Uscita
+    { width: 15 }  // Ore
+  ];
+  
+  // Stile per le celle del titolo (merge delle prime celle)
+  ws['!merges'] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }, // Titolo azienda
+    { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }  // Sottotitolo
+  ];
+  
+  // Aggiungi il foglio al workbook
+  XLSX.utils.book_append_sheet(wb, ws, 'Riepilogo Timbrature');
+  
+  // Crea secondo foglio con dettagli timbrature complete
+  if (timbrature && timbrature.length > 0) {
+    const dettagliData = [
+      ['DETTAGLIO COMPLETO TIMBRATURE'],
+      [''],
+      ['Data', 'Ora', 'Tipo', 'Giorno Logico']
+    ];
+    
+    // Filtra e ordina le timbrature per il periodo
+    const timbratureFiltrate = timbrature.filter(t => {
+      let dataRiferimento = t.giornologico || t.data;
+      if (typeof dataRiferimento !== 'string') {
+        dataRiferimento = new Date(dataRiferimento).toISOString().split('T')[0];
+      } else if (dataRiferimento.includes('T')) {
+        dataRiferimento = dataRiferimento.split('T')[0];
+      }
+      return dataRiferimento >= dataInizio.value && dataRiferimento <= dataFine.value;
+    }).sort((a, b) => {
+      const dataA = a.giornologico || a.data;
+      const dataB = b.giornologico || b.data;
+      if (dataA !== dataB) return dataA.localeCompare(dataB);
+      return a.ore.localeCompare(b.ore);
+    });
+    
+    timbratureFiltrate.forEach(t => {
+      const dataFormatted = new Date(t.data).toLocaleDateString('it-IT');
+      const giornoLogico = t.giornologico ? new Date(t.giornologico + 'T12:00:00').toLocaleDateString('it-IT') : dataFormatted;
+      dettagliData.push([
+        dataFormatted,
+        t.ore.slice(0,5),
+        t.tipo.toUpperCase(),
+        giornoLogico
+      ]);
+    });
+    
+    const wsDettagli = XLSX.utils.aoa_to_sheet(dettagliData);
+    wsDettagli['!cols'] = [
+      { width: 12 }, // Data
+      { width: 8 },  // Ora
+      { width: 10 }, // Tipo
+      { width: 12 }  // Giorno Logico
+    ];
+    
+    wsDettagli['!merges'] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } } // Titolo
+    ];
+    
+    XLSX.utils.book_append_sheet(wb, wsDettagli, 'Dettaglio Completo');
+  }
+  
+  // Salva il file Excel
+  const nomeFileExcel = `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.xlsx`;
+  XLSX.writeFile(wb, nomeFileExcel);
+});
+
 // Inizializzazione
 document.addEventListener('DOMContentLoaded', function() {
   initCalendarUtils();
