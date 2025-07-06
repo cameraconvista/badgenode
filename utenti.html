@@ -37,43 +37,7 @@
       font-weight: bold;
     }
 
-    .form-riga {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: nowrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .form-riga input,
-    .form-riga button {
-      padding: 12px 16px;
-      font-size: 14px;
-      border-radius: 8px;
-      border: none;
-      font-weight: 500;
-      text-align: center;
-    }
-
-    .form-riga input {
-      background-color: white;
-      color: black;
-    }
-
-    #nome, #cognome, #email, .form-riga button { width: 150px; }
-    #pin { width: 60px; }
-
-    .form-riga button {
-      background-color: #4f46e5;
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .form-riga button:hover {
-      background-color: #4338ca;
-    }
+    
 
     table {
       width: 100%;
@@ -352,13 +316,7 @@
     <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="display:block; margin:5px auto 0; width:120px;" />
     <h1>Archivio Dipendenti</h1>
 
-    <form id="form-aggiungi" class="form-riga">
-      <input type="text" id="nome" placeholder="Nome" required />
-      <input type="text" id="cognome" placeholder="Cognome" required />
-      <input type="text" id="pin" placeholder="PIN" maxlength="2" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <button type="submit">Aggiungi</button>
-    </form>
+    
 
     <table>
       <thead>
