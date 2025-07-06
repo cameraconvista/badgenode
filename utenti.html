@@ -409,26 +409,7 @@
 
     
 
-    <!-- Form aggiungi utente -->
-    <form id="form-aggiungi" style="background: #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: flex; gap: 15px; flex-wrap: wrap; align-items: end;">
-      <div style="flex: 1; min-width: 120px;">
-        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8;">PIN</label>
-        <input type="text" id="pin" placeholder="PIN" required style="width: 100%; padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #374151; color: white; font-size: 14px;">
-      </div>
-      <div style="flex: 2; min-width: 150px;">
-        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8;">Nome</label>
-        <input type="text" id="nome" placeholder="Nome" required style="width: 100%; padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #374151; color: white; font-size: 14px;">
-      </div>
-      <div style="flex: 2; min-width: 150px;">
-        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8;">Cognome</label>
-        <input type="text" id="cognome" placeholder="Cognome" required style="width: 100%; padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #374151; color: white; font-size: 14px;">
-      </div>
-      <div style="flex: 2; min-width: 200px;">
-        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #94a3b8;">Email</label>
-        <input type="email" id="email" placeholder="Email" required style="width: 100%; padding: 10px; border: 1px solid #4b5563; border-radius: 6px; background: #374151; color: white; font-size: 14px;">
-      </div>
-      <button type="submit" style="padding: 12px 20px; background: #16a34a; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; height: 42px;">Aggiungi</button>
-    </form>
+    
 
     <table>
       <thead>
@@ -677,14 +658,6 @@
     );
 
     const tbody = document.getElementById("lista-dipendenti");
-    const form = document.getElementById("form-aggiungi");
-    const nomeInput = document.getElementById("nome");
-    const cognomeInput = document.getElementById("cognome");
-    const pinInput = document.getElementById("pin");
-    const emailInput = document.getElementById("email");
-    const btn = form.querySelector("button");
-
-    let idDaModificare = null;
 
     async function caricaUtenti() {
       try {
@@ -751,51 +724,7 @@
       }
     };
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const nuovoUtente = {
-        nome: nomeInput.value.trim(),
-        cognome: cognomeInput.value.trim(),
-        pin: pinInput.value.trim(),
-        email: emailInput.value.trim(),
-        ore_contrattuali: 8.00  // Valore di default
-      };
-
-      if (Object.values(nuovoUtente).some(val => val === '' || val === null)) {
-        alert("Compila tutti i campi.");
-        return;
-      }
-
-      let errore = null;
-
-      try {
-        if (idDaModificare) {
-          ({ error: errore } = await supabase
-            .from("utenti")
-            .update(nuovoUtente)
-            .eq("pin", idDaModificare));
-          idDaModificare = null;
-          btn.textContent = "Aggiungi";
-        } else {
-          ({ error: errore } = await supabase
-            .from("utenti")
-            .insert([nuovoUtente]));
-        }
-
-        if (errore) {
-          console.error("Errore database:", errore);
-          alert("Errore: " + errore.message);
-          return;
-        }
-
-        form.reset();
-        caricaUtenti();
-      } catch (error) {
-        console.error("Errore imprevisto:", error);
-        alert("Errore durante l'operazione");
-      }
-    });
+    
 
     // Variabile globale per memorizzare i dati originali
     let datiOriginali = {};
