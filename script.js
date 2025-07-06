@@ -71,3 +71,13 @@ window.utils = {
   gestisciErroreSupabase,
   getOraDecimale
 };
+
+// Placeholder for the part of the code that needs to be modified
+function updateStatusMessage(utente, tipo, oraAttuale, statusDiv) {
+    const tipoColorato = tipo === 'entrata' 
+      ? `<span style="color: #10b981; font-weight: bold;">ENTRATA</span>`
+      : `<span style="color: #ef4444; font-weight: bold;">USCITA</span>`;
+
+    statusDiv.innerHTML = `${utente.nome} ${utente.cognome} ${tipoColorato} ${oraAttuale}`;
+    statusDiv.className = `status-message visible ${tipo === 'entrata' ? 'success' : 'error'}`;
+}
