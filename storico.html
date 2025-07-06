@@ -61,29 +61,31 @@
         <h1 id="intestazione" class="titolo-grande">Nome Cognome</h1>
       </div>
 
-      <div class="filtro-temporale">
-        <select id="filtro-mese">
-          <option value="corrente">Mese corrente</option>
-          <option value="precedente">Mese precedente</option>
-          <option value="due-precedenti">2 mesi precedenti</option>
-        </select>
-        <div class="data-container">
-          <input type="date" id="data-inizio" />
-          <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-inizio" />
+      <div class="filtro-e-pulsanti">
+        <div class="filtro-temporale">
+          <select id="filtro-mese">
+            <option value="corrente">Mese corrente</option>
+            <option value="precedente">Mese precedente</option>
+            <option value="due-precedenti">2 mesi precedenti</option>
+          </select>
+          <div class="data-container">
+            <input type="date" id="data-inizio" />
+            <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-inizio" />
+          </div>
+          <div class="data-container">
+            <input type="date" id="data-fine" />
+            <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-fine" />
+          </div>
         </div>
-        <div class="data-container">
-          <input type="date" id="data-fine" />
-          <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-fine" />
-        </div>
-      </div>
 
-      <div class="pulsanti-alto">
-        <button id="btn-invia" title="Scarica PDF">
-          <img src="assets/icons/pdf.png" alt="PDF" />
-        </button>
-        <button id="btn-esporta" title="Esporta Excel">
-          <img src="assets/icons/esporta.png" alt="Esporta Excel" />
-        </button>
+        <div class="pulsanti-alto">
+          <button id="btn-invia" title="Scarica PDF">
+            <img src="assets/icons/pdf.png" alt="PDF" />
+          </button>
+          <button id="btn-esporta" title="Esporta Excel">
+            <img src="assets/icons/esporta.png" alt="Esporta Excel" />
+          </button>
+        </div>
       </div>
     </div>
 
