@@ -504,66 +504,50 @@ document.getElementById("torna-utenti").addEventListener("click", function() {
   window.location.href = "utenti.html";
 });
 
-// Funzionalità WhatsApp con scheda visiva completa
+// Funzionalità WhatsApp con formato semplificato
 document.getElementById("btn-whatsapp").addEventListener("click", function() {
   const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
   const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
   const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
   
-  // Calcola totali dalla tabella footer
+  // Calcola solo le ore totali dalla tabella footer
   const footerRow = document.querySelector('#totale-footer tr');
   let totaleMensile = '—';
-  let totaleExtra = '';
   
   if (footerRow) {
     const cells = footerRow.querySelectorAll('td');
     if (cells.length >= 4) {
       totaleMensile = cells[3].textContent.trim();
-      if (cells.length >= 5) {
-        totaleExtra = cells[4].textContent.trim();
-      }
     }
   }
   
-  // Genera la tabella delle timbrature
+  // Genera la tabella delle timbrature semplificata (solo Data, Entrata, Uscita)
   const righeTabella = document.querySelectorAll('#storico-body tr');
   let tabellaTimbrature = '';
   
   righeTabella.forEach(riga => {
     const cells = riga.querySelectorAll('td');
-    if (cells.length >= 5) {
+    if (cells.length >= 3) {
       const data = cells[0].textContent.trim();
       const entrata = cells[1].textContent.trim();
       const uscita = cells[2].textContent.trim();
-      const ore = cells[3].textContent.trim();
-      const extra = cells[4].textContent.trim();
       
       // Formatta la riga solo se ci sono dati significativi
       if (entrata !== '—' || uscita !== '—') {
-        const extraFormatted = extra ? ` ${extra.replace(/(<([^>]+)>)/gi, "")}` : '';
-        tabellaTimbrature += `│ ${data.padEnd(8)} │ ${entrata.padEnd(5)} │ ${uscita.padEnd(5)} │ ${ore.padEnd(5)}${extraFormatted}\n`;
+        tabellaTimbrature += `${data.padEnd(10)} ${entrata.padEnd(10)} ${uscita.padEnd(10)}\n`;
       }
     }
   });
   
-  // Genera il messaggio completo con scheda visiva
-  const messaggio = `📊 *STORICO TIMBRATURE - BADGEBOX*\n` +
-                   `═══════════════════════════════════\n\n` +
+  // Genera il messaggio semplificato come nell'esempio
+  const messaggio = `CAMERA CON VISTA Bistrot\n\n` +
+                   `*RIEPILOGO MENSILE:*\n\n` +
                    `👤 *${nomeCompleto}* (PIN: ${pin})\n` +
                    `📅 Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}\n\n` +
-                   `📈 *RIEPILOGO MENSILE:*\n` +
-                   `⏰ Ore totali: ${totaleMensile}\n` +
-                   (totaleExtra ? `🕐 Ore extra: ${totaleExtra.replace(/(<([^>]+)>)/gi, "")}\n` : '') +
-                   `📊 PIN dipendente: ${pin}\n\n` +
-                   `┌─────────────────────────────────┐\n` +
-                   `│      DETTAGLIO TIMBRATURE       │\n` +
-                   `├─────────────────────────────────┤\n` +
-                   `│ Data     │ Entr. │ Usci. │ Ore  │\n` +
-                   `├─────────────────────────────────┤\n` +
-                   (tabellaTimbrature || '│ Nessuna timbratura nel periodo  │\n') +
-                   `└─────────────────────────────────┘\n\n` +
-                   `🚀 *Generato da BADGEBOX*\n` +
-                   `📱 Data: ${new Date().toLocaleDateString('it-IT')} ${new Date().toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'})}`;
+                   `Ore totali: ${totaleMensile}\n\n` +
+                   `DETTAGLIO TIMBRATURE\n\n` +
+                   `Data      Entrata    Uscita\n` +
+                   (tabellaTimbrature || 'Nessuna timbratura nel periodo\n');
   
   const url = `https://wa.me/?text=${encodeURIComponent(messaggio)}`;
   window.open(url, '_blank');
