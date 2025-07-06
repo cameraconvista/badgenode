@@ -386,6 +386,7 @@ body {
 
 .tabella-footer table {
   margin: 0;
+  table-layout: fixed;
 }
 
 .tabella-footer tr {
@@ -405,14 +406,17 @@ table {
   border-spacing: 0;
   background-color: transparent;
   border-radius: 0;
+  table-layout: fixed;
 }
 
 .tabella-header table {
   margin-bottom: 0;
+  table-layout: fixed;
 }
 
 .tabella-body-wrapper table {
   margin-top: 0;
+  table-layout: fixed;
 }
 
 table th, table td {
@@ -421,10 +425,8 @@ table th, table td {
   padding: 8px 12px;
   text-align: center;
   color: white;
-}
-
-table th, table td {
   width: 16.66%;
+  box-sizing: border-box;
 }
 
 table th:first-child, table td:first-child {
