@@ -1,4 +1,3 @@
-
 /* Sfondo generale */
 body {
   background-color: #0c1a2a;
@@ -30,11 +29,11 @@ body {
     border-radius: 8px;
     transition: background-color 0.2s;
   }
-  
+
   .modifica-icon:hover, .modifica-icon:active {
     background-color: rgba(255, 255, 255, 0.1);
   }
-  
+
   /* Migliora i pulsanti */
   .pulsanti-basso button {
     min-height: 48px;
@@ -43,7 +42,7 @@ body {
     border-radius: 12px;
     touch-action: manipulation;
   }
-  
+
   /* Ottimizza i form elements */
   .filtro-temporale select,
   .filtro-temporale input[type="date"] {
@@ -60,12 +59,12 @@ body {
     font-weight: 600;
     letter-spacing: -0.5px;
   }
-  
+
   .titolo-piccolo {
     font-weight: 400;
     letter-spacing: 0.25px;
   }
-  
+
   /* Ottimizza lo scroll orizzontale */
   .tabella-wrapper {
     -webkit-overflow-scrolling: touch;
@@ -471,7 +470,7 @@ button#btnChiudi {
 /* Pulsante torna a utenti in alto a sinistra */
 .btn-torna-utenti {
   position: absolute;
-  top: 170px;
+  top: 80px;
   left: 20px;
   background: rgba(60, 60, 60, 0.9);
   color: white;
@@ -792,7 +791,7 @@ button#btnChiudi {
 
   /* Pulsante torna a utenti responsive per mobile */
   .btn-torna-utenti {
-    top: 160px;
+    top: 70px;
     left: 10px;
     width: 40px;
     height: 40px;
