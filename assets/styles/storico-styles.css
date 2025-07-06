@@ -549,6 +549,16 @@ button#btnChiudi {
   transform: scale(0.95);
 }
 
+/* Contenitore pulsanti in alto a destra sopra la tabella */
+.pulsanti-alto {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  padding: 0 15px;
+}
+
 /* Contenitore pulsanti in fondo alla tabella */
 .pulsanti-basso {
   display: flex;
@@ -562,6 +572,7 @@ button#btnChiudi {
   padding: 4px 0;
 }
 
+.pulsanti-alto button,
 .pulsanti-basso button {
   cursor: pointer;
   border: none;
@@ -597,11 +608,13 @@ button#btnChiudi {
   cursor: pointer;
 }
 
+.pulsanti-alto button:hover,
 .pulsanti-basso button:hover {
   background: rgba(30, 144, 255, 0.2);
   color: transparent;
 }
 
+.pulsanti-alto button img,
 .pulsanti-basso button img {
   width: 24px;
   height: 24px;
