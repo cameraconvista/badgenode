@@ -430,6 +430,7 @@
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 1, nome: 'Mario', cognome: 'Rossi', email: 'mario.rossi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
                 <button onclick="archiviaUtente('1')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
+                <button onclick="eliminaUtente('1', 'Mario', 'Rossi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
           </td>
         </tr>
         <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
@@ -440,6 +441,7 @@
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 2, nome: 'Luigi', cognome: 'Verdi', email: 'luigi.verdi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
                 <button onclick="archiviaUtente('2')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
+                <button onclick="eliminaUtente('2', 'Luigi', 'Verdi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
           </td>
         </tr>
         <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
@@ -450,6 +452,7 @@
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 3, nome: 'Anna', cognome: 'Bianchi', email: 'anna.bianchi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
                 <button onclick="archiviaUtente('3')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
+                <button onclick="eliminaUtente('3', 'Anna', 'Bianchi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
           </td>
         </tr>
       </tbody>
@@ -694,6 +697,7 @@
               <td onclick="event.stopPropagation()">
                 <button onclick="apriModalDettagli({pin: ${utente.pin}, nome: '${utente.nome}', cognome: '${utente.cognome}', email: '${utente.email}', telefono: '${utente.telefono || ''}', descrizione_contratto: '${utente.descrizione_contratto || ''}', ore_contrattuali: ${utente.ore_contrattuali || 8.00}})" style="margin-right: 8px;" title="Modifica">✏️</button>
                 <button onclick="archiviaUtente('${utente.pin}')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
+                <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
               </td>
           `;
           tbody.appendChild(riga);
@@ -705,6 +709,59 @@
     }
 
     // Funzione modificaUtente rimossa - ora si usa apriModalDettagli
+
+    window.eliminaUtente = async (pin, nome, cognome) => {
+      // Primo messaggio di conferma
+      if (!confirm(`⚠️ ATTENZIONE! Stai per eliminare DEFINITIVAMENTE il dipendente:\n\n${nome} ${cognome} (PIN: ${pin})\n\nQuesta azione eliminerà:\n• Il dipendente dall'app\n• Tutte le sue timbrature\n• Tutti i suoi dati\n\nQuesta operazione NON può essere annullata!\n\nVuoi continuare?`)) {
+        return;
+      }
+
+      // Secondo messaggio di conferma più forte
+      if (!confirm(`🔴 ULTIMA CONFERMA!\n\nSei ASSOLUTAMENTE SICURO di voler eliminare DEFINITIVAMENTE:\n\n${nome} ${cognome}\n\nDigita "ELIMINA" nella prossima finestra per confermare.`)) {
+        return;
+      }
+
+      // Terza conferma con prompt
+      const confermaFinale = prompt(`Per confermare l'eliminazione DEFINITIVA di:\n${nome} ${cognome}\n\nScrivi esattamente: ELIMINA`);
+      
+      if (confermaFinale !== "ELIMINA") {
+        alert("Eliminazione annullata. Il testo inserito non corrisponde.");
+        return;
+      }
+
+      try {
+        // Elimina prima tutte le timbrature del dipendente
+        const { error: errorTimbrature } = await supabase
+          .from("timbrature")
+          .delete()
+          .eq("pin", pin);
+
+        if (errorTimbrature) {
+          console.error("Errore eliminazione timbrature:", errorTimbrature);
+          alert("Errore durante l'eliminazione delle timbrature: " + errorTimbrature.message);
+          return;
+        }
+
+        // Elimina il dipendente dalla tabella utenti
+        const { error: errorUtente } = await supabase
+          .from("utenti")
+          .delete()
+          .eq("pin", pin);
+
+        if (errorUtente) {
+          console.error("Errore eliminazione utente:", errorUtente);
+          alert("Errore durante l'eliminazione del dipendente: " + errorUtente.message);
+          return;
+        }
+
+        alert(`✅ Dipendente ${nome} ${cognome} eliminato DEFINITIVAMENTE dall'app!\n\nTutti i dati e le timbrature sono stati cancellati.`);
+        caricaUtenti();
+
+      } catch (error) {
+        console.error("Errore imprevisto:", error);
+        alert("Errore durante l'eliminazione definitiva");
+      }
+    };
 
     window.archiviaUtente = async (pin) => {
       if (!confirm("Sei sicuro di voler archiviare questo dipendente?")) return;
