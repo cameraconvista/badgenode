@@ -7,6 +7,12 @@ body {
   padding: 0;
   overflow-x: hidden;
   touch-action: manipulation;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Stili tabella */
@@ -77,11 +83,12 @@ body {
 
 .titolo-grande {
   text-align: center;
-  font-size: 39.2px;
+  font-size: clamp(24px, 6vw, 39.2px);
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: clamp(8px, 2vw, 10px);
   color: white;
+  line-height: 1.2;
 }
 
 .filtro-temporale {

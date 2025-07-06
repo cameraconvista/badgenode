@@ -12,8 +12,16 @@ html, body {
   background-color: #0d1b2a;
   color: white;
   overflow-x: hidden;
-  -webkit-text-size-adjust: 100%;
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 body {
@@ -22,27 +30,31 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 10px;
+  min-height: 100dvh;
+  padding: 8px;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* CONTAINER PRINCIPALE */
 .main-container {
   width: 100%;
-  max-width: 400px;
+  max-width: min(400px, calc(100vw - 16px));
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: clamp(10px, 3vw, 15px);
   background-color: #1e293b;
-  border-radius: 20px;
-  padding: 30px 25px;
+  border-radius: clamp(12px, 4vw, 20px);
+  padding: clamp(20px, 5vw, 30px) clamp(15px, 4vw, 25px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: auto;
 }
 
 /* LOGO */
 .logo {
-  width: 120px;
+  width: clamp(90px, 25vw, 120px);
   height: auto;
   margin-bottom: 0;
 }
@@ -54,19 +66,20 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
+  gap: clamp(10px, 3vw, 15px);
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .date-text {
-  font-size: 18px;
+  font-size: clamp(16px, 4.5vw, 18px);
   color: #a0aec0;
   margin: 0;
   font-weight: 600;
 }
 
 .time-text {
-  font-size: 18px;
+  font-size: clamp(16px, 4.5vw, 18px);
   color: white;
   font-weight: bold;
   margin: 0;
@@ -75,24 +88,24 @@ body {
 /* DISPLAY PIN */
 .pin-display {
   width: 100%;
-  max-width: 225px;
-  padding: 15px;
-  font-size: 36px;
+  max-width: min(225px, calc(100vw - 60px));
+  padding: clamp(12px, 3.5vw, 15px);
+  font-size: clamp(28px, 8vw, 36px);
   font-weight: bold;
   text-align: center;
   background-color: #e2e8f0;
   color: #333;
   border: none;
-  border-radius: 15px;
-  letter-spacing: 3px;
-  margin-bottom: 20px;
+  border-radius: clamp(10px, 3vw, 15px);
+  letter-spacing: clamp(2px, 0.5vw, 3px);
+  margin-bottom: clamp(15px, 4vw, 20px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   outline: none;
 }
 
 .pin-display::placeholder {
   color: #666;
-  font-size: 32px;
+  font-size: clamp(26px, 7vw, 32px);
 }
 
 /* MESSAGGI DI STATO */
@@ -134,21 +147,21 @@ body {
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  gap: clamp(10px, 3vw, 15px);
   width: 100%;
-  max-width: 300px;
-  margin-bottom: 30px;
+  max-width: min(300px, calc(100vw - 40px));
+  margin-bottom: clamp(20px, 5vw, 30px);
   justify-items: center;
 }
 
 .keypad-button {
-  width: 80px;
-  height: 80px;
+  width: clamp(60px, 18vw, 80px);
+  height: clamp(60px, 18vw, 80px);
   border-radius: 50%;
   background-color: #2d3748;
   border: 2px solid #4a5568;
   color: white;
-  font-size: 24px;
+  font-size: clamp(18px, 5vw, 24px);
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -174,17 +187,17 @@ body {
 /* AZIONI ENTRATA/USCITA */
 .action-buttons {
   display: flex;
-  gap: 20px;
+  gap: clamp(15px, 4vw, 20px);
   width: 100%;
-  max-width: 300px;
+  max-width: min(300px, calc(100vw - 40px));
 }
 
 .action-button {
   flex: 1;
-  padding: 18px 0;
+  padding: clamp(14px, 4vw, 18px) 0;
   border: none;
-  border-radius: 15px;
-  font-size: 18px;
+  border-radius: clamp(10px, 3vw, 15px);
+  font-size: clamp(16px, 4.5vw, 18px);
   font-weight: 600;
   color: white;
   cursor: pointer;
@@ -192,8 +205,9 @@ body {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: clamp(0.5px, 0.2vw, 1px);
   touch-action: manipulation;
+  min-height: 44px;
 }
 
 .action-button.entrata {
