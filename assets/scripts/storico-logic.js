@@ -151,6 +151,7 @@ function renderizzaTabella() {
   const giorniSettimana = ["Domenica", "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi", "Sabato"];
 
   let totaleMensileOre = 0;
+  let totaleMensileExtra = 0;
 
   const startDateFixed = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 12, 0, 0);
   const endDateFixed = new Date(end.getFullYear(), end.getMonth(), end.getDate(), 12, 0, 0);
@@ -219,6 +220,7 @@ function renderizzaTabella() {
       const oreExtraInt = Math.floor(oreExtra);
       const minutiExtra = Math.round((oreExtra - oreExtraInt) * 60);
       extraContent = `<span style="color: #fbbf24; font-weight: bold;">+${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')}</span>`;
+      totaleMensileExtra += oreExtra;
     }
 
     const timbraturaId = timbratureEntrata.length > 0 ? timbratureEntrata[0].id : 'nuovo';
@@ -249,12 +251,21 @@ function renderizzaTabella() {
   const footerTbody = document.getElementById("totale-footer");
   footerTbody.innerHTML = "";
   const rigaTotale = document.createElement("tr");
+  
+  // Calcola il totale extra formattato
+  let totaleExtraContent = '';
+  if (totaleMensileExtra > 0) {
+    const oreExtraTotali = Math.floor(totaleMensileExtra);
+    const minutiExtraTotali = Math.round((totaleMensileExtra % 1) * 60);
+    totaleExtraContent = `<span style="color: #fbbf24; font-weight: bold;">+${oreExtraTotali}:${minutiExtraTotali.toString().padStart(2, '0')}</span>`;
+  }
+  
   rigaTotale.innerHTML = `
     <td style="text-align:left;">TOTALE MENSILE</td>
     <td></td>
     <td></td>
     <td style="color: #ffff99;">${totaleMensileOre.toFixed(2)}</td>
-    <td></td>
+    <td style="text-align: center;">${totaleExtraContent}</td>
     <td></td>
   `;
   footerTbody.appendChild(rigaTotale);
