@@ -50,47 +50,56 @@
   </script>
 </head>
 <body>
-  <div class="container" style="position: relative;">
+  <div class="container">
     <button id="torna-utenti" class="btn-torna-utenti" title="Torna a Utenti">
       ⬅
     </button>
-    <div style="position: relative; text-align: center; margin-bottom: 10px;">
-      <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="width: 120px; height: auto; margin-bottom: -5px;" />
-      <p class="titolo-piccolo">Storico Timbrature</p>
-      <h1 id="intestazione" class="titolo-grande">Nome Cognome</h1>
-    </div>
-
-    <div class="filtro-temporale">
-      <select id="filtro-mese">
-        <option value="corrente">Mese corrente</option>
-        <option value="precedente">Mese precedente</option>
-        <option value="due-precedenti">2 mesi precedenti</option>
-      </select>
-      <div class="data-container">
-        <input type="date" id="data-inizio" />
-        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-inizio" />
+    
+    <div class="header-fisso">
+      <div style="position: relative; text-align: center; margin-bottom: 10px;">
+        <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="width: 120px; height: auto; margin-bottom: -5px;" />
+        <p class="titolo-piccolo">Storico Timbrature</p>
+        <h1 id="intestazione" class="titolo-grande">Nome Cognome</h1>
       </div>
-      <div class="data-container">
-        <input type="date" id="data-fine" />
-        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-fine" />
+
+      <div class="filtro-temporale">
+        <select id="filtro-mese">
+          <option value="corrente">Mese corrente</option>
+          <option value="precedente">Mese precedente</option>
+          <option value="due-precedenti">2 mesi precedenti</option>
+        </select>
+        <div class="data-container">
+          <input type="date" id="data-inizio" />
+          <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-inizio" />
+        </div>
+        <div class="data-container">
+          <input type="date" id="data-fine" />
+          <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-fine" />
+        </div>
       </div>
     </div>
 
     <div class="tabella-wrapper">
       <div class="tabella-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Entrata</th>
-              <th>Uscita</th>
-              <th>Ore</th>
-              <th>EXTRA</th>
-              <th>Modifica</th>
-            </tr>
-          </thead>
-          <tbody id="storico-body"></tbody>
-        </table>
+        <div class="tabella-header">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Entrata</th>
+                <th>Uscita</th>
+                <th>Ore</th>
+                <th>EXTRA</th>
+                <th>Modifica</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="tabella-body-wrapper">
+          <table>
+            <tbody id="storico-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -103,6 +112,7 @@
       </button>
     </div>
   </div>
+</body>
 
   <div id="modalOverlay">
     <div id="modal">

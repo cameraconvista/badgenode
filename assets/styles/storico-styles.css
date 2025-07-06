@@ -306,22 +306,39 @@ body {
   background: #475569;
 }
 
+body {
+  height: 100vh;
+  overflow: hidden;
+}
+
 .container {
-  padding-bottom: 20px;
+  height: 100vh;
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header-fisso {
+  flex-shrink: 0;
+  background-color: #0c1a2a;
+  z-index: 100;
+  padding-bottom: 15px;
 }
 
 .tabella-wrapper {
   background-color: #1e293b;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-  margin-bottom: 10px;
+  flex: 1;
   padding: 13px;
   overflow: hidden;
-  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .tabella-container {
@@ -329,6 +346,22 @@ body {
   border-radius: 0;
   padding: 0;
   overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabella-header {
+  flex-shrink: 0;
+  background-color: #1e293b;
+}
+
+.tabella-body-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
 }
 
 table {
@@ -337,6 +370,14 @@ table {
   border-spacing: 0;
   background-color: transparent;
   border-radius: 0;
+}
+
+.tabella-header table {
+  margin-bottom: 0;
+}
+
+.tabella-body-wrapper table {
+  margin-top: 0;
 }
 
 table th, table td {
