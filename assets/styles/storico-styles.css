@@ -396,7 +396,7 @@ body {
   background-color: #1f3a56 !important;
   font-weight: bold;
   border-bottom: none;
-  padding: 14px 12px;
+  padding: 6px 12px;
 }
 
 table {
@@ -418,7 +418,7 @@ table {
 table th, table td {
   border-bottom: 1px solid #334155;
   border-right: 1px solid #334155;
-  padding: 11px 12px;
+  padding: 4px 12px;
   text-align: center;
   color: white;
 }
@@ -437,7 +437,7 @@ table th:last-child, table td:last-child {
 
 /* Righe dei giorni con altezza ridotta del 20% */
 table tbody tr:not(:last-child) td {
-  padding: 6px 12px;
+  padding: 2px 12px;
 }
 
 table th {
@@ -786,7 +786,7 @@ button#btnChiudi {
   table th:first-child, table td:first-child {
     width: 20%;
     font-size: 12px;
-    padding: 8px 4px;
+    padding: 2px 4px;
   }
 
   table th:nth-child(2), table td:nth-child(2),
@@ -818,7 +818,7 @@ button#btnChiudi {
   }
 
   table th, table td {
-    padding: 6px 4px;
+    padding: 2px 4px;
     font-size: 12px;
     line-height: 1.2;
   }
@@ -1036,7 +1036,7 @@ button#btnChiudi {
   }
 
   table th, table td {
-    padding: 16px 14px;
+    padding: 6px 14px;
     font-size: 16px;
   }
 
@@ -1070,7 +1070,7 @@ button#btnChiudi {
 
   /* Righe con altezza appropriata */
   tbody tr {
-    height: 50px;
+    height: 30px;
   }
 
   /* Pulsante torna ottimizzato */
@@ -1188,7 +1188,7 @@ button#btnChiudi {
   }
 
   table th, table td {
-    padding: 18px 16px;
+    padding: 8px 16px;
     font-size: 17px;
   }
 
@@ -1197,7 +1197,7 @@ button#btnChiudi {
   }
 
   tbody tr {
-    height: 55px;
+    height: 32px;
   }
 
   .pulsanti-basso button {
