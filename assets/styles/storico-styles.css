@@ -418,7 +418,7 @@ table {
 table th, table td {
   border-bottom: 1px solid #334155;
   border-right: 1px solid #334155;
-  padding: 4px 12px;
+  padding: 8px 12px;
   text-align: center;
   color: white;
 }
@@ -435,9 +435,9 @@ table th:last-child, table td:last-child {
   border-right: 1px solid #334155;
 }
 
-/* Righe dei giorni con altezza ridotta del 20% */
+/* Righe dei giorni con altezza leggermente aumentata */
 table tbody tr:not(:last-child) td {
-  padding: 2px 12px;
+  padding: 6px 12px;
 }
 
 table th {
