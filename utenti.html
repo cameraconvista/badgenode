@@ -460,6 +460,43 @@
     </table>
   </div>
 
+  <!-- Pulsanti in fondo alla pagina -->
+  <div style="display: flex; justify-content: center; gap: 20px; margin-top: 30px; padding: 20px;">
+    <button onclick="window.location.href='index.html'" style="
+      background-color: #16a34a;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 120px;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+    " onmouseover="this.style.backgroundColor='#15803d'; this.style.transform='translateY(-2px)'" 
+       onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='translateY(0)'">
+      Aggiungi
+    </button>
+    
+    <button onclick="window.location.href='storico.html'" style="
+      background-color: #ca8a04;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 120px;
+      box-shadow: 0 4px 12px rgba(202, 138, 4, 0.3);
+    " onmouseover="this.style.backgroundColor='#a16207'; this.style.transform='translateY(-2px)'" 
+       onmouseout="this.style.backgroundColor='#ca8a04'; this.style.transform='translateY(0)'">
+      Storico
+    </button>
+  </div>
+
   <!-- Modale Dettagli Dipendente -->
   <div id="modalDettagli">
     <div class="modal-content">
