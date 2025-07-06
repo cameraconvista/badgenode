@@ -1022,10 +1022,11 @@ button#btnChiudi {
     margin-top: 0;
   }
 
+  /* Reduction of PDF/Excel buttons by 30% */
   .pulsanti-alto button {
-    height: 48px;
-    padding: 8px 12px;
-    min-width: 60px;
+    height: 34px;
+    padding: 6px 8px;
+    min-width: 42px;
   }
 
   /* Tabella ottimizzata per desktop */
@@ -1058,7 +1059,7 @@ button#btnChiudi {
     max-width: 16.66% !important;
   }
 
-  table th:nth-child(4), table td:nth-child(4) {
+  table th:nth-child(4),table td:nth-child(4) {
     font-weight: 600;
   }
 
