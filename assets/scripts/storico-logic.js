@@ -148,7 +148,7 @@ function renderizzaTabella() {
 
   const start = new Date(dataInizio.value + 'T00:00:00');
   const end = new Date(dataFine.value + 'T00:00:00');
-  const giorniSettimana = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
+  const giorniSettimana = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
 
   let totaleMensileOre = 0;
   let totaleMensileExtra = 0;
