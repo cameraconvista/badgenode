@@ -94,7 +94,7 @@ body {
 .filtro-e-pulsanti {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 15px;
   max-width: 900px;
   margin-left: auto;
@@ -107,9 +107,10 @@ body {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 20px;
-  flex-wrap: nowrap;
+  gap: 15px;
+  flex-wrap: wrap;
   flex: 1;
+  max-width: 700px;
 }
 
 .filtro-temporale select {
@@ -560,9 +561,10 @@ button#btnChiudi {
 .pulsanti-alto {
   display: flex;
   justify-content: flex-end;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   flex-shrink: 0;
+  margin-top: 5px;
 }
 
 /* Contenitore pulsanti in fondo alla tabella */
