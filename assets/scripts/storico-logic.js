@@ -550,6 +550,97 @@ document.getElementById("btn-whatsapp").addEventListener("click", function() {
   window.open(url, '_blank');
 });
 
+// Funzionalità PDF
+document.getElementById("btn-invia").addEventListener("click", function() {
+  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
+  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
+  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
+  
+  // Calcola le ore totali dalla tabella footer
+  const footerRow = document.querySelector('#totale-footer tr');
+  let totaleMensile = '—';
+  
+  if (footerRow) {
+    const cells = footerRow.querySelectorAll('td');
+    if (cells.length >= 4) {
+      totaleMensile = cells[3].textContent.trim();
+    }
+  }
+  
+  // Crea nuovo documento PDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  // Titolo
+  doc.setFontSize(20);
+  doc.setFont("helvetica", "bold");
+  doc.text("CAMERA CON VISTA Bistrot", 105, 20, { align: "center" });
+  
+  // Sottotitolo
+  doc.setFontSize(16);
+  doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 35, { align: "center" });
+  
+  // Informazioni dipendente
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Dipendente: ${nomeCompleto} (PIN: ${pin})`, 20, 55);
+  doc.text(`Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}`, 20, 65);
+  doc.text(`Ore totali: ${totaleMensile}`, 20, 75);
+  
+  // Linea separatrice
+  doc.line(20, 85, 190, 85);
+  
+  // Intestazione tabella
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.text("Data", 20, 100);
+  doc.text("Entrata", 70, 100);
+  doc.text("Uscita", 120, 100);
+  doc.text("Ore", 160, 100);
+  
+  // Linea sotto intestazione
+  doc.line(20, 105, 190, 105);
+  
+  // Dati tabella
+  doc.setFont("helvetica", "normal");
+  const righeTabella = document.querySelectorAll('#storico-body tr');
+  let yPosition = 115;
+  
+  righeTabella.forEach(riga => {
+    const cells = riga.querySelectorAll('td');
+    if (cells.length >= 4) {
+      const data = cells[0].textContent.trim();
+      const entrata = cells[1].textContent.trim();
+      const uscita = cells[2].textContent.trim();
+      const ore = cells[3].textContent.trim();
+      
+      // Aggiungi riga solo se ci sono dati significativi
+      if (entrata !== '—' || uscita !== '—') {
+        doc.text(data, 20, yPosition);
+        doc.text(entrata, 70, yPosition);
+        doc.text(uscita, 120, yPosition);
+        doc.text(ore, 160, yPosition);
+        yPosition += 10;
+        
+        // Controlla se serve una nuova pagina
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = 20;
+        }
+      }
+    }
+  });
+  
+  // Footer con data generazione
+  const dataGenerazione = new Date().toLocaleDateString('it-IT') + ' ' + new Date().toLocaleTimeString('it-IT');
+  doc.setFontSize(8);
+  doc.text(`Generato il: ${dataGenerazione}`, 20, 285);
+  
+  // Salva il PDF
+  const nomeFile = `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.pdf`;
+  doc.save(nomeFile);
+});
+
 // Inizializzazione
 document.addEventListener('DOMContentLoaded', function() {
   initCalendarUtils();
