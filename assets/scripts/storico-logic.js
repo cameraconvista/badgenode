@@ -504,7 +504,7 @@ document.getElementById("torna-utenti").addEventListener("click", function() {
   window.location.href = "utenti.html";
 });
 
-// Funzionalità WhatsApp
+// Funzionalità WhatsApp con scheda visiva completa
 document.getElementById("btn-whatsapp").addEventListener("click", function() {
   const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
   const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
@@ -525,11 +525,45 @@ document.getElementById("btn-whatsapp").addEventListener("click", function() {
     }
   }
   
-  const messaggio = `📊 *Storico Timbrature - ${nomeCompleto}*\n\n` +
+  // Genera la tabella delle timbrature
+  const righeTabella = document.querySelectorAll('#storico-body tr');
+  let tabellaTimbrature = '';
+  
+  righeTabella.forEach(riga => {
+    const cells = riga.querySelectorAll('td');
+    if (cells.length >= 5) {
+      const data = cells[0].textContent.trim();
+      const entrata = cells[1].textContent.trim();
+      const uscita = cells[2].textContent.trim();
+      const ore = cells[3].textContent.trim();
+      const extra = cells[4].textContent.trim();
+      
+      // Formatta la riga solo se ci sono dati significativi
+      if (entrata !== '—' || uscita !== '—') {
+        const extraFormatted = extra ? ` ${extra.replace(/(<([^>]+)>)/gi, "")}` : '';
+        tabellaTimbrature += `│ ${data.padEnd(8)} │ ${entrata.padEnd(5)} │ ${uscita.padEnd(5)} │ ${ore.padEnd(5)}${extraFormatted}\n`;
+      }
+    }
+  });
+  
+  // Genera il messaggio completo con scheda visiva
+  const messaggio = `📊 *STORICO TIMBRATURE - BADGEBOX*\n` +
+                   `═══════════════════════════════════\n\n` +
+                   `👤 *${nomeCompleto}* (PIN: ${pin})\n` +
                    `📅 Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}\n\n` +
-                   `⏰ Totale ore lavorate: ${totaleMensile}\n` +
-                   (totaleExtra ? `🕐 Ore extra: ${totaleExtra}\n\n` : '\n') +
-                   `Generato da BADGEBOX 🚀`;
+                   `📈 *RIEPILOGO MENSILE:*\n` +
+                   `⏰ Ore totali: ${totaleMensile}\n` +
+                   (totaleExtra ? `🕐 Ore extra: ${totaleExtra.replace(/(<([^>]+)>)/gi, "")}\n` : '') +
+                   `📊 PIN dipendente: ${pin}\n\n` +
+                   `┌─────────────────────────────────┐\n` +
+                   `│      DETTAGLIO TIMBRATURE       │\n` +
+                   `├─────────────────────────────────┤\n` +
+                   `│ Data     │ Entr. │ Usci. │ Ore  │\n` +
+                   `├─────────────────────────────────┤\n` +
+                   (tabellaTimbrature || '│ Nessuna timbratura nel periodo  │\n') +
+                   `└─────────────────────────────────┘\n\n` +
+                   `🚀 *Generato da BADGEBOX*\n` +
+                   `📱 Data: ${new Date().toLocaleDateString('it-IT')} ${new Date().toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'})}`;
   
   const url = `https://wa.me/?text=${encodeURIComponent(messaggio)}`;
   window.open(url, '_blank');
