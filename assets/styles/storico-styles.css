@@ -471,7 +471,7 @@ button#btnChiudi {
 /* Pulsante torna a utenti in alto a sinistra */
 .btn-torna-utenti {
   position: absolute;
-  top: 20px;
+  top: 170px;
   left: 20px;
   background: rgba(60, 60, 60, 0.9);
   color: white;
@@ -792,7 +792,7 @@ button#btnChiudi {
 
   /* Pulsante torna a utenti responsive per mobile */
   .btn-torna-utenti {
-    top: 15px;
+    top: 160px;
     left: 10px;
     width: 40px;
     height: 40px;
