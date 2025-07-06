@@ -37,7 +37,7 @@
       font-weight: bold;
     }
 
-    
+
 
     table {
       width: 100%;
@@ -407,9 +407,9 @@
     <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="display:block; margin:5px auto 0; width:150px;" />
     <h1>Archivio Dipendenti</h1>
 
-    
 
-    
+
+
 
     <table>
       <thead>
@@ -428,8 +428,8 @@
           <td>Mario</td>
           <td>Rossi</td>
           <td onclick="event.stopPropagation()">
-            <button onclick="apriModalDettagli({pin: 1, nome: 'Mario', cognome: 'Rossi', email: 'mario.rossi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
-            <button onclick="archiviaUtente('1')" title="Archivia dipendente">❌</button>
+            <button onclick="apriModalDettagli({pin: 1, nome: 'Mario', cognome: 'Rossi', email: 'mario.rossi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
+                <button onclick="archiviaUtente('1')" title="Archivia dipendente" style="background-color: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 6px; padding: 6px 8px;">📦</button>
           </td>
         </tr>
         <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
@@ -438,8 +438,8 @@
           <td>Luigi</td>
           <td>Verdi</td>
           <td onclick="event.stopPropagation()">
-            <button onclick="apriModalDettagli({pin: 2, nome: 'Luigi', cognome: 'Verdi', email: 'luigi.verdi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
-            <button onclick="archiviaUtente('2')" title="Archivia dipendente">❌</button>
+            <button onclick="apriModalDettagli({pin: 2, nome: 'Luigi', cognome: 'Verdi', email: 'luigi.verdi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
+                <button onclick="archiviaUtente('2')" title="Archivia dipendente" style="background-color: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 6px; padding: 6px 8px;">📦</button>
           </td>
         </tr>
         <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
@@ -448,8 +448,8 @@
           <td>Anna</td>
           <td>Bianchi</td>
           <td onclick="event.stopPropagation()">
-            <button onclick="apriModalDettagli({pin: 3, nome: 'Anna', cognome: 'Bianchi', email: 'anna.bianchi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
-            <button onclick="archiviaUtente('3')" title="Archivia dipendente">❌</button>
+            <button onclick="apriModalDettagli({pin: 3, nome: 'Anna', cognome: 'Bianchi', email: 'anna.bianchi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
+                <button onclick="archiviaUtente('3')" title="Archivia dipendente" style="background-color: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 6px; padding: 6px 8px;">📦</button>
           </td>
         </tr>
       </tbody>
@@ -474,7 +474,7 @@
        onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='translateY(0)'">
       Aggiungi
     </button>
-    
+
     <button onclick="window.location.href='ex-dipendenti.html'" style="
       background-color: #ca8a04;
       color: white;
@@ -692,8 +692,8 @@
               <td>${utente.nome}</td>
               <td>${utente.cognome}</td>
               <td onclick="event.stopPropagation()">
-                <button onclick="apriModalDettagli({pin: ${utente.pin}, nome: '${utente.nome}', cognome: '${utente.cognome}', email: '${utente.email}', telefono: '${utente.telefono || ''}', descrizione_contratto: '${utente.descrizione_contratto || ''}', ore_contrattuali: ${utente.ore_contrattuali || 8.00}})" style="margin-right: 8px;">✏️</button>
-                <button onclick="archiviaUtente('${utente.pin}')" title="Archivia dipendente">❌</button>
+                <button onclick="apriModalDettagli({pin: ${utente.pin}, nome: '${utente.nome}', cognome: '${utente.cognome}', email: '${utente.email}', telefono: '${utente.telefono || ''}', descrizione_contratto: '${utente.descrizione_contratto || ''}', ore_contrattuali: ${utente.ore_contrattuali || 8.00}})" style="margin-right: 8px;" title="Modifica">✏️</button>
+                <button onclick="archiviaUtente('${utente.pin}')" title="Archivia dipendente" style="background-color: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 6px; padding: 6px 8px;">📦</button>
               </td>
           `;
           tbody.appendChild(riga);
@@ -794,14 +794,14 @@
 
         alert(`✅ Dipendente ${dipendente.nome} ${dipendente.cognome} archiviato con successo!\nFile Excel: ${nomeFileExcel}`);
         caricaUtenti();
-        
+
       } catch (error) {
         console.error("Errore imprevisto:", error);
         alert("Errore durante l'archiviazione");
       }
     };
 
-    
+
 
     // Variabile globale per memorizzare i dati originali
     let datiOriginali = {};
@@ -871,7 +871,7 @@
       if (e.key === 'Escape') {
         const modalDettagli = document.getElementById('modalDettagli');
         const modalNuovo = document.getElementById('modalNuovoDipendente');
-        
+
         if (modalDettagli.style.display === 'flex') {
           chiudiModalDettagli();
         } else if (modalNuovo.style.display === 'flex') {
@@ -991,7 +991,7 @@
     // Funzioni per il modale nuovo dipendente
     window.apriModalNuovoDipendente = () => {
       const modal = document.getElementById('modalNuovoDipendente');
-      
+
       // Reset tutti i campi
       document.getElementById('nuovo-nome').value = '';
       document.getElementById('nuovo-cognome').value = '';
