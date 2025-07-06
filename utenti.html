@@ -404,21 +404,7 @@
         font-size: 16px;
         padding: 12px 14px;
       }
-
-      /* Larghezze specifiche per desktop */
-      th:nth-child(1), td:nth-child(1) { width: 3%; } /* Storico */
-      th:nth-child(2), td:nth-child(2) { width: 3%; } /* PIN */
-      th:nth-child(3), td:nth-child(3) { width: 44%; } /* Nome - aumentato del 50% */
-      th:nth-child(4), td:nth-child(4) { width: 44%; } /* Cognome - aumentato del 50% */
-      th:nth-child(5), td:nth-child(5) { width: 6%; } /* Azioni */
     }
-
-    /* Larghezze specifiche per le colonne */
-    th:nth-child(1), td:nth-child(1) { width: 3%; } /* Storico */
-    th:nth-child(2), td:nth-child(2) { width: 3%; } /* PIN */
-    th:nth-child(3), td:nth-child(3) { width: 44%; } /* Nome - aumentato del 50% */
-    th:nth-child(4), td:nth-child(4) { width: 44%; } /* Cognome - aumentato del 50% */
-    th:nth-child(5), td:nth-child(5) { width: 6%; } /* Azioni */
   </style>
 </head>
 <body>
@@ -476,7 +462,7 @@
         </tr>
       </tbody>
     </table>
-
+    
     <!-- Pulsanti sotto la tabella allineati a destra -->
     <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
       <button onclick="apriModalNuovoDipendente()" style="
@@ -742,7 +728,7 @@
 
       // Terza conferma con prompt
       const confermaFinale = prompt(`Per confermare l'eliminazione DEFINITIVA di:\n${nome} ${cognome}\n\nScrivi esattamente: ELIMINA`);
-
+      
       if (confermaFinale !== "ELIMINA") {
         alert("Eliminazione annullata. Il testo inserito non corrisponde.");
         return;
