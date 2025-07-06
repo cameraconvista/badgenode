@@ -216,7 +216,7 @@ function renderizzaTabella() {
     if (oreExtra > 0) {
       const oreExtraInt = Math.floor(oreExtra);
       const minutiExtra = Math.round((oreExtra - oreExtraInt) * 60);
-      extraContent = `<span style="color: #fbbf24; font-weight: bold;">+${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')}</span>`;
+      extraContent = `<span style="color: #fbbf24; font-weight: bold;">${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')}</span>`;
       totaleMensileExtra += oreExtra;
     }
 
@@ -254,7 +254,7 @@ function renderizzaTabella() {
   if (totaleMensileExtra > 0) {
     const oreExtraTotali = Math.floor(totaleMensileExtra);
     const minutiExtraTotali = Math.round((totaleMensileExtra % 1) * 60);
-    totaleExtraContent = `<span style="color: #fbbf24; font-weight: bold;">+${oreExtraTotali}:${minutiExtraTotali.toString().padStart(2, '0')}</span>`;
+    totaleExtraContent = `<span style="color: #fbbf24; font-weight: bold;">${oreExtraTotali}:${minutiExtraTotali.toString().padStart(2, '0')}</span>`;
   }
   
   rigaTotale.innerHTML = `
