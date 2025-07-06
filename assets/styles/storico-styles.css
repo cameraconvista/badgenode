@@ -940,7 +940,7 @@ button#btnChiudi {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 8px;
     max-width: 100%;
     gap: 30px;
   }
@@ -1000,6 +1000,7 @@ button#btnChiudi {
     padding: 20px;
     margin-bottom: 20px;
     border-radius: 15px;
+    margin-top: 0;
   }
 
   table {
