@@ -358,6 +358,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  position: relative;
 }
 
 .tabella-header {
@@ -370,6 +371,32 @@ body {
   overflow-y: auto;
   overflow-x: auto;
   min-height: 0;
+  padding-bottom: 60px;
+}
+
+.tabella-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #1e293b;
+  border-top: 2px solid #334155;
+  z-index: 10;
+}
+
+.tabella-footer table {
+  margin: 0;
+}
+
+.tabella-footer tr {
+  background-color: #1f3a56 !important;
+}
+
+.tabella-footer td {
+  background-color: #1f3a56 !important;
+  font-weight: bold;
+  border-bottom: none;
+  padding: 14px 12px;
 }
 
 table {

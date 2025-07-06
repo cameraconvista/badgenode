@@ -245,19 +245,19 @@ function renderizzaTabella() {
     totaleMensileOre += oreTotaliGiorno;
   }
 
-  // Riga totale
+  // Riga totale nel footer fisso
+  const footerTbody = document.getElementById("totale-footer");
+  footerTbody.innerHTML = "";
   const rigaTotale = document.createElement("tr");
-  rigaTotale.style.fontWeight = "bold";
-  rigaTotale.style.backgroundColor = "#1f3a56 !important";
   rigaTotale.innerHTML = `
-    <td style="text-align:left; background-color: #1f3a56 !important;">TOTALE MENSILE</td>
-    <td style="background-color: #1f3a56 !important;"></td>
-    <td style="background-color: #1f3a56 !important;"></td>
-    <td style="color: #ffff99; background-color: #1f3a56 !important;">${totaleMensileOre.toFixed(2)}</td>
-    <td style="background-color: #1f3a56 !important;"></td>
-    <td style="background-color: #1f3a56 !important;"></td>
+    <td style="text-align:left;">TOTALE MENSILE</td>
+    <td></td>
+    <td></td>
+    <td style="color: #ffff99;">${totaleMensileOre.toFixed(2)}</td>
+    <td></td>
+    <td></td>
   `;
-  tbody.appendChild(rigaTotale);
+  footerTbody.appendChild(rigaTotale);
 
   aggiungiListenerModifica();
 }
