@@ -329,7 +329,41 @@
           <th>Azioni</th>
         </tr>
       </thead>
-      <tbody id="lista-dipendenti"></tbody>
+      <tbody id="lista-dipendenti">
+        <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
+          <td><a href="storico.html?pin=1" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
+          <td>01</td>
+          <td>Mario</td>
+          <td>Rossi</td>
+          <td>mario.rossi@example.com</td>
+          <td onclick="event.stopPropagation()">
+            <button onclick="modificaUtente('1', 'Mario', 'Rossi', 'mario.rossi@example.com')">✏️</button>
+            <button onclick="eliminaUtente('1')">❌</button>
+          </td>
+        </tr>
+        <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
+          <td><a href="storico.html?pin=2" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
+          <td>02</td>
+          <td>Luigi</td>
+          <td>Verdi</td>
+          <td>luigi.verdi@example.com</td>
+          <td onclick="event.stopPropagation()">
+            <button onclick="modificaUtente('2', 'Luigi', 'Verdi', 'luigi.verdi@example.com')">✏️</button>
+            <button onclick="eliminaUtente('2')">❌</button>
+          </td>
+        </tr>
+        <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
+          <td><a href="storico.html?pin=3" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
+          <td>03</td>
+          <td>Anna</td>
+          <td>Bianchi</td>
+          <td>anna.bianchi@example.com</td>
+          <td onclick="event.stopPropagation()">
+            <button onclick="modificaUtente('3', 'Anna', 'Bianchi', 'anna.bianchi@example.com')">✏️</button>
+            <button onclick="eliminaUtente('3')">❌</button>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 
