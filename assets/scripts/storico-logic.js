@@ -301,7 +301,7 @@ async function apriModale(dataSelezionata, timbraturaId) {
     <h2>Modifica Timbratura</h2>
     <form id="modaleForm">
       <label>Data:</label>
-      <input type="date" id="modale-data" value="${dataSelezionata}" disabled />
+      <input type="date" id="modale-data" value="${dataSelezionata}" />
       <label for="modale-entrata">Entrata:</label>
       <input type="time" id="modale-entrata" value="${timbraturaEntrata ? timbraturaEntrata.ore.slice(0,5) : ''}" />
       <label for="modale-uscita">Uscita:</label>
@@ -334,44 +334,87 @@ async function salvaModifiche() {
   const modaleEntrata = document.getElementById("modale-entrata").value;
   const modaleUscita = document.getElementById("modale-uscita").value;
 
+  if (!modaleData) {
+    alert("La data è obbligatoria!");
+    return;
+  }
+
   try {
     const dataUTC = new Date(modaleData);
     dataUTC.setHours(12);
     const dataISO = dataUTC.toISOString();
 
+    // Calcolo giorno logico (stesso sistema usato nell'inserimento)
+    let giornoLogico = modaleData;
+    
     // Gestione entrata
     if (modaleEntrata) {
       const [ore, minuti] = modaleEntrata.split(":");
-      const entrataUTC = new Date(dataUTC);
-      entrataUTC.setHours(parseInt(ore), parseInt(minuti), 0, 0);
+      
+      // Se è tra 00:00 e 04:59, appartiene al giorno lavorativo precedente
+      if (parseInt(ore) >= 0 && parseInt(ore) < 5) {
+        const dataGiornoLogico = new Date(modaleData);
+        dataGiornoLogico.setDate(dataGiornoLogico.getDate() - 1);
+        giornoLogico = dataGiornoLogico.toISOString().split('T')[0];
+      }
 
       if (window.timbraturaEntrataCorrente) {
         await supabaseClient
           .from("timbrature")
-          .update({ ore: modaleEntrata + ":00" })
+          .update({ 
+            data: dataISO, 
+            ore: modaleEntrata + ":00", 
+            giornologico: giornoLogico 
+          })
           .eq("id", window.timbraturaEntrataCorrente.id);
       } else {
         await supabaseClient
           .from("timbrature")
-          .insert([{ pin: parseInt(pin), data: dataISO, ore: modaleEntrata + ":00", tipo: "entrata" }]);
+          .insert([{ 
+            pin: parseInt(pin), 
+            nome: dipendente.nome,
+            cognome: dipendente.cognome,
+            data: dataISO, 
+            ore: modaleEntrata + ":00", 
+            tipo: "entrata",
+            giornologico: giornoLogico
+          }]);
       }
     }
 
     // Gestione uscita
     if (modaleUscita) {
       const [ore, minuti] = modaleUscita.split(":");
-      const uscitaUTC = new Date(dataUTC);
-      uscitaUTC.setHours(parseInt(ore), parseInt(minuti), 0, 0);
+      
+      // Stesso calcolo del giorno logico per l'uscita
+      let giornoLogicoUscita = modaleData;
+      if (parseInt(ore) >= 0 && parseInt(ore) < 5) {
+        const dataGiornoLogico = new Date(modaleData);
+        dataGiornoLogico.setDate(dataGiornoLogico.getDate() - 1);
+        giornoLogicoUscita = dataGiornoLogico.toISOString().split('T')[0];
+      }
 
       if (window.timbraturaUscitaCorrente) {
         await supabaseClient
           .from("timbrature")
-          .update({ ore: modaleUscita + ":00" })
+          .update({ 
+            data: dataISO, 
+            ore: modaleUscita + ":00", 
+            giornologico: giornoLogicoUscita 
+          })
           .eq("id", window.timbraturaUscitaCorrente.id);
       } else {
         await supabaseClient
           .from("timbrature")
-          .insert([{ pin: parseInt(pin), data: dataISO, ore: modaleUscita + ":00", tipo: "uscita" }]);
+          .insert([{ 
+            pin: parseInt(pin), 
+            nome: dipendente.nome,
+            cognome: dipendente.cognome,
+            data: dataISO, 
+            ore: modaleUscita + ":00", 
+            tipo: "uscita",
+            giornologico: giornoLogicoUscita
+          }]);
       }
     }
 
