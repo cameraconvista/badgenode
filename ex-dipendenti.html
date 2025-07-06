@@ -100,7 +100,7 @@
       background-color: #10b981;
       color: white;
       border: none;
-      padding: 8px 16px;
+      padding: 10px 20px;
       border-radius: 8px;
       font-size: 14px;
       font-weight: 600;
@@ -115,6 +115,24 @@
       transform: translateY(-2px);
     }
 
+    .restore-btn {
+      background-color: #f59e0b;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: 8px;
+    }
+
+    .restore-btn:hover {
+      background-color: #d97706;
+      transform: translateY(-2px);
+    }
+
     .empty-message {
       text-align: center;
       padding: 40px;
@@ -124,6 +142,15 @@
 
     .info-badge {
       background-color: #3b82f6;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-badge {
+      background-color: #dc2626;
       color: white;
       padding: 4px 8px;
       border-radius: 6px;
@@ -161,6 +188,11 @@
         padding: 6px 12px;
         font-size: 12px;
       }
+
+      .restore-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
     }
 
     @media (min-width: 1024px) {
@@ -191,8 +223,13 @@
       }
 
       .download-btn {
-        padding: 10px 20px;
+        padding: 12px 24px;
         font-size: 16px;
+      }
+
+      .restore-btn {
+        padding: 10px 18px;
+        font-size: 14px;
       }
     }
   </style>
@@ -211,7 +248,7 @@
           <th>Cognome</th>
           <th>Data Archiviazione</th>
           <th>Timbrature</th>
-          <th>Scarica Excel</th>
+          <th>Azioni</th>
         </tr>
       </thead>
       <tbody id="lista-ex-dipendenti">
@@ -293,6 +330,9 @@
               <button class="download-btn" onclick="scaricaExcel('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')">
                 📊 Scarica Excel
               </button>
+              <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')">
+                ↩️ Ripristina
+              </button>
             </td>
           `;
           tbody.appendChild(riga);
@@ -329,19 +369,32 @@
         
         // Genera contenuto CSV per compatibilità Excel
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Nome,Cognome,PIN,Email,Telefono,Ore Contrattuali\n";
-        csvContent += `${excelData.dipendente.nome},${excelData.dipendente.cognome},${excelData.dipendente.pin},${excelData.dipendente.email},${excelData.dipendente.telefono || ''},${excelData.dipendente.ore_contrattuali}\n\n`;
         
+        // Header informazioni dipendente
+        csvContent += "INFORMAZIONI DIPENDENTE\n";
+        csvContent += "Nome,Cognome,PIN,Email,Telefono,Ore Contrattuali\n";
+        csvContent += `"${excelData.dipendente.nome}","${excelData.dipendente.cognome}",${excelData.dipendente.pin},"${excelData.dipendente.email}","${excelData.dipendente.telefono || 'N/A'}",${excelData.dipendente.ore_contrattuali}\n\n`;
+        
+        // Header timbrature
+        csvContent += "STORICO TIMBRATURE\n";
         csvContent += "Data,Ora,Tipo,PIN,Nome,Cognome\n";
-        excelData.timbrature.forEach(timbratura => {
-          csvContent += `${timbratura.data},${timbratura.ore},${timbratura.tipo},${timbratura.pin},${timbratura.nome},${timbratura.cognome}\n`;
-        });
+        
+        // Dati timbrature
+        if (excelData.timbrature && excelData.timbrature.length > 0) {
+          excelData.timbrature.forEach(timbratura => {
+            csvContent += `"${timbratura.data}","${timbratura.ore}","${timbratura.tipo}",${timbratura.pin},"${timbratura.nome}","${timbratura.cognome}"\n`;
+          });
+        }
+
+        // Footer statistiche
+        csvContent += `\nTOTALE TIMBRATURE: ${excelData.totaleTimbrature || 0}\n`;
+        csvContent += `GENERATO IL: ${new Date(excelData.dataGenerazione).toLocaleString('it-IT')}\n`;
 
         // Crea e scarica il file
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `${nome}_${cognome}_timbrature.csv`);
+        link.setAttribute("download", `${nome}_${cognome}_timbrature_completo.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -351,6 +404,82 @@
       } catch (error) {
         console.error("Errore scaricamento file:", error);
         alert("Errore durante lo scaricamento del file");
+      }
+    };
+
+    // Funzione per ripristinare un dipendente dall'archivio
+    window.ripristinaDipendente = async (id, nome, cognome) => {
+      if (!confirm(`Sei sicuro di voler ripristinare ${nome} ${cognome} tra i dipendenti attivi?`)) return;
+      if (!confirm("ATTENZIONE: Le timbrature archiviate NON verranno ripristinate.\nIl dipendente tornerà attivo con storico vuoto.\nConfermi il ripristino?")) return;
+
+      try {
+        // 1. Recupera i dati dell'ex dipendente
+        const { data: exDipendente, error: errorRecupero } = await supabase
+          .from("dipendenti_archiviati")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (errorRecupero) {
+          console.error("Errore recupero ex dipendente:", errorRecupero);
+          alert("Errore durante il recupero: " + errorRecupero.message);
+          return;
+        }
+
+        // 2. Verifica che il PIN non sia già in uso
+        const { data: pinEsistente, error: errorPin } = await supabase
+          .from("utenti")
+          .select("pin")
+          .eq("pin", exDipendente.pin);
+
+        if (errorPin) {
+          console.error("Errore verifica PIN:", errorPin);
+          alert("Errore durante la verifica PIN: " + errorPin.message);
+          return;
+        }
+
+        if (pinEsistente && pinEsistente.length > 0) {
+          alert(`Impossibile ripristinare: PIN ${exDipendente.pin} già in uso da un altro dipendente attivo`);
+          return;
+        }
+
+        // 3. Ripristina nella tabella utenti
+        const { error: errorInserimento } = await supabase
+          .from("utenti")
+          .insert([{
+            pin: exDipendente.pin,
+            nome: exDipendente.nome,
+            cognome: exDipendente.cognome,
+            email: exDipendente.email,
+            telefono: exDipendente.telefono,
+            ore_contrattuali: exDipendente.ore_contrattuali,
+            descrizione_contratto: exDipendente.descrizione_contratto
+          }]);
+
+        if (errorInserimento) {
+          console.error("Errore inserimento utente:", errorInserimento);
+          alert("Errore durante il ripristino: " + errorInserimento.message);
+          return;
+        }
+
+        // 4. Rimuovi dall'archivio
+        const { error: errorRimozione } = await supabase
+          .from("dipendenti_archiviati")
+          .delete()
+          .eq("id", id);
+
+        if (errorRimozione) {
+          console.error("Errore rimozione da archivio:", errorRimozione);
+          alert("Errore durante la rimozione dall'archivio: " + errorRimozione.message);
+          return;
+        }
+
+        alert(`✅ ${nome} ${cognome} ripristinato con successo!\nIl dipendente è tornato attivo con PIN ${exDipendente.pin}.`);
+        caricaExDipendenti(); // Ricarica la lista
+
+      } catch (error) {
+        console.error("Errore imprevisto:", error);
+        alert("Errore durante il ripristino");
       }
     };
 
