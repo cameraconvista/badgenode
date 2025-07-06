@@ -775,6 +775,82 @@ document.getElementById("btn-esporta").addEventListener("click", function() {
   XLSX.writeFile(wb, nomeFileExcel);
 });
 
+// Funzionalità Google Fogli
+document.getElementById("btn-google-sheets").addEventListener("click", function() {
+  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
+  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
+  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
+  
+  // Calcola le ore totali dalla tabella footer
+  const footerRow = document.querySelector('#totale-footer tr');
+  let totaleMensile = '—';
+  
+  if (footerRow) {
+    const cells = footerRow.querySelectorAll('td');
+    if (cells.length >= 4) {
+      totaleMensile = cells[3].textContent.trim();
+    }
+  }
+  
+  // Prepara i dati per Google Sheets
+  let csvData = `CAMERA CON VISTA Bistrot\nRIEPILOGO MENSILE TIMBRATURE\n\n`;
+  csvData += `Dipendente:,${nomeCompleto} (PIN: ${pin})\n`;
+  csvData += `Periodo:,dal ${dataInizioFormatted} al ${dataFineFormatted}\n`;
+  csvData += `Ore totali:,${totaleMensile}\n\n`;
+  csvData += `Data,Entrata,Uscita,Ore Giornaliere\n`;
+  
+  // Aggiungi i dati delle timbrature
+  const righeTabella = document.querySelectorAll('#storico-body tr');
+  
+  righeTabella.forEach(riga => {
+    const cells = riga.querySelectorAll('td');
+    if (cells.length >= 4) {
+      const data = cells[0].textContent.trim();
+      const entrata = cells[1].textContent.trim();
+      const uscita = cells[2].textContent.trim();
+      const ore = cells[3].textContent.trim();
+      
+      // Aggiungi riga solo se ci sono dati significativi
+      if (entrata !== '—' || uscita !== '—') {
+        csvData += `${data},${entrata},${uscita},${ore}\n`;
+      }
+    }
+  });
+  
+  // Aggiungi totale
+  csvData += `\nTOTALE MENSILE,,,${totaleMensile}\n`;
+  
+  // Footer con data generazione
+  const dataGenerazione = new Date().toLocaleDateString('it-IT') + ' ' + new Date().toLocaleTimeString('it-IT');
+  csvData += `\nGenerato il:,${dataGenerazione}`;
+  
+  // Crea URL per Google Sheets
+  const encodedData = encodeURIComponent(csvData);
+  const sheetTitle = encodeURIComponent(`Timbrature_${nomeCompleto.replace(/\s/g, '_')}_${dataInizio.value}_${dataFine.value}`);
+  
+  // URL per creare un nuovo Google Sheets con i dati
+  const googleSheetsUrl = `https://docs.google.com/spreadsheets/create?title=${sheetTitle}&usp=drive_web`;
+  
+  // Apri Google Sheets in una nuova scheda
+  window.open(googleSheetsUrl, '_blank');
+  
+  // Mostra istruzioni all'utente
+  setTimeout(() => {
+    alert(`Google Sheets aperto!\n\nPer importare i dati:\n1. Vai su File → Importa\n2. Carica il file CSV o incolla i dati\n3. Il foglio sarà pronto per l'uso!`);
+  }, 1000);
+  
+  // Opzionalmente, scarica anche un file CSV per facilitare l'importazione
+  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+
 // Inizializzazione
 document.addEventListener('DOMContentLoaded', function() {
   initCalendarUtils();
