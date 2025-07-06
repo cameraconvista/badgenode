@@ -429,7 +429,7 @@
           <td>Rossi</td>
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 1, nome: 'Mario', cognome: 'Rossi', email: 'mario.rossi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
-            <button onclick="eliminaUtente('1')">❌</button>
+            <button onclick="archiviaUtente('1')" title="Archivia dipendente">❌</button>
           </td>
         </tr>
         <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
@@ -439,7 +439,7 @@
           <td>Verdi</td>
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 2, nome: 'Luigi', cognome: 'Verdi', email: 'luigi.verdi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
-            <button onclick="eliminaUtente('2')">❌</button>
+            <button onclick="archiviaUtente('2')" title="Archivia dipendente">❌</button>
           </td>
         </tr>
         <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
@@ -449,7 +449,7 @@
           <td>Bianchi</td>
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 3, nome: 'Anna', cognome: 'Bianchi', email: 'anna.bianchi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;">✏️</button>
-            <button onclick="eliminaUtente('3')">❌</button>
+            <button onclick="archiviaUtente('3')" title="Archivia dipendente">❌</button>
           </td>
         </tr>
       </tbody>
@@ -475,7 +475,7 @@
       Aggiungi
     </button>
     
-    <button onclick="window.location.href='storico.html'" style="
+    <button onclick="window.location.href='ex-dipendenti.html'" style="
       background-color: #ca8a04;
       color: white;
       border: none;
@@ -693,7 +693,7 @@
               <td>${utente.cognome}</td>
               <td onclick="event.stopPropagation()">
                 <button onclick="apriModalDettagli({pin: ${utente.pin}, nome: '${utente.nome}', cognome: '${utente.cognome}', email: '${utente.email}', telefono: '${utente.telefono || ''}', descrizione_contratto: '${utente.descrizione_contratto || ''}', ore_contrattuali: ${utente.ore_contrattuali || 8.00}})" style="margin-right: 8px;">✏️</button>
-                <button onclick="eliminaUtente('${utente.pin}')">❌</button>
+                <button onclick="archiviaUtente('${utente.pin}')" title="Archivia dipendente">❌</button>
               </td>
           `;
           tbody.appendChild(riga);
@@ -706,21 +706,98 @@
 
     // Funzione modificaUtente rimossa - ora si usa apriModalDettagli
 
-    window.eliminaUtente = async (pin) => {
-      if (!confirm("Sei sicuro di voler eliminare questo utente?")) return;
-      if (!confirm("ATTENZIONE: questa operazione è irreversibile.\nConfermi l'eliminazione definitiva?")) return;
+    window.archiviaUtente = async (pin) => {
+      if (!confirm("Sei sicuro di voler archiviare questo dipendente?")) return;
+      if (!confirm("Il dipendente verrà spostato nell'archivio con tutto lo storico timbrature.\nConfermi l'archiviazione?")) return;
 
       try {
-        const { error } = await supabase.from("utenti").delete().eq("pin", pin);
-        if (error) {
-          console.error("Errore eliminazione:", error);
-          alert("Errore durante l'eliminazione: " + error.message);
+        // 1. Recupera i dati del dipendente
+        const { data: dipendente, error: errorDipendente } = await supabase
+          .from("utenti")
+          .select("*")
+          .eq("pin", pin)
+          .single();
+
+        if (errorDipendente) {
+          console.error("Errore recupero dipendente:", errorDipendente);
+          alert("Errore durante il recupero dati dipendente: " + errorDipendente.message);
           return;
         }
+
+        // 2. Recupera tutte le timbrature del dipendente
+        const { data: timbrature, error: errorTimbrature } = await supabase
+          .from("timbrature")
+          .select("*")
+          .eq("pin", pin)
+          .order("data", { ascending: true })
+          .order("ore", { ascending: true });
+
+        if (errorTimbrature) {
+          console.error("Errore recupero timbrature:", errorTimbrature);
+          alert("Errore durante il recupero timbrature: " + errorTimbrature.message);
+          return;
+        }
+
+        // 3. Genera file Excel (simulato - salviamo i dati JSON)
+        const excelData = {
+          dipendente: dipendente,
+          timbrature: timbrature || [],
+          dataGenerazione: new Date().toISOString(),
+          totaleTimbrature: timbrature ? timbrature.length : 0
+        };
+
+        const nomeFileExcel = `${dipendente.nome}_${dipendente.cognome}_timbrature_${new Date().toISOString().split('T')[0]}.json`;
+
+        // 4. Inserisci in dipendenti_archiviati
+        const { error: errorArchivio } = await supabase
+          .from("dipendenti_archiviati")
+          .insert([{
+            pin: dipendente.pin,
+            nome: dipendente.nome,
+            cognome: dipendente.cognome,
+            email: dipendente.email,
+            telefono: dipendente.telefono,
+            ore_contrattuali: dipendente.ore_contrattuali,
+            descrizione_contratto: dipendente.descrizione_contratto,
+            file_excel_name: nomeFileExcel,
+            file_excel_path: JSON.stringify(excelData) // Salviamo i dati come JSON per ora
+          }]);
+
+        if (errorArchivio) {
+          console.error("Errore archiviazione:", errorArchivio);
+          alert("Errore durante l'archiviazione: " + errorArchivio.message);
+          return;
+        }
+
+        // 5. Elimina dalle tabelle attive
+        const { error: errorDeleteTimbrature } = await supabase
+          .from("timbrature")
+          .delete()
+          .eq("pin", pin);
+
+        if (errorDeleteTimbrature) {
+          console.error("Errore eliminazione timbrature:", errorDeleteTimbrature);
+          alert("Errore durante l'eliminazione timbrature: " + errorDeleteTimbrature.message);
+          return;
+        }
+
+        const { error: errorDeleteUtente } = await supabase
+          .from("utenti")
+          .delete()
+          .eq("pin", pin);
+
+        if (errorDeleteUtente) {
+          console.error("Errore eliminazione utente:", errorDeleteUtente);
+          alert("Errore durante l'eliminazione utente: " + errorDeleteUtente.message);
+          return;
+        }
+
+        alert(`✅ Dipendente ${dipendente.nome} ${dipendente.cognome} archiviato con successo!\nFile Excel: ${nomeFileExcel}`);
         caricaUtenti();
+        
       } catch (error) {
         console.error("Errore imprevisto:", error);
-        alert("Errore durante l'eliminazione");
+        alert("Errore durante l'archiviazione");
       }
     };
 
