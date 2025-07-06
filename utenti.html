@@ -404,7 +404,25 @@
         font-size: 16px;
         padding: 12px 14px;
       }
+
+      /* Larghezze specifiche per desktop - adattamento automatico */
+      th:nth-child(1), td:nth-child(1) { width: 80px; min-width: 80px; } /* Storico */
+      th:nth-child(2), td:nth-child(2) { width: 80px; min-width: 80px; } /* PIN */
+      th:nth-child(3), td:nth-child(3) { min-width: 150px; white-space: nowrap; } /* Nome - si adatta */
+      th:nth-child(4), td:nth-child(4) { min-width: 150px; white-space: nowrap; } /* Cognome - si adatta */
+      th:nth-child(5), td:nth-child(5) { width: 150px; min-width: 150px; } /* Azioni */
     }
+
+    /* Larghezze ottimizzate per adattamento automatico */
+    table {
+      table-layout: auto; /* Permette adattamento automatico */
+    }
+
+    th:nth-child(1), td:nth-child(1) { width: 60px; min-width: 60px; } /* Storico - larghezza fissa minima */
+    th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; } /* PIN - larghezza fissa minima */
+    th:nth-child(3), td:nth-child(3) { min-width: 120px; white-space: nowrap; } /* Nome - si adatta al contenuto */
+    th:nth-child(4), td:nth-child(4) { min-width: 120px; white-space: nowrap; } /* Cognome - si adatta al contenuto */
+    th:nth-child(5), td:nth-child(5) { width: 120px; min-width: 120px; } /* Azioni - larghezza fissa */
   </style>
 </head>
 <body>
@@ -462,7 +480,7 @@
         </tr>
       </tbody>
     </table>
-    
+
     <!-- Pulsanti sotto la tabella allineati a destra -->
     <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
       <button onclick="apriModalNuovoDipendente()" style="
@@ -728,7 +746,7 @@
 
       // Terza conferma con prompt
       const confermaFinale = prompt(`Per confermare l'eliminazione DEFINITIVA di:\n${nome} ${cognome}\n\nScrivi esattamente: ELIMINA`);
-      
+
       if (confermaFinale !== "ELIMINA") {
         alert("Eliminazione annullata. Il testo inserito non corrisponde.");
         return;
