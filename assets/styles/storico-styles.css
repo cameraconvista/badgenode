@@ -927,6 +927,12 @@ button#btnChiudi {
     width: 28px;
     height: 28px;
   }
+
+  /* Dimensioni SVG WhatsApp su mobile */
+  #btn-whatsapp svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 /* Ottimizzazioni specifiche per desktop */
@@ -1027,6 +1033,20 @@ button#btnChiudi {
     height: 34px;
     padding: 6px 8px;
     min-width: 42px;
+  }
+
+  /* Stile specifico per pulsante WhatsApp */
+  #btn-whatsapp {
+    background-color: rgba(37, 211, 102, 0.1) !important;
+    border: 1px solid rgba(37, 211, 102, 0.3) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+  }
+
+  #btn-whatsapp:hover {
+    background-color: rgba(37, 211, 102, 0.2) !important;
+    border-color: rgba(37, 211, 102, 0.5) !important;
+    transform: scale(1.05) !important;
   }
 
   /* Tabella ottimizzata per desktop */

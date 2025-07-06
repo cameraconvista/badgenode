@@ -504,6 +504,37 @@ document.getElementById("torna-utenti").addEventListener("click", function() {
   window.location.href = "utenti.html";
 });
 
+// Funzionalità WhatsApp
+document.getElementById("btn-whatsapp").addEventListener("click", function() {
+  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
+  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
+  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
+  
+  // Calcola totali dalla tabella footer
+  const footerRow = document.querySelector('#totale-footer tr');
+  let totaleMensile = '—';
+  let totaleExtra = '';
+  
+  if (footerRow) {
+    const cells = footerRow.querySelectorAll('td');
+    if (cells.length >= 4) {
+      totaleMensile = cells[3].textContent.trim();
+      if (cells.length >= 5) {
+        totaleExtra = cells[4].textContent.trim();
+      }
+    }
+  }
+  
+  const messaggio = `📊 *Storico Timbrature - ${nomeCompleto}*\n\n` +
+                   `📅 Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}\n\n` +
+                   `⏰ Totale ore lavorate: ${totaleMensile}\n` +
+                   (totaleExtra ? `🕐 Ore extra: ${totaleExtra}\n\n` : '\n') +
+                   `Generato da BADGEBOX 🚀`;
+  
+  const url = `https://wa.me/?text=${encodeURIComponent(messaggio)}`;
+  window.open(url, '_blank');
+});
+
 // Inizializzazione
 document.addEventListener('DOMContentLoaded', function() {
   initCalendarUtils();
