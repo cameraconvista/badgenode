@@ -539,7 +539,7 @@ button#btnChiudi {
   background: #475569;
 }
 
-/* Media Queries Responsive */
+/* Media Queries */
 @media (max-width: 480px) {
   .filtro-temporale {
     flex-direction: column;
@@ -565,6 +565,9 @@ button#btnChiudi {
   .pulsanti-basso button {
     flex: 1;
     min-width: 60px;
+    min-height: 48px;
+    border-radius: 12px;
+    touch-action: manipulation;
   }
   
   .modifica-icon {
@@ -579,12 +582,6 @@ button#btnChiudi {
 
   .modifica-icon:hover, .modifica-icon:active {
     background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .pulsanti-basso button {
-    min-height: 48px;
-    border-radius: 12px;
-    touch-action: manipulation;
   }
 
   .filtro-temporale select,
