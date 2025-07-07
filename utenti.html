@@ -4,18 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Gestione Utenti - BADGEBOX</title>
+```
 
+```html
   <!-- PWA Meta -->
   <meta name="theme-color" content="#0d1b2b" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
+```
 
+```html
   <!-- Icone PWA -->
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/BADGENODE.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
   <link rel="manifest" href="manifest.json" />
+```
 
+```html
   <link rel="stylesheet" href="style.css" />
   <style>
     body {
@@ -23,22 +29,26 @@
       color: white;
       font-family: Arial, sans-serif;
     }
+```
 
+```html
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 30px;
     }
+```
 
+```html
     h1 {
       text-align: center;
       margin-bottom: 30px;
       font-size: 36px;
       font-weight: bold;
     }
+```
 
-
-
+```html
     table {
       width: 100%;
       border-collapse: collapse;
@@ -47,7 +57,9 @@
       overflow: hidden;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
     }
+```
 
+```html
     th, td {
       padding: 2px 6px;
       text-align: center;
@@ -56,33 +68,37 @@
       line-height: 1.1;
       height: 24px;
     }
+```
 
+```html
     th {
-      height: 54px; /* Aumentata del 50% da 36px per mobile */
-    }
-
-    th:first-child, td:first-child {
-      border-left: 1px solid #374151;
-    }
-
-    th {
+      height: 54px;
       background-color: #1f3a56;
       font-weight: 600;
       font-size: 18px;
     }
+```
 
+```html
     td {
       font-size: 16px;
-    }
-
-    td {
       background-color: #1e293b;
     }
+```
 
+```html
+    th:first-child, td:first-child {
+      border-left: 1px solid #374151;
+    }
+```
+
+```html
     tr:last-child td {
       border-bottom: none;
     }
+```
 
+```html
     td button {
       background: none;
       border: none;
@@ -93,13 +109,17 @@
       border-radius: 3px;
       transition: background-color 0.2s;
     }
+```
 
+```html
     td button:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
+```
 
-    /* Stili modale nuovo dipendente */
-    #modalNuovoDipendente {
+```html
+    /* Stili modali */
+    #modalNuovoDipendente, #modalDettagli {
       position: fixed;
       top: 0;
       left: 0;
@@ -112,22 +132,9 @@
       z-index: 10000;
       padding: 20px;
     }
+```
 
-    /* Stili modale dettagli dipendente */
-    #modalDettagli {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      padding: 20px;
-    }
-
+```html
     .modal-content {
       background: #1e293b;
       border-radius: 16px;
@@ -139,7 +146,9 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
       color: white;
     }
+```
 
+```html
     .modal-header {
       display: flex;
       justify-content: space-between;
@@ -148,13 +157,17 @@
       border-bottom: 2px solid #374151;
       padding-bottom: 15px;
     }
+```
 
+```html
     .modal-title {
       font-size: 24px;
       font-weight: bold;
       color: #60a5fa;
     }
+```
 
+```html
     .close-btn {
       background: #dc2626;
       color: white;
@@ -168,15 +181,21 @@
       align-items: center;
       justify-content: center;
     }
+```
 
+```html
     .close-btn:hover {
       background: #b91c1c;
     }
+```
 
+```html
     .sezione-modal {
       margin-bottom: 30px;
     }
+```
 
+```html
     .sezione-titolo {
       font-size: 18px;
       font-weight: 600;
@@ -185,25 +204,33 @@
       border-left: 4px solid #fbbf24;
       padding-left: 12px;
     }
+```
 
+```html
     .campo-gruppo {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
       margin-bottom: 15px;
     }
+```
 
+```html
     .campo-singolo {
       margin-bottom: 15px;
     }
+```
 
+```html
     .campo-label {
       font-size: 14px;
       color: #94a3b8;
       margin-bottom: 5px;
       font-weight: 500;
     }
+```
 
+```html
     .campo-valore {
       background: #374151;
       border: 1px solid #4b5563;
@@ -214,12 +241,16 @@
       width: 100%;
       box-sizing: border-box;
     }
+```
 
+```html
     .campo-textarea {
       min-height: 80px;
       resize: vertical;
     }
+```
 
+```html
     .upload-area {
       border: 2px dashed #4b5563;
       border-radius: 8px;
@@ -228,44 +259,60 @@
       background: #374151;
       transition: border-color 0.3s;
     }
+```
 
+```html
     .upload-area:hover {
       border-color: #60a5fa;
     }
+```
 
+```html
     .upload-icon {
       font-size: 32px;
       color: #6b7280;
       margin-bottom: 10px;
     }
+```
 
+```html
     .upload-text {
       color: #9ca3af;
       font-size: 14px;
     }
+```
 
+```html
     .upload-area.dragover {
       border-color: #3b82f6;
       background-color: #1e40af;
     }
+```
 
+```html
     .file-info {
       color: #10b981;
       font-size: 14px;
       text-align: left;
     }
+```
 
+```html
     .file-name {
       font-weight: 600;
       margin-bottom: 5px;
     }
+```
 
+```html
     .file-size {
       color: #6b7280;
       font-size: 12px;
       margin-bottom: 10px;
     }
+```
 
+```html
     .remove-file-btn {
       background-color: #dc2626;
       color: white;
@@ -276,11 +323,15 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
+```
 
+```html
     .remove-file-btn:hover {
       background-color: #b91c1c;
     }
+```
 
+```html
     .modal-actions {
       display: flex;
       justify-content: flex-end;
@@ -289,7 +340,9 @@
       padding-top: 20px;
       border-top: 1px solid #374151;
     }
+```
 
+```html
     .btn-annulla,
     .btn-salva {
       padding: 10px 20px;
@@ -301,219 +354,112 @@
       transition: all 0.2s ease;
       min-width: 80px;
     }
+```
 
+```html
     .btn-annulla {
       background-color: #6b7280;
       color: white;
     }
+```
 
+```html
     .btn-annulla:hover {
       background-color: #4b5563;
     }
+```
 
+```html
     .btn-salva {
       background-color: #16a34a;
       color: white;
     }
+```
 
+```html
     .btn-salva:hover {
       background-color: #15803d;
     }
+```
 
-    /* Media query per schermi extra piccoli (fino a 320px) */
-    @media (max-width: 320px) {
+```html
+    /* Media queries consolidate */
+    @media (max-width: 480px) {
       .container {
         padding: 8px;
         max-width: 100%;
       }
+```
 
+```html
       h1 {
         font-size: 20px;
         margin-bottom: 15px;
       }
+```
 
+```html
       table {
         font-size: 10px;
       }
+```
 
+```html
       th, td {
         padding: 2px 4px;
         font-size: 10px;
       }
+```
 
+```html
       th {
         font-size: 11px;
         height: 40px;
       }
+```
 
+```html
       td {
         height: 35px;
       }
+```
 
+```html
       th:nth-child(1), td:nth-child(1) { width: 15% !important; }
       th:nth-child(2), td:nth-child(2) { width: 15% !important; }
       th:nth-child(3), td:nth-child(3) { width: 30% !important; }
       th:nth-child(4), td:nth-child(4) { width: 30% !important; }
       th:nth-child(5), td:nth-child(5) { width: 10% !important; }
+```
 
+```html
       td button {
         font-size: 12px;
         padding: 1px;
       }
+```
 
+```html
       .modal-content {
         padding: 10px;
         margin: 5px;
       }
-    }
+```
 
-    /* Media query per mobile piccoli (321px - 480px) */
-    @media (min-width: 321px) and (max-width: 480px) {
-      .container {
-        padding: 12px;
-        max-width: 100%;
-      }
-
-      h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
-      }
-
-      table {
-        font-size: 12px;
-      }
-
-      th, td {
-        padding: 3px 6px;
-        font-size: 12px;
-      }
-
-      th {
-        font-size: 13px;
-        height: 45px;
-      }
-
-      td {
-        height: 40px;
-      }
-
-      th:nth-child(1), td:nth-child(1) { width: 12% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 12% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 30% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 30% !important; }
-      th:nth-child(5), td:nth-child(5) { width: 16% !important; }
-
-      td button {
-        font-size: 14px;
-        padding: 2px;
-      }
-
-      .modal-content {
-        padding: 15px;
-        margin: 8px;
-      }
-
+```html
       .campo-gruppo {
         grid-template-columns: 1fr;
       }
-    }
+```
 
-    /* Media query per tablet portrait (481px - 768px) */
-    @media (min-width: 481px) and (max-width: 768px) {
-      .container {
-        padding: 15px;
-        max-width: 98%;
-      }
-
-      h1 {
-        font-size: 26px;
-        margin-bottom: 22px;
-      }
-
-      table {
-        font-size: 13px;
-      }
-
-      th, td {
-        padding: 4px 8px;
-        font-size: 13px;
-      }
-
-      th {
-        font-size: 15px;
-        height: 48px;
-      }
-
-      td {
-        height: 43px;
-      }
-
-      th:nth-child(1), td:nth-child(1) { width: 10% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 10% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 25% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 25% !important; }
-      th:nth-child(5), td:nth-child(5) { width: 30% !important; }
-
-      td button {
-        font-size: 15px;
-        padding: 3px;
-      }
-
-      .modal-content {
-        padding: 20px;
-        margin: 10px;
-      }
-
-      .campo-gruppo {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Media query per tablet landscape (769px - 1024px) */
-    @media (min-width: 769px) and (max-width: 1024px) {
-      .container {
-        padding: 20px;
-        max-width: 95%;
-      }
-
-      h1 {
-        font-size: 28px;
-        margin-bottom: 25px;
-      }
-
-      th, td {
-        padding: 8px 10px;
-        font-size: 14px;
-      }
-
-      th {
-        font-size: 16px;
-        height: 50px;
-      }
-
-      td {
-        height: 45px;
-      }
-
-      th:nth-child(1), td:nth-child(1) { width: 12% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 12% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 28% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 28% !important; }
-      th:nth-child(5), td:nth-child(5) { width: 20% !important; }
-
-      .modal-content {
-        max-width: 80%;
-        padding: 25px;
-      }
-    }
-
-    /* Media query per schermi molto piccoli - compatibilità legacy */
-    @media (max-width: 767px) {
+```html
       .modal-actions {
         flex-direction: column;
         gap: 8px;
       }
+```
 
+```html
       .btn-annulla,
       .btn-salva {
         width: 100%;
@@ -521,102 +467,243 @@
         font-size: 16px;
       }
     }
+```
 
-    /* Ottimizzazioni specifiche per desktop */
+```html
+    @media (min-width: 481px) and (max-width: 768px) {
+      .container {
+        padding: 12px;
+        max-width: 100%;
+      }
+```
+
+```html
+      h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+```
+
+```html
+      table {
+        font-size: 12px;
+      }
+```
+
+```html
+      th, td {
+        padding: 3px 6px;
+        font-size: 12px;
+      }
+```
+
+```html
+      th {
+        font-size: 13px;
+        height: 45px;
+      }
+```
+
+```html
+      td {
+        height: 40px;
+      }
+```
+
+```html
+      th:nth-child(1), td:nth-child(1) { width: 12% !important; }
+      th:nth-child(2), td:nth-child(2) { width: 12% !important; }
+      th:nth-child(3), td:nth-child(3) { width: 30% !important; }
+      th:nth-child(4), td:nth-child(4) { width: 30% !important; }
+      th:nth-child(5), td:nth-child(5) { width: 16% !important; }
+```
+
+```html
+      td button {
+        font-size: 14px;
+        padding: 2px;
+      }
+```
+
+```html
+      .modal-content {
+        padding: 15px;
+        margin: 8px;
+      }
+```
+
+```html
+      .campo-gruppo {
+        grid-template-columns: 1fr;
+      }
+    }
+```
+
+```html
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        padding: 20px;
+        max-width: 95%;
+      }
+```
+
+```html
+      h1 {
+        font-size: 28px;
+        margin-bottom: 25px;
+      }
+```
+
+```html
+      th, td {
+        padding: 8px 10px;
+        font-size: 14px;
+      }
+```
+
+```html
+      th {
+        font-size: 16px;
+        height: 50px;
+      }
+```
+
+```html
+      td {
+        height: 45px;
+      }
+```
+
+```html
+      th:nth-child(1), td:nth-child(1) { width: 12% !important; }
+      th:nth-child(2), td:nth-child(2) { width: 12% !important; }
+      th:nth-child(3), td:nth-child(3) { width: 28% !important; }
+      th:nth-child(4), td:nth-child(4) { width: 28% !important; }
+      th:nth-child(5), td:nth-child(5) { width: 20% !important; }
+```
+
+```html
+      .modal-content {
+        max-width: 80%;
+        padding: 25px;
+      }
+    }
+```
+
+```html
     @media (min-width: 1024px) {
       .container {
         max-width: 1400px;
         padding: 40px;
       }
+```
 
+```html
       h1 {
         font-size: 42px;
         margin-bottom: 40px;
       }
+```
 
+```html
       table {
         border-radius: 20px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        table-layout: auto;
       }
+```
 
+```html
       th, td {
         padding: 3px 8px;
         height: 28px;
       }
+```
 
+```html
       th {
         font-size: 20px;
-        height: 63px; /* Aumentata del 50% da 42px */
+        height: 63px;
       }
+```
 
+```html
       td {
         font-size: 18px;
       }
+```
 
+```html
       td button {
         font-size: 22px;
         padding: 10px;
       }
+```
 
-      /* Icona storico più grande */
+```html
       td img {
         width: 28px !important;
         height: 28px !important;
       }
+```
 
-      /* Migliora spaziatura righe */
+```html
       tr {
         height: 28px;
       }
+```
 
-      /* Modale più grande su desktop */
+```html
       .modal-content {
         max-width: 800px;
         padding: 40px;
       }
+```
 
+```html
       .modal-title {
         font-size: 28px;
       }
+```
 
+```html
       .sezione-titolo {
         font-size: 20px;
       }
+```
 
+```html
       .campo-valore {
         font-size: 16px;
         padding: 12px 14px;
       }
+```
 
-      /* Larghezze specifiche per desktop - adattamento automatico */
-      th:nth-child(1), td:nth-child(1) { width: 80px; min-width: 80px; } /* Storico */
-      th:nth-child(2), td:nth-child(2) { width: 80px; min-width: 80px; } /* PIN */
-      th:nth-child(3), td:nth-child(3) { min-width: 253px; white-space: nowrap; } /* Nome - ridotta del 25% da 337px */
-      th:nth-child(4), td:nth-child(4) { min-width: 253px; white-space: nowrap; } /* Cognome - ridotta del 25% da 337px */
-      th:nth-child(5), td:nth-child(5) { width: 225px; min-width: 225px; } /* Azioni - aumentata del 50% */
+```html
+      th:nth-child(1), td:nth-child(1) { width: 80px; min-width: 80px; }
+      th:nth-child(2), td:nth-child(2) { width: 80px; min-width: 80px; }
+      th:nth-child(3), td:nth-child(3) { min-width: 253px; white-space: nowrap; }
+      th:nth-child(4), td:nth-child(4) { min-width: 253px; white-space: nowrap; }
+      th:nth-child(5), td:nth-child(5) { width: 225px; min-width: 225px; }
     }
+```
 
-    /* Larghezze ottimizzate per adattamento automatico */
-    table {
-      table-layout: auto; /* Permette adattamento automatico */
-    }
-
-    th:nth-child(1), td:nth-child(1) { width: 60px; min-width: 60px; } /* Storico - larghezza fissa minima */
-    th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; } /* PIN - larghezza fissa minima */
-    th:nth-child(3), td:nth-child(3) { min-width: 203px; white-space: nowrap; } /* Nome - ridotta del 25% da 270px */
-    th:nth-child(4), td:nth-child(4) { min-width: 203px; white-space: nowrap; } /* Cognome - ridotta del 25% da 270px */
-    th:nth-child(5), td:nth-child(5) { width: 180px; min-width: 180px; } /* Azioni - aumentata del 50% */
+```html
+    /* Ottimizzazioni per colonne responsive */
+    th:nth-child(1), td:nth-child(1) { width: 60px; min-width: 60px; }
+    th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; }
+    th:nth-child(3), td:nth-child(3) { min-width: 203px; white-space: nowrap; }
+    th:nth-child(4), td:nth-child(4) { min-width: 203px; white-space: nowrap; }
+    th:nth-child(5), td:nth-child(5) { width: 180px; min-width: 180px; }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="assets/icons/logoBN 2.png" alt="BadgeBox Logo" style="display:block; margin:-10px auto 20px; width:150px;" />
     <h1>Archivio Dipendenti</h1>
+```
 
-
-
-
-
+```html
     <table>
       <thead>
         <tr>
@@ -663,8 +750,9 @@
         </tr>
       </tbody>
     </table>
+```
 
-    <!-- Pulsanti sotto la tabella allineati a destra -->
+```html
     <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
       <button onclick="apriModalNuovoDipendente()" style="
         background-color: #16a34a;
@@ -682,7 +770,9 @@
          onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='translateY(0)'">
         Aggiungi
       </button>
+```
 
+```html
       <button onclick="window.location.href='ex-dipendenti.html'" style="
         background-color: #ca8a04;
         color: white;
@@ -701,7 +791,9 @@
       </button>
     </div>
   </div>
+```
 
+```html
   <!-- Modale Nuovo Dipendente -->
   <div id="modalNuovoDipendente">
     <div class="modal-content">
@@ -709,8 +801,9 @@
         <h2 class="modal-title">Aggiungi Nuovo Dipendente</h2>
         <button class="close-btn" onclick="chiudiModalNuovoDipendente()">×</button>
       </div>
+```
 
-      <!-- Sezione Dati Anagrafici -->
+```html
       <div class="sezione-modal">
         <div class="sezione-titolo">👤 Dati Anagrafici</div>
         <div class="campo-gruppo">
@@ -738,11 +831,14 @@
           <input type="number" class="campo-valore" id="nuovo-pin" min="1" max="99" required>
         </div>
       </div>
+```
 
-      <!-- Sezione Contratto Attivo -->
+```html
       <div class="sezione-modal">
         <div class="sezione-titolo">📄 Contratto Attivo</div>
+```
 
+```html
         <div class="campo-singolo">
           <div class="campo-label">Upload Contratto</div>
           <div class="upload-area" id="nuovo-upload-area">
@@ -759,29 +855,38 @@
             </div>
           </div>
         </div>
+```
 
+```html
         <div class="campo-singolo">
           <div class="campo-label">Descrizione Contratto in Corso</div>
           <textarea class="campo-valore campo-textarea" id="nuovo-descrizione-contratto" 
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
+```
 
+```html
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto</div>
           <input type="number" class="campo-valore" id="nuovo-ore-contrattuali" 
                  placeholder="8.00" step="0.25" min="0" max="24" value="8.00">
         </div>
+```
 
+```html
       </div>
+```
 
-      <!-- Pulsanti Azioni -->
+```html
       <div class="modal-actions">
         <button class="btn-annulla" onclick="annullaNuovoDipendente()">Annulla</button>
         <button class="btn-salva" onclick="salvaNuovoDipendente()">Salva</button>
       </div>
     </div>
   </div>
+```
 
+```html
   <!-- Modale Dettagli Dipendente -->
   <div id="modalDettagli">
     <div class="modal-content">
@@ -789,8 +894,9 @@
         <h2 class="modal-title" id="modalTitolo">Dettagli Dipendente</h2>
         <button class="close-btn" onclick="chiudiModalDettagli()">×</button>
       </div>
+```
 
-      <!-- Sezione Dati Anagrafici -->
+```html
       <div class="sezione-modal">
         <div class="sezione-titolo">👤 Dati Anagrafici</div>
         <div class="campo-gruppo">
@@ -814,11 +920,14 @@
           </div>
         </div>
       </div>
+```
 
-      <!-- Sezione Contratto Attivo -->
+```html
       <div class="sezione-modal">
         <div class="sezione-titolo">📄 Contratto Attivo</div>
+```
 
+```html
         <div class="campo-singolo">
           <div class="campo-label">Upload Contratto</div>
           <div class="upload-area" id="upload-area">
@@ -835,735 +944,33 @@
             </div>
           </div>
         </div>
+```
 
+```html
         <div class="campo-singolo">
           <div class="campo-label">Descrizione Contratto in Corso</div>
           <textarea class="campo-valore campo-textarea" id="dettagli-descrizione-contratto" 
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
+```
 
+```html
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto</div>
           <input type="number" class="campo-valore" id="dettagli-ore-contrattuali" 
-                 placeholder="8.00" step="0.25" min="0" max="24">
+placeholder="8.00" step="0.25" min="0" max="24">
         </div>
+```
 
+```html
       </div>
+```
 
-      <!-- Pulsanti Azioni -->
+```html
       <div class="modal-actions">
         <button class="btn-annulla" onclick="annullaModifiche()">Annulla</button>
         <button class="btn-salva" onclick="salvaModifiche()">Salva</button>
       </div>
     </div>
   </div>
-
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-    const supabase = createClient(
-      "https://txmjqrnitfsiytbytxlc.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
-    );
-
-    const tbody = document.getElementById("lista-dipendenti");
-
-    async function caricaUtenti() {
-      try {
-        const { data, error } = await supabase
-          .from("utenti")
-          .select("*")
-          .order("pin", { ascending: true });
-
-        if (error) {
-          console.error("Errore caricamento utenti:", error);
-          alert("Errore durante il caricamento utenti: " + error.message);
-          return;
-        }
-
-        tbody.innerHTML = "";
-        data.forEach(utente => {
-          const pin = String(utente.pin).padStart(2, "0");
-          const riga = document.createElement('tr');
-          riga.style.transition = 'background-color 0.2s';
-          riga.addEventListener('mouseenter', () => {
-            riga.style.backgroundColor = '#2563eb';
-          });
-          riga.addEventListener('mouseleave', () => {
-            riga.style.backgroundColor = '#1e293b';
-          });
-
-          riga.innerHTML = `
-              <td><a href="storico.html?pin=${utente.pin}" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
-              <td>${pin}</td>
-              <td>${utente.nome}</td>
-              <td>${utente.cognome}</td>
-              <td onclick="event.stopPropagation()">
-                <button onclick="apriModalDettagli({pin: ${utente.pin}, nome: '${utente.nome}', cognome: '${utente.cognome}', email: '${utente.email}', telefono: '${utente.telefono || ''}', descrizione_contratto: '${utente.descrizione_contratto || ''}', ore_contrattuali: ${utente.ore_contrattuali || 8.00}})" style="margin-right: 8px;" title="Modifica">✏️</button>
-                <button onclick="archiviaUtente('${utente.pin}')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
-                <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
-              </td>
-          `;
-          tbody.appendChild(riga);
-        });
-      } catch (error) {
-        console.error("Errore imprevisto:", error);
-        alert("Errore durante il caricamento utenti");
-      }
-    }
-
-    // Funzione modificaUtente rimossa - ora si usa apriModalDettagli
-
-    window.eliminaUtente = async (pin, nome, cognome) => {
-      // Primo messaggio di conferma
-      if (!confirm(`⚠️ ATTENZIONE! Stai per eliminare DEFINITIVAMENTE il dipendente:\n\n${nome} ${cognome} (PIN: ${pin})\n\nQuesta azione eliminerà:\n• Il dipendente dall'app\n• Tutte le sue timbrature\n• Tutti i suoi dati\n\nQuesta operazione NON può essere annullata!\n\nVuoi continuare?`)) {
-        return;
-      }
-
-      // Secondo messaggio di conferma più forte
-      if (!confirm(`🔴 ULTIMA CONFERMA!\n\nSei ASSOLUTAMENTE SICURO di voler eliminare DEFINITIVAMENTE:\n\n${nome} ${cognome}\n\nDigita "ELIMINA" nella prossima finestra per confermare.`)) {
-        return;
-      }
-
-      // Terza conferma con prompt
-      const confermaFinale = prompt(`Per confermare l'eliminazione DEFINITIVA di:\n${nome} ${cognome}\n\nScrivi esattamente: ELIMINA`);
-
-      if (confermaFinale !== "ELIMINA") {
-        alert("Eliminazione annullata. Il testo inserito non corrisponde.");
-        return;
-      }
-
-      try {
-        // Elimina prima tutte le timbrature del dipendente
-        const { error: errorTimbrature } = await supabase
-          .from("timbrature")
-          .delete()
-          .eq("pin", pin);
-
-        if (errorTimbrature) {
-          console.error("Errore eliminazione timbrature:", errorTimbrature);
-          alert("Errore durante l'eliminazione delle timbrature: " + errorTimbrature.message);
-          return;
-        }
-
-        // Elimina il dipendente dalla tabella utenti
-        const { error: errorUtente } = await supabase
-          .from("utenti")
-          .delete()
-          .eq("pin", pin);
-
-        if (errorUtente) {
-          console.error("Errore eliminazione utente:", errorUtente);
-          alert("Errore durante l'eliminazione del dipendente: " + errorUtente.message);
-          return;
-        }
-
-        alert(`✅ Dipendente ${nome} ${cognome} eliminato DEFINITIVAMENTE dall'app!\n\nTutti i dati e le timbrature sono stati cancellati.`);
-        caricaUtenti();
-
-      } catch (error) {
-        console.error("Errore imprevisto:", error);
-        alert("Errore durante l'eliminazione definitiva");
-      }
-    };
-
-    window.archiviaUtente = async (pin) => {
-      if (!confirm("Sei sicuro di voler archiviare questo dipendente?")) return;
-      if (!confirm("Il dipendente verrà spostato nell'archivio con tutto lo storico timbrature.\nConfermi l'archiviazione?")) return;
-
-      try {
-        // 1. Recupera i dati del dipendente
-        const { data: dipendente, error: errorDipendente } = await supabase
-          .from("utenti")
-          .select("*")
-          .eq("pin", pin)
-          .single();
-
-        if (errorDipendente) {
-          console.error("Errore recupero dipendente:", errorDipendente);
-          alert("Errore durante il recupero dati dipendente: " + errorDipendente.message);
-          return;
-        }
-
-        // 2. Recupera tutte le timbrature del dipendente
-        const { data: timbrature, error: errorTimbrature } = await supabase
-          .from("timbrature")
-          .select("*")
-          .eq("pin", pin)
-          .order("data", { ascending: true })
-          .order("ore", { ascending: true });
-
-        if (errorTimbrature) {
-          console.error("Errore recupero timbrature:", errorTimbrature);
-          alert("Errore durante il recupero timbrature: " + errorTimbrature.message);
-          return;
-        }
-
-        // 3. Genera file Excel (simulato - salviamo i dati JSON)
-        const excelData = {
-          dipendente: dipendente,
-          timbrature: timbrature || [],
-          dataGenerazione: new Date().toISOString(),
-          totaleTimbrature: timbrature ? timbrature.length : 0
-        };
-
-        const nomeFileExcel = `${dipendente.nome}_${dipendente.cognome}_timbrature_${new Date().toISOString().split('T')[0]}.json`;
-
-        // 4. Inserisci in dipendenti_archiviati
-        const { error: errorArchivio } = await supabase
-          .from("dipendenti_archiviati")
-          .insert([{
-            pin: dipendente.pin,
-            nome: dipendente.nome,
-            cognome: dipendente.cognome,
-            email: dipendente.email,
-            telefono: dipendente.telefono,
-            ore_contrattuali: dipendente.ore_contrattuali,
-            descrizione_contratto: dipendente.descrizione_contratto,
-            file_excel_name: nomeFileExcel,
-            file_excel_path: JSON.stringify(excelData) // Salviamo i dati come JSON per ora
-          }]);
-
-        if (errorArchivio) {
-          console.error("Errore archiviazione:", errorArchivio);
-          alert("Errore durante l'archiviazione: " + errorArchivio.message);
-          return;
-        }
-
-        // 5. Elimina dalle tabelle attive
-        const { error: errorDeleteTimbrature } = await supabase
-          .from("timbrature")
-          .delete()
-          .eq("pin", pin);
-
-        if (errorDeleteTimbrature) {
-          console.error("Errore eliminazione timbrature:", errorDeleteTimbrature);
-          alert("Errore durante l'eliminazione timbrature: " + errorDeleteTimbrature.message);
-          return;
-        }
-
-        const { error: errorDeleteUtente } = await supabase
-          .from("utenti")
-          .delete()
-          .eq("pin", pin);
-
-        if (errorDeleteUtente) {
-          console.error("Errore eliminazione utente:", errorDeleteUtente);
-          alert("Errore durante l'eliminazione utente: " + errorDeleteUtente.message);
-          return;
-        }
-
-        alert(`✅ Dipendente ${dipendente.nome} ${dipendente.cognome} archiviato con successo!\nFile Excel: ${nomeFileExcel}`);
-        caricaUtenti();
-
-      } catch (error) {
-        console.error("Errore imprevisto:", error);
-        alert("Errore durante l'archiviazione");
-      }
-    };
-
-
-
-    // Variabile globale per memorizzare i dati originali
-    let datiOriginali = {};
-    let utenteCorrente = null;
-
-    // Funzioni per il modale dettagli dipendente
-    window.apriModalDettagli = (utente) => {
-      const modal = document.getElementById('modalDettagli');
-      const modalTitolo = document.getElementById('modalTitolo');
-
-      // Memorizza l'utente corrente e i dati originali
-      utenteCorrente = utente;
-      datiOriginali = {
-        nome: utente.nome || '',
-        cognome: utente.cognome || '',
-        email: utente.email || '',
-        telefono: utente.telefono || '',
-        descrizioneContratto: utente.descrizione_contratto || '',
-        oreContrattuali: utente.ore_contrattuali || 8.00
-      };
-
-      // Aggiorna il titolo del modale
-      modalTitolo.textContent = `Dettagli - ${utente.nome} ${utente.cognome}`;
-
-      // Popola i campi con i dati del dipendente - Con controllo esistenza elementi
-      const campoNome = document.getElementById('dettagli-nome');
-      const campoCognome = document.getElementById('dettagli-cognome');
-      const campoEmail = document.getElementById('dettagli-email');
-      const campoTelefono = document.getElementById('dettagli-telefono');
-      const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
-      const campoOre = document.getElementById('dettagli-ore-contrattuali');
-
-      if (campoNome) campoNome.value = datiOriginali.nome;
-      if (campoCognome) campoCognome.value = datiOriginali.cognome;
-      if (campoEmail) campoEmail.value = datiOriginali.email;
-      if (campoTelefono) campoTelefono.value = datiOriginali.telefono;
-      if (campoDescrizione) campoDescrizione.value = datiOriginali.descrizioneContratto;
-      if (campoOre) campoOre.value = datiOriginali.oreContrattuali;
-
-      // Inizializza upload file
-      inizializzaUploadFile();
-
-      // Mostra il modale
-      modal.style.display = 'flex';
-
-      // Impedisce lo scroll della pagina sottostante
-      document.body.style.overflow = 'hidden';
-    };
-
-    window.chiudiModalDettagli = () => {
-      const modal = document.getElementById('modalDettagli');
-      modal.style.display = 'none';
-
-      // Ripristina lo scroll della pagina
-      document.body.style.overflow = 'auto';
-    };
-
-    // Chiudi il modale cliccando fuori dal contenuto
-    document.getElementById('modalDettagli').addEventListener('click', (e) => {
-      if (e.target.id === 'modalDettagli') {
-        chiudiModalDettagli();
-      }
-    });
-
-    // Chiudi il modale con il tasto ESC
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const modalDettagli = document.getElementById('modalDettagli');
-        const modalNuovo = document.getElementById('modalNuovoDipendente');
-
-        if (modalDettagli.style.display === 'flex') {
-          chiudiModalDettagli();
-        } else if (modalNuovo.style.display === 'flex') {
-          chiudiModalNuovoDipendente();
-        }
-      }
-    });
-
-    // Funzioni per pulsanti modale
-    window.annullaModifiche = () => {
-      // Ripristina i valori originali nei campi con controllo esistenza
-      if (datiOriginali) {
-        const campoNome = document.getElementById('dettagli-nome');
-        const campoCognome = document.getElementById('dettagli-cognome');
-        const campoEmail = document.getElementById('dettagli-email');
-        const campoTelefono = document.getElementById('dettagli-telefono');
-        const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
-        const campoOre = document.getElementById('dettagli-ore-contrattuali');
-
-        if (campoNome) campoNome.value = datiOriginali.nome;
-        if (campoCognome) campoCognome.value = datiOriginali.cognome;
-        if (campoEmail) campoEmail.value = datiOriginali.email;
-        if (campoTelefono) campoTelefono.value = datiOriginali.telefono;
-        if (campoDescrizione) campoDescrizione.value = datiOriginali.descrizioneContratto;
-        if (campoOre) campoOre.value = datiOriginali.oreContrattuali;
-      }
-
-      // Chiudi il modale
-      chiudiModalDettagli();
-    };
-
-    window.salvaModifiche = async () => {
-      if (!utenteCorrente) {
-        alert('Errore: nessun utente selezionato');
-        return;
-      }
-
-      try {
-        // Raccogli i dati dai campi del modale con controllo esistenza
-        const campoNome = document.getElementById('dettagli-nome');
-        const campoCognome = document.getElementById('dettagli-cognome');
-        const campoEmail = document.getElementById('dettagli-email');
-        const campoTelefono = document.getElementById('dettagli-telefono');
-        const campoDescrizione = document.getElementById('dettagli-descrizione-contratto');
-        const campoOre = document.getElementById('dettagli-ore-contrattuali');
-
-        const datiAggiornati = {
-          nome: campoNome ? campoNome.value.trim() : '',
-          cognome: campoCognome ? campoCognome.value.trim() : '',
-          email: campoEmail ? campoEmail.value.trim() : '',
-          telefono: campoTelefono ? campoTelefono.value.trim() : '',
-          descrizione_contratto: campoDescrizione ? campoDescrizione.value.trim() : '',
-          ore_contrattuali: campoOre ? parseFloat(campoOre.value) || 8.00 : 8.00
-        };
-
-        // Validazione base
-        if (!datiAggiornati.nome || !datiAggiornati.cognome || !datiAggiornati.email) {
-          alert('I campi Nome, Cognome ed Email sono obbligatori');
-          return;
-        }
-
-        // Validazione email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(datiAggiornati.email)) {
-          alert('Inserisci un indirizzo email valido');
-          return;
-        }
-
-        // Validazione ore giornaliere
-        if (datiAggiornati.ore_contrattuali < 0 || datiAggiornati.ore_contrattuali > 24) {
-          alert('Le ore giornaliere devono essere comprese tra 0 e 24');
-          return;
-        }
-
-        console.log('Dati da salvare:', datiAggiornati);
-
-        // Aggiorna i dati su Supabase usando PIN come chiave
-        const { error } = await supabase
-          .from('utenti')
-          .update(datiAggiornati)
-          .eq('pin', utenteCorrente.pin);
-
-        if (error) {
-          console.error('Errore durante il salvataggio:', error);
-          alert('Errore durante il salvataggio: ' + error.message);
-          return;
-        }
-
-        // Successo - aggiorna i dati locali
-        datiOriginali = {
-          nome: datiAggiornati.nome,
-          cognome: datiAggiornati.cognome,
-          email: datiAggiornati.email,
-          telefono: datiAggiornati.telefono,
-          descrizioneContratto: datiAggiornati.descrizione_contratto,
-          oreContrattuali: datiAggiornati.ore_contrattuali
-        };
-
-        // Aggiorna l'oggetto utente corrente
-        Object.assign(utenteCorrente, datiAggiornati);
-
-        // Ricarica la lista utenti per riflettere le modifiche
-        await caricaUtenti();
-
-        // Mostra messaggio di successo
-        alert('✅ Dati salvati con successo!');
-
-        // Chiudi il modale
-        chiudiModalDettagli();
-
-      } catch (error) {
-        console.error('Errore imprevisto:', error);
-        alert('Errore imprevisto durante il salvataggio');
-      }
-    };
-
-    // Funzioni per il modale nuovo dipendente
-    window.apriModalNuovoDipendente = () => {
-      const modal = document.getElementById('modalNuovoDipendente');
-
-      // Reset tutti i campi
-      document.getElementById('nuovo-nome').value = '';
-      document.getElementById('nuovo-cognome').value = '';
-      document.getElementById('nuovo-email').value = '';
-      document.getElementById('nuovo-telefono').value = '';
-      document.getElementById('nuovo-pin').value = '';
-      document.getElementById('nuovo-descrizione-contratto').value = '';
-      document.getElementById('nuovo-ore-contrattuali').value = '8.00';
-
-      // Inizializza upload file per nuovo dipendente
-      inizializzaUploadFileNuovo();
-
-      // Mostra il modale
-      modal.style.display = 'flex';
-
-      // Impedisce lo scroll della pagina sottostante
-      document.body.style.overflow = 'hidden';
-    };
-
-    window.chiudiModalNuovoDipendente = () => {
-      const modal = document.getElementById('modalNuovoDipendente');
-      modal.style.display = 'none';
-
-      // Ripristina lo scroll della pagina
-      document.body.style.overflow = 'auto';
-    };
-
-    window.annullaNuovoDipendente = () => {
-      chiudiModalNuovoDipendente();
-    };
-
-    window.salvaNuovoDipendente = async () => {
-      try {
-        // Raccogli i dati dai campi del modale
-        const nome = document.getElementById('nuovo-nome').value.trim();
-        const cognome = document.getElementById('nuovo-cognome').value.trim();
-        const email = document.getElementById('nuovo-email').value.trim();
-        const telefono = document.getElementById('nuovo-telefono').value.trim();
-        const pin = document.getElementById('nuovo-pin').value.trim();
-        const descrizioneContratto = document.getElementById('nuovo-descrizione-contratto').value.trim();
-        const oreContrattuali = parseFloat(document.getElementById('nuovo-ore-contrattuali').value) || 8.00;
-
-        // Validazione base
-        if (!nome || !cognome || !email || !pin) {
-          alert('I campi Nome, Cognome, Email e PIN sono obbligatori');
-          return;
-        }
-
-        // Validazione PIN
-        const pinNum = parseInt(pin);
-        if (isNaN(pinNum) || pinNum < 1 || pinNum > 99) {
-          alert('Il PIN deve essere un numero compreso tra 1 e 99');
-          return;
-        }
-
-        // Validazione email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          alert('Inserisci un indirizzo email valido');
-          return;
-        }
-
-        // Validazione ore giornaliere
-        if (oreContrattuali < 0 || oreContrattuali > 24) {
-          alert('Le ore giornaliere devono essere comprese tra 0 e 24');
-          return;
-        }
-
-        const nuovoDipendente = {
-          nome: nome,
-          cognome: cognome,
-          email: email,
-          telefono: telefono || null,
-          pin: pinNum,
-          descrizione_contratto: descrizioneContratto || null,
-          ore_contrattuali: oreContrattuali
-        };
-
-        console.log('Dati nuovo dipendente:', nuovoDipendente);
-
-        // Inserisci i dati su Supabase
-        const { error } = await supabase
-          .from('utenti')
-          .insert([nuovoDipendente]);
-
-        if (error) {
-          console.error('Errore durante il salvataggio:', error);
-          if (error.code === '23505') {
-            alert('Errore: PIN già esistente. Scegli un PIN diverso.');
-          } else {
-            alert('Errore durante il salvataggio: ' + error.message);
-          }
-          return;
-        }
-
-        // Successo - ricarica la lista utenti
-        await caricaUtenti();
-
-        // Mostra messaggio di successo
-        alert('✅ Nuovo dipendente aggiunto con successo!');
-
-        // Chiudi il modale
-        chiudiModalNuovoDipendente();
-
-      } catch (error) {
-        console.error('Errore imprevisto:', error);
-        alert('Errore imprevisto durante il salvataggio');
-      }
-    };
-
-    // Chiudi il modale cliccando fuori dal contenuto
-    document.getElementById('modalNuovoDipendente').addEventListener('click', (e) => {
-      if (e.target.id === 'modalNuovoDipendente') {
-        chiudiModalNuovoDipendente();
-      }
-    });
-
-    // Funzionalità Upload File per nuovo dipendente
-    function inizializzaUploadFileNuovo() {
-      const uploadArea = document.getElementById('nuovo-upload-area');
-      const fileInput = document.getElementById('nuovo-file-input');
-      const uploadText = document.getElementById('nuovo-upload-text');
-      const fileInfo = document.getElementById('nuovo-file-info');
-      const fileName = document.getElementById('nuovo-file-name');
-      const fileSize = document.getElementById('nuovo-file-size');
-      const removeFileBtn = document.getElementById('nuovo-remove-file-btn');
-
-      // Verifica esistenza elementi
-      if (!uploadArea || !fileInput || !uploadText || !fileInfo || !fileName || !fileSize || !removeFileBtn) {
-        console.warn('Alcuni elementi dell\'upload nuovo dipendente non sono stati trovati');
-        return;
-      }
-
-      // Click per aprire selezione file
-      uploadArea.addEventListener('click', (e) => {
-        if (!e.target.closest('.remove-file-btn')) {
-          fileInput.click();
-        }
-      });
-
-      // Gestione selezione file
-      fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          gestisciFileNuovo(file);
-        }
-      });
-
-      // Drag & Drop events
-      uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
-      });
-
-      uploadArea.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-      });
-
-      uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          gestisciFileNuovo(files[0]);
-        }
-      });
-
-      // Rimozione file
-      removeFileBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        rimuoviFileNuovo();
-      });
-
-      function gestisciFileNuovo(file) {
-        // Validazione tipo file
-        const tipiAccettati = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        if (!tipiAccettati.includes(file.type)) {
-          alert('Tipo di file non supportato. Seleziona un file PDF, DOC o DOCX.');
-          return;
-        }
-
-        // Validazione dimensione (5MB)
-        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-        if (file.size > maxSize) {
-          alert('Il file è troppo grande. La dimensione massima consentita è 5MB.');
-          return;
-        }
-
-        // Mostra informazioni file
-        fileName.textContent = file.name;
-        fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
-
-        uploadText.style.display = 'none';
-        fileInfo.style.display = 'block';
-
-        uploadArea.style.borderColor = '#10b981';
-        uploadArea.style.backgroundColor = '#064e3b';
-
-        console.log('File caricato:', file.name, 'Dimensione:', file.size, 'bytes');
-      }
-
-      function rimuoviFileNuovo() {
-        fileInput.value = '';
-        uploadText.style.display = 'block';
-        fileInfo.style.display = 'none';
-
-        uploadArea.style.borderColor = '#4b5563';
-        uploadArea.style.backgroundColor = '#374151';
-      }
-    }
-
-    // Funzionalità Upload File per modifica dipendente
-    function inizializzaUploadFile() {
-      const uploadArea = document.getElementById('upload-area');
-      const fileInput = document.getElementById('file-input');
-      const uploadText = document.getElementById('upload-text');
-      const fileInfo = document.getElementById('file-info');
-      const fileName = document.getElementById('file-name');
-      const fileSize = document.getElementById('file-size');
-      const removeFileBtn = document.getElementById('remove-file-btn');
-
-      // Verifica esistenza elementi
-      if (!uploadArea || !fileInput || !uploadText || !fileInfo || !fileName || !fileSize || !removeFileBtn) {
-        console.warn('Alcuni elementi dell\'upload non sono stati trovati');
-        return;
-      }
-
-      // Click per aprire selezione file
-      uploadArea.addEventListener('click', (e) => {
-        if (!e.target.closest('.remove-file-btn')) {
-          fileInput.click();
-        }
-      });
-
-      // Gestione selezione file
-      fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          gestisciFile(file);
-        }
-      });
-
-      // Drag & Drop events
-      uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
-      });
-
-      uploadArea.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-      });
-
-      uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-          gestisciFile(files[0]);
-        }
-      });
-
-      // Rimozione file
-      removeFileBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        rimuoviFile();
-      });
-
-      function gestisciFile(file) {
-        // Validazione tipo file
-        const tipiAccettati = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        if (!tipiAccettati.includes(file.type)) {
-          alert('Tipo di file non supportato. Seleziona un file PDF, DOC o DOCX.');
-          return;
-        }
-
-        // Validazione dimensione (5MB)
-        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-        if (file.size > maxSize) {
-          alert('Il file è troppo grande. La dimensione massima consentita è 5MB.');
-          return;
-        }
-
-        // Mostra informazioni file
-        fileName.textContent = file.name;
-        fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
-
-        uploadText.style.display = 'none';
-        fileInfo.style.display = 'block';
-
-        uploadArea.style.borderColor = '#10b981';
-        uploadArea.style.backgroundColor = '#064e3b';
-
-        console.log('File caricato:', file.name, 'Dimensione:', file.size, 'bytes');
-      }
-
-      function rimuoviFile() {
-        fileInput.value = '';
-        uploadText.style.display = 'block';
-        fileInfo.style.display = 'none';
-
-        uploadArea.style.borderColor = '#4b5563';
-        uploadArea.style.backgroundColor = '#374151';
-      }
-    }
-
-    // Carica utenti all'avvio
-    caricaUtenti();
-  </script>
-</body>
-</html>
+`
