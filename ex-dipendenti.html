@@ -94,17 +94,17 @@
     }
 
     /* Larghezze specifiche per le colonne - OTTIMIZZATE */
-    th:nth-child(1), td:nth-child(1) { width: 20%; } /* Nome */
-    th:nth-child(2), td:nth-child(2) { width: 20%; } /* Cognome */
-    th:nth-child(3), td:nth-child(3) { width: 18%; } /* Data Archiviazione */
-    th:nth-child(4), td:nth-child(4) { width: 12%; } /* Timbrature */
-    th:nth-child(5), td:nth-child(5) { width: 30%; } /* Azioni - ALLARGATA */
+    th:nth-child(1), td:nth-child(1) { width: 15%; } /* Nome */
+    th:nth-child(2), td:nth-child(2) { width: 15%; } /* Cognome */
+    th:nth-child(3), td:nth-child(3) { width: 15%; } /* Data Archiviazione */
+    th:nth-child(4), td:nth-child(4) { width: 10%; } /* Timbrature */
+    th:nth-child(5), td:nth-child(5) { width: 45%; } /* Azioni - RADDOPPIATA */
 
     /* Ottimizzazione colonna azioni - FORZATA ORIZZONTALE */
     td:nth-child(5) {
       white-space: nowrap !important;
       text-align: center !important;
-      padding: 4px 8px !important;
+      padding: 8px 16px !important;
       overflow: visible !important;
       height: 28px !important;
       line-height: 28px !important;
@@ -114,17 +114,18 @@
 
     td:nth-child(5) button {
       display: inline-block !important;
-      margin: 0 2px !important;
-      padding: 2px 4px !important;
-      font-size: 16px !important;
+      margin: 0 8px !important;
+      padding: 4px 8px !important;
+      font-size: 18px !important;
       border: none !important;
       background: none !important;
       cursor: pointer !important;
       vertical-align: middle !important;
       float: none !important;
       position: relative !important;
-      height: 20px !important;
-      line-height: 16px !important;
+      height: 24px !important;
+      line-height: 20px !important;
+      min-width: 32px !important;
     }
 
     tr:last-child td {
