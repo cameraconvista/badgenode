@@ -19,14 +19,8 @@ const modalOverlay = document.getElementById("modalOverlay");
 const urlParams = new URLSearchParams(window.location.search);
 let pin = urlParams.get("pin");
 
-console.log("URL completa:", window.location.href);
-console.log("Query string:", window.location.search);
-console.log("PIN dalla URL:", pin);
-
-// Debug per Netlify
 if (!pin) {
-  console.warn("PIN non trovato nella URL, possibile problema di routing");
-  console.log("Location:", window.location);
+  console.warn("PIN non trovato nella URL");
 }
 
 // Funzione per aggiornare il range di date
@@ -52,13 +46,8 @@ function aggiornaRange(mese) {
   const primoGiorno = new Date(anno, meseIndice, 1, 12, 0, 0);
   const ultimoGiorno = new Date(anno, meseIndice + 1, 0, 12, 0, 0);
 
-  const dataInizioString = primoGiorno.toISOString().split('T')[0];
-  const dataFineString = ultimoGiorno.toISOString().split('T')[0];
-
-  dataInizio.value = dataInizioString;
-  dataFine.value = dataFineString;
-
-  console.log(`Range aggiornato: dal ${dataInizioString} al ${dataFineString}`);
+  dataInizio.value = primoGiorno.toISOString().split('T')[0];
+  dataFine.value = ultimoGiorno.toISOString().split('T')[0];
 }
 
 // Funzione per aggiungere opzione personalizzato
@@ -78,6 +67,16 @@ function aggiungiOpzionePersonalizzato() {
   selectFiltro.style.color = '#90EE90';
 }
 
+// Normalizza data per confronto
+function normalizzaData(data) {
+  if (typeof data !== 'string') {
+    data = new Date(data).toISOString().split('T')[0];
+  } else if (data.includes('T')) {
+    data = data.split('T')[0];
+  }
+  return data;
+}
+
 // Carica i dati dal database
 async function caricaDati() {
   if (!pin) return;
@@ -91,7 +90,6 @@ async function caricaDati() {
       .single();
 
     if (errUtente) {
-      console.error("Errore recupero utente:", errUtente.message);
       alert("Errore recupero utente: " + errUtente.message);
       return;
     }
@@ -99,7 +97,6 @@ async function caricaDati() {
     if (datiUtente) {
       dipendente = datiUtente;
       intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
-      console.log("Dati utente caricati:", dipendente);
     }
 
     // Recupera timbrature
@@ -111,40 +108,47 @@ async function caricaDati() {
       .order("ore", { ascending: true });
 
     if (error) {
-      console.error("Errore nel recupero timbrature:", error);
       alert("Errore nel recupero timbrature: " + error.message);
       return;
     }
 
     // Filtra le timbrature
     timbrature = (data || []).filter(t => {
-      let dataRiferimento = t.giornologico || t.data;
-      if (typeof dataRiferimento !== 'string') {
-        dataRiferimento = new Date(dataRiferimento).toISOString().split('T')[0];
-      } else if (dataRiferimento.includes('T')) {
-        dataRiferimento = dataRiferimento.split('T')[0];
-      }
+      const dataRiferimento = normalizzaData(t.giornologico || t.data);
       return dataRiferimento >= dataInizio.value && dataRiferimento <= dataFine.value;
     });
 
-    console.log(`FILTRO APPLICATO: ${timbrature.length} timbrature nel periodo ${dataInizio.value} - ${dataFine.value}`);
-
   } catch (error) {
-    console.error("Errore caricamento dati:", error);
     alert("Errore durante il caricamento dei dati");
   }
 
   renderizzaTabella();
 }
 
+// Calcola ore lavorate tra due orari
+function calcolaOreLavorate(oraInizio, oraFine) {
+  const inizio = new Date(`1970-01-01T${oraInizio}`);
+  const fine = new Date(`1970-01-01T${oraFine}`);
+
+  if (fine < inizio) fine.setDate(fine.getDate() + 1);
+
+  const diffMs = fine - inizio;
+  return diffMs > 0 ? diffMs / (1000 * 60 * 60) : 0;
+}
+
+// Formatta ore in formato HH:MM
+function formattaOre(ore) {
+  if (ore <= 0) return '—';
+  const oreInt = Math.floor(ore);
+  const minuti = Math.round((ore % 1) * 60);
+  return `${oreInt}:${minuti.toString().padStart(2, '0')}`;
+}
+
 // Renderizza la tabella
 function renderizzaTabella() {
   tbody.innerHTML = "";
 
-  if (!dataInizio.value || !dataFine.value) {
-    console.log("Date non impostate correttamente");
-    return;
-  }
+  if (!dataInizio.value || !dataFine.value) return;
 
   const start = new Date(dataInizio.value + 'T00:00:00');
   const end = new Date(dataFine.value + 'T00:00:00');
@@ -161,42 +165,23 @@ function renderizzaTabella() {
     const dataISO = current.toISOString().split("T")[0];
     const giornoSettimana = giorniSettimana[current.getDay()];
     const giornoNumero = current.getDate().toString().padStart(2, "0");
-
     const dataFormattata = `${giornoNumero} ${giornoSettimana}`;
 
-    // Logica per le timbrature del giorno...
+    // Filtra timbrature del giorno
     const timbratureOggi = timbrature.filter(t => {
-      let dataRiferimento = t.giornologico || t.data;
-      if (typeof dataRiferimento !== 'string') {
-        dataRiferimento = new Date(dataRiferimento).toISOString().split('T')[0];
-      } else if (dataRiferimento.includes('T')) {
-        dataRiferimento = dataRiferimento.split('T')[0];
-      }
+      const dataRiferimento = normalizzaData(t.giornologico || t.data);
       return dataRiferimento === dataISO;
     });
 
-    // Continua con la logica esistente...
     const timbratureEntrata = timbratureOggi.filter(t => t.tipo === "entrata").sort((a, b) => a.ore.localeCompare(b.ore));
     const timbratureUscita = timbratureOggi.filter(t => t.tipo === "uscita").sort((a, b) => a.ore.localeCompare(b.ore));
 
-    // Resto della logica di rendering...
-    // [Qui continua la logica esistente di raggruppamento e rendering]
-
+    // Calcola ore lavorate
     let oreTotaliGiorno = 0;
-    // Logica semplificata per il calcolo delle ore
     if (timbratureEntrata.length > 0 && timbratureUscita.length > 0) {
       const entrata = timbratureEntrata[0];
       const uscita = timbratureUscita[timbratureUscita.length - 1];
-
-      const oraInizio = new Date(`1970-01-01T${entrata.ore}`);
-      const oraFine = new Date(`1970-01-01T${uscita.ore}`);
-
-      if (oraFine < oraInizio) oraFine.setDate(oraFine.getDate() + 1);
-
-      const diffMs = oraFine - oraInizio;
-      if (diffMs > 0) {
-        oreTotaliGiorno = diffMs / (1000 * 60 * 60);
-      }
+      oreTotaliGiorno = calcolaOreLavorate(entrata.ore, uscita.ore);
     }
 
     // Crea riga tabella
@@ -207,16 +192,14 @@ function renderizzaTabella() {
 
     const entrataDisplay = timbratureEntrata.length > 0 ? timbratureEntrata[0].ore.slice(0,5) : '—';
     const uscitaDisplay = timbratureUscita.length > 0 ? timbratureUscita[timbratureUscita.length - 1].ore.slice(0,5) : '—';
-    const oreDisplay = oreTotaliGiorno > 0 ? `${Math.floor(oreTotaliGiorno)}:${Math.round((oreTotaliGiorno % 1) * 60).toString().padStart(2, '0')}` : '—';
+    const oreDisplay = formattaOre(oreTotaliGiorno);
 
     // Calcola EXTRA
     const oreContrattuali = parseFloat(dipendente?.ore_contrattuali) || 8.00;
     const oreExtra = oreTotaliGiorno - oreContrattuali;
     let extraContent = '';
     if (oreExtra > 0) {
-      const oreExtraInt = Math.floor(oreExtra);
-      const minutiExtra = Math.round((oreExtra - oreExtraInt) * 60);
-      extraContent = `<span style="color: #fbbf24; font-weight: bold;">${oreExtraInt}:${minutiExtra.toString().padStart(2, '0')}</span>`;
+      extraContent = `<span style="color: #fbbf24; font-weight: bold;">${formattaOre(oreExtra)}</span>`;
       totaleMensileExtra += oreExtra;
     }
 
@@ -244,19 +227,16 @@ function renderizzaTabella() {
     totaleMensileOre += oreTotaliGiorno;
   }
 
-  // Riga totale nel footer fisso
+  // Riga totale nel footer
   const footerTbody = document.getElementById("totale-footer");
   footerTbody.innerHTML = "";
   const rigaTotale = document.createElement("tr");
-  
-  // Calcola il totale extra formattato
+
   let totaleExtraContent = '';
   if (totaleMensileExtra > 0) {
-    const oreExtraTotali = Math.floor(totaleMensileExtra);
-    const minutiExtraTotali = Math.round((totaleMensileExtra % 1) * 60);
-    totaleExtraContent = `<span style="color: #fbbf24; font-weight: bold;">${oreExtraTotali}:${minutiExtraTotali.toString().padStart(2, '0')}</span>`;
+    totaleExtraContent = `<span style="color: #fbbf24; font-weight: bold;">${formattaOre(totaleMensileExtra)}</span>`;
   }
-  
+
   rigaTotale.innerHTML = `
     <td style="text-align:left;">TOTALE MENSILE</td>
     <td></td>
@@ -292,12 +272,7 @@ async function apriModale(dataSelezionata, timbraturaId) {
   dataCorrenteModale = dataSelezionata;
 
   const timbratureGiorno = timbrature.filter(t => {
-    let dataRiferimento = t.giornologico || t.data;
-    if (typeof dataRiferimento !== 'string') {
-      dataRiferimento = new Date(dataRiferimento).toISOString().split('T')[0];
-    } else if (dataRiferimento.includes('T')) {
-      dataRiferimento = dataRiferimento.split('T')[0];
-    }
+    const dataRiferimento = normalizzaData(t.giornologico || t.data);
     return dataRiferimento === dataSelezionata;
   });
 
@@ -338,6 +313,17 @@ function chiudiModale() {
   modalOverlay.style.display = "none";
 }
 
+// Calcola giorno logico per timbrature notturne
+function calcolaGiornoLogico(data, ore) {
+  const [oraInt] = ore.split(":").map(Number);
+  if (oraInt >= 0 && oraInt < 5) {
+    const dataGiornoLogico = new Date(data);
+    dataGiornoLogico.setDate(dataGiornoLogico.getDate() - 1);
+    return dataGiornoLogico.toISOString().split('T')[0];
+  }
+  return data;
+}
+
 // Salva le modifiche
 async function salvaModifiche() {
   const modaleDataEntrata = document.getElementById("modale-data-entrata").value;
@@ -356,16 +342,7 @@ async function salvaModifiche() {
       const dataEntrataUTC = new Date(modaleDataEntrata);
       dataEntrataUTC.setHours(12);
       const dataEntrataISO = dataEntrataUTC.toISOString();
-
-      const [ore, minuti] = modaleEntrata.split(":");
-      
-      // Calcolo giorno logico per entrata
-      let giornoLogicoEntrata = modaleDataEntrata;
-      if (parseInt(ore) >= 0 && parseInt(ore) < 5) {
-        const dataGiornoLogico = new Date(modaleDataEntrata);
-        dataGiornoLogico.setDate(dataGiornoLogico.getDate() - 1);
-        giornoLogicoEntrata = dataGiornoLogico.toISOString().split('T')[0];
-      }
+      const giornoLogicoEntrata = calcolaGiornoLogico(modaleDataEntrata, modaleEntrata);
 
       if (window.timbraturaEntrataCorrente) {
         await supabaseClient
@@ -401,16 +378,7 @@ async function salvaModifiche() {
       const dataUscitaUTC = new Date(modaleDataUscita);
       dataUscitaUTC.setHours(12);
       const dataUscitaISO = dataUscitaUTC.toISOString();
-
-      const [oreUscita, minutiUscita] = modaleUscita.split(":");
-      
-      // Calcolo giorno logico per uscita
-      let giornoLogicoUscita = modaleDataUscita;
-      if (parseInt(oreUscita) >= 0 && parseInt(oreUscita) < 5) {
-        const dataGiornoLogico = new Date(modaleDataUscita);
-        dataGiornoLogico.setDate(dataGiornoLogico.getDate() - 1);
-        giornoLogicoUscita = dataGiornoLogico.toISOString().split('T')[0];
-      }
+      const giornoLogicoUscita = calcolaGiornoLogico(modaleDataUscita, modaleUscita);
 
       if (window.timbraturaUscitaCorrente) {
         await supabaseClient
@@ -440,7 +408,6 @@ async function salvaModifiche() {
     chiudiModale();
     caricaDati();
   } catch (error) {
-    console.error("Errore salvataggio:", error);
     alert("Errore durante il salvataggio: " + error.message);
   }
 }
@@ -468,9 +435,44 @@ async function eliminaTimbrature() {
     chiudiModale();
     caricaDati();
   } catch (error) {
-    console.error("Errore eliminazione:", error);
     alert("Errore durante l'eliminazione: " + error.message);
   }
+}
+
+// Genera dati per esportazione
+function generaDatiEsportazione() {
+  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
+  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
+  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
+
+  const footerRow = document.querySelector('#totale-footer tr');
+  let totaleMensile = '—';
+
+  if (footerRow) {
+    const cells = footerRow.querySelectorAll('td');
+    if (cells.length >= 4) {
+      totaleMensile = cells[3].textContent.trim();
+    }
+  }
+
+  const righeTabella = document.querySelectorAll('#storico-body tr');
+  const datiTabella = [];
+
+  righeTabella.forEach(riga => {
+    const cells = riga.querySelectorAll('td');
+    if (cells.length >= 4) {
+      const data = cells[0].textContent.trim();
+      const entrata = cells[1].textContent.trim();
+      const uscita = cells[2].textContent.trim();
+      const ore = cells[3].textContent.trim();
+
+      if (entrata !== '—' || uscita !== '—') {
+        datiTabella.push({ data, entrata, uscita, ore });
+      }
+    }
+  });
+
+  return { nomeCompleto, dataInizioFormatted, dataFineFormatted, totaleMensile, datiTabella };
 }
 
 // Event listeners
@@ -497,99 +499,49 @@ dataFine.addEventListener("change", () => {
   caricaDati();
 });
 
-document.getElementById("torna-utenti").addEventListener("click", function() {
+document.getElementById("torna-utenti").addEventListener("click", () => {
   window.location.href = "utenti.html";
 });
 
-// Funzionalità WhatsApp con formato semplificato
-document.getElementById("btn-whatsapp").addEventListener("click", function() {
-  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
-  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
-  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
-  
-  // Calcola solo le ore totali dalla tabella footer
-  const footerRow = document.querySelector('#totale-footer tr');
-  let totaleMensile = '—';
-  
-  if (footerRow) {
-    const cells = footerRow.querySelectorAll('td');
-    if (cells.length >= 4) {
-      totaleMensile = cells[3].textContent.trim();
-    }
-  }
-  
-  // Genera la tabella delle timbrature semplificata (solo Data, Entrata, Uscita)
-  const righeTabella = document.querySelectorAll('#storico-body tr');
+// Funzionalità WhatsApp
+document.getElementById("btn-whatsapp").addEventListener("click", () => {
+  const { nomeCompleto, dataInizioFormatted, dataFineFormatted, totaleMensile, datiTabella } = generaDatiEsportazione();
+
   let tabellaTimbrature = '';
-  
-  righeTabella.forEach(riga => {
-    const cells = riga.querySelectorAll('td');
-    if (cells.length >= 3) {
-      const data = cells[0].textContent.trim();
-      const entrata = cells[1].textContent.trim();
-      const uscita = cells[2].textContent.trim();
-      
-      // Formatta la riga solo se ci sono dati significativi
-      if (entrata !== '—' || uscita !== '—') {
-        tabellaTimbrature += `${data.padEnd(10)} ${entrata.padEnd(10)} ${uscita}\n`;
-      }
-    }
+  datiTabella.forEach(({ data, entrata, uscita }) => {
+    tabellaTimbrature += `${data.padEnd(10)} ${entrata.padEnd(10)} ${uscita}\n`;
   });
-  
-  // Genera il messaggio semplificato come nell'esempio
-  const messaggio = `CAMERA CON VISTA Bistrot\n\n` +
-                   `*RIEPILOGO MENSILE:*\n\n` +
-                   `👤 *${nomeCompleto}* (PIN: ${pin})\n` +
-                   `📅 Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}\n\n` +
-                   `Ore totali: ${totaleMensile}\n\n` +
-                   `DETTAGLIO TIMBRATURE\n\n` +
-                   `Data      Entrata    Uscita\n` +
-                   (tabellaTimbrature || 'Nessuna timbratura nel periodo\n');
-  
+
+  const messaggio = `CAMERA CON VISTA Bistrot\n\n*RIEPILOGO MENSILE:*\n\n👤 *${nomeCompleto}* (PIN: ${pin})\n📅 Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}\n\nOre totali: ${totaleMensile}\n\nDETTAGLIO TIMBRATURE\n\nData      Entrata    Uscita\n${tabellaTimbrature || 'Nessuna timbratura nel periodo\n'}`;
+
   const url = `https://wa.me/?text=${encodeURIComponent(messaggio)}`;
   window.open(url, '_blank');
 });
 
 // Funzionalità PDF
-document.getElementById("btn-invia").addEventListener("click", function() {
-  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
-  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
-  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
-  
-  // Calcola le ore totali dalla tabella footer
-  const footerRow = document.querySelector('#totale-footer tr');
-  let totaleMensile = '—';
-  
-  if (footerRow) {
-    const cells = footerRow.querySelectorAll('td');
-    if (cells.length >= 4) {
-      totaleMensile = cells[3].textContent.trim();
-    }
-  }
-  
-  // Crea nuovo documento PDF
+document.getElementById("btn-invia").addEventListener("click", () => {
+  const { nomeCompleto, dataInizioFormatted, dataFineFormatted, totaleMensile, datiTabella } = generaDatiEsportazione();
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  
-  // Titolo
+
+  // Titolo e intestazioni
   doc.setFontSize(20);
   doc.setFont("helvetica", "bold");
   doc.text("CAMERA CON VISTA Bistrot", 105, 20, { align: "center" });
-  
-  // Sottotitolo
+
   doc.setFontSize(16);
   doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 35, { align: "center" });
-  
+
   // Informazioni dipendente
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
   doc.text(`Dipendente: ${nomeCompleto} (PIN: ${pin})`, 20, 55);
   doc.text(`Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}`, 20, 65);
   doc.text(`Ore totali: ${totaleMensile}`, 20, 75);
-  
-  // Linea separatrice
+
   doc.line(20, 85, 190, 85);
-  
+
   // Intestazione tabella
   doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
@@ -597,71 +549,40 @@ document.getElementById("btn-invia").addEventListener("click", function() {
   doc.text("Entrata", 70, 100);
   doc.text("Uscita", 120, 100);
   doc.text("Ore", 160, 100);
-  
-  // Linea sotto intestazione
+
   doc.line(20, 105, 190, 105);
-  
+
   // Dati tabella
   doc.setFont("helvetica", "normal");
-  const righeTabella = document.querySelectorAll('#storico-body tr');
   let yPosition = 115;
-  
-  righeTabella.forEach(riga => {
-    const cells = riga.querySelectorAll('td');
-    if (cells.length >= 4) {
-      const data = cells[0].textContent.trim();
-      const entrata = cells[1].textContent.trim();
-      const uscita = cells[2].textContent.trim();
-      const ore = cells[3].textContent.trim();
-      
-      // Aggiungi riga solo se ci sono dati significativi
-      if (entrata !== '—' || uscita !== '—') {
-        doc.text(data, 20, yPosition);
-        doc.text(entrata, 70, yPosition);
-        doc.text(uscita, 120, yPosition);
-        doc.text(ore, 160, yPosition);
-        yPosition += 10;
-        
-        // Controlla se serve una nuova pagina
-        if (yPosition > 270) {
-          doc.addPage();
-          yPosition = 20;
-        }
-      }
+
+  datiTabella.forEach(({ data, entrata, uscita, ore }) => {
+    doc.text(data, 20, yPosition);
+    doc.text(entrata, 70, yPosition);
+    doc.text(uscita, 120, yPosition);
+    doc.text(ore, 160, yPosition);
+    yPosition += 10;
+
+    if (yPosition > 270) {
+      doc.addPage();
+      yPosition = 20;
     }
   });
-  
-  // Footer con data generazione
+
   const dataGenerazione = new Date().toLocaleDateString('it-IT') + ' ' + new Date().toLocaleTimeString('it-IT');
   doc.setFontSize(8);
   doc.text(`Generato il: ${dataGenerazione}`, 20, 285);
-  
-  // Salva il PDF
+
   const nomeFile = `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.pdf`;
   doc.save(nomeFile);
 });
 
 // Funzionalità Excel
-document.getElementById("btn-esporta").addEventListener("click", function() {
-  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
-  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
-  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
-  
-  // Calcola le ore totali dalla tabella footer
-  const footerRow = document.querySelector('#totale-footer tr');
-  let totaleMensile = '—';
-  
-  if (footerRow) {
-    const cells = footerRow.querySelectorAll('td');
-    if (cells.length >= 4) {
-      totaleMensile = cells[3].textContent.trim();
-    }
-  }
-  
-  // Crea un nuovo workbook
+document.getElementById("btn-esporta").addEventListener("click", () => {
+  const { nomeCompleto, dataInizioFormatted, dataFineFormatted, totaleMensile, datiTabella } = generaDatiEsportazione();
+
   const wb = XLSX.utils.book_new();
-  
-  // Dati per il foglio di riepilogo
+
   const riepilogoData = [
     ['CAMERA CON VISTA Bistrot'],
     ['RIEPILOGO MENSILE TIMBRATURE'],
@@ -672,70 +593,43 @@ document.getElementById("btn-esporta").addEventListener("click", function() {
     [''],
     ['Data', 'Entrata', 'Uscita', 'Ore Giornaliere']
   ];
-  
-  // Aggiungi i dati delle timbrature
-  const righeTabella = document.querySelectorAll('#storico-body tr');
-  
-  righeTabella.forEach(riga => {
-    const cells = riga.querySelectorAll('td');
-    if (cells.length >= 4) {
-      const data = cells[0].textContent.trim();
-      const entrata = cells[1].textContent.trim();
-      const uscita = cells[2].textContent.trim();
-      const ore = cells[3].textContent.trim();
-      
-      // Aggiungi riga solo se ci sono dati significativi
-      if (entrata !== '—' || uscita !== '—') {
-        riepilogoData.push([data, entrata, uscita, ore]);
-      }
-    }
+
+  datiTabella.forEach(({ data, entrata, uscita, ore }) => {
+    riepilogoData.push([data, entrata, uscita, ore]);
   });
-  
-  // Aggiungi riga vuota e totale
+
   riepilogoData.push(['']);
   riepilogoData.push(['TOTALE MENSILE', '', '', totaleMensile]);
-  
-  // Aggiungi footer con data generazione
+
   const dataGenerazione = new Date().toLocaleDateString('it-IT') + ' ' + new Date().toLocaleTimeString('it-IT');
   riepilogoData.push(['']);
   riepilogoData.push([`Generato il: ${dataGenerazione}`]);
-  
-  // Crea il foglio di lavoro
+
   const ws = XLSX.utils.aoa_to_sheet(riepilogoData);
-  
-  // Imposta la larghezza delle colonne
+
   ws['!cols'] = [
-    { width: 15 }, // Data
-    { width: 10 }, // Entrata
-    { width: 10 }, // Uscita
-    { width: 15 }  // Ore
+    { width: 15 },
+    { width: 10 },
+    { width: 10 },
+    { width: 15 }
   ];
-  
-  // Stile per le celle del titolo (merge delle prime celle)
+
   ws['!merges'] = [
-    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }, // Titolo azienda
-    { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }  // Sottotitolo
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },
+    { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }
   ];
-  
-  // Aggiungi il foglio al workbook
+
   XLSX.utils.book_append_sheet(wb, ws, 'Riepilogo Timbrature');
-  
-  // Crea secondo foglio con dettagli timbrature complete
+
   if (timbrature && timbrature.length > 0) {
     const dettagliData = [
       ['DETTAGLIO COMPLETO TIMBRATURE'],
       [''],
       ['Data', 'Ora', 'Tipo', 'Giorno Logico']
     ];
-    
-    // Filtra e ordina le timbrature per il periodo
+
     const timbratureFiltrate = timbrature.filter(t => {
-      let dataRiferimento = t.giornologico || t.data;
-      if (typeof dataRiferimento !== 'string') {
-        dataRiferimento = new Date(dataRiferimento).toISOString().split('T')[0];
-      } else if (dataRiferimento.includes('T')) {
-        dataRiferimento = dataRiferimento.split('T')[0];
-      }
+      const dataRiferimento = normalizzaData(t.giornologico || t.data);
       return dataRiferimento >= dataInizio.value && dataRiferimento <= dataFine.value;
     }).sort((a, b) => {
       const dataA = a.giornologico || a.data;
@@ -743,7 +637,7 @@ document.getElementById("btn-esporta").addEventListener("click", function() {
       if (dataA !== dataB) return dataA.localeCompare(dataB);
       return a.ore.localeCompare(b.ore);
     });
-    
+
     timbratureFiltrate.forEach(t => {
       const dataFormatted = new Date(t.data).toLocaleDateString('it-IT');
       const giornoLogico = t.giornologico ? new Date(t.giornologico + 'T12:00:00').toLocaleDateString('it-IT') : dataFormatted;
@@ -754,94 +648,57 @@ document.getElementById("btn-esporta").addEventListener("click", function() {
         giornoLogico
       ]);
     });
-    
+
     const wsDettagli = XLSX.utils.aoa_to_sheet(dettagliData);
     wsDettagli['!cols'] = [
-      { width: 12 }, // Data
-      { width: 8 },  // Ora
-      { width: 10 }, // Tipo
-      { width: 12 }  // Giorno Logico
+      { width: 12 },
+      { width: 8 },
+      { width: 10 },
+      { width: 12 }
     ];
-    
+
     wsDettagli['!merges'] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } } // Titolo
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }
     ];
-    
+
     XLSX.utils.book_append_sheet(wb, wsDettagli, 'Dettaglio Completo');
   }
-  
-  // Salva il file Excel
+
   const nomeFileExcel = `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.xlsx`;
   XLSX.writeFile(wb, nomeFileExcel);
 });
 
 // Funzionalità Google Fogli
-document.getElementById("btn-google-sheets").addEventListener("click", function() {
-  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
-  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
-  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
-  
-  // Calcola le ore totali dalla tabella footer
-  const footerRow = document.querySelector('#totale-footer tr');
-  let totaleMensile = '—';
-  
-  if (footerRow) {
-    const cells = footerRow.querySelectorAll('td');
-    if (cells.length >= 4) {
-      totaleMensile = cells[3].textContent.trim();
-    }
-  }
-  
-  // Prepara i dati per Google Sheets
+document.getElementById("btn-google-sheets").addEventListener("click", () => {
+  const { nomeCompleto, dataInizioFormatted, dataFineFormatted, totaleMensile, datiTabella } = generaDatiEsportazione();
+
   let csvData = `CAMERA CON VISTA Bistrot\nRIEPILOGO MENSILE TIMBRATURE\n\n`;
   csvData += `Dipendente:,${nomeCompleto} (PIN: ${pin})\n`;
   csvData += `Periodo:,dal ${dataInizioFormatted} al ${dataFineFormatted}\n`;
   csvData += `Ore totali:,${totaleMensile}\n\n`;
   csvData += `Data,Entrata,Uscita,Ore Giornaliere\n`;
-  
-  // Aggiungi i dati delle timbrature
-  const righeTabella = document.querySelectorAll('#storico-body tr');
-  
-  righeTabella.forEach(riga => {
-    const cells = riga.querySelectorAll('td');
-    if (cells.length >= 4) {
-      const data = cells[0].textContent.trim();
-      const entrata = cells[1].textContent.trim();
-      const uscita = cells[2].textContent.trim();
-      const ore = cells[3].textContent.trim();
-      
-      // Aggiungi riga solo se ci sono dati significativi
-      if (entrata !== '—' || uscita !== '—') {
-        csvData += `${data},${entrata},${uscita},${ore}\n`;
-      }
-    }
+
+  datiTabella.forEach(({ data, entrata, uscita, ore }) => {
+    csvData += `${data},${entrata},${uscita},${ore}\n`;
   });
-  
-  // Aggiungi totale
+
   csvData += `\nTOTALE MENSILE,,,${totaleMensile}\n`;
-  
-  // Footer con data generazione
+
   const dataGenerazione = new Date().toLocaleDateString('it-IT') + ' ' + new Date().toLocaleTimeString('it-IT');
   csvData += `\nGenerato il:,${dataGenerazione}`;
-  
-  // Crea URL per Google Sheets
-  const encodedData = encodeURIComponent(csvData);
+
   const sheetTitle = encodeURIComponent(`Timbrature_${nomeCompleto.replace(/\s/g, '_')}_${dataInizio.value}_${dataFine.value}`);
-  
-  // URL per creare un nuovo Google Sheets con i dati
   const googleSheetsUrl = `https://docs.google.com/spreadsheets/create?title=${sheetTitle}&usp=drive_web`;
-  
-  // Apri Google Sheets in una nuova scheda
+
   window.open(googleSheetsUrl, '_blank');
-  
-  // Mostra istruzioni all'utente
+
   setTimeout(() => {
     alert(`Google Sheets aperto!\n\nPer importare i dati:\n1. Copia i dati dalla tabella\n2. Incolla direttamente nel foglio Google\n3. Il foglio sarà pronto per l'uso!`);
   }, 1000);
 });
 
 // Inizializzazione
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
   initCalendarUtils();
   aggiornaRange("corrente");
   caricaDati();
