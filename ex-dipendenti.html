@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
   <title>Ex Dipendenti - BADGEBOX</title>
 
   <!-- PWA Meta -->
@@ -274,8 +274,85 @@
       font-weight: 600;
     }
 
-    /* Mobile Small (fino a 480px) */
-    @media (max-width: 480px) {
+    /* Mobile Extra Small (fino a 320px) */
+    @media (max-width: 320px) {
+      .container {
+        padding: 6px;
+        max-width: 100%;
+      }
+
+      h1 {
+        font-size: 18px;
+        margin-top: 60px;
+        margin-bottom: 15px;
+      }
+
+      .back-button {
+        top: 8px;
+        left: 8px;
+        padding: 8px 12px;
+        font-size: 12px;
+        min-height: 40px;
+        border-radius: 6px;
+      }
+
+      table {
+        font-size: 9px;
+        border-radius: 8px;
+      }
+
+      th, td {
+        padding: 4px 2px;
+        font-size: 9px;
+        line-height: 1.1;
+      }
+
+      th {
+        font-size: 10px;
+        height: 40px;
+        font-weight: 700;
+      }
+
+      td {
+        height: 50px;
+        vertical-align: middle;
+      }
+
+      th:nth-child(1), td:nth-child(1) { width: 25% !important; }
+      th:nth-child(2), td:nth-child(2) { width: 25% !important; }
+      th:nth-child(3), td:nth-child(3) { width: 22% !important; }
+      th:nth-child(4), td:nth-child(4) { width: 28% !important; }
+
+      td:nth-child(4) .actions-container {
+        gap: 2px !important;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .download-btn, .restore-btn, .delete-btn {
+        min-width: 28px;
+        min-height: 28px;
+        padding: 4px;
+        border-radius: 6px;
+        margin: 1px;
+      }
+
+      .download-btn img {
+        width: 14px !important;
+        height: 14px !important;
+      }
+
+      .restore-btn {
+        font-size: 16px;
+      }
+
+      .delete-btn {
+        font-size: 12px;
+      }
+    }
+
+    /* Mobile Small (321px - 480px) */
+    @media (min-width: 321px) and (max-width: 480px) {
       .container {
         padding: 10px;
         max-width: 100%;

@@ -774,8 +774,157 @@ button#btnChiudi {
   }
 }
 
-/* Media query per schermi molto piccoli */
-@media (max-width: 480px) {
+/* Media query per schermi extra piccoli (fino a 320px) */
+@media (max-width: 320px) {
+  .filtro-temporale {
+    gap: 6px;
+    padding: 0 2px;
+    margin-bottom: 4px;
+  }
+
+  .filtro-temporale select,
+  .filtro-temporale input[type="date"] {
+    font-size: 14px;
+    padding: 6px 8px;
+    height: 36px;
+    border-radius: 6px;
+  }
+
+  .container {
+    padding: 2px;
+  }
+
+  .titolo-grande {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+
+  .titolo-piccolo {
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
+
+  table th, table td {
+    width: 16.66% !important;
+    min-width: 0 !important;
+    max-width: 16.66% !important;
+    font-size: 9px;
+    padding: 1px 2px;
+    line-height: 1.0;
+  }
+
+  table th {
+    font-size: 9px;
+    padding: 3px 2px;
+  }
+
+  table th:nth-child(4), table td:nth-child(4) {
+    font-weight: 600;
+  }
+
+  .tabella-wrapper {
+    padding: 2px;
+    margin-bottom: 4px;
+    border-radius: 4px;
+  }
+
+  table td:nth-child(4) {
+    font-size: 8px;
+    font-weight: bold;
+  }
+
+  .pulsanti-basso {
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 0 2px;
+  }
+
+  .pulsanti-basso button {
+    flex: 1;
+    min-width: 50px;
+    padding: 4px 6px;
+    font-size: 10px;
+    height: 32px;
+  }
+
+  .modifica-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .icona-calendario-campo {
+    width: 14px;
+    height: 14px;
+    right: 4px;
+  }
+
+  .btn-torna-utenti {
+    top: 30px;
+    left: 4px;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  #modal {
+    width: 98%;
+    padding: 8px;
+    max-height: 90vh;
+  }
+
+  #modal h2 {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  #modal input[type="time"],
+  #modal input[type="date"] {
+    font-size: 14px;
+    padding: 4px 6px;
+  }
+
+  .modal-btns {
+    margin-top: 8px;
+    gap: 4px;
+  }
+
+  .modal-btns button {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .tabella-footer td {
+    padding: 5px 3px;
+    font-size: 10px;
+    height: 28px;
+  }
+
+  .filtro-e-pulsanti {
+    margin-bottom: 2px;
+    padding: 0 2px;
+    gap: 6px;
+  }
+
+  .pulsanti-alto button {
+    height: 32px;
+    padding: 2px 4px;
+    min-width: 32px;
+  }
+
+  .pulsanti-alto button img {
+    width: 24px;
+    height: 24px;
+  }
+
+  #btn-whatsapp svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Media query per schermi molto piccoli (321px - 480px) */
+@media (min-width: 321px) and (max-width: 480px) {
   .filtro-temporale {
     gap: 8px;
     padding: 0 4px;

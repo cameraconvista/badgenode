@@ -320,7 +320,145 @@
       background-color: #15803d;
     }
 
-    @media (max-width: 768px) {
+    /* Media query per schermi extra piccoli (fino a 320px) */
+    @media (max-width: 320px) {
+      .container {
+        padding: 8px;
+        max-width: 100%;
+      }
+
+      h1 {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+
+      table {
+        font-size: 10px;
+      }
+
+      th, td {
+        padding: 2px 4px;
+        font-size: 10px;
+      }
+
+      th {
+        font-size: 11px;
+        height: 40px;
+      }
+
+      td {
+        height: 35px;
+      }
+
+      th:nth-child(1), td:nth-child(1) { width: 15% !important; }
+      th:nth-child(2), td:nth-child(2) { width: 15% !important; }
+      th:nth-child(3), td:nth-child(3) { width: 30% !important; }
+      th:nth-child(4), td:nth-child(4) { width: 30% !important; }
+      th:nth-child(5), td:nth-child(5) { width: 10% !important; }
+
+      td button {
+        font-size: 12px;
+        padding: 1px;
+      }
+
+      .modal-content {
+        padding: 10px;
+        margin: 5px;
+      }
+    }
+
+    /* Media query per mobile piccoli (321px - 480px) */
+    @media (min-width: 321px) and (max-width: 480px) {
+      .container {
+        padding: 12px;
+        max-width: 100%;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 3px 6px;
+        font-size: 12px;
+      }
+
+      th {
+        font-size: 13px;
+        height: 45px;
+      }
+
+      td {
+        height: 40px;
+      }
+
+      th:nth-child(1), td:nth-child(1) { width: 12% !important; }
+      th:nth-child(2), td:nth-child(2) { width: 12% !important; }
+      th:nth-child(3), td:nth-child(3) { width: 30% !important; }
+      th:nth-child(4), td:nth-child(4) { width: 30% !important; }
+      th:nth-child(5), td:nth-child(5) { width: 16% !important; }
+
+      td button {
+        font-size: 14px;
+        padding: 2px;
+      }
+
+      .modal-content {
+        padding: 15px;
+        margin: 8px;
+      }
+
+      .campo-gruppo {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Media query per tablet portrait (481px - 768px) */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .container {
+        padding: 15px;
+        max-width: 98%;
+      }
+
+      h1 {
+        font-size: 26px;
+        margin-bottom: 22px;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 4px 8px;
+        font-size: 13px;
+      }
+
+      th {
+        font-size: 15px;
+        height: 48px;
+      }
+
+      td {
+        height: 43px;
+      }
+
+      th:nth-child(1), td:nth-child(1) { width: 10% !important; }
+      th:nth-child(2), td:nth-child(2) { width: 10% !important; }
+      th:nth-child(3), td:nth-child(3) { width: 25% !important; }
+      th:nth-child(4), td:nth-child(4) { width: 25% !important; }
+      th:nth-child(5), td:nth-child(5) { width: 30% !important; }
+
+      td button {
+        font-size: 15px;
+        padding: 3px;
+      }
+
       .modal-content {
         padding: 20px;
         margin: 10px;
@@ -329,11 +467,48 @@
       .campo-gruppo {
         grid-template-columns: 1fr;
       }
+    }
 
-      .modal-title {
-        font-size: 20px;
+    /* Media query per tablet landscape (769px - 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        padding: 20px;
+        max-width: 95%;
       }
 
+      h1 {
+        font-size: 28px;
+        margin-bottom: 25px;
+      }
+
+      th, td {
+        padding: 8px 10px;
+        font-size: 14px;
+      }
+
+      th {
+        font-size: 16px;
+        height: 50px;
+      }
+
+      td {
+        height: 45px;
+      }
+
+      th:nth-child(1), td:nth-child(1) { width: 12% !important; }
+      th:nth-child(2), td:nth-child(2) { width: 12% !important; }
+      th:nth-child(3), td:nth-child(3) { width: 28% !important; }
+      th:nth-child(4), td:nth-child(4) { width: 28% !important; }
+      th:nth-child(5), td:nth-child(5) { width: 20% !important; }
+
+      .modal-content {
+        max-width: 80%;
+        padding: 25px;
+      }
+    }
+
+    /* Media query per schermi molto piccoli - compatibilità legacy */
+    @media (max-width: 767px) {
       .modal-actions {
         flex-direction: column;
         gap: 8px;
