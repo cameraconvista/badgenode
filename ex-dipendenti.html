@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -97,7 +96,7 @@
     th:nth-child(1), td:nth-child(1) { width: 15% !important; } /* Nome */
     th:nth-child(2), td:nth-child(2) { width: 15% !important; } /* Cognome */
     th:nth-child(3), td:nth-child(3) { width: 15% !important; } /* Data Archiviazione */
-    th:nth-child(4), td:nth-child(4) { width: 2.5% !important; } /* Record - ridotta del 50% da 5% */
+    th:nth-child(4), td:nth-child(4) { width: 3.25% !important; } /* Record - aumentata del 30% da 2.5% */
     th:nth-child(5), td:nth-child(5) { width: 11.25% !important; min-width: 50px !important; } /* Azioni - ridotta del 50% da 22.5% */
 
     /* Ottimizzazione colonna azioni - LAYOUT FLEXBOX FORZATO */
@@ -257,7 +256,7 @@
       th:nth-child(1), td:nth-child(1) { width: 18%; } /* Nome */
       th:nth-child(2), td:nth-child(2) { width: 18%; } /* Cognome */
       th:nth-child(3), td:nth-child(3) { width: 15%; } /* Data */
-      th:nth-child(4), td:nth-child(4) { width: 2.5%; } /* Record - ridotta del 50% da 5% */
+      th:nth-child(4), td:nth-child(4) { width: 3.25%; } /* Record - aumentata del 30% da 2.5% */
       th:nth-child(5), td:nth-child(5) { width: 11.25% !important; } /* Azioni - ridotta del 50% da 22.5% */
     }
 
@@ -309,14 +308,14 @@
       th:nth-child(1), td:nth-child(1) { width: 15%; } /* Nome */
       th:nth-child(2), td:nth-child(2) { width: 15%; } /* Cognome */
       th:nth-child(3), td:nth-child(3) { width: 15%; } /* Data */
-      th:nth-child(4), td:nth-child(4) { width: 2.5%; } /* Record - ridotta del 50% da 5% */
+      th:nth-child(4), td:nth-child(4) { width: 3.25%; } /* Record - aumentata del 30% da 2.5% */
       th:nth-child(5), td:nth-child(5) { width: 11.25% !important; } /* Azioni - ridotta del 50% da 22.5% */
     }
   </style>
 </head>
 <body>
   <a href="utenti.html" class="back-button">← Torna ai Dipendenti</a>
-  
+
   <div class="container">
     <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="display:block; margin:5px auto 0; width:150px;" />
     <h1>📚 Archivio Ex Dipendenti</h1>
@@ -448,19 +447,19 @@
 
         // Parsa i dati
         const excelData = JSON.parse(data.file_excel_path);
-        
+
         // Genera contenuto CSV per compatibilità Excel
         let csvContent = "data:text/csv;charset=utf-8,";
-        
+
         // Header informazioni dipendente
         csvContent += "INFORMAZIONI DIPENDENTE\n";
         csvContent += "Nome,Cognome,PIN,Email,Telefono,Ore Contrattuali\n";
         csvContent += `"${excelData.dipendente.nome}","${excelData.dipendente.cognome}",${excelData.dipendente.pin},"${excelData.dipendente.email}","${excelData.dipendente.telefono || 'N/A'}",${excelData.dipendente.ore_contrattuali}\n\n`;
-        
+
         // Header timbrature
         csvContent += "STORICO TIMBRATURE\n";
         csvContent += "Data,Ora,Tipo,PIN,Nome,Cognome\n";
-        
+
         // Dati timbrature
         if (excelData.timbrature && excelData.timbrature.length > 0) {
           excelData.timbrature.forEach(timbratura => {
