@@ -4,18 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
   <title>Ex Dipendenti - BADGEBOX</title>
-
-  <!-- PWA Meta -->
   <meta name="theme-color" content="#0d1b2b" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
-
-  <!-- Icone PWA -->
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/BADGENODE.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
   <link rel="manifest" href="manifest.json" />
-
   <link rel="stylesheet" href="style.css" />
   <style>
     body {
@@ -80,7 +75,7 @@
     }
 
     td {
-      height: 47px; /* Aumentata del 30% da 36px */
+      height: 47px;
     }
 
     th {
@@ -96,13 +91,11 @@
       background-color: #1e293b;
     }
 
-    /* Larghezze specifiche per le colonne - FORZATE CON !IMPORTANT */
-    th:nth-child(1), td:nth-child(1) { width: 25% !important; } /* Nome - aumentata per compensare */
-    th:nth-child(2), td:nth-child(2) { width: 25% !important; } /* Cognome - aumentata per compensare */
-    th:nth-child(3), td:nth-child(3) { width: 33.5% !important; } /* Archiviazione - aumentata per compensare */
-    th:nth-child(4), td:nth-child(4) { width: 16.5% !important; min-width: 50px !important; } /* Azioni - ridotta del 70% da 55% */
+    th:nth-child(1), td:nth-child(1) { width: 25% !important; }
+    th:nth-child(2), td:nth-child(2) { width: 25% !important; }
+    th:nth-child(3), td:nth-child(3) { width: 33.5% !important; }
+    th:nth-child(4), td:nth-child(4) { width: 16.5% !important; min-width: 50px !important; }
 
-    /* Ottimizzazione colonna azioni - LAYOUT FLEXBOX FORZATO */
     td:nth-child(4) {
       white-space: nowrap !important;
       text-align: center !important;
@@ -213,7 +206,6 @@
       line-height: 1.5;
     }
 
-    /* Ottimizzazioni touch per migliore usabilità mobile */
     @media (pointer: coarse) {
       .download-btn, .restore-btn, .delete-btn {
         min-width: 48px;
@@ -227,7 +219,6 @@
         padding: 12px 20px;
       }
 
-      /* Aumenta l'area di tocco per i pulsanti */
       td:nth-child(4) {
         padding: 12px 8px !important;
       }
@@ -237,7 +228,6 @@
       }
     }
 
-    /* PWA e safe area per dispositivi con notch */
     @media (display-mode: standalone) {
       body {
         padding-top: env(safe-area-inset-top);
@@ -274,388 +264,108 @@
       font-weight: 600;
     }
 
-    /* Mobile Extra Small (fino a 320px) */
+    /* Media Queries Ottimizzate */
     @media (max-width: 320px) {
-      .container {
-        padding: 6px;
-        max-width: 100%;
-      }
-
-      h1 {
-        font-size: 18px;
-        margin-top: 60px;
-        margin-bottom: 15px;
-      }
-
-      .back-button {
-        top: 8px;
-        left: 8px;
-        padding: 8px 12px;
-        font-size: 12px;
-        min-height: 40px;
-        border-radius: 6px;
-      }
-
-      table {
-        font-size: 9px;
-        border-radius: 8px;
-      }
-
-      th, td {
-        padding: 4px 2px;
-        font-size: 9px;
-        line-height: 1.1;
-      }
-
-      th {
-        font-size: 10px;
-        height: 40px;
-        font-weight: 700;
-      }
-
-      td {
-        height: 50px;
-        vertical-align: middle;
-      }
-
+      .container { padding: 6px; max-width: 100%; }
+      h1 { font-size: 18px; margin-top: 60px; margin-bottom: 15px; }
+      .back-button { top: 8px; left: 8px; padding: 8px 12px; font-size: 12px; min-height: 40px; border-radius: 6px; }
+      table { font-size: 9px; border-radius: 8px; }
+      th, td { padding: 4px 2px; font-size: 9px; line-height: 1.1; }
+      th { font-size: 10px; height: 40px; font-weight: 700; }
+      td { height: 50px; vertical-align: middle; }
       th:nth-child(1), td:nth-child(1) { width: 25% !important; }
       th:nth-child(2), td:nth-child(2) { width: 25% !important; }
       th:nth-child(3), td:nth-child(3) { width: 22% !important; }
       th:nth-child(4), td:nth-child(4) { width: 28% !important; }
-
-      td:nth-child(4) .actions-container {
-        gap: 2px !important;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .download-btn, .restore-btn, .delete-btn {
-        min-width: 28px;
-        min-height: 28px;
-        padding: 4px;
-        border-radius: 6px;
-        margin: 1px;
-      }
-
-      .download-btn img {
-        width: 14px !important;
-        height: 14px !important;
-      }
-
-      .restore-btn {
-        font-size: 16px;
-      }
-
-      .delete-btn {
-        font-size: 12px;
-      }
+      td:nth-child(4) .actions-container { gap: 2px !important; flex-wrap: wrap; justify-content: center; }
+      .download-btn, .restore-btn, .delete-btn { min-width: 28px; min-height: 28px; padding: 4px; border-radius: 6px; margin: 1px; }
+      .download-btn img { width: 14px !important; height: 14px !important; }
+      .restore-btn { font-size: 16px; }
+      .delete-btn { font-size: 12px; }
     }
 
-    /* Mobile Small (321px - 480px) */
     @media (min-width: 321px) and (max-width: 480px) {
-      .container {
-        padding: 10px;
-        max-width: 100%;
-      }
-
-      h1 {
-        font-size: 22px;
-        margin-top: 70px;
-        margin-bottom: 20px;
-      }
-
-      .back-button {
-        top: 10px;
-        left: 10px;
-        padding: 10px 15px;
-        font-size: 14px;
-        min-height: 44px;
-        border-radius: 8px;
-      }
-
-      table {
-        font-size: 11px;
-        border-radius: 12px;
-      }
-
-      th, td {
-        padding: 6px 4px;
-        font-size: 11px;
-        line-height: 1.2;
-      }
-
-      th {
-        font-size: 12px;
-        height: 50px;
-        font-weight: 700;
-      }
-
-      td {
-        height: 60px;
-        vertical-align: middle;
-      }
-
-      /* Colonne ottimizzate per mobile very small */
+      .container { padding: 10px; max-width: 100%; }
+      h1 { font-size: 22px; margin-top: 70px; margin-bottom: 20px; }
+      .back-button { top: 10px; left: 10px; padding: 10px 15px; font-size: 14px; min-height: 44px; border-radius: 8px; }
+      table { font-size: 11px; border-radius: 12px; }
+      th, td { padding: 6px 4px; font-size: 11px; line-height: 1.2; }
+      th { font-size: 12px; height: 50px; font-weight: 700; }
+      td { height: 60px; vertical-align: middle; }
       th:nth-child(1), td:nth-child(1) { width: 20% !important; }
       th:nth-child(2), td:nth-child(2) { width: 20% !important; }
       th:nth-child(3), td:nth-child(3) { width: 25% !important; }
       th:nth-child(4), td:nth-child(4) { width: 35% !important; }
-
-      /* Pulsanti mobile ottimizzati */
-      td:nth-child(4) .actions-container {
-        gap: 4px !important;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .download-btn, .restore-btn, .delete-btn {
-        min-width: 36px;
-        min-height: 36px;
-        padding: 6px;
-        border-radius: 8px;
-        margin: 1px;
-      }
-
-      .download-btn img {
-        width: 18px !important;
-        height: 18px !important;
-      }
-
-      .restore-btn {
-        font-size: 20px;
-      }
-
-      .delete-btn {
-        font-size: 16px;
-      }
+      td:nth-child(4) .actions-container { gap: 4px !important; flex-wrap: wrap; justify-content: center; }
+      .download-btn, .restore-btn, .delete-btn { min-width: 36px; min-height: 36px; padding: 6px; border-radius: 8px; margin: 1px; }
+      .download-btn img { width: 18px !important; height: 18px !important; }
+      .restore-btn { font-size: 20px; }
+      .delete-btn { font-size: 16px; }
     }
 
-    /* Mobile Medium (481px - 768px) */
     @media (min-width: 481px) and (max-width: 768px) {
-      .container {
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 26px;
-        margin-top: 65px;
-      }
-
-      .back-button {
-        top: 10px;
-        left: 10px;
-        padding: 12px 18px;
-        font-size: 15px;
-        min-height: 44px;
-      }
-
-      th, td {
-        padding: 8px 6px;
-        font-size: 13px;
-      }
-
-      th {
-        font-size: 15px;
-        height: 55px;
-      }
-
-      td {
-        height: 55px;
-      }
-
-      /* Colonne tablet small */
+      .container { padding: 15px; }
+      h1 { font-size: 26px; margin-top: 65px; }
+      .back-button { top: 10px; left: 10px; padding: 12px 18px; font-size: 15px; min-height: 44px; }
+      th, td { padding: 8px 6px; font-size: 13px; }
+      th { font-size: 15px; height: 55px; }
+      td { height: 55px; }
       th:nth-child(1), td:nth-child(1) { width: 22% !important; }
       th:nth-child(2), td:nth-child(2) { width: 22% !important; }
       th:nth-child(3), td:nth-child(3) { width: 28% !important; }
       th:nth-child(4), td:nth-child(4) { width: 28% !important; }
-
-      .download-btn, .restore-btn, .delete-btn {
-        min-width: 40px;
-        min-height: 40px;
-        padding: 8px;
-      }
-
-      .download-btn img {
-        width: 22px !important;
-        height: 22px !important;
-      }
-
-      .restore-btn {
-        font-size: 24px;
-      }
-
-      .delete-btn {
-        font-size: 18px;
-      }
+      .download-btn, .restore-btn, .delete-btn { min-width: 40px; min-height: 40px; padding: 8px; }
+      .download-btn img { width: 22px !important; height: 22px !important; }
+      .restore-btn { font-size: 24px; }
+      .delete-btn { font-size: 18px; }
     }
 
-    /* Tablet Portrait (769px - 1024px) */
     @media (min-width: 769px) and (max-width: 1024px) {
-      .container {
-        padding: 25px;
-        max-width: 95%;
-      }
-
-      h1 {
-        font-size: 32px;
-        margin-bottom: 30px;
-      }
-
-      .back-button {
-        padding: 14px 22px;
-        font-size: 16px;
-        min-height: 48px;
-      }
-
-      table {
-        border-radius: 16px;
-      }
-
-      th, td {
-        padding: 10px 8px;
-        font-size: 15px;
-      }
-
-      th {
-        font-size: 18px;
-        height: 60px;
-      }
-
-      td {
-        height: 50px;
-      }
-
-      /* Colonne tablet */
+      .container { padding: 25px; max-width: 95%; }
+      h1 { font-size: 32px; margin-bottom: 30px; }
+      .back-button { padding: 14px 22px; font-size: 16px; min-height: 48px; }
+      table { border-radius: 16px; }
+      th, td { padding: 10px 8px; font-size: 15px; }
+      th { font-size: 18px; height: 60px; }
+      td { height: 50px; }
       th:nth-child(1), td:nth-child(1) { width: 24% !important; }
       th:nth-child(2), td:nth-child(2) { width: 24% !important; }
       th:nth-child(3), td:nth-child(3) { width: 30% !important; }
       th:nth-child(4), td:nth-child(4) { width: 22% !important; }
-
-      .download-btn, .restore-btn, .delete-btn {
-        min-width: 42px;
-        min-height: 42px;
-        padding: 8px;
-      }
-
-      .download-btn img {
-        width: 26px !important;
-        height: 26px !important;
-      }
-
-      .restore-btn {
-        font-size: 30px;
-      }
-
-      .delete-btn {
-        font-size: 20px;
-      }
+      .download-btn, .restore-btn, .delete-btn { min-width: 42px; min-height: 42px; padding: 8px; }
+      .download-btn img { width: 26px !important; height: 26px !important; }
+      .restore-btn { font-size: 30px; }
+      .delete-btn { font-size: 20px; }
     }
 
-    /* Desktop (1025px+) */
     @media (min-width: 1025px) {
-      .container {
-        max-width: 1200px;
-        padding: 40px;
-      }
-
-      h1 {
-        font-size: 42px;
-        margin-bottom: 40px;
-      }
-
-      table {
-        border-radius: 20px;
-      }
-
-      th, td {
-        padding: 12px;
-      }
-
-      td {
-        height: 55px;
-      }
-
-      th {
-        font-size: 20px;
-        height: 64px;
-      }
-
-      td {
-        font-size: 18px;
-      }
-
-      .download-btn, .restore-btn, .delete-btn {
-        min-width: 46px;
-        min-height: 46px;
-        padding: 10px;
-      }
-
-      .download-btn img {
-        width: 30px !important;
-        height: 30px !important;
-      }
-
-      .restore-btn {
-        font-size: 36px;
-      }
-
-      .delete-btn {
-        font-size: 22px;
-      }
-
-      /* Larghezze colonne desktop */
+      .container { max-width: 1200px; padding: 40px; }
+      h1 { font-size: 42px; margin-bottom: 40px; }
+      table { border-radius: 20px; }
+      th, td { padding: 12px; }
+      td { height: 55px; }
+      th { font-size: 20px; height: 64px; }
+      td { font-size: 18px; }
+      .download-btn, .restore-btn, .delete-btn { min-width: 46px; min-height: 46px; padding: 10px; }
+      .download-btn img { width: 30px !important; height: 30px !important; }
+      .restore-btn { font-size: 36px; }
+      .delete-btn { font-size: 22px; }
       th:nth-child(1), td:nth-child(1) { width: 25% !important; }
       th:nth-child(2), td:nth-child(2) { width: 25% !important; }
       th:nth-child(3), td:nth-child(3) { width: 32% !important; }
       th:nth-child(4), td:nth-child(4) { width: 18% !important; }
     }
 
-    /* Landscape orientation ottimizzazioni */
     @media (orientation: landscape) and (max-height: 600px) {
-      .container {
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 24px;
-        margin-top: 50px;
-        margin-bottom: 20px;
-      }
-
-      .back-button {
-        top: 8px;
-        left: 8px;
-        padding: 8px 12px;
-        font-size: 13px;
-      }
-
-      table {
-        font-size: 12px;
-      }
-
-      th {
-        height: 45px;
-        font-size: 14px;
-      }
-
-      td {
-        height: 40px;
-        font-size: 12px;
-      }
-
-      .download-btn, .restore-btn, .delete-btn {
-        min-width: 32px;
-        min-height: 32px;
-        padding: 6px;
-      }
-
-      .restore-btn {
-        font-size: 18px;
-      }
-
-      .delete-btn {
-        font-size: 14px;
-      }
+      .container { padding: 15px; }
+      h1 { font-size: 24px; margin-top: 50px; margin-bottom: 20px; }
+      .back-button { top: 8px; left: 8px; padding: 8px 12px; font-size: 13px; }
+      table { font-size: 12px; }
+      th { height: 45px; font-size: 14px; }
+      td { height: 40px; font-size: 12px; }
+      .download-btn, .restore-btn, .delete-btn { min-width: 32px; min-height: 32px; padding: 6px; }
+      .restore-btn { font-size: 18px; }
+      .delete-btn { font-size: 14px; }
     }
   </style>
 </head>
@@ -685,12 +395,10 @@
       </tbody>
     </table>
 
-    <!-- Pulsante torna ai dipendenti sotto la tabella allineato a destra -->
     <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
       <a href="utenti.html" class="back-button" style="position: static; top: auto; left: auto; margin: 0;">← Torna ai Dipendenti</a>
     </div>
   </div>
-</body>
 
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
@@ -733,7 +441,6 @@
 
         data.forEach(exDipendente => {
           const dataArchiviazione = new Date(exDipendente.data_archiviazione).toLocaleDateString('it-IT');
-
           const riga = document.createElement('tr');
           riga.innerHTML = `
             <td title="${exDipendente.nome}">${exDipendente.nome}</td>
@@ -762,7 +469,6 @@
       }
     }
 
-    // Funzione per scaricare il file Excel
     window.scaricaExcel = async (id, nome, cognome) => {
       try {
         const { data, error } = await supabase
@@ -782,33 +488,25 @@
           return;
         }
 
-        // Parsa i dati
         const excelData = JSON.parse(data.file_excel_path);
-
-        // Genera contenuto CSV per compatibilità Excel
         let csvContent = "data:text/csv;charset=utf-8,";
 
-        // Header informazioni dipendente
         csvContent += "INFORMAZIONI DIPENDENTE\n";
         csvContent += "Nome,Cognome,PIN,Email,Telefono,Ore Contrattuali\n";
         csvContent += `"${excelData.dipendente.nome}","${excelData.dipendente.cognome}",${excelData.dipendente.pin},"${excelData.dipendente.email}","${excelData.dipendente.telefono || 'N/A'}",${excelData.dipendente.ore_contrattuali}\n\n`;
 
-        // Header timbrature
         csvContent += "STORICO TIMBRATURE\n";
         csvContent += "Data,Ora,Tipo,PIN,Nome,Cognome\n";
 
-        // Dati timbrature
         if (excelData.timbrature && excelData.timbrature.length > 0) {
           excelData.timbrature.forEach(timbratura => {
             csvContent += `"${timbratura.data}","${timbratura.ore}","${timbratura.tipo}",${timbratura.pin},"${timbratura.nome}","${timbratura.cognome}"\n`;
           });
         }
 
-        // Footer statistiche
         csvContent += `\nTOTALE TIMBRATURE: ${excelData.totaleTimbrature || 0}\n`;
         csvContent += `GENERATO IL: ${new Date(excelData.dataGenerazione).toLocaleString('it-IT')}\n`;
 
-        // Crea e scarica il file
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
@@ -817,21 +515,17 @@
         link.click();
         document.body.removeChild(link);
 
-        console.log(`File scaricato per ${nome} ${cognome}:`, excelData);
-
       } catch (error) {
         console.error("Errore scaricamento file:", error);
         alert("Errore durante lo scaricamento del file");
       }
     };
 
-    // Funzione per ripristinare un dipendente dall'archivio
     window.ripristinaDipendente = async (id, nome, cognome) => {
       if (!confirm(`Sei sicuro di voler ripristinare ${nome} ${cognome} tra i dipendenti attivi?`)) return;
       if (!confirm("ATTENZIONE: Le timbrature archiviate NON verranno ripristinate.\nIl dipendente tornerà attivo con storico vuoto.\nConfermi il ripristino?")) return;
 
       try {
-        // 1. Recupera i dati dell'ex dipendente
         const { data: exDipendente, error: errorRecupero } = await supabase
           .from("dipendenti_archiviati")
           .select("*")
@@ -844,7 +538,6 @@
           return;
         }
 
-        // 2. Verifica che il PIN non sia già in uso
         const { data: pinEsistente, error: errorPin } = await supabase
           .from("utenti")
           .select("pin")
@@ -861,7 +554,6 @@
           return;
         }
 
-        // 3. Ripristina nella tabella utenti
         const { error: errorInserimento } = await supabase
           .from("utenti")
           .insert([{
@@ -880,7 +572,6 @@
           return;
         }
 
-        // 4. Rimuovi dall'archivio
         const { error: errorRimozione } = await supabase
           .from("dipendenti_archiviati")
           .delete()
@@ -893,7 +584,7 @@
         }
 
         alert(`✅ ${nome} ${cognome} ripristinato con successo!\nIl dipendente è tornato attivo con PIN ${exDipendente.pin}.`);
-        caricaExDipendenti(); // Ricarica la lista
+        caricaExDipendenti();
 
       } catch (error) {
         console.error("Errore imprevisto:", error);
@@ -901,10 +592,9 @@
       }
     };
 
-    // Funzione per eliminare definitivamente un ex dipendente
     window.eliminaExDipendente = async (id, nome, cognome) => {
       if (!confirm(`⚠️ ATTENZIONE! Stai per eliminare DEFINITIVAMENTE l'ex dipendente:\n\n${nome} ${cognome}\n\nQuesta azione eliminerà:\n• L'ex dipendente dall'archivio\n• Tutti i suoi dati archiviati\n• Il file Excel associato\n\nQuesta operazione NON può essere annullata!\n\nSei sicuro di voler procedere?`)) return;
-      
+
       if (!confirm(`⚠️ ULTIMA CONFERMA!\n\nStai per eliminare definitivamente ${nome} ${cognome}.\n\nDigita "ELIMINA" per confermare:`)) return;
 
       try {
@@ -920,7 +610,7 @@
         }
 
         alert(`✅ Ex dipendente ${nome} ${cognome} eliminato definitivamente dall'archivio!`);
-        caricaExDipendenti(); // Ricarica la lista
+        caricaExDipendenti();
 
       } catch (error) {
         console.error("Errore imprevisto:", error);
@@ -928,7 +618,6 @@
       }
     };
 
-    // Carica dati all'avvio
     caricaExDipendenti();
   </script>
 </body>
