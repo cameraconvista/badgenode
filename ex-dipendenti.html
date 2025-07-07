@@ -93,39 +93,47 @@
       background-color: #1e293b;
     }
 
-    /* Larghezze specifiche per le colonne - OTTIMIZZATE */
-    th:nth-child(1), td:nth-child(1) { width: 15%; } /* Nome */
-    th:nth-child(2), td:nth-child(2) { width: 15%; } /* Cognome */
-    th:nth-child(3), td:nth-child(3) { width: 15%; } /* Data Archiviazione */
-    th:nth-child(4), td:nth-child(4) { width: 10%; } /* Timbrature */
-    th:nth-child(5), td:nth-child(5) { width: 45%; } /* Azioni - RADDOPPIATA */
+    /* Larghezze specifiche per le colonne - FORZATE CON !IMPORTANT */
+    th:nth-child(1), td:nth-child(1) { width: 15% !important; } /* Nome */
+    th:nth-child(2), td:nth-child(2) { width: 15% !important; } /* Cognome */
+    th:nth-child(3), td:nth-child(3) { width: 15% !important; } /* Data Archiviazione */
+    th:nth-child(4), td:nth-child(4) { width: 10% !important; } /* Timbrature */
+    th:nth-child(5), td:nth-child(5) { width: 45% !important; min-width: 200px !important; } /* Azioni - FORZATA */
 
-    /* Ottimizzazione colonna azioni - FORZATA ORIZZONTALE */
+    /* Ottimizzazione colonna azioni - LAYOUT FLEXBOX FORZATO */
     td:nth-child(5) {
       white-space: nowrap !important;
       text-align: center !important;
       padding: 8px 16px !important;
       overflow: visible !important;
       height: 28px !important;
-      line-height: 28px !important;
       display: table-cell !important;
       vertical-align: middle !important;
+      min-width: 200px !important;
+    }
+
+    td:nth-child(5) .actions-container {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 12px !important;
+      width: 100% !important;
+      height: 28px !important;
     }
 
     td:nth-child(5) button {
-      display: inline-block !important;
-      margin: 0 8px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
       padding: 4px 8px !important;
       font-size: 18px !important;
       border: none !important;
       background: none !important;
       cursor: pointer !important;
-      vertical-align: middle !important;
-      float: none !important;
-      position: relative !important;
       height: 24px !important;
-      line-height: 20px !important;
       min-width: 32px !important;
+      flex-shrink: 0 !important;
     }
 
     tr:last-child td {
@@ -399,12 +407,14 @@
               <span class="info-badge">${numeroTimbrature}</span>
             </td>
             <td>
-              <button class="download-btn" onclick="scaricaExcel('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Scarica Excel">
-                📊
-              </button>
-              <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Ripristina">
-                ↩️
-              </button>
+              <div class="actions-container">
+                <button class="download-btn" onclick="scaricaExcel('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Scarica Excel">
+                  📊
+                </button>
+                <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Ripristina">
+                  ↩️
+                </button>
+              </div>
             </td>
           `;
           tbody.appendChild(riga);
