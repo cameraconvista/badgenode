@@ -346,6 +346,13 @@
       .modal-title { font-size: 28px; }
       .sezione-titolo { font-size: 20px; }
       .campo-valore { font-size: 16px; padding: 12px 14px; }
+      
+      /* Allargamento colonne Nome e Cognome del 50% solo su desktop */
+      th:nth-child(1), td:nth-child(1) { width: 15%; }  /* Storico: ridotto da 20% */
+      th:nth-child(2), td:nth-child(2) { width: 12%; }  /* PIN: ridotto da 15% */
+      th:nth-child(3), td:nth-child(3) { width: 24%; }  /* Nome: aumentato del 50% (da 16%) */
+      th:nth-child(4), td:nth-child(4) { width: 24%; }  /* Cognome: aumentato del 50% (da 16%) */
+      th:nth-child(5), td:nth-child(5) { width: 25%; }  /* Azioni: ridotto da 33% */
     }
   </style>
 </head>
