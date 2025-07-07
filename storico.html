@@ -4,57 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no" />
   <title>Storico Timbrature - BADGEBOX</title>
-  
+
   <!-- PWA Meta -->
   <meta name="theme-color" content="#0d1b2b" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
-  
+
   <!-- Icone PWA -->
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/BADGENODE.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
   <link rel="manifest" href="manifest.json" />
-  
+
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="assets/styles/storico-styles.css" />
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('.icona-calendario-campo').forEach(icon => {
-        icon.addEventListener('click', function (e) {
-          e.preventDefault();
-          const campoId = this.getAttribute('data-campo');
-          const campo = document.getElementById(campoId);
-          if (campo) {
-            try {
-              campo.focus();
-              if (campo.showPicker && typeof campo.showPicker === 'function') {
-                campo.showPicker();
-              }
-            } catch (err) {
-              campo.focus();
-            }
-          }
-        });
-
-        const tornaBtn = document.getElementById("torna-archivio");
-        if (tornaBtn) {
-          tornaBtn.addEventListener("click", function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const pin = urlParams.get("pin");
-            window.location.href = "index.html" + (pin ? "?pin=" + pin : "");
-          });
-        }
-      });
-    });
-  </script>
 </head>
 <body>
   <div class="container">
     <button id="torna-utenti" class="btn-torna-utenti" title="Torna a Utenti">
       ⬅
     </button>
-    
+
     <div class="header-fisso">
       <div style="position: relative; text-align: center; margin-bottom: 10px;">
         <p class="titolo-piccolo">Storico Timbrature</p>
@@ -126,7 +96,7 @@
       </div>
     </div>
 
-    
+
   </div>
 </body>
 
