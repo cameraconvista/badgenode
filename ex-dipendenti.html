@@ -102,25 +102,23 @@
 
     /* Ottimizzazione colonna azioni - FORZATA */
     td:nth-child(5) {
-      white-space: nowrap;
+      white-space: nowrap !important;
       text-align: center;
       padding: 2px 4px !important;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
+      height: 28px !important;
+      line-height: 28px !important;
     }
 
     td:nth-child(5) .download-btn,
     td:nth-child(5) .restore-btn {
-      display: inline-block;
-      margin: 0 1px;
+      display: inline-block !important;
+      margin: 0 2px !important;
       padding: 2px 4px;
       font-size: 10px;
       border-radius: 3px;
-      vertical-align: middle;
-      flex-shrink: 0;
+      vertical-align: middle !important;
+      float: none !important;
     }
 
     tr:last-child td {
