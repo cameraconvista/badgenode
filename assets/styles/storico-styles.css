@@ -539,36 +539,59 @@ button#btnChiudi {
   background: #475569;
 }
 
-/* Media Queries Compattate */
+/* Media Queries Responsive */
 @media (max-width: 480px) {
   .filtro-temporale {
     flex-direction: column;
-    gap: clamp(4px, 2vw, 12px);
-    padding: 0 clamp(2px, 1vw, 10px);
-    margin-bottom: clamp(2px, 1vw, 6px);
+    gap: 8px;
+    padding: 0 4px;
   }
   
   .filtro-temporale select,
-  .filtro-temporale input[type="date"] {
-    font-size: clamp(12px, 3vw, 16px);
-    padding: clamp(4px, 2vw, 12px);
-    height: clamp(32px, 8vw, 48px);
-    width: 100%;
-  }
-  
+  .filtro-temporale input[type="date"],
   .data-container {
     width: 100%;
+    font-size: 14px;
+    padding: 8px 12px;
+    height: 40px;
   }
   
   .pulsanti-basso {
     flex-wrap: wrap;
-    gap: clamp(2px, 1vw, 12px);
-    padding: 0 clamp(2px, 1vw, 8px);
+    gap: 8px;
+    padding: 0 4px;
   }
   
   .pulsanti-basso button {
     flex: 1;
-    min-width: clamp(40px, 10vw, 80px);
+    min-width: 60px;
+  }
+  
+  .modifica-icon {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+
+  .modifica-icon:hover, .modifica-icon:active {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .pulsanti-basso button {
+    min-height: 48px;
+    border-radius: 12px;
+    touch-action: manipulation;
+  }
+
+  .filtro-temporale select,
+  .filtro-temporale input[type="date"] {
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    appearance: none;
   }
 }
 
@@ -593,18 +616,13 @@ button#btnChiudi {
     margin-bottom: 20px;
   }
   
-  .filtro-temporale select {
-    width: 100%;
-    max-width: 400px;
-    padding: 14px 18px;
-    height: 52px;
-  }
-  
+  .filtro-temporale select,
   .data-container {
     width: 100%;
     max-width: 400px;
   }
   
+  .filtro-temporale select,
   .filtro-temporale input[type="date"] {
     padding: 14px 18px;
     height: 52px;
@@ -670,42 +688,5 @@ button#btnChiudi {
     width: 22px;
     height: 22px;
     right: 12px;
-  }
-}
-
-/* Ottimizzazioni touch */
-@media (max-width: 768px) {
-  .modifica-icon {
-    min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    transition: background-color 0.2s;
-  }
-
-  .modifica-icon:hover, .modifica-icon:active {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .pulsanti-basso button {
-    min-height: 48px;
-    border-radius: 12px;
-    touch-action: manipulation;
-  }
-
-  .filtro-temporale select,
-  .filtro-temporale input[type="date"] {
-    touch-action: manipulation;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-}
-
-/* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .keypad-button {
-    border-width: 1px;
   }
 }
