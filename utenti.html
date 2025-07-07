@@ -52,7 +52,8 @@
       border-bottom: 1px solid #374151;
       border-right: 1px solid #374151;
       line-height: 1.1;
-      height: 24px;
+      height: 50px;
+      vertical-align: middle;
     }
 
     /* Larghezza colonne - Azioni aumentata del 50% */
@@ -715,9 +716,11 @@
             <td>${utente.nome}</td>
             <td>${utente.cognome}</td>
             <td onclick="event.stopPropagation()">
-              <button onclick="apriModalDettagli({pin: ${utente.pin}, nome: '${utente.nome}', cognome: '${utente.cognome}', email: '${utente.email || ''}', telefono: '${utente.telefono || ''}', descrizione_contratto: '${utente.descrizione_contratto || ''}', ore_contrattuali: ${utente.ore_contrattuali || 8.00}})" style="margin-right: 8px;" title="Modifica">✏️</button>
-              <button onclick="archiviaUtente('${utente.pin}')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
-              <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
+              <div style="display: flex; justify-content: center; align-items: center; gap: 4px; height: 100%;">
+                <button onclick="apriModalDettagli({pin: ${utente.pin}, nome: '${utente.nome}', cognome: '${utente.cognome}', email: '${utente.email || ''}', telefono: '${utente.telefono || ''}', descrizione_contratto: '${utente.descrizione_contratto || ''}', ore_contrattuali: ${utente.ore_contrattuali || 8.00}})" style="background: none; border: none; font-size: 20px; padding: 4px;" title="Modifica">✏️</button>
+                <button onclick="archiviaUtente('${utente.pin}')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 4px;">📦</button>
+                <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 4px; color: #dc2626;">❌</button>
+              </div>
             </td>
           `;
           tbody.appendChild(riga);
