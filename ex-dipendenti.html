@@ -583,8 +583,6 @@
   </style>
 </head>
 <body>
-  <a href="utenti.html" class="back-button">← Torna ai Dipendenti</a>
-
   <div class="container">
     <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="display:block; margin:5px auto 0; width:150px;" />
     <h1>📚 Archivio Ex Dipendenti</h1>
@@ -609,7 +607,13 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- Pulsante torna ai dipendenti sotto la tabella allineato a destra -->
+    <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+      <a href="utenti.html" class="back-button" style="position: static; top: auto; left: auto; margin: 0;">← Torna ai Dipendenti</a>
+    </div>
   </div>
+</body>
 
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
