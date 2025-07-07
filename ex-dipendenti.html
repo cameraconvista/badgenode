@@ -94,31 +94,34 @@
     }
 
     /* Larghezze specifiche per le colonne - OTTIMIZZATE */
-    th:nth-child(1), td:nth-child(1) { width: 25%; } /* Nome */
-    th:nth-child(2), td:nth-child(2) { width: 25%; } /* Cognome */
+    th:nth-child(1), td:nth-child(1) { width: 20%; } /* Nome */
+    th:nth-child(2), td:nth-child(2) { width: 20%; } /* Cognome */
     th:nth-child(3), td:nth-child(3) { width: 18%; } /* Data Archiviazione */
     th:nth-child(4), td:nth-child(4) { width: 12%; } /* Timbrature */
-    th:nth-child(5), td:nth-child(5) { width: 20%; } /* Azioni - RIDOTTA */
+    th:nth-child(5), td:nth-child(5) { width: 30%; } /* Azioni - ALLARGATA */
 
-    /* Ottimizzazione colonna azioni - FORZATA */
+    /* Ottimizzazione colonna azioni - FORZATA ORIZZONTALE */
     td:nth-child(5) {
       white-space: nowrap !important;
-      text-align: center;
-      padding: 2px 4px !important;
-      overflow: hidden;
+      text-align: center !important;
+      padding: 4px 8px !important;
+      overflow: visible !important;
       height: 28px !important;
       line-height: 28px !important;
+      display: table-cell !important;
+      vertical-align: middle !important;
     }
 
     td:nth-child(5) .download-btn,
     td:nth-child(5) .restore-btn {
       display: inline-block !important;
-      margin: 0 2px !important;
-      padding: 2px 4px;
-      font-size: 10px;
-      border-radius: 3px;
+      margin: 0 4px !important;
+      padding: 3px 6px !important;
+      font-size: 11px !important;
+      border-radius: 4px !important;
       vertical-align: middle !important;
       float: none !important;
+      position: relative !important;
     }
 
     tr:last-child td {
