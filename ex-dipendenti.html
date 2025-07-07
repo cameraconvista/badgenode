@@ -93,14 +93,13 @@
     }
 
     /* Larghezze specifiche per le colonne - FORZATE CON !IMPORTANT */
-    th:nth-child(1), td:nth-child(1) { width: 15% !important; } /* Nome */
-    th:nth-child(2), td:nth-child(2) { width: 15% !important; } /* Cognome */
-    th:nth-child(3), td:nth-child(3) { width: 15% !important; } /* Data Archiviazione */
-    th:nth-child(4), td:nth-child(4) { width: 3.25% !important; } /* Record - aumentata del 30% da 2.5% */
-    th:nth-child(5), td:nth-child(5) { width: 11.25% !important; min-width: 50px !important; } /* Azioni - ridotta del 50% da 22.5% */
+    th:nth-child(1), td:nth-child(1) { width: 25% !important; } /* Nome */
+    th:nth-child(2), td:nth-child(2) { width: 25% !important; } /* Cognome */
+    th:nth-child(3), td:nth-child(3) { width: 25% !important; } /* Data Archiviazione */
+    th:nth-child(4), td:nth-child(4) { width: 25% !important; min-width: 50px !important; } /* Azioni */
 
     /* Ottimizzazione colonna azioni - LAYOUT FLEXBOX FORZATO */
-    td:nth-child(5) {
+    td:nth-child(4) {
       white-space: nowrap !important;
       text-align: center !important;
       padding: 8px 16px !important;
@@ -111,7 +110,7 @@
       min-width: 50px !important;
     }
 
-    td:nth-child(5) .actions-container {
+    td:nth-child(4) .actions-container {
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
@@ -120,7 +119,7 @@
       height: 28px !important;
     }
 
-    td:nth-child(5) button {
+    td:nth-child(4) button {
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -253,11 +252,10 @@
       }
 
       /* Larghezze colonne ottimizzate per mobile */
-      th:nth-child(1), td:nth-child(1) { width: 18%; } /* Nome */
-      th:nth-child(2), td:nth-child(2) { width: 18%; } /* Cognome */
-      th:nth-child(3), td:nth-child(3) { width: 15%; } /* Data */
-      th:nth-child(4), td:nth-child(4) { width: 3.25%; } /* Record - aumentata del 30% da 2.5% */
-      th:nth-child(5), td:nth-child(5) { width: 11.25% !important; } /* Azioni - ridotta del 50% da 22.5% */
+      th:nth-child(1), td:nth-child(1) { width: 30%; } /* Nome */
+      th:nth-child(2), td:nth-child(2) { width: 30%; } /* Cognome */
+      th:nth-child(3), td:nth-child(3) { width: 20%; } /* Data */
+      th:nth-child(4), td:nth-child(4) { width: 20% !important; } /* Azioni */
     }
 
     @media (min-width: 1024px) {
@@ -305,11 +303,10 @@
       }
 
       /* Larghezze colonne ottimizzate per desktop */
-      th:nth-child(1), td:nth-child(1) { width: 15%; } /* Nome */
-      th:nth-child(2), td:nth-child(2) { width: 15%; } /* Cognome */
-      th:nth-child(3), td:nth-child(3) { width: 15%; } /* Data */
-      th:nth-child(4), td:nth-child(4) { width: 3.25%; } /* Record - aumentata del 30% da 2.5% */
-      th:nth-child(5), td:nth-child(5) { width: 11.25% !important; } /* Azioni - ridotta del 50% da 22.5% */
+      th:nth-child(1), td:nth-child(1) { width: 25%; } /* Nome */
+      th:nth-child(2), td:nth-child(2) { width: 25%; } /* Cognome */
+      th:nth-child(3), td:nth-child(3) { width: 25%; } /* Data */
+      th:nth-child(4), td:nth-child(4) { width: 25% !important; } /* Azioni */
     }
   </style>
 </head>
@@ -326,13 +323,12 @@
           <th>Nome</th>
           <th>Cognome</th>
           <th>Archiviazione</th>
-          <th>Record</th>
           <th>Azioni</th>
         </tr>
       </thead>
       <tbody id="lista-ex-dipendenti">
         <tr>
-          <td colspan="5" class="empty-message">
+          <td colspan="4" class="empty-message">
             <div>📂 Nessun dipendente archiviato</div>
             <small style="display: block; margin-top: 10px; color: #6b7280;">
               I dipendenti archiviati appariranno qui con la possibilità di scaricare il file Excel completo
@@ -371,7 +367,7 @@
         if (!data || data.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="5" class="empty-message">
+              <td colspan="4" class="empty-message">
                 <div>📂 Nessun dipendente archiviato</div>
                 <small style="display: block; margin-top: 10px; color: #6b7280;">
                   I dipendenti archiviati appariranno qui con la possibilità di scaricare il file Excel completo
@@ -384,27 +380,12 @@
 
         data.forEach(exDipendente => {
           const dataArchiviazione = new Date(exDipendente.data_archiviazione).toLocaleDateString('it-IT');
-          let excelData = null;
-          let numeroTimbrature = 0;
-
-          // Prova a parsare i dati Excel
-          try {
-            if (exDipendente.file_excel_path) {
-              excelData = JSON.parse(exDipendente.file_excel_path);
-              numeroTimbrature = excelData.totaleTimbrature || 0;
-            }
-          } catch (e) {
-            console.warn("Errore parsing dati Excel per", exDipendente.nome, e);
-          }
 
           const riga = document.createElement('tr');
           riga.innerHTML = `
             <td title="${exDipendente.nome}">${exDipendente.nome}</td>
             <td title="${exDipendente.cognome}">${exDipendente.cognome}</td>
             <td title="${dataArchiviazione}">${dataArchiviazione}</td>
-            <td>
-              <span class="info-badge">${numeroTimbrature}</span>
-            </td>
             <td>
               <div class="actions-container">
                 <button class="download-btn" onclick="scaricaExcel('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Scarica Excel">
