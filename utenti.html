@@ -44,6 +44,7 @@
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      table-layout: fixed;
     }
 
     th, td {
@@ -56,12 +57,12 @@
       vertical-align: middle;
     }
 
-    /* Larghezza colonne - Nome e Cognome aumentate del 100% */
-    th:nth-child(1), td:nth-child(1) { width: 5%; }     /* Storico */
-    th:nth-child(2), td:nth-child(2) { width: 5%; }     /* PIN */
-    th:nth-child(3), td:nth-child(3) { width: 37.5%; padding: 2px 20px; }  /* Nome - con padding extra */
-    th:nth-child(4), td:nth-child(4) { width: 37.5%; padding: 2px 20px; }  /* Cognome - con padding extra */
-    th:nth-child(5), td:nth-child(5) { width: 15%; }    /* Azioni */
+    /* Larghezza colonne - Nome e Cognome significativamente aumentate */
+    th:nth-child(1), td:nth-child(1) { width: 8%; }     /* Storico */
+    th:nth-child(2), td:nth-child(2) { width: 8%; }     /* PIN */
+    th:nth-child(3), td:nth-child(3) { width: 35%; }    /* Nome - molto più largo */
+    th:nth-child(4), td:nth-child(4) { width: 35%; }    /* Cognome - molto più largo */
+    th:nth-child(5), td:nth-child(5) { width: 14%; }    /* Azioni */
 
     th {
       height: 54px;
@@ -309,11 +310,17 @@
     @media (max-width: 480px) {
       .container { padding: 8px; }
       h1 { font-size: 20px; margin-bottom: 15px; }
-      table { font-size: 10px; }
+      table { font-size: 10px; table-layout: fixed; }
       th, td { padding: 2px 4px; font-size: 10px; }
       th { font-size: 11px; height: 40px; }
       td { height: 35px; }
       td button { font-size: 12px; padding: 1px; }
+      /* Mantieni larghezze anche su mobile */
+      th:nth-child(1), td:nth-child(1) { width: 8% !important; }
+      th:nth-child(2), td:nth-child(2) { width: 8% !important; }
+      th:nth-child(3), td:nth-child(3) { width: 35% !important; }
+      th:nth-child(4), td:nth-child(4) { width: 35% !important; }
+      th:nth-child(5), td:nth-child(5) { width: 14% !important; }
       .modal-content { padding: 10px; margin: 5px; }
       .campo-gruppo { grid-template-columns: 1fr; }
       .modal-actions { flex-direction: column; gap: 8px; }
