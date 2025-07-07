@@ -86,7 +86,8 @@
     td {
       font-size: 16px;
       background-color: #1e293b;
-      height: 47px;
+      height: 50px;
+      vertical-align: middle;
     }
 
     /* Larghezze colonne */
@@ -97,9 +98,9 @@
 
     /* Azioni container */
     td:nth-child(4) {
-      padding: 8px 16px;
+      padding: 4px 8px;
       overflow: visible;
-      height: 28px;
+      height: 50px;
       display: table-cell;
       vertical-align: middle;
     }
@@ -108,9 +109,11 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
+      gap: 4px;
       width: 100%;
-      height: 28px;
+      height: 40px;
+      flex-wrap: nowrap;
+      flex-direction: row;
     }
 
     /* Pulsanti azioni */
@@ -124,18 +127,21 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 8px;
-      min-width: 44px;
-      min-height: 44px;
+      padding: 4px;
+      min-width: 36px;
+      min-height: 36px;
+      max-width: 36px;
+      max-height: 36px;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      flex-shrink: 0;
     }
 
     .download-btn {
       background-color: #10b981;
       color: white;
-      font-size: 14px;
+      font-size: 12px;
     }
 
     .download-btn:hover, .download-btn:active {
@@ -146,7 +152,7 @@
     .restore-btn {
       background-color: #f59e0b;
       color: white;
-      font-size: 28px;
+      font-size: 20px;
     }
 
     .restore-btn:hover, .restore-btn:active {
@@ -157,7 +163,7 @@
     .delete-btn {
       background-color: #dc2626;
       color: white;
-      font-size: 20px;
+      font-size: 16px;
     }
 
     .delete-btn:hover, .delete-btn:active {
