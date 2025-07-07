@@ -118,7 +118,7 @@
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
-      gap: 12px !important;
+      gap: 8px !important;
       width: 100% !important;
       height: 28px !important;
     }
@@ -184,6 +184,25 @@
 
     .restore-btn:hover {
       background-color: #d97706;
+    }
+
+    .delete-btn {
+      background-color: #dc2626;
+      color: white;
+      border: none;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      min-width: 30px;
+      height: 18px;
+      line-height: 14px;
+    }
+
+    .delete-btn:hover {
+      background-color: #b91c1c;
     }
 
     .empty-message {
@@ -406,6 +425,9 @@
                 <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Ripristina" style="font-size: 27px;">
                   ↩️
                 </button>
+                <button class="delete-btn" onclick="eliminaExDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Elimina Definitivamente" style="font-size: 24px; color: #dc2626;">
+                  ❌
+                </button>
               </div>
             </td>
           `;
@@ -554,6 +576,33 @@
       } catch (error) {
         console.error("Errore imprevisto:", error);
         alert("Errore durante il ripristino");
+      }
+    };
+
+    // Funzione per eliminare definitivamente un ex dipendente
+    window.eliminaExDipendente = async (id, nome, cognome) => {
+      if (!confirm(`⚠️ ATTENZIONE! Stai per eliminare DEFINITIVAMENTE l'ex dipendente:\n\n${nome} ${cognome}\n\nQuesta azione eliminerà:\n• L'ex dipendente dall'archivio\n• Tutti i suoi dati archiviati\n• Il file Excel associato\n\nQuesta operazione NON può essere annullata!\n\nSei sicuro di voler procedere?`)) return;
+      
+      if (!confirm(`⚠️ ULTIMA CONFERMA!\n\nStai per eliminare definitivamente ${nome} ${cognome}.\n\nDigita "ELIMINA" per confermare:`)) return;
+
+      try {
+        const { error } = await supabase
+          .from("dipendenti_archiviati")
+          .delete()
+          .eq("id", id);
+
+        if (error) {
+          console.error("Errore eliminazione ex dipendente:", error);
+          alert("Errore durante l'eliminazione: " + error.message);
+          return;
+        }
+
+        alert(`✅ Ex dipendente ${nome} ${cognome} eliminato definitivamente dall'archivio!`);
+        caricaExDipendenti(); // Ricarica la lista
+
+      } catch (error) {
+        console.error("Errore imprevisto:", error);
+        alert("Errore durante l'eliminazione definitiva");
       }
     };
 
