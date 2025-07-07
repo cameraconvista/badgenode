@@ -1,3 +1,4 @@
+
 /* Base styles */
 :root {
   --bg-base: #0c1a2a;
@@ -24,72 +25,76 @@ body {
 
 .container {
   height: 100vh;
-  max-width: 95vw;
+  max-width: 100vw;
   margin: 0 auto;
-  padding: 8px;
+  padding: 4px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* Titoli */
+/* Titoli - Ottimizzati per mobile */
 .titolo-grande {
   text-align: center;
-  font-size: 5vw;
+  font-size: 6vw;
   font-weight: bold;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
   color: var(--text-color);
-  line-height: 1.1;
+  line-height: 1;
+  max-height: 8vh;
+  overflow: hidden;
 }
 
 .titolo-piccolo {
   text-align: center;
   color: var(--text-muted);
-  font-size: 3vw;
+  font-size: 3.5vw;
   margin-bottom: 0;
+  line-height: 1;
 }
 
-/* Header */
+/* Header - Compatto per mobile */
 .header-fisso {
   flex-shrink: 0;
   background-color: var(--bg-base);
   z-index: 100;
-  padding-bottom: 8px;
+  padding: 4px 0;
+  max-height: 25vh;
+  overflow: visible;
 }
 
 .filtro-e-pulsanti {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2px;
-  padding: 0 8px;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+  padding: 0 4px;
 }
 
+/* Filtri temporali - Stack verticale su mobile */
 .filtro-temporale {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  flex: 1;
-  max-width: 700px;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
 }
 
 .filtro-temporale select,
 .filtro-temporale input[type="date"] {
-  width: 210px;
-  padding: 10px 14px;
-  font-size: 16px;
-  border-radius: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
   border: 1px solid var(--border-color);
   background-color: var(--bg-panel);
   color: var(--text-color);
-  height: 48px;
+  height: 40px;
   box-sizing: border-box;
 }
 
 .data-container {
   position: relative;
-  width: 210px;
+  width: 100%;
 }
 
 .filtro-temporale input[type="date"]::-webkit-calendar-picker-indicator {
@@ -99,44 +104,110 @@ body {
 
 .icona-calendario-campo {
   position: absolute;
-  right: 10px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
   z-index: 10;
 }
 
-/* Tabella */
+/* Pulsanti superiori - Layout orizzontale compatto */
+.pulsanti-alto {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 0 2px;
+}
+
+.pulsanti-alto button {
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-weight: 700;
+  font-size: 11px;
+  background: transparent;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  min-width: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+.pulsanti-alto button:hover {
+  background: rgba(30, 144, 255, 0.2);
+}
+
+.pulsanti-alto button img,
+.pulsanti-alto button svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Tabella - Ottimizzata per scroll mobile */
 .tabella-wrapper {
   background-color: var(--bg-panel);
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   flex: 1;
-  padding: 6px;
+  padding: 4px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
-.tabella-container,
-.tabella-body-wrapper {
+.tabella-container {
   background-color: transparent;
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   min-height: 0;
   position: relative;
+}
+
+.tabella-body-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 60px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+  padding-bottom: 45px;
+}
+
+.tabella-body-wrapper::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tabella-body-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabella-body-wrapper::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
 }
 
 .tabella-header,
 .tabella-footer {
   background-color: var(--bg-panel);
   flex-shrink: 0;
+  position: sticky;
+  z-index: 10;
+}
+
+.tabella-header {
+  top: 0;
 }
 
 .tabella-footer {
@@ -145,7 +216,7 @@ body {
   left: 0;
   right: 0;
   border-top: 2px solid var(--border-color);
-  z-index: 10;
+  background-color: var(--bg-header);
 }
 
 table {
@@ -159,34 +230,45 @@ table {
 th, td {
   border-bottom: 1px solid var(--border-color);
   border-right: 1px solid var(--border-color);
-  padding: 4px 6px;
+  padding: 3px 2px;
   text-align: center;
   color: var(--text-color);
-  width: 16.66%;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 11px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Allarga colonne Nome e Cognome */
-th:nth-child(3), td:nth-child(3) { width: 25%; } /* Nome */
-th:nth-child(4), td:nth-child(4) { width: 25%; } /* Cognome */
+/* Larghezze colonne ottimizzate per mobile verticale */
+th:nth-child(1), td:nth-child(1) { width: 25%; text-align: left; padding-left: 4px; } /* Data */
+th:nth-child(2), td:nth-child(2) { width: 15%; } /* Entrata */
+th:nth-child(3), td:nth-child(3) { width: 15%; } /* Uscita */
+th:nth-child(4), td:nth-child(4) { width: 15%; } /* Ore */
+th:nth-child(5), td:nth-child(5) { width: 15%; } /* Extra */
+th:nth-child(6), td:nth-child(6) { width: 15%; } /* Modifica */
 
 th:first-child, td:first-child {
-  text-align: left;
-  padding-left: 6px;
   border-left: 1px solid var(--border-color);
 }
 
 th {
   background-color: var(--bg-header);
   font-weight: 600;
-  font-size: 16px;
-  padding: 6px 4px;
+  font-size: 12px;
+  padding: 4px 2px;
+  height: 35px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 
 td {
   background-color: var(--bg-panel);
-  padding: 3px 6px;
+  padding: 2px;
+  height: 32px;
+  vertical-align: middle;
 }
 
 tr.weekend td {
@@ -197,32 +279,41 @@ tr.weekend td {
   background-color: var(--bg-header);
   font-weight: bold;
   border-bottom: none;
-  padding: 9px 8px;
-  font-size: 15px;
-  height: 40px;
+  padding: 6px 4px;
+  font-size: 12px;
+  height: 35px;
 }
 
-/* Pulsanti */
+/* Icona modifica ottimizzata per touch */
 .modifica-icon {
   cursor: pointer;
   user-select: none;
   display: inline-block;
   line-height: 1;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
+.modifica-icon:hover,
+.modifica-icon:active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Bottone torna - Posizionamento ottimizzato */
 .btn-torna-utenti {
   position: absolute;
-  top: 60px;
-  left: 20px;
-  background: rgba(60, 60, 60, 0.9);
+  top: 8px;
+  left: 8px;
+  background: rgba(60, 60, 60, 0.95);
   color: white;
   border: 2px solid rgba(120, 120, 120, 0.4);
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -238,74 +329,26 @@ tr.weekend td {
   transform: scale(1.05);
 }
 
-.pulsanti-alto,
-.pulsanti-basso {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
-.pulsanti-basso {
-  margin: 8px auto 0;
-  max-width: 900px;
-  padding: 4px 0;
-}
-
-.pulsanti-alto button,
-.pulsanti-basso button {
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-weight: 700;
-  font-size: 14px;
-  background: transparent;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.2s;
-  min-width: 80px;
-  justify-content: center;
-}
-
-#torna-archivio {
-  background: #ddd;
-  color: #222;
-}
-
-.pulsanti-alto button:hover,
-.pulsanti-basso button:hover {
-  background: rgba(30, 144, 255, 0.2);
-}
-
-.pulsanti-alto button img,
-.pulsanti-basso button img {
-  width: 32px;
-  height: 32px;
-}
-
-/* Modale */
+/* Modale ottimizzata per mobile */
 #modalOverlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 10000;
+  padding: 10px;
 }
 
 #modal {
   background: #1e2a38;
-  padding: 20px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 450px;
+  padding: 15px;
+  border-radius: 8px;
+  width: 95%;
+  max-width: 350px;
   color: white;
-  max-height: 90vh;
+  max-height: 80vh;
   overflow-y: auto;
   box-sizing: border-box;
 }
@@ -314,56 +357,62 @@ tr.weekend td {
   margin-bottom: 15px;
   text-align: center;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 18px;
   text-transform: capitalize;
 }
 
 label {
   display: block;
-  margin: 15px 0 5px;
+  margin: 10px 0 4px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 input[type="time"], input[type="date"] {
   width: 100%;
-  padding: 6px 8px;
-  border-radius: 5px;
+  padding: 8px;
+  border-radius: 4px;
   border: none;
   font-size: 16px;
   color: #000;
+  margin-bottom: 8px;
 }
 
 .modal-btns {
-  margin-top: 20px;
+  margin-top: 15px;
   display: flex;
   justify-content: space-between;
+  gap: 8px;
 }
 
-button {
-  padding: 10px 16px;
+.modal-btns button {
+  flex: 1;
+  padding: 12px 8px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 700;
   font-size: 14px;
+  min-height: 44px;
 }
 
 #btnSalva { background-color: #1e90ff; color: white; }
 #btnElimina { background-color: #dc3545; color: white; }
 #btnChiudi { background-color: #666; color: white; }
 
-/* Calendario */
+/* Calendario mobile */
 .menu-calendario {
   position: absolute;
   top: 100%;
   right: 0;
   background: var(--bg-panel);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   z-index: 1000;
-  min-width: 280px;
-  padding: 12px;
+  min-width: 260px;
+  padding: 8px;
+  max-width: 90vw;
 }
 
 .calendario-header,
@@ -371,16 +420,19 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 6px;
 }
 
 .calendario-nav {
   background: none;
   border: none;
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 6px 8px;
   border-radius: 4px;
+  min-width: 36px;
+  min-height: 36px;
 }
 
 .calendario-nav:hover {
@@ -390,9 +442,9 @@ button {
 .calendario-mese-anno {
   color: white;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   text-align: center;
-  min-width: 120px;
+  min-width: 100px;
 }
 
 .calendario-giorni-settimana,
@@ -400,29 +452,30 @@ button {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 2px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .giorno-settimana {
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
   font-weight: 600;
-  padding: 4px 0;
+  padding: 2px 0;
 }
 
 .giorno-calendario {
-  width: 32px;
-  height: 28px;
+  width: 28px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   color: white;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 3px;
   background: none;
   transition: all 0.2s;
+  border: none;
 }
 
 .giorno-calendario:hover { background-color: var(--border-color); }
@@ -433,10 +486,11 @@ button {
 .btn-oggi,
 .btn-chiudi-calendario {
   border: none;
-  padding: 6px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 11px;
   cursor: pointer;
+  min-height: 32px;
 }
 
 .btn-oggi {
@@ -452,4 +506,164 @@ button {
 }
 .btn-chiudi-calendario:hover {
   background: #475569;
+}
+
+/* Media query specifica per mobile verticale */
+@media (max-width: 480px) and (orientation: portrait) {
+  .container {
+    padding: 2px;
+  }
+  
+  .titolo-grande {
+    font-size: 5.5vw;
+    max-height: 6vh;
+  }
+  
+  .titolo-piccolo {
+    font-size: 3vw;
+  }
+  
+  .header-fisso {
+    max-height: 22vh;
+    padding: 2px 0;
+  }
+  
+  .filtro-e-pulsanti {
+    gap: 6px;
+  }
+  
+  .filtro-temporale {
+    gap: 4px;
+  }
+  
+  .filtro-temporale select,
+  .filtro-temporale input[type="date"] {
+    height: 36px;
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+  
+  .pulsanti-alto {
+    gap: 3px;
+  }
+  
+  .pulsanti-alto button {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+  
+  .pulsanti-alto button img,
+  .pulsanti-alto button svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  th, td {
+    font-size: 10px;
+    padding: 2px 1px;
+  }
+  
+  th {
+    font-size: 11px;
+    height: 30px;
+  }
+  
+  td {
+    height: 28px;
+  }
+  
+  .tabella-footer td {
+    font-size: 11px;
+    height: 32px;
+    padding: 4px 2px;
+  }
+  
+  .modifica-icon {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+  }
+  
+  .btn-torna-utenti {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    top: 6px;
+    left: 6px;
+  }
+}
+
+/* Landscape mode per schermi piccoli */
+@media (max-height: 600px) and (orientation: landscape) {
+  .container {
+    padding: 4px;
+  }
+  
+  .header-fisso {
+    max-height: 35vh;
+  }
+  
+  .titolo-grande {
+    font-size: 4vw;
+    max-height: 5vh;
+  }
+  
+  .titolo-piccolo {
+    font-size: 2.5vw;
+  }
+  
+  .filtro-e-pulsanti {
+    flex-direction: row;
+    gap: 8px;
+  }
+  
+  .filtro-temporale {
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1;
+    gap: 4px;
+  }
+  
+  .filtro-temporale select,
+  .filtro-temporale input[type="date"] {
+    width: auto;
+    min-width: 140px;
+    height: 32px;
+  }
+  
+  .pulsanti-alto {
+    flex-direction: row;
+    gap: 4px;
+  }
+  
+  th {
+    height: 25px;
+    font-size: 10px;
+  }
+  
+  td {
+    height: 24px;
+    font-size: 9px;
+  }
+}
+
+/* PWA Safe Area */
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .container {
+    margin-top: env(safe-area-inset-top);
+  }
+
+  .btn-torna-utenti {
+    top: calc(8px + env(safe-area-inset-top));
+    left: calc(8px + env(safe-area-inset-left));
+  }
 }
