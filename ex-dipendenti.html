@@ -68,6 +68,7 @@
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      table-layout: fixed;
     }
 
     th, td {
@@ -75,6 +76,9 @@
       height: 28px;
       text-align: center;
       border-bottom: 1px solid #374151;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     th {
@@ -87,6 +91,29 @@
     td {
       font-size: 16px;
       background-color: #1e293b;
+    }
+
+    /* Larghezze specifiche per le colonne */
+    th:nth-child(1), td:nth-child(1) { width: 20%; } /* Nome */
+    th:nth-child(2), td:nth-child(2) { width: 20%; } /* Cognome */
+    th:nth-child(3), td:nth-child(3) { width: 15%; } /* Data Archiviazione */
+    th:nth-child(4), td:nth-child(4) { width: 15%; } /* Timbrature */
+    th:nth-child(5), td:nth-child(5) { width: 30%; } /* Azioni */
+
+    /* Ottimizzazione colonna azioni */
+    td:nth-child(5) {
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    td:nth-child(5) .download-btn,
+    td:nth-child(5) .restore-btn {
+      display: inline-block;
+      margin: 0 2px;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      vertical-align: middle;
     }
 
     tr:last-child td {
@@ -177,24 +204,34 @@
       }
 
       th, td {
-        padding: 2px 6px;
+        padding: 2px 4px;
         height: 24px;
-        font-size: 14px;
-      }
-
-      th {
-        font-size: 16px;
-      }
-
-      .download-btn {
-        padding: 6px 12px;
         font-size: 12px;
       }
 
-      .restore-btn {
-        padding: 6px 10px;
-        font-size: 11px;
+      th {
+        font-size: 14px;
       }
+
+      /* Ridimensiona pulsanti per mobile */
+      .download-btn {
+        padding: 3px 6px;
+        font-size: 10px;
+        margin: 0 1px;
+      }
+
+      .restore-btn {
+        padding: 3px 5px;
+        font-size: 10px;
+        margin: 0 1px;
+      }
+
+      /* Larghezze colonne ottimizzate per mobile */
+      th:nth-child(1), td:nth-child(1) { width: 18%; } /* Nome */
+      th:nth-child(2), td:nth-child(2) { width: 18%; } /* Cognome */
+      th:nth-child(3), td:nth-child(3) { width: 14%; } /* Data */
+      th:nth-child(4), td:nth-child(4) { width: 12%; } /* Timbrature */
+      th:nth-child(5), td:nth-child(5) { width: 38%; } /* Azioni */
     }
 
     @media (min-width: 1024px) {
@@ -226,14 +263,23 @@
       }
 
       .download-btn {
-        padding: 12px 24px;
-        font-size: 16px;
+        padding: 6px 12px;
+        font-size: 14px;
+        margin: 0 3px;
       }
 
       .restore-btn {
-        padding: 10px 18px;
-        font-size: 14px;
+        padding: 6px 10px;
+        font-size: 12px;
+        margin: 0 3px;
       }
+
+      /* Larghezze colonne ottimizzate per desktop */
+      th:nth-child(1), td:nth-child(1) { width: 22%; } /* Nome */
+      th:nth-child(2), td:nth-child(2) { width: 22%; } /* Cognome */
+      th:nth-child(3), td:nth-child(3) { width: 16%; } /* Data */
+      th:nth-child(4), td:nth-child(4) { width: 14%; } /* Timbrature */
+      th:nth-child(5), td:nth-child(5) { width: 26%; } /* Azioni */
     }
   </style>
 </head>
@@ -249,8 +295,8 @@
         <tr>
           <th>Nome</th>
           <th>Cognome</th>
-          <th>Data Archiviazione</th>
-          <th>Timbrature</th>
+          <th>Archiviazione</th>
+          <th>Record</th>
           <th>Azioni</th>
         </tr>
       </thead>
@@ -323,17 +369,17 @@
 
           const riga = document.createElement('tr');
           riga.innerHTML = `
-            <td>${exDipendente.nome}</td>
-            <td>${exDipendente.cognome}</td>
-            <td>${dataArchiviazione}</td>
+            <td title="${exDipendente.nome}">${exDipendente.nome}</td>
+            <td title="${exDipendente.cognome}">${exDipendente.cognome}</td>
+            <td title="${dataArchiviazione}">${dataArchiviazione}</td>
             <td>
-              <span class="info-badge">${numeroTimbrature} record</span>
+              <span class="info-badge">${numeroTimbrature}</span>
             </td>
             <td>
-              <button class="download-btn" onclick="scaricaExcel('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')">
-                📊 Scarica Excel
+              <button class="download-btn" onclick="scaricaExcel('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Scarica Excel">
+                📊 Excel
               </button>
-              <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')">
+              <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Ripristina">
                 ↩️ Ripristina
               </button>
             </td>
