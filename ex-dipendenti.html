@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -66,16 +67,12 @@
     }
 
     th, td {
-      padding: 3px 8px;
+      padding: 8px;
       text-align: center;
       border-bottom: 1px solid #374151;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-
-    td {
-      height: 47px;
     }
 
     th {
@@ -89,68 +86,47 @@
     td {
       font-size: 16px;
       background-color: #1e293b;
+      height: 47px;
     }
 
-    th:nth-child(1), td:nth-child(1) { width: 25% !important; }
-    th:nth-child(2), td:nth-child(2) { width: 25% !important; }
-    th:nth-child(3), td:nth-child(3) { width: 33.5% !important; }
-    th:nth-child(4), td:nth-child(4) { width: 16.5% !important; min-width: 50px !important; }
+    /* Larghezze colonne */
+    th:nth-child(1), td:nth-child(1) { width: 25%; }
+    th:nth-child(2), td:nth-child(2) { width: 25%; }
+    th:nth-child(3), td:nth-child(3) { width: 33.5%; }
+    th:nth-child(4), td:nth-child(4) { width: 16.5%; min-width: 50px; }
 
+    /* Azioni container */
     td:nth-child(4) {
-      white-space: nowrap !important;
-      text-align: center !important;
-      padding: 8px 16px !important;
-      overflow: visible !important;
-      height: 28px !important;
-      display: table-cell !important;
-      vertical-align: middle !important;
-      min-width: 50px !important;
+      padding: 8px 16px;
+      overflow: visible;
+      height: 28px;
+      display: table-cell;
+      vertical-align: middle;
     }
 
     td:nth-child(4) .actions-container {
-      display: flex !important;
-      justify-content: center !important;
-      align-items: center !important;
-      gap: 8px !important;
-      width: 100% !important;
-      height: 28px !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      height: 28px;
     }
 
-    td:nth-child(4) button {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      margin: 0 !important;
-      padding: 4px 8px !important;
-      font-size: 18px !important;
-      border: none !important;
-      background: none !important;
-      cursor: pointer !important;
-      height: 24px !important;
-      min-width: 32px !important;
-      flex-shrink: 0 !important;
-      transition: all 0.2s ease !important;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tr:hover {
-      background-color: #2563eb;
-    }
-
+    /* Pulsanti azioni */
     .download-btn, .restore-btn, .delete-btn {
       border: none;
       border-radius: 6px;
       font-weight: 600;
-      cursor: pointer !important;
+      cursor: pointer;
       transition: all 0.3s ease;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
+      padding: 8px;
+      min-width: 44px;
+      min-height: 44px;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
@@ -159,9 +135,6 @@
     .download-btn {
       background-color: #10b981;
       color: white;
-      padding: 8px;
-      min-width: 44px;
-      min-height: 44px;
       font-size: 14px;
     }
 
@@ -173,9 +146,6 @@
     .restore-btn {
       background-color: #f59e0b;
       color: white;
-      padding: 8px;
-      min-width: 44px;
-      min-height: 44px;
       font-size: 28px;
     }
 
@@ -187,15 +157,20 @@
     .delete-btn {
       background-color: #dc2626;
       color: white;
-      padding: 8px;
-      min-width: 44px;
-      min-height: 44px;
       font-size: 20px;
     }
 
     .delete-btn:hover, .delete-btn:active {
       background-color: #b91c1c;
       transform: scale(0.95);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: #2563eb;
     }
 
     .empty-message {
@@ -206,28 +181,7 @@
       line-height: 1.5;
     }
 
-    @media (pointer: coarse) {
-      .download-btn, .restore-btn, .delete-btn {
-        min-width: 48px;
-        min-height: 48px;
-        padding: 10px;
-        border-radius: 10px;
-      }
-
-      .back-button {
-        min-height: 48px;
-        padding: 12px 20px;
-      }
-
-      td:nth-child(4) {
-        padding: 12px 8px !important;
-      }
-
-      td:nth-child(4) .actions-container {
-        gap: 8px !important;
-      }
-    }
-
+    /* PWA Safe Area */
     @media (display-mode: standalone) {
       body {
         padding-top: env(safe-area-inset-top);
@@ -246,75 +200,113 @@
       }
     }
 
-    .info-badge {
-      background-color: #3b82f6;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
+    /* Touch Optimization */
+    @media (pointer: coarse) {
+      .download-btn, .restore-btn, .delete-btn {
+        min-width: 48px;
+        min-height: 48px;
+        padding: 10px;
+        border-radius: 10px;
+      }
+
+      .back-button {
+        min-height: 48px;
+        padding: 12px 20px;
+      }
+
+      td:nth-child(4) {
+        padding: 12px 8px;
+      }
+
+      td:nth-child(4) .actions-container {
+        gap: 8px;
+      }
     }
 
-    .status-badge {
-      background-color: #dc2626;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    /* Media Queries Ottimizzate */
-    @media (max-width: 320px) {
-      .container { padding: 6px; max-width: 100%; }
-      h1 { font-size: 18px; margin-top: 60px; margin-bottom: 15px; }
-      .back-button { top: 8px; left: 8px; padding: 8px 12px; font-size: 12px; min-height: 40px; border-radius: 6px; }
-      table { font-size: 9px; border-radius: 8px; }
-      th, td { padding: 4px 2px; font-size: 9px; line-height: 1.1; }
-      th { font-size: 10px; height: 40px; font-weight: 700; }
-      td { height: 50px; vertical-align: middle; }
-      th:nth-child(1), td:nth-child(1) { width: 25% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 25% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 22% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 28% !important; }
-      td:nth-child(4) .actions-container { gap: 2px !important; flex-wrap: wrap; justify-content: center; }
-      .download-btn, .restore-btn, .delete-btn { min-width: 28px; min-height: 28px; padding: 4px; border-radius: 6px; margin: 1px; }
-      .download-btn img { width: 14px !important; height: 14px !important; }
-      .restore-btn { font-size: 16px; }
-      .delete-btn { font-size: 12px; }
-    }
-
-    @media (min-width: 321px) and (max-width: 480px) {
-      .container { padding: 10px; max-width: 100%; }
-      h1 { font-size: 22px; margin-top: 70px; margin-bottom: 20px; }
-      .back-button { top: 10px; left: 10px; padding: 10px 15px; font-size: 14px; min-height: 44px; border-radius: 8px; }
-      table { font-size: 11px; border-radius: 12px; }
-      th, td { padding: 6px 4px; font-size: 11px; line-height: 1.2; }
-      th { font-size: 12px; height: 50px; font-weight: 700; }
-      td { height: 60px; vertical-align: middle; }
-      th:nth-child(1), td:nth-child(1) { width: 20% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 20% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 25% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 35% !important; }
-      td:nth-child(4) .actions-container { gap: 4px !important; flex-wrap: wrap; justify-content: center; }
-      .download-btn, .restore-btn, .delete-btn { min-width: 36px; min-height: 36px; padding: 6px; border-radius: 8px; margin: 1px; }
-      .download-btn img { width: 18px !important; height: 18px !important; }
-      .restore-btn { font-size: 20px; }
-      .delete-btn { font-size: 16px; }
+    /* Media Queries Responsive */
+    @media (max-width: 480px) {
+      .container { 
+        padding: 10px; 
+        max-width: 100%; 
+      }
+      
+      h1 { 
+        font-size: 22px; 
+        margin-top: 70px; 
+        margin-bottom: 20px; 
+      }
+      
+      .back-button { 
+        top: 10px; 
+        left: 10px; 
+        padding: 10px 15px; 
+        font-size: 14px; 
+        min-height: 44px; 
+        border-radius: 8px; 
+      }
+      
+      table { 
+        font-size: 11px; 
+        border-radius: 12px; 
+      }
+      
+      th, td { 
+        padding: 6px 4px; 
+        font-size: 11px; 
+        line-height: 1.2; 
+      }
+      
+      th { 
+        font-size: 12px; 
+        height: 50px; 
+        font-weight: 700; 
+      }
+      
+      td { 
+        height: 60px; 
+        vertical-align: middle; 
+      }
+      
+      th:nth-child(1), td:nth-child(1) { width: 20%; }
+      th:nth-child(2), td:nth-child(2) { width: 20%; }
+      th:nth-child(3), td:nth-child(3) { width: 25%; }
+      th:nth-child(4), td:nth-child(4) { width: 35%; }
+      
+      td:nth-child(4) .actions-container { 
+        gap: 4px; 
+        flex-wrap: wrap; 
+        justify-content: center; 
+      }
+      
+      .download-btn, .restore-btn, .delete-btn { 
+        min-width: 36px; 
+        min-height: 36px; 
+        padding: 6px; 
+        border-radius: 8px; 
+        margin: 1px; 
+      }
+      
+      .download-btn img { 
+        width: 18px !important; 
+        height: 18px !important; 
+      }
+      
+      .restore-btn { 
+        font-size: 20px; 
+      }
+      
+      .delete-btn { 
+        font-size: 16px; 
+      }
     }
 
     @media (min-width: 481px) and (max-width: 768px) {
       .container { padding: 15px; }
       h1 { font-size: 26px; margin-top: 65px; }
-      .back-button { top: 10px; left: 10px; padding: 12px 18px; font-size: 15px; min-height: 44px; }
+      .back-button { padding: 12px 18px; font-size: 15px; min-height: 44px; }
       th, td { padding: 8px 6px; font-size: 13px; }
       th { font-size: 15px; height: 55px; }
       td { height: 55px; }
-      th:nth-child(1), td:nth-child(1) { width: 22% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 22% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 28% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 28% !important; }
-      .download-btn, .restore-btn, .delete-btn { min-width: 40px; min-height: 40px; padding: 8px; }
       .download-btn img { width: 22px !important; height: 22px !important; }
       .restore-btn { font-size: 24px; }
       .delete-btn { font-size: 18px; }
@@ -328,11 +320,6 @@
       th, td { padding: 10px 8px; font-size: 15px; }
       th { font-size: 18px; height: 60px; }
       td { height: 50px; }
-      th:nth-child(1), td:nth-child(1) { width: 24% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 24% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 30% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 22% !important; }
-      .download-btn, .restore-btn, .delete-btn { min-width: 42px; min-height: 42px; padding: 8px; }
       .download-btn img { width: 26px !important; height: 26px !important; }
       .restore-btn { font-size: 30px; }
       .delete-btn { font-size: 20px; }
@@ -346,14 +333,9 @@
       td { height: 55px; }
       th { font-size: 20px; height: 64px; }
       td { font-size: 18px; }
-      .download-btn, .restore-btn, .delete-btn { min-width: 46px; min-height: 46px; padding: 10px; }
       .download-btn img { width: 30px !important; height: 30px !important; }
       .restore-btn { font-size: 36px; }
       .delete-btn { font-size: 22px; }
-      th:nth-child(1), td:nth-child(1) { width: 25% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 25% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 32% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 18% !important; }
     }
 
     @media (orientation: landscape) and (max-height: 600px) {
@@ -363,7 +345,6 @@
       table { font-size: 12px; }
       th { height: 45px; font-size: 14px; }
       td { height: 40px; font-size: 12px; }
-      .download-btn, .restore-btn, .delete-btn { min-width: 32px; min-height: 32px; padding: 6px; }
       .restore-btn { font-size: 18px; }
       .delete-btn { font-size: 14px; }
     }
