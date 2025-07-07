@@ -118,8 +118,8 @@
 
     /* Pulsanti azioni */
     .download-btn, .restore-btn, .delete-btn {
+      background: none;
       border: none;
-      border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -136,38 +136,18 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       flex-shrink: 0;
-    }
-
-    .download-btn {
-      background-color: #10b981;
-      color: white;
-      font-size: 12px;
-    }
-
-    .download-btn:hover, .download-btn:active {
-      background-color: #059669;
-      transform: scale(0.95);
-    }
-
-    .restore-btn {
-      background-color: #f59e0b;
-      color: white;
       font-size: 20px;
     }
 
-    .restore-btn:hover, .restore-btn:active {
-      background-color: #d97706;
+    .download-btn:hover, .download-btn:active {
       transform: scale(0.95);
     }
 
-    .delete-btn {
-      background-color: #dc2626;
-      color: white;
-      font-size: 16px;
+    .restore-btn:hover, .restore-btn:active {
+      transform: scale(0.95);
     }
 
     .delete-btn:hover, .delete-btn:active {
-      background-color: #b91c1c;
       transform: scale(0.95);
     }
 
@@ -288,21 +268,8 @@
         min-width: 36px; 
         min-height: 36px; 
         padding: 6px; 
-        border-radius: 8px; 
         margin: 1px; 
-      }
-      
-      .download-btn img { 
-        width: 18px !important; 
-        height: 18px !important; 
-      }
-      
-      .restore-btn { 
-        font-size: 20px; 
-      }
-      
-      .delete-btn { 
-        font-size: 16px; 
+        font-size: 16px;
       }
     }
 
@@ -313,9 +280,7 @@
       th, td { padding: 8px 6px; font-size: 13px; }
       th { font-size: 15px; height: 55px; }
       td { height: 55px; }
-      .download-btn img { width: 22px !important; height: 22px !important; }
-      .restore-btn { font-size: 24px; }
-      .delete-btn { font-size: 18px; }
+      .download-btn, .restore-btn, .delete-btn { font-size: 18px; }
     }
 
     @media (min-width: 769px) and (max-width: 1024px) {
@@ -326,9 +291,7 @@
       th, td { padding: 10px 8px; font-size: 15px; }
       th { font-size: 18px; height: 60px; }
       td { height: 50px; }
-      .download-btn img { width: 26px !important; height: 26px !important; }
-      .restore-btn { font-size: 30px; }
-      .delete-btn { font-size: 20px; }
+      .download-btn, .restore-btn, .delete-btn { font-size: 20px; }
     }
 
     @media (min-width: 1025px) {
@@ -339,9 +302,7 @@
       td { height: 55px; }
       th { font-size: 20px; height: 64px; }
       td { font-size: 18px; }
-      .download-btn img { width: 30px !important; height: 30px !important; }
-      .restore-btn { font-size: 36px; }
-      .delete-btn { font-size: 22px; }
+      .download-btn, .restore-btn, .delete-btn { font-size: 22px; }
     }
 
     @media (orientation: landscape) and (max-height: 600px) {
@@ -351,8 +312,7 @@
       table { font-size: 12px; }
       th { height: 45px; font-size: 14px; }
       td { height: 40px; font-size: 12px; }
-      .restore-btn { font-size: 18px; }
-      .delete-btn { font-size: 14px; }
+      .download-btn, .restore-btn, .delete-btn { font-size: 14px; }
     }
   </style>
 </head>
@@ -436,12 +396,12 @@
             <td>
               <div class="actions-container">
                 <button class="download-btn" onclick="scaricaExcel('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Scarica Excel">
-                  <img src="assets/icons/esporta.png" alt="Esporta Excel" style="width: 30.8px; height: 30.8px;" />
+                  📊
                 </button>
-                <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Ripristina" style="font-size: 41px;">
+                <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Ripristina">
                   ↩️
                 </button>
-                <button class="delete-btn" onclick="eliminaExDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Elimina Definitivamente" style="font-size: 24px; color: #dc2626;">
+                <button class="delete-btn" onclick="eliminaExDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Elimina Definitivamente">
                   ❌
                 </button>
               </div>
