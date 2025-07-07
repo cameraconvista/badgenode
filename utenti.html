@@ -4,24 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Gestione Utenti - BADGEBOX</title>
-```
 
-```html
   <!-- PWA Meta -->
   <meta name="theme-color" content="#0d1b2b" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
-```
 
-```html
   <!-- Icone PWA -->
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/BADGENODE.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
   <link rel="manifest" href="manifest.json" />
-```
 
-```html
   <link rel="stylesheet" href="style.css" />
   <style>
     body {
@@ -29,26 +23,20 @@
       color: white;
       font-family: Arial, sans-serif;
     }
-```
 
-```html
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 30px;
     }
-```
 
-```html
     h1 {
       text-align: center;
       margin-bottom: 30px;
       font-size: 36px;
       font-weight: bold;
     }
-```
 
-```html
     table {
       width: 100%;
       border-collapse: collapse;
@@ -57,9 +45,7 @@
       overflow: hidden;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
     }
-```
 
-```html
     th, td {
       padding: 2px 6px;
       text-align: center;
@@ -68,37 +54,27 @@
       line-height: 1.1;
       height: 24px;
     }
-```
 
-```html
     th {
       height: 54px;
       background-color: #1f3a56;
       font-weight: 600;
       font-size: 18px;
     }
-```
 
-```html
     td {
       font-size: 16px;
       background-color: #1e293b;
     }
-```
 
-```html
     th:first-child, td:first-child {
       border-left: 1px solid #374151;
     }
-```
 
-```html
     tr:last-child td {
       border-bottom: none;
     }
-```
 
-```html
     td button {
       background: none;
       border: none;
@@ -109,16 +85,12 @@
       border-radius: 3px;
       transition: background-color 0.2s;
     }
-```
 
-```html
     td button:hover {
       background-color: rgba(255, 255, 255, 0.1);
     }
-```
 
-```html
-    /* Stili modali */
+    /* Modali */
     #modalNuovoDipendente, #modalDettagli {
       position: fixed;
       top: 0;
@@ -132,9 +104,7 @@
       z-index: 10000;
       padding: 20px;
     }
-```
 
-```html
     .modal-content {
       background: #1e293b;
       border-radius: 16px;
@@ -146,9 +116,7 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
       color: white;
     }
-```
 
-```html
     .modal-header {
       display: flex;
       justify-content: space-between;
@@ -157,17 +125,13 @@
       border-bottom: 2px solid #374151;
       padding-bottom: 15px;
     }
-```
 
-```html
     .modal-title {
       font-size: 24px;
       font-weight: bold;
       color: #60a5fa;
     }
-```
 
-```html
     .close-btn {
       background: #dc2626;
       color: white;
@@ -181,21 +145,15 @@
       align-items: center;
       justify-content: center;
     }
-```
 
-```html
     .close-btn:hover {
       background: #b91c1c;
     }
-```
 
-```html
     .sezione-modal {
       margin-bottom: 30px;
     }
-```
 
-```html
     .sezione-titolo {
       font-size: 18px;
       font-weight: 600;
@@ -204,33 +162,25 @@
       border-left: 4px solid #fbbf24;
       padding-left: 12px;
     }
-```
 
-```html
     .campo-gruppo {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
       margin-bottom: 15px;
     }
-```
 
-```html
     .campo-singolo {
       margin-bottom: 15px;
     }
-```
 
-```html
     .campo-label {
       font-size: 14px;
       color: #94a3b8;
       margin-bottom: 5px;
       font-weight: 500;
     }
-```
 
-```html
     .campo-valore {
       background: #374151;
       border: 1px solid #4b5563;
@@ -241,16 +191,12 @@
       width: 100%;
       box-sizing: border-box;
     }
-```
 
-```html
     .campo-textarea {
       min-height: 80px;
       resize: vertical;
     }
-```
 
-```html
     .upload-area {
       border: 2px dashed #4b5563;
       border-radius: 8px;
@@ -259,60 +205,44 @@
       background: #374151;
       transition: border-color 0.3s;
     }
-```
 
-```html
     .upload-area:hover {
       border-color: #60a5fa;
     }
-```
 
-```html
     .upload-icon {
       font-size: 32px;
       color: #6b7280;
       margin-bottom: 10px;
     }
-```
 
-```html
     .upload-text {
       color: #9ca3af;
       font-size: 14px;
     }
-```
 
-```html
     .upload-area.dragover {
       border-color: #3b82f6;
       background-color: #1e40af;
     }
-```
 
-```html
     .file-info {
       color: #10b981;
       font-size: 14px;
       text-align: left;
     }
-```
 
-```html
     .file-name {
       font-weight: 600;
       margin-bottom: 5px;
     }
-```
 
-```html
     .file-size {
       color: #6b7280;
       font-size: 12px;
       margin-bottom: 10px;
     }
-```
 
-```html
     .remove-file-btn {
       background-color: #dc2626;
       color: white;
@@ -323,15 +253,11 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-```
 
-```html
     .remove-file-btn:hover {
       background-color: #b91c1c;
     }
-```
 
-```html
     .modal-actions {
       display: flex;
       justify-content: flex-end;
@@ -340,9 +266,7 @@
       padding-top: 20px;
       border-top: 1px solid #374151;
     }
-```
 
-```html
     .btn-annulla,
     .btn-salva {
       padding: 10px 20px;
@@ -354,356 +278,82 @@
       transition: all 0.2s ease;
       min-width: 80px;
     }
-```
 
-```html
     .btn-annulla {
       background-color: #6b7280;
       color: white;
     }
-```
 
-```html
     .btn-annulla:hover {
       background-color: #4b5563;
     }
-```
 
-```html
     .btn-salva {
       background-color: #16a34a;
       color: white;
     }
-```
 
-```html
     .btn-salva:hover {
       background-color: #15803d;
     }
-```
 
-```html
-    /* Media queries consolidate */
+    /* Media queries ottimizzate */
     @media (max-width: 480px) {
-      .container {
-        padding: 8px;
-        max-width: 100%;
-      }
-```
-
-```html
-      h1 {
-        font-size: 20px;
-        margin-bottom: 15px;
-      }
-```
-
-```html
-      table {
-        font-size: 10px;
-      }
-```
-
-```html
-      th, td {
-        padding: 2px 4px;
-        font-size: 10px;
-      }
-```
-
-```html
-      th {
-        font-size: 11px;
-        height: 40px;
-      }
-```
-
-```html
-      td {
-        height: 35px;
-      }
-```
-
-```html
-      th:nth-child(1), td:nth-child(1) { width: 15% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 15% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 30% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 30% !important; }
-      th:nth-child(5), td:nth-child(5) { width: 10% !important; }
-```
-
-```html
-      td button {
-        font-size: 12px;
-        padding: 1px;
-      }
-```
-
-```html
-      .modal-content {
-        padding: 10px;
-        margin: 5px;
-      }
-```
-
-```html
-      .campo-gruppo {
-        grid-template-columns: 1fr;
-      }
-```
-
-```html
-      .modal-actions {
-        flex-direction: column;
-        gap: 8px;
-      }
-```
-
-```html
-      .btn-annulla,
-      .btn-salva {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-      }
+      .container { padding: 8px; }
+      h1 { font-size: 20px; margin-bottom: 15px; }
+      table { font-size: 10px; }
+      th, td { padding: 2px 4px; font-size: 10px; }
+      th { font-size: 11px; height: 40px; }
+      td { height: 35px; }
+      td button { font-size: 12px; padding: 1px; }
+      .modal-content { padding: 10px; margin: 5px; }
+      .campo-gruppo { grid-template-columns: 1fr; }
+      .modal-actions { flex-direction: column; gap: 8px; }
+      .btn-annulla, .btn-salva { width: 100%; padding: 12px; font-size: 16px; }
     }
-```
 
-```html
     @media (min-width: 481px) and (max-width: 768px) {
-      .container {
-        padding: 12px;
-        max-width: 100%;
-      }
-```
-
-```html
-      h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
-      }
-```
-
-```html
-      table {
-        font-size: 12px;
-      }
-```
-
-```html
-      th, td {
-        padding: 3px 6px;
-        font-size: 12px;
-      }
-```
-
-```html
-      th {
-        font-size: 13px;
-        height: 45px;
-      }
-```
-
-```html
-      td {
-        height: 40px;
-      }
-```
-
-```html
-      th:nth-child(1), td:nth-child(1) { width: 12% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 12% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 30% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 30% !important; }
-      th:nth-child(5), td:nth-child(5) { width: 16% !important; }
-```
-
-```html
-      td button {
-        font-size: 14px;
-        padding: 2px;
-      }
-```
-
-```html
-      .modal-content {
-        padding: 15px;
-        margin: 8px;
-      }
-```
-
-```html
-      .campo-gruppo {
-        grid-template-columns: 1fr;
-      }
+      .container { padding: 12px; }
+      h1 { font-size: 24px; margin-bottom: 20px; }
+      table { font-size: 12px; }
+      th, td { padding: 3px 6px; font-size: 12px; }
+      th { font-size: 13px; height: 45px; }
+      td { height: 40px; }
+      td button { font-size: 14px; padding: 2px; }
+      .modal-content { padding: 15px; margin: 8px; }
+      .campo-gruppo { grid-template-columns: 1fr; }
     }
-```
 
-```html
     @media (min-width: 769px) and (max-width: 1024px) {
-      .container {
-        padding: 20px;
-        max-width: 95%;
-      }
-```
-
-```html
-      h1 {
-        font-size: 28px;
-        margin-bottom: 25px;
-      }
-```
-
-```html
-      th, td {
-        padding: 8px 10px;
-        font-size: 14px;
-      }
-```
-
-```html
-      th {
-        font-size: 16px;
-        height: 50px;
-      }
-```
-
-```html
-      td {
-        height: 45px;
-      }
-```
-
-```html
-      th:nth-child(1), td:nth-child(1) { width: 12% !important; }
-      th:nth-child(2), td:nth-child(2) { width: 12% !important; }
-      th:nth-child(3), td:nth-child(3) { width: 28% !important; }
-      th:nth-child(4), td:nth-child(4) { width: 28% !important; }
-      th:nth-child(5), td:nth-child(5) { width: 20% !important; }
-```
-
-```html
-      .modal-content {
-        max-width: 80%;
-        padding: 25px;
-      }
+      .container { padding: 20px; max-width: 95%; }
+      h1 { font-size: 28px; margin-bottom: 25px; }
+      th, td { padding: 8px 10px; font-size: 14px; }
+      th { font-size: 16px; height: 50px; }
+      td { height: 45px; }
+      .modal-content { max-width: 80%; padding: 25px; }
     }
-```
 
-```html
     @media (min-width: 1024px) {
-      .container {
-        max-width: 1400px;
-        padding: 40px;
-      }
-```
-
-```html
-      h1 {
-        font-size: 42px;
-        margin-bottom: 40px;
-      }
-```
-
-```html
-      table {
-        border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-        table-layout: auto;
-      }
-```
-
-```html
-      th, td {
-        padding: 3px 8px;
-        height: 28px;
-      }
-```
-
-```html
-      th {
-        font-size: 20px;
-        height: 63px;
-      }
-```
-
-```html
-      td {
-        font-size: 18px;
-      }
-```
-
-```html
-      td button {
-        font-size: 22px;
-        padding: 10px;
-      }
-```
-
-```html
-      td img {
-        width: 28px !important;
-        height: 28px !important;
-      }
-```
-
-```html
-      tr {
-        height: 28px;
-      }
-```
-
-```html
-      .modal-content {
-        max-width: 800px;
-        padding: 40px;
-      }
-```
-
-```html
-      .modal-title {
-        font-size: 28px;
-      }
-```
-
-```html
-      .sezione-titolo {
-        font-size: 20px;
-      }
-```
-
-```html
-      .campo-valore {
-        font-size: 16px;
-        padding: 12px 14px;
-      }
-```
-
-```html
-      th:nth-child(1), td:nth-child(1) { width: 80px; min-width: 80px; }
-      th:nth-child(2), td:nth-child(2) { width: 80px; min-width: 80px; }
-      th:nth-child(3), td:nth-child(3) { min-width: 253px; white-space: nowrap; }
-      th:nth-child(4), td:nth-child(4) { min-width: 253px; white-space: nowrap; }
-      th:nth-child(5), td:nth-child(5) { width: 225px; min-width: 225px; }
+      .container { max-width: 1400px; padding: 40px; }
+      h1 { font-size: 42px; margin-bottom: 40px; }
+      table { border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); }
+      th, td { padding: 3px 8px; height: 28px; }
+      th { font-size: 20px; height: 63px; }
+      td { font-size: 18px; }
+      td button { font-size: 22px; padding: 10px; }
+      td img { width: 28px !important; height: 28px !important; }
+      .modal-content { max-width: 800px; padding: 40px; }
+      .modal-title { font-size: 28px; }
+      .sezione-titolo { font-size: 20px; }
+      .campo-valore { font-size: 16px; padding: 12px 14px; }
     }
-```
-
-```html
-    /* Ottimizzazioni per colonne responsive */
-    th:nth-child(1), td:nth-child(1) { width: 60px; min-width: 60px; }
-    th:nth-child(2), td:nth-child(2) { width: 60px; min-width: 60px; }
-    th:nth-child(3), td:nth-child(3) { min-width: 203px; white-space: nowrap; }
-    th:nth-child(4), td:nth-child(4) { min-width: 203px; white-space: nowrap; }
-    th:nth-child(5), td:nth-child(5) { width: 180px; min-width: 180px; }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="assets/icons/logoBN 2.png" alt="BadgeBox Logo" style="display:block; margin:-10px auto 20px; width:150px;" />
     <h1>Archivio Dipendenti</h1>
-```
 
-```html
     <table>
       <thead>
         <tr>
@@ -722,8 +372,8 @@
           <td>Rossi</td>
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 1, nome: 'Mario', cognome: 'Rossi', email: 'mario.rossi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
-                <button onclick="archiviaUtente('1')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
-                <button onclick="eliminaUtente('1', 'Mario', 'Rossi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
+            <button onclick="archiviaUtente('1')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
+            <button onclick="eliminaUtente('1', 'Mario', 'Rossi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
           </td>
         </tr>
         <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
@@ -733,8 +383,8 @@
           <td>Verdi</td>
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 2, nome: 'Luigi', cognome: 'Verdi', email: 'luigi.verdi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
-                <button onclick="archiviaUtente('2')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
-                <button onclick="eliminaUtente('2', 'Luigi', 'Verdi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
+            <button onclick="archiviaUtente('2')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
+            <button onclick="eliminaUtente('2', 'Luigi', 'Verdi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
           </td>
         </tr>
         <tr style="background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;">
@@ -744,15 +394,13 @@
           <td>Bianchi</td>
           <td onclick="event.stopPropagation()">
             <button onclick="apriModalDettagli({pin: 3, nome: 'Anna', cognome: 'Bianchi', email: 'anna.bianchi@example.com', telefono: '', descrizione_contratto: '', ore_contrattuali: 8.00})" style="margin-right: 8px;" title="Modifica">✏️</button>
-                <button onclick="archiviaUtente('3')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
-                <button onclick="eliminaUtente('3', 'Anna', 'Bianchi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
+            <button onclick="archiviaUtente('3')" title="Archivia dipendente" style="background: none; border: none; font-size: 20px; padding: 8px;">📦</button>
+            <button onclick="eliminaUtente('3', 'Anna', 'Bianchi')" title="Elimina definitivamente" style="background: none; border: none; font-size: 20px; padding: 8px; color: #dc2626;">❌</button>
           </td>
         </tr>
       </tbody>
     </table>
-```
 
-```html
     <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
       <button onclick="apriModalNuovoDipendente()" style="
         background-color: #16a34a;
@@ -770,9 +418,7 @@
          onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='translateY(0)'">
         Aggiungi
       </button>
-```
 
-```html
       <button onclick="window.location.href='ex-dipendenti.html'" style="
         background-color: #ca8a04;
         color: white;
@@ -791,9 +437,7 @@
       </button>
     </div>
   </div>
-```
 
-```html
   <!-- Modale Nuovo Dipendente -->
   <div id="modalNuovoDipendente">
     <div class="modal-content">
@@ -801,9 +445,7 @@
         <h2 class="modal-title">Aggiungi Nuovo Dipendente</h2>
         <button class="close-btn" onclick="chiudiModalNuovoDipendente()">×</button>
       </div>
-```
 
-```html
       <div class="sezione-modal">
         <div class="sezione-titolo">👤 Dati Anagrafici</div>
         <div class="campo-gruppo">
@@ -831,14 +473,10 @@
           <input type="number" class="campo-valore" id="nuovo-pin" min="1" max="99" required>
         </div>
       </div>
-```
 
-```html
       <div class="sezione-modal">
         <div class="sezione-titolo">📄 Contratto Attivo</div>
-```
 
-```html
         <div class="campo-singolo">
           <div class="campo-label">Upload Contratto</div>
           <div class="upload-area" id="nuovo-upload-area">
@@ -855,38 +493,27 @@
             </div>
           </div>
         </div>
-```
 
-```html
         <div class="campo-singolo">
           <div class="campo-label">Descrizione Contratto in Corso</div>
           <textarea class="campo-valore campo-textarea" id="nuovo-descrizione-contratto" 
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
-```
 
-```html
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto</div>
           <input type="number" class="campo-valore" id="nuovo-ore-contrattuali" 
                  placeholder="8.00" step="0.25" min="0" max="24" value="8.00">
         </div>
-```
-
-```html
       </div>
-```
 
-```html
       <div class="modal-actions">
         <button class="btn-annulla" onclick="annullaNuovoDipendente()">Annulla</button>
         <button class="btn-salva" onclick="salvaNuovoDipendente()">Salva</button>
       </div>
     </div>
   </div>
-```
 
-```html
   <!-- Modale Dettagli Dipendente -->
   <div id="modalDettagli">
     <div class="modal-content">
@@ -894,9 +521,7 @@
         <h2 class="modal-title" id="modalTitolo">Dettagli Dipendente</h2>
         <button class="close-btn" onclick="chiudiModalDettagli()">×</button>
       </div>
-```
 
-```html
       <div class="sezione-modal">
         <div class="sezione-titolo">👤 Dati Anagrafici</div>
         <div class="campo-gruppo">
@@ -920,14 +545,10 @@
           </div>
         </div>
       </div>
-```
 
-```html
       <div class="sezione-modal">
         <div class="sezione-titolo">📄 Contratto Attivo</div>
-```
 
-```html
         <div class="campo-singolo">
           <div class="campo-label">Upload Contratto</div>
           <div class="upload-area" id="upload-area">
@@ -944,33 +565,146 @@
             </div>
           </div>
         </div>
-```
 
-```html
         <div class="campo-singolo">
           <div class="campo-label">Descrizione Contratto in Corso</div>
           <textarea class="campo-valore campo-textarea" id="dettagli-descrizione-contratto" 
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
-```
 
-```html
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto</div>
           <input type="number" class="campo-valore" id="dettagli-ore-contrattuali" 
-placeholder="8.00" step="0.25" min="0" max="24">
+                 placeholder="8.00" step="0.25" min="0" max="24">
         </div>
-```
-
-```html
       </div>
-```
 
-```html
       <div class="modal-actions">
         <button class="btn-annulla" onclick="annullaModifiche()">Annulla</button>
         <button class="btn-salva" onclick="salvaModifiche()">Salva</button>
       </div>
     </div>
   </div>
-`
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+      "https://txmjqrnitfsiytbytxlc.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
+    );
+
+    // Funzioni globali per l'interfaccia
+    window.apriModalNuovoDipendente = () => document.getElementById("modalNuovoDipendente").style.display = "flex";
+    window.chiudiModalNuovoDipendente = () => document.getElementById("modalNuovoDipendente").style.display = "none";
+    window.apriModalDettagli = (utente) => {
+      document.getElementById("modalTitolo").textContent = `${utente.nome} ${utente.cognome}`;
+      document.getElementById("dettagli-nome").value = utente.nome;
+      document.getElementById("dettagli-cognome").value = utente.cognome;
+      document.getElementById("dettagli-email").value = utente.email || "";
+      document.getElementById("dettagli-telefono").value = utente.telefono || "";
+      document.getElementById("dettagli-descrizione-contratto").value = utente.descrizione_contratto || "";
+      document.getElementById("dettagli-ore-contrattuali").value = utente.ore_contrattuali || 8.00;
+      document.getElementById("modalDettagli").style.display = "flex";
+    };
+    window.chiudiModalDettagli = () => document.getElementById("modalDettagli").style.display = "none";
+    window.annullaNuovoDipendente = () => {
+      document.getElementById("modalNuovoDipendente").style.display = "none";
+      document.getElementById("nuovo-nome").value = "";
+      document.getElementById("nuovo-cognome").value = "";
+      document.getElementById("nuovo-email").value = "";
+      document.getElementById("nuovo-telefono").value = "";
+      document.getElementById("nuovo-pin").value = "";
+      document.getElementById("nuovo-descrizione-contratto").value = "";
+      document.getElementById("nuovo-ore-contrattuali").value = "8.00";
+    };
+    window.annullaModifiche = () => document.getElementById("modalDettagli").style.display = "none";
+
+    window.salvaNuovoDipendente = async () => {
+      const nome = document.getElementById("nuovo-nome").value.trim();
+      const cognome = document.getElementById("nuovo-cognome").value.trim();
+      const email = document.getElementById("nuovo-email").value.trim();
+      const telefono = document.getElementById("nuovo-telefono").value.trim();
+      const pin = parseInt(document.getElementById("nuovo-pin").value);
+      const descrizioneContratto = document.getElementById("nuovo-descrizione-contratto").value.trim();
+      const oreContrattuali = parseFloat(document.getElementById("nuovo-ore-contrattuali").value) || 8.00;
+
+      if (!nome || !cognome || !email || !pin) {
+        alert("Compila tutti i campi obbligatori");
+        return;
+      }
+
+      try {
+        const { error } = await supabase.from("utenti").insert([{
+          pin, nome, cognome, email, telefono, descrizione_contratto: descrizioneContratto, ore_contrattuali: oreContrattuali
+        }]);
+
+        if (error) throw error;
+        alert("Dipendente aggiunto con successo!");
+        window.annullaNuovoDipendente();
+        location.reload();
+      } catch (error) {
+        console.error("Errore:", error);
+        alert("Errore durante l'inserimento: " + error.message);
+      }
+    };
+
+    window.salvaModifiche = () => alert("Funzione di modifica in fase di implementazione");
+    window.archiviaUtente = (pin) => {
+      if (confirm("Sei sicuro di voler archiviare questo dipendente?")) {
+        alert(`Dipendente con PIN ${pin} archiviato (funzione in fase di implementazione)`);
+      }
+    };
+    window.eliminaUtente = (pin, nome, cognome) => {
+      if (confirm(`Sei sicuro di voler eliminare definitivamente ${nome} ${cognome}?`)) {
+        alert(`Dipendente ${nome} ${cognome} eliminato (funzione in fase di implementazione)`);
+      }
+    };
+
+    // Gestione upload file
+    function setupFileUpload(areaId, inputId, textId, infoId, nameId, sizeId, removeBtnId) {
+      const area = document.getElementById(areaId);
+      const input = document.getElementById(inputId);
+      const text = document.getElementById(textId);
+      const info = document.getElementById(infoId);
+      const nameEl = document.getElementById(nameId);
+      const sizeEl = document.getElementById(sizeId);
+      const removeBtn = document.getElementById(removeBtnId);
+
+      area.addEventListener("click", () => input.click());
+      area.addEventListener("dragover", (e) => { e.preventDefault(); area.classList.add("dragover"); });
+      area.addEventListener("dragleave", () => area.classList.remove("dragover"));
+      area.addEventListener("drop", (e) => {
+        e.preventDefault();
+        area.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        if (files.length > 0) handleFile(files[0]);      });
+
+      input.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) handleFile(e.target.files[0]);
+      });
+
+      removeBtn.addEventListener("click", () => {
+        input.value = "";
+        text.style.display = "block";
+        info.style.display = "none";
+      });
+
+      function handleFile(file) {
+        if (file.size > 5 * 1024 * 1024) {
+          alert("File troppo grande. Massimo 5MB.");
+          return;
+        }
+        nameEl.textContent = file.name;
+        sizeEl.textContent = (file.size / 1024 / 1024).toFixed(2) + " MB";
+        text.style.display = "none";
+        info.style.display = "block";
+      }
+    }
+
+    // Setup upload areas
+    setupFileUpload("nuovo-upload-area", "nuovo-file-input", "nuovo-upload-text", "nuovo-file-info", "nuovo-file-name", "nuovo-file-size", "nuovo-remove-file-btn");
+    setupFileUpload("upload-area", "file-input", "upload-text", "file-info", "file-name", "file-size", "remove-file-btn");
+  </script>
+</body>
+</html>
