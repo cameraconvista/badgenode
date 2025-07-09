@@ -145,22 +145,6 @@ body {
 }
 
 @keyframes flash-timbratura {
-  0%, 100% { 
-    background-color: #15803d; 
-    opacity: 1; 
-  }
-  25%, 75% { 
-    background-color: #b45309; 
-    opacity: 0.8; 
-  }
-  50% { 
-    background-color: #f59e0b; 
-    opacity: 0.9; 
-  }
-}
-}
-
-@keyframes flash-timbratura {
   0%, 100% { opacity: 1; }
   10% { opacity: 0.3; }
   20% { opacity: 1; }
