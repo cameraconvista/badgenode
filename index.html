@@ -105,12 +105,13 @@
       // Applica l'animazione lampeggiante per le timbrature (entrata e uscita)
       if (tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"))) {
         status.className = `status-message ${tipo} visible timbratura-flash`;
-        // Per le timbrature, usa sempre 7 secondi
-        setTimeout(() => status.className = "status-message", 7000);
       } else {
         status.className = `status-message ${tipo} visible`;
-        setTimeout(() => status.className = "status-message", durata);
       }
+      
+      // Imposta la durata corretta: 7 secondi per le timbrature, durata normale per gli altri
+      const durataEffettiva = (tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"))) ? 7000 : durata;
+      setTimeout(() => status.className = "status-message", durataEffettiva);
     }
 
     function pulisciPin() {
