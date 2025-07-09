@@ -5,28 +5,30 @@ export function apriModaleModifica(data, timbratureEntrata, timbratureUscita, pi
   console.log('🔧 Apertura modale modifica per data:', data);
   
   const modal = document.getElementById('modalOverlay');
-  const modaleData = document.getElementById('modale-data');
+  const modaleDataEntrata = document.getElementById('modale-data-entrata');
+  const modaleDataUscita = document.getElementById('modale-data-uscita');
   const modaleEntrata = document.getElementById('modale-entrata');
   const modaleUscita = document.getElementById('modale-uscita');
   
-  if (!modal || !modaleData || !modaleEntrata || !modaleUscita) {
+  if (!modal || !modaleDataEntrata || !modaleDataUscita || !modaleEntrata || !modaleUscita) {
     console.error('❌ Elementi modale non trovati');
     return;
   }
 
-  // Imposta la data
-  modaleData.value = data;
-  
-  // Imposta orari esistenti
+  // Imposta le date e orari esistenti
   if (timbratureEntrata && timbratureEntrata.length > 0) {
+    modaleDataEntrata.value = timbratureEntrata[0].giornologico || timbratureEntrata[0].data || data;
     modaleEntrata.value = timbratureEntrata[0].ore.slice(0, 5);
   } else {
+    modaleDataEntrata.value = data;
     modaleEntrata.value = '';
   }
   
   if (timbratureUscita && timbratureUscita.length > 0) {
+    modaleDataUscita.value = timbratureUscita[timbratureUscita.length - 1].giornologico || timbratureUscita[timbratureUscita.length - 1].data || data;
     modaleUscita.value = timbratureUscita[timbratureUscita.length - 1].ore.slice(0, 5);
   } else {
+    modaleDataUscita.value = data;
     modaleUscita.value = '';
   }
 
@@ -45,7 +47,15 @@ export function apriModaleModifica(data, timbratureEntrata, timbratureUscita, pi
   
   // Salva modifiche
   btnSalva.onclick = async () => {
-    await salvaModifiche(data, modaleEntrata.value, modaleUscita.value, pin, timbraturaId);
+    await salvaModifiche(
+      modaleDataEntrata.value, 
+      modaleEntrata.value, 
+      modaleDataUscita.value, 
+      modaleUscita.value, 
+      pin, 
+      timbraturaId,
+      data // data originale per eventuali cancellazioni
+    );
     chiudiModale();
   };
   
@@ -75,44 +85,54 @@ function chiudiModale() {
   }
 }
 
-async function salvaModifiche(data, entrata, uscita, pin, timbraturaId) {
+async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pin, timbraturaId, dataOriginale) {
   try {
-    console.log('💾 Salvataggio modifiche per:', { data, entrata, uscita, pin });
+    console.log('💾 Salvataggio modifiche per:', { dataEntrata, oraEntrata, dataUscita, oraUscita, pin });
     
     const url = 'https://db3cae29-6f00-4872-abaf-3aa3cb08cd7e-00-2v1otxtl8dccv.riker.replit.dev/api/timbrature';
     
-    // Se ci sono orari da salvare
-    if (entrata || uscita) {
-      const promises = [];
-      
-      if (entrata) {
-        promises.push(fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            pin: pin,
-            tipo: 'entrata',
-            data: data,
-            ore: entrata + ':00',
-            giornologico: data
-          })
-        }));
+    // Prima elimina le timbrature esistenti per la data originale
+    if (dataOriginale) {
+      try {
+        const deleteUrl = `https://db3cae29-6f00-4872-abaf-3aa3cb08cd7e-00-2v1otxtl8dccv.riker.replit.dev/api/timbrature/${pin}/${dataOriginale}`;
+        await fetch(deleteUrl, { method: 'DELETE' });
+      } catch (deleteError) {
+        console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
       }
-      
-      if (uscita) {
-        promises.push(fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            pin: pin,
-            tipo: 'uscita',
-            data: data,
-            ore: uscita + ':00',
-            giornologico: data
-          })
-        }));
-      }
-      
+    }
+    
+    // Salva le nuove timbrature se presenti
+    const promises = [];
+    
+    if (oraEntrata && dataEntrata) {
+      promises.push(fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pin: pin,
+          tipo: 'entrata',
+          data: dataEntrata,
+          ore: oraEntrata + ':00',
+          giornologico: dataEntrata
+        })
+      }));
+    }
+    
+    if (oraUscita && dataUscita) {
+      promises.push(fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pin: pin,
+          tipo: 'uscita',
+          data: dataUscita,
+          ore: oraUscita + ':00',
+          giornologico: dataUscita
+        })
+      }));
+    }
+    
+    if (promises.length > 0) {
       await Promise.all(promises);
     }
     

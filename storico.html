@@ -118,12 +118,16 @@
     <div id="modal">
       <h2>Modifica Timbrature</h2>
       <form id="modaleForm">
-        <label>Data:</label>
-        <input type="date" id="modale-data" disabled />
-        <label for="modale-entrata">Entrata:</label>
+        <label for="modale-data-entrata">Data Entrata:</label>
+        <input type="date" id="modale-data-entrata" />
+        <label for="modale-entrata">Ora Entrata:</label>
         <input type="time" id="modale-entrata" />
-        <label for="modale-uscita">Uscita:</label>
+        
+        <label for="modale-data-uscita">Data Uscita:</label>
+        <input type="date" id="modale-data-uscita" />
+        <label for="modale-uscita">Ora Uscita:</label>
         <input type="time" id="modale-uscita" />
+        
         <div class="modal-btns">
           <button type="button" id="btnSalva">Salva</button>
           <button type="button" id="btnElimina">Elimina</button>
