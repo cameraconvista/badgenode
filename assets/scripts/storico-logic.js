@@ -699,10 +699,25 @@ document.getElementById("btn-google-sheets").addEventListener("click", () => {
 
 // Inizializzazione
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM caricato, inizializzo calendario');
   initCalendarUtils();
   aggiornaRange("corrente");
   caricaDati();
 });
+
+// Inizializzazione anche se il DOM è già caricato
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
+function initApp() {
+  console.log('Inizializzo app');
+  initCalendarUtils();
+  aggiornaRange("corrente");
+  caricaDati();
+}
 
 // Esporta funzioni globali necessarie
 window.StoriceLogic = {

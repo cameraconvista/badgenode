@@ -3,32 +3,50 @@
 let calendarioAperto = null;
 
 export function initCalendarUtils() {
-  // Gestione delle icone calendario con calendario visivo
-  document.addEventListener('DOMContentLoaded', function() {
-    // Crea il contenitore del calendario se non esiste
-    if (!document.getElementById('calendario-popup')) {
-      createCalendarioPopup();
-    }
-    
-    document.querySelectorAll('.icona-calendario-campo').forEach(icon => {
-      icon.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const campoId = this.getAttribute('data-campo');
-        const campo = document.getElementById(campoId);
-        if (campo) {
-          mostraCalendario(campo, this);
-        }
-      });
-    });
+  // Assicurati che il DOM sia caricato
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupCalendar);
+  } else {
+    setupCalendar();
+  }
+}
 
-    // Chiudi calendario quando si clicca fuori
-    document.addEventListener('click', function(e) {
-      const calendarioPopup = document.getElementById('calendario-popup');
-      if (calendarioPopup && calendarioAperto && !calendarioPopup.contains(e.target)) {
-        nascondiCalendario();
+function setupCalendar() {
+  // Crea il contenitore del calendario se non esiste
+  if (!document.getElementById('calendario-popup')) {
+    createCalendarioPopup();
+  }
+  
+  // Aggiungi event listeners alle icone calendario
+  const iconeCalendario = document.querySelectorAll('.icona-calendario-campo');
+  console.log('Icone calendario trovate:', iconeCalendario.length);
+  
+  iconeCalendario.forEach(icon => {
+    icon.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Icona calendario cliccata');
+      const campoId = this.getAttribute('data-campo');
+      console.log('Campo ID:', campoId);
+      const campo = document.getElementById(campoId);
+      if (campo) {
+        console.log('Campo trovato, mostro calendario');
+        mostraCalendario(campo, this);
+      } else {
+        console.log('Campo non trovato');
       }
     });
+  });
+
+  // Chiudi calendario quando si clicca fuori
+  document.addEventListener('click', function(e) {
+    const calendarioPopup = document.getElementById('calendario-popup');
+    if (calendarioPopup && calendarioAperto && !calendarioPopup.contains(e.target)) {
+      // Verifica se il click è su un'icona calendario
+      if (!e.target.classList.contains('icona-calendario-campo')) {
+        nascondiCalendario();
+      }
+    }
   });
 }
 
@@ -51,12 +69,17 @@ function createCalendarioPopup() {
   `;
   
   document.body.appendChild(popup);
+  console.log('Popup calendario creato');
 }
 
 function mostraCalendario(campoInput, iconaElemento) {
   const popup = document.getElementById('calendario-popup');
-  if (!popup) return;
+  if (!popup) {
+    console.log('Popup non trovato');
+    return;
+  }
 
+  console.log('Mostro calendario per campo:', campoInput.id);
   calendarioAperto = campoInput;
   
   // Ottieni la data corrente del campo o oggi
@@ -76,12 +99,14 @@ function mostraCalendario(campoInput, iconaElemento) {
   }
   
   popup.style.display = 'block';
+  console.log('Calendario mostrato');
 }
 
 function nascondiCalendario() {
   const popup = document.getElementById('calendario-popup');
   if (popup) {
     popup.style.display = 'none';
+    console.log('Calendario nascosto');
   }
   calendarioAperto = null;
 }
