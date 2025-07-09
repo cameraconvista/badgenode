@@ -470,14 +470,14 @@ button {
   }
 
   .titolo-grande {
-    font-size: 18px;
-    margin: 2px 0;
-    line-height: 1.2;
+    font-size: 14px;
+    margin: 1px 0;
+    line-height: 1.1;
   }
 
   .titolo-piccolo {
-    font-size: 12px;
-    margin-bottom: 4px;
+    font-size: 10px;
+    margin-bottom: 2px;
   }
 
   .filtro-e-pulsanti {
