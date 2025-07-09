@@ -102,8 +102,8 @@
     function mostraStatus(messaggio, tipo = "info", durata = 3000) {
       status.textContent = messaggio;
       
-      // Applica l'animazione lampeggiante per le timbrature
-      if (tipo === "success" || tipo === "uscita-status") {
+      // Applica l'animazione lampeggiante per le timbrature (entrata e uscita)
+      if (tipo === "success" || tipo === "uscita-status" || messaggio.includes("ENTRATA") || messaggio.includes("USCITA")) {
         status.className = `${tipo} visible timbratura-flash`;
       } else {
         status.className = `${tipo} visible`;
@@ -227,7 +227,7 @@
           throw new Error("Errore durante la registrazione: " + error.message);
         }
 
-        mostraStatus(`${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${ora.toFormat("HH:mm")}`, tipo === "uscita" ? "uscita-status" : "success", 6000);
+        mostraStatus(`${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${ora.toFormat("HH:mm")}`, "success", 6000);
         pulisciPin();
       } catch (e) {
         console.error("Errore generale:", e);
