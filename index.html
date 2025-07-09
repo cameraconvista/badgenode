@@ -101,7 +101,14 @@
 
     function mostraStatus(messaggio, tipo = "info", durata = 3000) {
       status.textContent = messaggio;
-      status.className = `${tipo} visible`;
+      
+      // Applica l'animazione lampeggiante per le timbrature
+      if (tipo === "success" || tipo === "uscita-status") {
+        status.className = `${tipo} visible timbratura-flash`;
+      } else {
+        status.className = `${tipo} visible`;
+      }
+      
       setTimeout(() => status.className = "", durata);
     }
 
