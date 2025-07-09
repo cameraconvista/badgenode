@@ -102,16 +102,18 @@
     function mostraStatus(messaggio, tipo = "info", durata = 3000) {
       status.textContent = messaggio;
       
+      // Per le timbrature, forza sempre 7 secondi di durata
+      const isTimbratura = tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"));
+      const durataFinale = isTimbratura ? 7000 : durata;
+      
       // Applica l'animazione lampeggiante per le timbrature (entrata e uscita)
-      if (tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"))) {
+      if (isTimbratura) {
         status.className = `status-message ${tipo} visible timbratura-flash`;
       } else {
         status.className = `status-message ${tipo} visible`;
       }
       
-      // Imposta la durata corretta: 7 secondi per le timbrature, durata normale per gli altri
-      const durataEffettiva = (tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"))) ? 7000 : durata;
-      setTimeout(() => status.className = "status-message", durataEffettiva);
+      setTimeout(() => status.className = "status-message", durataFinale);
     }
 
     function pulisciPin() {
@@ -229,7 +231,7 @@
           throw new Error("Errore durante la registrazione: " + error.message);
         }
 
-        mostraStatus(`${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${ora.toFormat("HH:mm")}`, "success", 7000);
+        mostraStatus(`${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${ora.toFormat("HH:mm")}`, "success");
         pulisciPin();
       } catch (e) {
         console.error("Errore generale:", e);
