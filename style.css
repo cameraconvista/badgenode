@@ -139,7 +139,7 @@ body {
 
 /* ANIMAZIONE LAMPEGGIANTE PER TIMBRATURE */
 .status-message.timbratura-flash {
-  animation: flash-timbratura 4s ease-in-out;
+  animation: flash-timbratura 7s ease-in-out;
   background-color: #b45309 !important; /* Giallo scuro per il box lampeggiante */
   border: 2px solid #f59e0b; /* Bordo giallo più chiaro */
 }
