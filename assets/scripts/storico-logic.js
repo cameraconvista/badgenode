@@ -1,7 +1,7 @@
 // scripts/storico-logic.js
 
 import { aggiungiOpzionePersonalizzato, aggiornaRange } from './calendar-utils.js';
-import { caricaDati } from './timbrature-data.js';
+import { caricaDati, pulisciCache } from './timbrature-data.js';
 import { renderizzaTabella } from './timbrature-render.js';
 
 const intestazione = document.getElementById("intestazione");
@@ -75,9 +75,26 @@ document.getElementById("btn-whatsapp")?.addEventListener("click", () => {
   window.open(`https://wa.me/?text=${encodeURIComponent(messaggio)}`, '_blank');
 });
 
+// Cache per librerie
+let jsPDFLib = null;
+let XLSXLib = null;
+
 document.getElementById("btn-invia")?.addEventListener("click", async () => {
-  const { jsPDF } = await import("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
-  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
+  // Mostra loading
+  const btn = document.getElementById("btn-invia");
+  const originalText = btn.textContent;
+  btn.textContent = "Generando PDF...";
+  btn.disabled = true;
+  
+  try {
+    // Lazy load con cache
+    if (!jsPDFLib) {
+      console.log('📥 Caricamento libreria PDF...');
+      const module = await import("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+      jsPDFLib = module.jsPDF;
+    }
+    
+    const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
   const doc = new jsPDF();
   const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
   const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
@@ -107,11 +124,31 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
 
   doc.setFontSize(8).text(`Generato il: ${new Date().toLocaleString('it-IT')}`, 20, 285);
   doc.save(`${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.pdf`);
+  } catch (error) {
+    console.error('❌ Errore generazione PDF:', error);
+    alert('Errore durante la generazione del PDF');
+  } finally {
+    // Ripristina bottone
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
 });
 
 document.getElementById("btn-esporta")?.addEventListener("click", async () => {
-  const XLSX = await import("https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.mjs");
-  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
+  // Mostra loading
+  const btn = document.getElementById("btn-esporta");
+  const originalText = btn.textContent;
+  btn.textContent = "Generando Excel...";
+  btn.disabled = true;
+  
+  try {
+    // Lazy load con cache
+    if (!XLSXLib) {
+      console.log('📥 Caricamento libreria Excel...');
+      XLSXLib = await import("https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.mjs");
+    }
+    
+    const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
   const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
   const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
 
@@ -139,11 +176,19 @@ document.getElementById("btn-esporta")?.addEventListener("click", async () => {
   });
 
   dati.push([''], ['TOTALE MENSILE', '', '', totaleMensile], ['Generato il:', new Date().toLocaleString('it-IT')]);
-  const ws = XLSX.utils.aoa_to_sheet(dati);
+  const ws = XLSXLib.utils.aoa_to_sheet(dati);
   ws['!cols'] = [{ wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 16 }];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Timbrature');
-  XLSX.writeFile(wb, `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.xlsx`);
+  const wb = XLSXLib.utils.book_new();
+  XLSXLib.utils.book_append_sheet(wb, ws, 'Timbrature');
+  XLSXLib.writeFile(wb, `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.xlsx`);
+  } catch (error) {
+    console.error('❌ Errore generazione Excel:', error);
+    alert('Errore durante la generazione del file Excel');
+  } finally {
+    // Ripristina bottone
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
 });
 
 // Caricamento iniziale
