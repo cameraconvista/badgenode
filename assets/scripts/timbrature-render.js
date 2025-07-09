@@ -1,6 +1,7 @@
 // timbrature-render.js
 
 import { calcolaOreLavorate, formattaOre, normalizzaData } from './calendar-utils.js';
+import { apriModaleModifica } from './modale-modifica.js';
 
 export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, tbody, footerTbody, pin) {
   tbody.innerHTML = "";
