@@ -74,6 +74,16 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
 
     tbody.appendChild(riga);
     totaleMensileOre += oreTotaliGiorno;
+
+        // Aggiungi evento click al pulsante modifica
+        const btnModifica = riga.querySelector('.modifica-icon'); // Corrected selector
+        if (btnModifica) {
+          btnModifica.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Assuming apriModaleModifica is defined elsewhere and accessible
+            apriModaleModifica(dataISO, timbratureEntrata, timbratureUscita, pin, timbraturaId); // Pass timbraturaId
+          });
+        }
   }
 
   const rigaTotale = document.createElement("tr");

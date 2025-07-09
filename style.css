@@ -5,6 +5,13 @@
   box-sizing: border-box;
 }
 
+/* Variabili CSS */
+:root {
+  --bg-panel: #1e293b;
+  --border-color: #334155;
+  --text-color: #ffffff;
+}
+
 html, body {
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
