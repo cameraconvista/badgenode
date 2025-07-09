@@ -454,6 +454,43 @@ button {
   background: #475569;
 }
 
+/* Calendario popup */
+.calendario-popup {
+  position: fixed;
+  background: #1e293b;
+  border: 2px solid #334155;
+  border-radius: 8px;
+  padding: 12px;
+  z-index: 10000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  display: none;
+  width: 280px;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.calendario-popup .giorno-calendario:hover {
+  background-color: #334155 !important;
+}
+
+.calendario-popup .giorno-calendario.oggi {
+  background-color: #dc2626 !important;
+  font-weight: bold;
+}
+
+.calendario-popup .giorno-calendario.selezionato {
+  background-color: #1e90ff !important;
+  font-weight: bold;
+}
+
+.calendario-popup .altro-mese {
+  color: #64748b;
+}
+
+.calendario-popup .btn-nav-calendario:hover {
+  background: #334155 !important;
+}
+
 /* Ottimizzazioni specifiche per mobile verticale */
 @media (max-width: 480px) and (orientation: portrait) {
   .container {
