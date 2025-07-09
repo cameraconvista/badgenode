@@ -103,13 +103,13 @@
       status.textContent = messaggio;
       
       // Applica l'animazione lampeggiante per le timbrature (entrata e uscita)
-      if (tipo === "success" || tipo === "uscita-status" || messaggio.includes("ENTRATA") || messaggio.includes("USCITA")) {
-        status.className = `${tipo} visible timbratura-flash`;
+      if (tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"))) {
+        status.className = `status-message ${tipo} visible timbratura-flash`;
       } else {
-        status.className = `${tipo} visible`;
+        status.className = `status-message ${tipo} visible`;
       }
       
-      setTimeout(() => status.className = "", durata);
+      setTimeout(() => status.className = "status-message", durata);
     }
 
     function pulisciPin() {
