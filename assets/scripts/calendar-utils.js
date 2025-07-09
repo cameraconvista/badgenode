@@ -38,17 +38,17 @@ export function normalizzaData(data) {
 // Formatta ore decimali in formato HH:MM
 export function formattaOre(oreDecimali) {
   if (!oreDecimali || oreDecimali === 0) return '—';
-  
+
   const ore = Math.floor(oreDecimali);
   const minuti = Math.round((oreDecimali - ore) * 60);
-  
+
   return `${ore}:${minuti.toString().padStart(2, '0')}`;
 }
 
 // Aggiunge opzione personalizzato al select
 export function aggiungiOpzionePersonalizzato(selectElement) {
   if (!selectElement) return;
-  
+
   const esistePersonalizzato = selectElement.querySelector('option[value="personalizzato"]');
   if (!esistePersonalizzato) {
     const opzionePersonalizzato = document.createElement('option');
@@ -56,7 +56,7 @@ export function aggiungiOpzionePersonalizzato(selectElement) {
     opzionePersonalizzato.textContent = 'Personalizzato';
     selectElement.appendChild(opzionePersonalizzato);
   }
-  
+
   selectElement.value = 'personalizzato';
   selectElement.style.borderColor = '#fbbf24';
   selectElement.style.color = '#fbbf24';
@@ -79,6 +79,7 @@ export function calcolaOreLavorate(oraInizio, oraFine) {
 }
 
 let calendarioAperto = null;
+
 
 export function normalizzaData(data) {
   if (typeof data !== 'string') {
