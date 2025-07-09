@@ -99,12 +99,12 @@
       document.getElementById("ora").textContent = ora.toFormat("HH:mm");
     }
 
-    function mostraStatus(messaggio, tipo = "info", durata = 3000) {
+    function mostraStatus(messaggio, tipo = "info", durata) {
       status.textContent = messaggio;
       
       // Per le timbrature, forza sempre 7 secondi di durata
       const isTimbratura = tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"));
-      const durataFinale = isTimbratura ? 7000 : durata;
+      const durataFinale = isTimbratura ? 7000 : (durata || 3000);
       
       // Applica l'animazione lampeggiante per le timbrature (entrata e uscita)
       if (isTimbratura) {
