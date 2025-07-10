@@ -118,9 +118,92 @@
     }
 
     function verificaAccessoAdmin() {
-      const pinAdmin = prompt("Inserisci il PIN amministratore:");
-      if (pinAdmin === "1909") window.location.href = "utenti.html";
-      else if (pinAdmin !== null) alert("PIN non valido. Accesso negato.");
+      // Crea modal personalizzato
+      const modalHTML = `
+        <div id="adminModal" style="
+          position: fixed; 
+          top: 0; 
+          left: 0; 
+          width: 100%; 
+          height: 100%; 
+          background: rgba(0,0,0,0.8); 
+          z-index: 9999; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center;
+        ">
+          <div style="
+            background: #1e293b; 
+            padding: 30px; 
+            border-radius: 15px; 
+            text-align: center; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            min-width: 300px;
+          ">
+            <h3 style="color: white; margin-bottom: 20px;">Accesso Amministratore</h3>
+            <input 
+              type="password" 
+              id="adminPinInput" 
+              placeholder="Inserisci PIN admin" 
+              style="
+                width: 100%; 
+                padding: 12px; 
+                font-size: 18px; 
+                text-align: center; 
+                border: none; 
+                border-radius: 8px; 
+                margin-bottom: 20px;
+                letter-spacing: 2px;
+              "
+            />
+            <div>
+              <button onclick="verificaPinAdmin()" style="
+                background: #15803d; 
+                color: white; 
+                border: none; 
+                padding: 12px 20px; 
+                margin: 0 10px; 
+                border-radius: 8px; 
+                cursor: pointer; 
+                font-size: 16px;
+              ">Conferma</button>
+              <button onclick="chiudiModalAdmin()" style="
+                background: #dc2626; 
+                color: white; 
+                border: none; 
+                padding: 12px 20px; 
+                margin: 0 10px; 
+                border-radius: 8px; 
+                cursor: pointer; 
+                font-size: 16px;
+              ">Annulla</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      document.getElementById('adminPinInput').focus();
+      
+      // Gestisce Enter
+      document.getElementById('adminPinInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') verificaPinAdmin();
+      });
+    }
+
+    function verificaPinAdmin() {
+      const pinAdmin = document.getElementById('adminPinInput').value;
+      if (pinAdmin === "1909") {
+        window.location.href = "utenti.html";
+      } else {
+        alert("PIN non valido. Accesso negato.");
+        chiudiModalAdmin();
+      }
+    }
+
+    function chiudiModalAdmin() {
+      const modal = document.getElementById('adminModal');
+      if (modal) modal.remove();
     }
 
     document.querySelectorAll(".keypad-button").forEach((key) => {
