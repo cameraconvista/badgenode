@@ -102,25 +102,49 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
       throw new Error('Impossibile recuperare i dati dell\'utente');
     }
     
-    // Prima elimina le timbrature esistenti per la data originale
+    // CANCELLAZIONE SICURA - elimina le timbrature esistenti per la data originale
     if (dataOriginale) {
-      const { error: deleteError } = await supabaseClient
+      console.log('🗑️ Eliminazione timbrature per data originale:', dataOriginale);
+      
+      // Cancellazione con doppio controllo: sia per 'giornologico' che per 'data'
+      const { error: deleteError1 } = await supabaseClient
         .from('timbrature')
         .delete()
         .eq('pin', parseInt(pin))
         .eq('giornologico', dataOriginale);
       
-      if (deleteError) {
-        console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
-      } else {
-        console.log('✅ Timbrature esistenti cancellate per data:', dataOriginale);
+      const { error: deleteError2 } = await supabaseClient
+        .from('timbrature')
+        .delete()
+        .eq('pin', parseInt(pin))
+        .eq('data', dataOriginale)
+        .is('giornologico', null);
+      
+      if (deleteError1) {
+        console.warn('⚠️ Errore cancellazione (giornologico):', deleteError1);
       }
+      if (deleteError2) {
+        console.warn('⚠️ Errore cancellazione (data):', deleteError2);
+      }
+      
+      console.log('✅ Pulizia timbrature completata per data:', dataOriginale);
     }
     
     // Salva le nuove timbrature se presenti
     const timbratureDaInserire = [];
     
+    // GESTIONE CORRETTA DEL GIORNO LOGICO (come nel sistema principale)
     if (oraEntrata && dataEntrata) {
+      const [oreEntrata, minutiEntrata] = oraEntrata.split(':').map(Number);
+      let giornoLogicoEntrata = dataEntrata;
+      
+      // Se entrata è tra 00:00 e 04:59, appartiene al giorno lavorativo precedente
+      if (oreEntrata >= 0 && oreEntrata < 5) {
+        const dataEntrataObj = new Date(dataEntrata + 'T00:00:00');
+        dataEntrataObj.setDate(dataEntrataObj.getDate() - 1);
+        giornoLogicoEntrata = dataEntrataObj.toISOString().split('T')[0];
+      }
+      
       timbratureDaInserire.push({
         pin: parseInt(pin),
         nome: userData.nome,
@@ -128,11 +152,21 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
         tipo: 'entrata',
         data: dataEntrata,
         ore: oraEntrata + ':00',
-        giornologico: dataEntrata
+        giornologico: giornoLogicoEntrata
       });
     }
     
     if (oraUscita && dataUscita) {
+      const [oreUscita, minutiUscita] = oraUscita.split(':').map(Number);
+      let giornoLogicoUscita = dataUscita;
+      
+      // Se uscita è tra 00:00 e 04:59, appartiene al giorno lavorativo precedente
+      if (oreUscita >= 0 && oreUscita < 5) {
+        const dataUscitaObj = new Date(dataUscita + 'T00:00:00');
+        dataUscitaObj.setDate(dataUscitaObj.getDate() - 1);
+        giornoLogicoUscita = dataUscitaObj.toISOString().split('T')[0];
+      }
+      
       timbratureDaInserire.push({
         pin: parseInt(pin),
         nome: userData.nome,
@@ -140,47 +174,67 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
         tipo: 'uscita',
         data: dataUscita,
         ore: oraUscita + ':00',
-        giornologico: dataUscita
+        giornologico: giornoLogicoUscita
       });
+    }
+    
+    // VALIDAZIONE PRIMA DELL'INSERIMENTO
+    if (!oraEntrata && !oraUscita) {
+      throw new Error('Inserisci almeno un orario (entrata o uscita)');
     }
     
     if (timbratureDaInserire.length > 0) {
       console.log('📝 Inserimento nuove timbrature:', timbratureDaInserire);
       
-      const { error: insertError } = await supabaseClient
+      // Inserimento con validazione
+      const { data: insertedData, error: insertError } = await supabaseClient
         .from('timbrature')
-        .insert(timbratureDaInserire);
+        .insert(timbratureDaInserire)
+        .select();
       
       if (insertError) {
         throw new Error(`Errore inserimento: ${insertError.message} (Code: ${insertError.code})`);
       }
       
-      console.log('✅ Nuove timbrature inserite con successo');
+      if (!insertedData || insertedData.length === 0) {
+        throw new Error('Nessuna timbratura inserita - verifica i permessi');
+      }
+      
+      console.log('✅ Nuove timbrature inserite con successo:', insertedData);
     }
     
     console.log('✅ Modifiche salvate con successo');
     alert('Modifiche salvate correttamente!');
     
-    // Ricarica i dati
+    // PREVENZIONE LOOP: ricarica solo dopo aver chiuso il modale
+    chiudiModale();
+    
+    // Ricarica i dati con delay maggiore
     setTimeout(() => {
-      location.reload();
-    }, 500);
+      window.location.reload();
+    }, 1000);
     
   } catch (error) {
     console.error('❌ Errore nel salvataggio:', error);
     
+    // GESTIONE ERRORI SPECIFICA PER PREVENIRE LOOP
     let errorMessage = 'Errore nel salvataggio delle modifiche: ';
     if (error.message?.includes('utente')) {
       errorMessage += 'Utente non trovato nel sistema.';
-    } else if (error.message?.includes('permission')) {
-      errorMessage += 'Permessi insufficienti.';
-    } else if (error.message?.includes('duplicate')) {
-      errorMessage += 'Timbratura già esistente.';
+    } else if (error.message?.includes('permission') || error.message?.includes('RLS')) {
+      errorMessage += 'Permessi insufficienti per modificare le timbrature.';
+    } else if (error.message?.includes('duplicate') || error.message?.includes('unique')) {
+      errorMessage += 'Timbratura già esistente per questo orario.';
+    } else if (error.message?.includes('almeno un orario')) {
+      errorMessage += error.message;
     } else {
-      errorMessage += (error.message || 'Errore sconosciuto');
+      errorMessage += (error.message || 'Errore di connessione al database');
     }
     
     alert(errorMessage);
+    
+    // NON ricaricare la pagina in caso di errore per evitare loop
+    console.log('⚠️ Salvataggio fallito - modale rimane aperto per correzioni');
   }
 }
 
