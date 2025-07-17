@@ -76,7 +76,6 @@ document.getElementById("btn-whatsapp")?.addEventListener("click", () => {
 });
 
 // Cache per librerie
-let jsPDFLib = null;
 let XLSXLib = null;
 
 document.getElementById("btn-invia")?.addEventListener("click", async () => {
@@ -90,28 +89,14 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
   try {
     console.log('📄 Inizio generazione PDF...');
     
-    // Lazy load jsPDF
-    if (!jsPDFLib) {
-      console.log('📥 Caricamento libreria PDF...');
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-      document.head.appendChild(script);
-      
-      await new Promise((resolve, reject) => {
-        script.onload = () => {
-          jsPDFLib = window.jsPDF;
-          resolve();
-        };
-        script.onerror = reject;
-      });
-    }
-    
-    if (!jsPDFLib) {
-      throw new Error('Impossibile caricare la libreria PDF');
+    // Usa la libreria jsPDF già caricata nel HTML
+    const { jsPDF } = window.jspdf || {};
+    if (!jsPDF) {
+      throw new Error('Libreria PDF non disponibile');
     }
     
     const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
-    const doc = new jsPDFLib();
+    const doc = new jsPDF();
     
     // Header del documento
     doc.setFontSize(20);
