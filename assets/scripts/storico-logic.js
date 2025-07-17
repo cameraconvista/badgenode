@@ -80,56 +80,107 @@ let jsPDFLib = null;
 let XLSXLib = null;
 
 document.getElementById("btn-invia")?.addEventListener("click", async () => {
-  // Mostra loading
   const btn = document.getElementById("btn-invia");
-  const originalText = btn.textContent;
-  btn.textContent = "Generando PDF...";
+  if (!btn) return;
+  
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = "Generando...";
   btn.disabled = true;
   
   try {
-    // Lazy load con cache
+    console.log('📄 Inizio generazione PDF...');
+    
+    // Lazy load jsPDF
     if (!jsPDFLib) {
       console.log('📥 Caricamento libreria PDF...');
-      const module = await import("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
-      jsPDFLib = module.jsPDF;
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      document.head.appendChild(script);
+      
+      await new Promise((resolve, reject) => {
+        script.onload = () => {
+          jsPDFLib = window.jsPDF;
+          resolve();
+        };
+        script.onerror = reject;
+      });
+    }
+    
+    if (!jsPDFLib) {
+      throw new Error('Impossibile caricare la libreria PDF');
     }
     
     const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
-  const doc = new jsPDF();
-  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
-  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
-
-  doc.setFontSize(20).text("CAMERA CON VISTA Bistrot", 105, 20, { align: "center" });
-  doc.setFontSize(16).text("RIEPILOGO MENSILE TIMBRATURE", 105, 35, { align: "center" });
-  doc.setFontSize(12)
-    .text(`Dipendente: ${nomeCompleto} (PIN: ${pin})`, 20, 55)
-    .text(`Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}`, 20, 65)
-    .text(`Ore totali: ${totaleMensile}`, 20, 75);
-  doc.line(20, 85, 190, 85);
-  doc.setFontSize(10).setFont("helvetica", "bold")
-    .text("Data", 20, 100).text("Entrata", 70, 100).text("Uscita", 120, 100).text("Ore", 160, 100);
-  doc.line(20, 105, 190, 105);
-
-  let y = 115;
-  document.querySelectorAll('#storico-body tr').forEach(r => {
-    const c = r.querySelectorAll('td');
-    if (c.length >= 4 && y < 280) {
-      doc.text(c[0].textContent.trim(), 20, y);
-      doc.text(c[1].textContent.trim(), 70, y);
-      doc.text(c[2].textContent.trim(), 120, y);
-      doc.text(c[3].textContent.trim(), 160, y);
-      y += 10;
-    }
-  });
-
-  doc.setFontSize(8).text(`Generato il: ${new Date().toLocaleString('it-IT')}`, 20, 285);
-  doc.save(`${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.pdf`);
+    const doc = new jsPDFLib();
+    
+    // Header del documento
+    doc.setFontSize(20);
+    doc.text("CAMERA CON VISTA Bistrot", 105, 20, { align: "center" });
+    
+    doc.setFontSize(16);
+    doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 35, { align: "center" });
+    
+    // Informazioni dipendente
+    const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
+    const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
+    
+    doc.setFontSize(12);
+    doc.text(`Dipendente: ${nomeCompleto} (PIN: ${pin})`, 20, 55);
+    doc.text(`Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}`, 20, 65);
+    doc.text(`Ore totali: ${totaleMensile}`, 20, 75);
+    
+    // Linea separatrice
+    doc.line(20, 85, 190, 85);
+    
+    // Header tabella
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text("Data", 20, 100);
+    doc.text("Entrata", 70, 100);
+    doc.text("Uscita", 120, 100);
+    doc.text("Ore", 160, 100);
+    doc.line(20, 105, 190, 105);
+    
+    // Dati tabella
+    doc.setFont("helvetica", "normal");
+    let y = 115;
+    const righe = document.querySelectorAll('#storico-body tr');
+    
+    righe.forEach(riga => {
+      const celle = riga.querySelectorAll('td');
+      if (celle.length >= 4 && y < 270) {
+        const data = celle[0].textContent.trim();
+        const entrata = celle[1].textContent.trim();
+        const uscita = celle[2].textContent.trim();
+        const ore = celle[3].textContent.trim();
+        
+        // Solo righe con dati significativi
+        if (entrata !== '—' || uscita !== '—' || ore !== '0.00') {
+          doc.text(data, 20, y);
+          doc.text(entrata, 70, y);
+          doc.text(uscita, 120, y);
+          doc.text(ore, 160, y);
+          y += 8;
+        }
+      }
+    });
+    
+    // Footer
+    doc.setFontSize(8);
+    doc.text(`Generato il: ${new Date().toLocaleString('it-IT')}`, 20, 285);
+    
+    // Salva il PDF
+    const nomeFile = `${nomeCompleto.replace(/\s+/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.pdf`;
+    doc.save(nomeFile);
+    
+    console.log('✅ PDF generato con successo:', nomeFile);
+    
   } catch (error) {
     console.error('❌ Errore generazione PDF:', error);
-    alert('Errore durante la generazione del PDF');
+    alert('Errore durante la generazione del PDF. Riprova.');
   } finally {
     // Ripristina bottone
-    btn.textContent = originalText;
+    btn.innerHTML = originalHTML;
     btn.disabled = false;
   }
 });
