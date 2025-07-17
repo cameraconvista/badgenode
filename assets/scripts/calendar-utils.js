@@ -58,20 +58,30 @@ export function aggiornaRange(valore, dataInizio, dataFine) {
 
   switch (valore) {
     case 'corrente':
+      // Primo giorno del mese corrente
       inizio = new Date(oggi.getFullYear(), oggi.getMonth(), 1);
+      // Ultimo giorno del mese corrente
       fine = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0);
       break;
     case 'precedente':
+      // Primo giorno del mese precedente
       inizio = new Date(oggi.getFullYear(), oggi.getMonth() - 1, 1);
+      // Ultimo giorno del mese precedente
       fine = new Date(oggi.getFullYear(), oggi.getMonth(), 0);
       break;
     case 'due-precedenti':
+      // Primo giorno di due mesi fa
       inizio = new Date(oggi.getFullYear(), oggi.getMonth() - 2, 1);
+      // Ultimo giorno di due mesi fa
       fine = new Date(oggi.getFullYear(), oggi.getMonth() - 1, 0);
       break;
     default:
       return;
   }
+
+  // Forza l'orario a mezzogiorno per evitare problemi di timezone
+  inizio.setHours(12, 0, 0, 0);
+  fine.setHours(12, 0, 0, 0);
 
   if (dataInizio) {
     dataInizio.value = inizio.toISOString().split('T')[0];
@@ -79,6 +89,11 @@ export function aggiornaRange(valore, dataInizio, dataFine) {
   if (dataFine) {
     dataFine.value = fine.toISOString().split('T')[0];
   }
+
+  console.log(`📅 Range aggiornato (${valore}):`, {
+    inizio: inizio.toISOString().split('T')[0],
+    fine: fine.toISOString().split('T')[0]
+  });
 }
 
 // Funzione per aggiungere opzione personalizzato
