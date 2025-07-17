@@ -91,17 +91,30 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
   try {
     console.log('💾 Salvataggio modifiche per:', { dataEntrata, oraEntrata, dataUscita, oraUscita, pin });
     
-    // Prima elimina le timbrature esistenti per la data originale
+    // Prima elimina le timbrature esistenti per la data originale usando RPC o metodo alternativo
     if (dataOriginale) {
       try {
-        const { error: deleteError } = await supabaseClient
+        // Cancellazione con query più specifica
+        const { data: existingData, error: fetchError } = await supabaseClient
           .from('timbrature')
-          .delete()
+          .select('id')
           .eq('pin', parseInt(pin))
           .eq('giornologico', dataOriginale);
         
-        if (deleteError) {
-          console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
+        if (fetchError) {
+          console.warn('⚠️ Errore nel recupero timbrature esistenti:', fetchError);
+        } else if (existingData && existingData.length > 0) {
+          // Elimina una per una usando gli ID
+          for (const record of existingData) {
+            const { error: deleteError } = await supabaseClient
+              .from('timbrature')
+              .delete()
+              .eq('id', record.id);
+            
+            if (deleteError) {
+              console.warn('⚠️ Errore nella cancellazione timbratura ID:', record.id, deleteError);
+            }
+          }
         }
       } catch (deleteError) {
         console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
@@ -117,7 +130,8 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
         tipo: 'entrata',
         data: dataEntrata,
         ore: oraEntrata + ':00',
-        giornologico: dataEntrata
+        giornologico: dataEntrata,
+        timestamp: new Date().toISOString()
       });
     }
     
@@ -127,21 +141,34 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
         tipo: 'uscita',
         data: dataUscita,
         ore: oraUscita + ':00',
-        giornologico: dataUscita
+        giornologico: dataUscita,
+        timestamp: new Date().toISOString()
       });
     }
     
     if (timbratureDaInserire.length > 0) {
-      const { error: insertError } = await supabaseClient
+      // Prova prima con upsert, poi con insert normale
+      const { error: upsertError } = await supabaseClient
         .from('timbrature')
-        .insert(timbratureDaInserire);
+        .upsert(timbratureDaInserire, { 
+          onConflict: 'pin,giornologico,tipo',
+          ignoreDuplicates: false 
+        });
       
-      if (insertError) {
-        throw insertError;
+      if (upsertError) {
+        // Se upsert fallisce, prova insert normale
+        const { error: insertError } = await supabaseClient
+          .from('timbrature')
+          .insert(timbratureDaInserire);
+        
+        if (insertError) {
+          throw new Error(`Errore inserimento: ${insertError.message} (Code: ${insertError.code})`);
+        }
       }
     }
     
     console.log('✅ Modifiche salvate con successo');
+    alert('Modifiche salvate correttamente!');
     
     // Ricarica i dati
     setTimeout(() => {
@@ -150,7 +177,18 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
     
   } catch (error) {
     console.error('❌ Errore nel salvataggio:', error);
-    alert('Errore nel salvataggio delle modifiche: ' + (error.message || 'Errore sconosciuto'));
+    
+    // Messaggio di errore più specifico
+    let errorMessage = 'Errore nel salvataggio delle modifiche: ';
+    if (error.message?.includes('permission')) {
+      errorMessage += 'Permessi insufficienti. Contatta l\'amministratore.';
+    } else if (error.message?.includes('duplicate')) {
+      errorMessage += 'Timbratura già esistente per questa data.';
+    } else {
+      errorMessage += (error.message || 'Errore sconosciuto');
+    }
+    
+    alert(errorMessage);
   }
 }
 
