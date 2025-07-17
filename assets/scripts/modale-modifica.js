@@ -91,33 +91,29 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
   try {
     console.log('💾 Salvataggio modifiche per:', { dataEntrata, oraEntrata, dataUscita, oraUscita, pin });
     
-    // Prima elimina le timbrature esistenti per la data originale usando RPC o metodo alternativo
+    // Prima recupera i dati dell'utente per nome e cognome
+    const { data: userData, error: userError } = await supabaseClient
+      .from('utenti')
+      .select('nome, cognome')
+      .eq('pin', parseInt(pin))
+      .single();
+    
+    if (userError || !userData) {
+      throw new Error('Impossibile recuperare i dati dell\'utente');
+    }
+    
+    // Prima elimina le timbrature esistenti per la data originale
     if (dataOriginale) {
-      try {
-        // Cancellazione con query più specifica
-        const { data: existingData, error: fetchError } = await supabaseClient
-          .from('timbrature')
-          .select('id')
-          .eq('pin', parseInt(pin))
-          .eq('giornologico', dataOriginale);
-        
-        if (fetchError) {
-          console.warn('⚠️ Errore nel recupero timbrature esistenti:', fetchError);
-        } else if (existingData && existingData.length > 0) {
-          // Elimina una per una usando gli ID
-          for (const record of existingData) {
-            const { error: deleteError } = await supabaseClient
-              .from('timbrature')
-              .delete()
-              .eq('id', record.id);
-            
-            if (deleteError) {
-              console.warn('⚠️ Errore nella cancellazione timbratura ID:', record.id, deleteError);
-            }
-          }
-        }
-      } catch (deleteError) {
+      const { error: deleteError } = await supabaseClient
+        .from('timbrature')
+        .delete()
+        .eq('pin', parseInt(pin))
+        .eq('giornologico', dataOriginale);
+      
+      if (deleteError) {
         console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
+      } else {
+        console.log('✅ Timbrature esistenti cancellate per data:', dataOriginale);
       }
     }
     
@@ -127,44 +123,39 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
     if (oraEntrata && dataEntrata) {
       timbratureDaInserire.push({
         pin: parseInt(pin),
+        nome: userData.nome,
+        cognome: userData.cognome,
         tipo: 'entrata',
         data: dataEntrata,
         ore: oraEntrata + ':00',
-        giornologico: dataEntrata,
-        timestamp: new Date().toISOString()
+        giornologico: dataEntrata
       });
     }
     
     if (oraUscita && dataUscita) {
       timbratureDaInserire.push({
         pin: parseInt(pin),
+        nome: userData.nome,
+        cognome: userData.cognome,
         tipo: 'uscita',
         data: dataUscita,
         ore: oraUscita + ':00',
-        giornologico: dataUscita,
-        timestamp: new Date().toISOString()
+        giornologico: dataUscita
       });
     }
     
     if (timbratureDaInserire.length > 0) {
-      // Prova prima con upsert, poi con insert normale
-      const { error: upsertError } = await supabaseClient
-        .from('timbrature')
-        .upsert(timbratureDaInserire, { 
-          onConflict: 'pin,giornologico,tipo',
-          ignoreDuplicates: false 
-        });
+      console.log('📝 Inserimento nuove timbrature:', timbratureDaInserire);
       
-      if (upsertError) {
-        // Se upsert fallisce, prova insert normale
-        const { error: insertError } = await supabaseClient
-          .from('timbrature')
-          .insert(timbratureDaInserire);
-        
-        if (insertError) {
-          throw new Error(`Errore inserimento: ${insertError.message} (Code: ${insertError.code})`);
-        }
+      const { error: insertError } = await supabaseClient
+        .from('timbrature')
+        .insert(timbratureDaInserire);
+      
+      if (insertError) {
+        throw new Error(`Errore inserimento: ${insertError.message} (Code: ${insertError.code})`);
       }
+      
+      console.log('✅ Nuove timbrature inserite con successo');
     }
     
     console.log('✅ Modifiche salvate con successo');
@@ -178,12 +169,13 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
   } catch (error) {
     console.error('❌ Errore nel salvataggio:', error);
     
-    // Messaggio di errore più specifico
     let errorMessage = 'Errore nel salvataggio delle modifiche: ';
-    if (error.message?.includes('permission')) {
-      errorMessage += 'Permessi insufficienti. Contatta l\'amministratore.';
+    if (error.message?.includes('utente')) {
+      errorMessage += 'Utente non trovato nel sistema.';
+    } else if (error.message?.includes('permission')) {
+      errorMessage += 'Permessi insufficienti.';
     } else if (error.message?.includes('duplicate')) {
-      errorMessage += 'Timbratura già esistente per questa data.';
+      errorMessage += 'Timbratura già esistente.';
     } else {
       errorMessage += (error.message || 'Errore sconosciuto');
     }
@@ -207,6 +199,7 @@ async function eliminaTimbrature(data, pin) {
     }
     
     console.log('✅ Timbrature eliminate con successo');
+    alert('Timbrature eliminate con successo!');
     
     // Ricarica i dati
     setTimeout(() => {
@@ -215,6 +208,6 @@ async function eliminaTimbrature(data, pin) {
     
   } catch (error) {
     console.error('❌ Errore nell\'eliminazione:', error);
-    alert('Errore nell\'eliminazione delle timbrature: ' + (error.message || 'Errore sconosciuto'));
+    alert('Errore nell\'eliminazione: ' + (error.message || 'Errore sconosciuto'));
   }
 }
