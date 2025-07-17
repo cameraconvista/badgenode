@@ -229,6 +229,9 @@ document.getElementById("btn-esporta")?.addEventListener("click", async () => {
 
 // Caricamento iniziale
 if (selectFiltro && dataInizio && dataFine) {
-  aggiornaRange(selectFiltro.value, dataInizio, dataFine);
+  const valoreDefault = 'corrente';
+  selectFiltro.value = valoreDefault;
+  aggiornaRange(valoreDefault, dataInizio, dataFine);
   aggiornaDati();
 }
+
