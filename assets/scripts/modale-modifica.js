@@ -91,31 +91,30 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
   try {
     console.log('💾 Salvataggio modifiche per:', { dataEntrata, oraEntrata, dataUscita, oraUscita, pin });
     
-    // Prima recupera i dati dell'utente per nome/cognome
-    const { data: utenteData, error: utenteError } = await supabaseClient
-      .from('utenti')
-      .select('nome, cognome')
-      .eq('pin', parseInt(pin))
-      .single();
-    
-    if (utenteError || !utenteData) {
-      throw new Error('Errore recupero dati utente: ' + (utenteError?.message || 'Utente non trovato'));
-    }
-    
-    // Prima elimina le timbrature esistenti per la data originale
+    // Prima elimina le timbrature esistenti per la data originale usando RPC o metodo alternativo
     if (dataOriginale) {
       try {
-        // Cancellazione diretta più sicura
-        const { error: deleteError } = await supabaseClient
+        // Cancellazione con query più specifica
+        const { data: existingData, error: fetchError } = await supabaseClient
           .from('timbrature')
-          .delete()
+          .select('id')
           .eq('pin', parseInt(pin))
           .eq('giornologico', dataOriginale);
         
-        if (deleteError) {
-          console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
-        } else {
-          console.log('✅ Timbrature esistenti cancellate per data:', dataOriginale);
+        if (fetchError) {
+          console.warn('⚠️ Errore nel recupero timbrature esistenti:', fetchError);
+        } else if (existingData && existingData.length > 0) {
+          // Elimina una per una usando gli ID
+          for (const record of existingData) {
+            const { error: deleteError } = await supabaseClient
+              .from('timbrature')
+              .delete()
+              .eq('id', record.id);
+            
+            if (deleteError) {
+              console.warn('⚠️ Errore nella cancellazione timbratura ID:', record.id, deleteError);
+            }
+          }
         }
       } catch (deleteError) {
         console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
@@ -128,39 +127,44 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
     if (oraEntrata && dataEntrata) {
       timbratureDaInserire.push({
         pin: parseInt(pin),
-        nome: utenteData.nome,
-        cognome: utenteData.cognome,
         tipo: 'entrata',
         data: dataEntrata,
         ore: oraEntrata + ':00',
-        giornologico: dataEntrata
+        giornologico: dataEntrata,
+        timestamp: new Date().toISOString()
       });
     }
     
     if (oraUscita && dataUscita) {
       timbratureDaInserire.push({
         pin: parseInt(pin),
-        nome: utenteData.nome,
-        cognome: utenteData.cognome,
         tipo: 'uscita',
         data: dataUscita,
         ore: oraUscita + ':00',
-        giornologico: dataUscita
+        giornologico: dataUscita,
+        timestamp: new Date().toISOString()
       });
     }
     
     if (timbratureDaInserire.length > 0) {
-      console.log('📝 Inserimento nuove timbrature:', timbratureDaInserire);
-      
-      const { error: insertError } = await supabaseClient
+      // Prova prima con upsert, poi con insert normale
+      const { error: upsertError } = await supabaseClient
         .from('timbrature')
-        .insert(timbratureDaInserire);
+        .upsert(timbratureDaInserire, { 
+          onConflict: 'pin,giornologico,tipo',
+          ignoreDuplicates: false 
+        });
       
-      if (insertError) {
-        throw new Error(`Errore inserimento: ${insertError.message} (Code: ${insertError.code})`);
+      if (upsertError) {
+        // Se upsert fallisce, prova insert normale
+        const { error: insertError } = await supabaseClient
+          .from('timbrature')
+          .insert(timbratureDaInserire);
+        
+        if (insertError) {
+          throw new Error(`Errore inserimento: ${insertError.message} (Code: ${insertError.code})`);
+        }
       }
-      
-      console.log('✅ Nuove timbrature inserite con successo');
     }
     
     console.log('✅ Modifiche salvate con successo');
