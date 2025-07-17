@@ -1,6 +1,8 @@
 
 // modale-modifica.js
 
+import { supabaseClient } from './supabase-client.js';
+
 export function apriModaleModifica(data, timbratureEntrata, timbratureUscita, pin, timbraturaId) {
   console.log('🔧 Apertura modale modifica per data:', data);
   
@@ -89,59 +91,66 @@ async function salvaModifiche(dataEntrata, oraEntrata, dataUscita, oraUscita, pi
   try {
     console.log('💾 Salvataggio modifiche per:', { dataEntrata, oraEntrata, dataUscita, oraUscita, pin });
     
-    const url = 'https://db3cae29-6f00-4872-abaf-3aa3cb08cd7e-00-2v1otxtl8dccv.riker.replit.dev/api/timbrature';
-    
     // Prima elimina le timbrature esistenti per la data originale
     if (dataOriginale) {
       try {
-        const deleteUrl = `https://db3cae29-6f00-4872-abaf-3aa3cb08cd7e-00-2v1otxtl8dccv.riker.replit.dev/api/timbrature/${pin}/${dataOriginale}`;
-        await fetch(deleteUrl, { method: 'DELETE' });
+        const { error: deleteError } = await supabaseClient
+          .from('timbrature')
+          .delete()
+          .eq('pin', parseInt(pin))
+          .eq('giornologico', dataOriginale);
+        
+        if (deleteError) {
+          console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
+        }
       } catch (deleteError) {
         console.warn('⚠️ Errore nella cancellazione delle timbrature esistenti:', deleteError);
       }
     }
     
     // Salva le nuove timbrature se presenti
-    const promises = [];
+    const timbratureDaInserire = [];
     
     if (oraEntrata && dataEntrata) {
-      promises.push(fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pin: pin,
-          tipo: 'entrata',
-          data: dataEntrata,
-          ore: oraEntrata + ':00',
-          giornologico: dataEntrata
-        })
-      }));
+      timbratureDaInserire.push({
+        pin: parseInt(pin),
+        tipo: 'entrata',
+        data: dataEntrata,
+        ore: oraEntrata + ':00',
+        giornologico: dataEntrata
+      });
     }
     
     if (oraUscita && dataUscita) {
-      promises.push(fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pin: pin,
-          tipo: 'uscita',
-          data: dataUscita,
-          ore: oraUscita + ':00',
-          giornologico: dataUscita
-        })
-      }));
+      timbratureDaInserire.push({
+        pin: parseInt(pin),
+        tipo: 'uscita',
+        data: dataUscita,
+        ore: oraUscita + ':00',
+        giornologico: dataUscita
+      });
     }
     
-    if (promises.length > 0) {
-      await Promise.all(promises);
+    if (timbratureDaInserire.length > 0) {
+      const { error: insertError } = await supabaseClient
+        .from('timbrature')
+        .insert(timbratureDaInserire);
+      
+      if (insertError) {
+        throw insertError;
+      }
     }
+    
+    console.log('✅ Modifiche salvate con successo');
     
     // Ricarica i dati
-    location.reload();
+    setTimeout(() => {
+      location.reload();
+    }, 500);
     
   } catch (error) {
     console.error('❌ Errore nel salvataggio:', error);
-    alert('Errore nel salvataggio delle modifiche');
+    alert('Errore nel salvataggio delle modifiche: ' + (error.message || 'Errore sconosciuto'));
   }
 }
 
@@ -149,21 +158,25 @@ async function eliminaTimbrature(data, pin) {
   try {
     console.log('🗑️ Eliminazione timbrature per:', { data, pin });
     
-    const url = `https://db3cae29-6f00-4872-abaf-3aa3cb08cd7e-00-2v1otxtl8dccv.riker.replit.dev/api/timbrature/${pin}/${data}`;
+    const { error } = await supabaseClient
+      .from('timbrature')
+      .delete()
+      .eq('pin', parseInt(pin))
+      .eq('giornologico', data);
     
-    const response = await fetch(url, {
-      method: 'DELETE'
-    });
-    
-    if (!response.ok) {
-      throw new Error('Errore nella cancellazione');
+    if (error) {
+      throw error;
     }
     
+    console.log('✅ Timbrature eliminate con successo');
+    
     // Ricarica i dati
-    location.reload();
+    setTimeout(() => {
+      location.reload();
+    }, 500);
     
   } catch (error) {
     console.error('❌ Errore nell\'eliminazione:', error);
-    alert('Errore nell\'eliminazione delle timbrature');
+    alert('Errore nell\'eliminazione delle timbrature: ' + (error.message || 'Errore sconosciuto'));
   }
 }
