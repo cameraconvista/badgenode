@@ -18,7 +18,8 @@ export function apriModaleModifica(data, timbratureEntrata, timbratureUscita, pi
 
   // Precompilazione valori modale
   if (timbratureEntrata?.length > 0) {
-    modaleDataEntrata.value = timbratureEntrata[0].giornologico || timbratureEntrata[0].data || data;
+    modaleDataEntrata.value = timbratureEntrata[0].data || data;
+
     modaleEntrata.value = timbratureEntrata[0].ore.slice(0, 5);
   } else {
     modaleDataEntrata.value = data;
@@ -26,7 +27,7 @@ export function apriModaleModifica(data, timbratureEntrata, timbratureUscita, pi
   }
 
   if (timbratureUscita?.length > 0) {
-    modaleDataUscita.value = timbratureUscita[timbratureUscita.length - 1].giornologico || timbratureUscita[timbratureUscita.length - 1].data || data;
+    modaleDataUscita.value = timbratureUscita[timbratureUscita.length - 1].data || data;
     modaleUscita.value = timbratureUscita[timbratureUscita.length - 1].ore.slice(0, 5);
   } else {
     modaleDataUscita.value = data;
