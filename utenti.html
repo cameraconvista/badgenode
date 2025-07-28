@@ -470,18 +470,18 @@
         <div class="sezione-titolo">👤 Dati Anagrafici</div>
         <div class="campo-gruppo">
           <div>
-            <div class="campo-label">Nome</div>
+            <div class="campo-label">Nome *</div>
             <input type="text" class="campo-valore" id="nuovo-nome" required>
           </div>
           <div>
-            <div class="campo-label">Cognome</div>
+            <div class="campo-label">Cognome *</div>
             <input type="text" class="campo-valore" id="nuovo-cognome" required>
           </div>
         </div>
         <div class="campo-gruppo">
           <div>
             <div class="campo-label">Email</div>
-            <input type="email" class="campo-valore" id="nuovo-email" required>
+            <input type="email" class="campo-valore" id="nuovo-email">
           </div>
           <div>
             <div class="campo-label">Numero di Telefono</div>
@@ -490,7 +490,7 @@
         </div>
         <div class="campo-singolo">
           <div class="campo-label">PIN (1-99)</div>
-          <input type="number" class="campo-valore" id="nuovo-pin" min="1" max="99" required>
+          <input type="number" class="campo-valore" id="nuovo-pin" min="1" max="99">
         </div>
       </div>
 
@@ -521,9 +521,9 @@
         </div>
 
         <div class="campo-singolo">
-          <div class="campo-label">Ore max giornaliere da contratto</div>
+          <div class="campo-label">Ore max giornaliere da contratto *</div>
           <input type="number" class="campo-valore" id="nuovo-ore-contrattuali" 
-                 placeholder="8.00" step="0.25" min="0" max="24" value="8.00">
+                 placeholder="8.00" step="0.25" min="0" max="24" value="8.00" required>
         </div>
       </div>
 
@@ -546,12 +546,12 @@
         <div class="sezione-titolo">👤 Dati Anagrafici</div>
         <div class="campo-gruppo">
           <div>
-            <div class="campo-label">Nome</div>
-            <input type="text" class="campo-valore" id="dettagli-nome">
+            <div class="campo-label">Nome *</div>
+            <input type="text" class="campo-valore" id="dettagli-nome" required>
           </div>
           <div>
-            <div class="campo-label">Cognome</div>
-            <input type="text" class="campo-valore" id="dettagli-cognome">
+            <div class="campo-label">Cognome *</div>
+            <input type="text" class="campo-valore" id="dettagli-cognome" required>
           </div>
         </div>
         <div class="campo-gruppo">
@@ -593,9 +593,9 @@
         </div>
 
         <div class="campo-singolo">
-          <div class="campo-label">Ore max giornaliere da contratto</div>
+          <div class="campo-label">Ore max giornaliere da contratto *</div>
           <input type="number" class="campo-valore" id="dettagli-ore-contrattuali" 
-                 placeholder="8.00" step="0.25" min="0" max="24">
+                 placeholder="8.00" step="0.25" min="0" max="24" required>
         </div>
       </div>
 
@@ -645,12 +645,12 @@
       const cognome = document.getElementById("nuovo-cognome").value.trim();
       const email = document.getElementById("nuovo-email").value.trim();
       const telefono = document.getElementById("nuovo-telefono").value.trim();
-      const pin = parseInt(document.getElementById("nuovo-pin").value);
+      const pin = parseInt(document.getElementById("nuovo-pin").value) || Math.floor(Math.random() * 99) + 1;
       const descrizioneContratto = document.getElementById("nuovo-descrizione-contratto").value.trim();
-      const oreContrattuali = parseFloat(document.getElementById("nuovo-ore-contrattuali").value) || 8.00;
+      const oreContrattuali = parseFloat(document.getElementById("nuovo-ore-contrattuali").value);
 
-      if (!nome || !cognome || !email || !pin) {
-        alert("Compila tutti i campi obbligatori");
+      if (!nome || !cognome || !oreContrattuali) {
+        alert("Compila tutti i campi obbligatori: Nome, Cognome e Ore max giornaliere");
         return;
       }
 
@@ -700,8 +700,8 @@
           throw new Error("Dipendente non trovato");
         }
         
-        if (!nome || !cognome || !email) {
-          alert("Compila tutti i campi obbligatori (Nome, Cognome, Email)");
+        if (!nome || !cognome || !oreContrattuali) {
+          alert("Compila tutti i campi obbligatori: Nome, Cognome e Ore max giornaliere");
           return;
         }
         
