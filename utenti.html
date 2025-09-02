@@ -674,7 +674,7 @@
       const originalText = btn.textContent;
       btn.textContent = "Salvando...";
       btn.disabled = true;
-      
+
       try {
         // Recupera i dati dal modale
         const nome = document.getElementById("dettagli-nome").value.trim();
@@ -683,11 +683,11 @@
         const telefono = document.getElementById("dettagli-telefono").value.trim();
         const descrizioneContratto = document.getElementById("dettagli-descrizione-contratto").value.trim();
         const oreContrattuali = parseFloat(document.getElementById("dettagli-ore-contrattuali").value) || 8.00;
-        
+
         // Recupera il PIN dal titolo del modale (formato: "Nome Cognome")
         const titoloModale = document.getElementById("modalTitolo").textContent;
         const [nomeOriginale, cognomeOriginale] = titoloModale.split(' ');
-        
+
         // Trova il dipendente nel database per recuperarne il PIN
         const { data: dipendenteCorrente, error: errorFind } = await supabase
           .from("utenti")
@@ -695,16 +695,16 @@
           .eq("nome", nomeOriginale)
           .eq("cognome", cognomeOriginale)
           .single();
-          
+
         if (errorFind || !dipendenteCorrente) {
           throw new Error("Dipendente non trovato");
         }
-        
+
         if (!nome || !cognome || !oreContrattuali) {
           alert("Compila tutti i campi obbligatori: Nome, Cognome e Ore max giornaliere");
           return;
         }
-        
+
         // Aggiorna i dati nel database
         const { error } = await supabase
           .from("utenti")
@@ -717,13 +717,13 @@
             ore_contrattuali: oreContrattuali
           })
           .eq("pin", dipendenteCorrente.pin);
-          
+
         if (error) throw error;
-        
+
         alert("Modifiche salvate con successo!");
         chiudiModalDettagli();
         caricaUtenti(); // Ricarica la tabella
-        
+
       } catch (error) {
         console.error("Errore nel salvataggio:", error);
         alert("Errore durante il salvataggio: " + error.message);
@@ -815,7 +815,7 @@
         utenti.forEach(utente => {
           const riga = document.createElement('tr');
           riga.style.cssText = "background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;";
-          
+
           riga.innerHTML = `
             <td><a href="storico.html?pin=${utente.pin}" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
             <td>${utente.pin.toString().padStart(2, '0')}</td>
