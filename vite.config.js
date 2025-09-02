@@ -1,16 +1,18 @@
 
-import { defineConfig } from 'vite'
-
-export default defineConfig({
+export default {
   server: {
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
+    allowedHosts: 'all',
+    watch: {
+      usePolling: true,
+      interval: 1000
+    },
     hmr: {
       port: 5173,
       host: '0.0.0.0'
-    },
-    allowedHosts: 'all'
+    }
   },
   preview: {
     host: '0.0.0.0',
@@ -21,4 +23,4 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets'
   }
-})
+};
