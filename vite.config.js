@@ -8,7 +8,13 @@ export default defineConfig({
     strictPort: true,
     hmr: {
       port: 5173
-    }
+    },
+    allowedHosts: [
+      '.replit.dev',
+      '.spock.replit.dev',
+      'localhost',
+      '127.0.0.1'
+    ]
   },
   preview: {
     host: '0.0.0.0',
