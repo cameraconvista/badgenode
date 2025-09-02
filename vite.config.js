@@ -8,13 +8,12 @@ export default defineConfig({
     strictPort: true,
     watch: {
       usePolling: true,
-      interval: 1000,
+      interval: 1000
     },
     hmr: {
-      host: 'localhost',
-      protocol: 'ws',
       port: 5173,
+      host: '0.0.0.0'
     },
-    allowedHosts: 'all' // Questo permette l'accesso dal dominio .replit.dev
+    allowedHosts: 'all'
   }
 });
