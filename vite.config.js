@@ -5,20 +5,13 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    strictPort: true,
-    hmr: {
-      port: 5173
-    },
-    allowedHosts: [
-      '.replit.dev',
-      '.spock.replit.dev',
-      'localhost',
-      '127.0.0.1'
-    ]
+    strictPort: false,
+    origin: 'http://0.0.0.0:5173'
   },
   preview: {
     host: '0.0.0.0',
-    port: 5173
+    port: 5173,
+    strictPort: false
   },
   build: {
     outDir: 'dist',
