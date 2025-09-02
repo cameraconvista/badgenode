@@ -6,19 +6,13 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
-    allowedHosts: 'all',
     watch: {
       usePolling: true,
-      interval: 1000
     },
+    allowedHosts: ['.replit.dev'], // supporta tutti i sottodomini
     hmr: {
-      port: 5173,
-      host: '0.0.0.0'
-    }
+      host: '0.0.0.0',
+      protocol: 'ws',
+    },
   },
-  preview: {
-    host: '0.0.0.0',
-    port: 4173,
-    strictPort: true
-  }
 })
