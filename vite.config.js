@@ -1,26 +1,20 @@
 
-export default {
+import { defineConfig } from 'vite';
+
+export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
-    allowedHosts: 'all',
     watch: {
       usePolling: true,
-      interval: 1000
+      interval: 1000,
     },
     hmr: {
+      host: 'localhost',
+      protocol: 'ws',
       port: 5173,
-      host: '0.0.0.0'
-    }
-  },
-  preview: {
-    host: '0.0.0.0',
-    port: 5173,
-    strictPort: true
-  },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets'
+    },
+    allowedHosts: 'all' // Questo permette l'accesso dal dominio .replit.dev
   }
-};
+});
