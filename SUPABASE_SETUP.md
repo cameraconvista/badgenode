@@ -1,171 +1,366 @@
 
 # SUPABASE_SETUP.md
 
-## Setup e Configurazione Supabase per BADGEBOX
+## Setup e Sincronizzazione Supabase - BADGEBOX
 
-### 🚀 Creazione Progetto Supabase
+### 🚀 Configurazione Iniziale Supabase
 
-#### 1. Account e Progetto
-1. Vai su [supabase.com](https://supabase.com) e crea account
-2. Clicca **"New Project"**
-3. Scegli organizzazione e inserisci:
-   - **Project Name**: `BADGEBOX-Production`
-   - **Database Password**: Genera password sicura (salvala!)
-   - **Region**: Europe (West) per performance EU
-4. Attendi creazione progetto (~2 minuti)
-
-#### 2. Configurazione Database
-```sql
--- Vai su SQL Editor in Supabase Dashboard
--- Copia e incolla tutto il contenuto di setup-database.sql
--- Clicca "Run" per eseguire lo schema completo
+#### 1. Creazione Progetto
+```bash
+# Vai su https://supabase.com
+# Sign up/Login → New Project
+# Scegli organization → Create project
+# Attendi provisioning (2-3 minuti)
 ```
 
-### 🔑 Gestione Credenziali e Variabili
+#### 2. Configurazione Database
+Esegui lo script completo nel **SQL Editor** di Supabase:
+
+```sql
+-- COPIA INTERO CONTENUTO DI setup-database.sql
+-- Include creazione tabelle + indici + constraints + RLS
+
+-- Verifica creazione tabelle
+SELECT table_name, column_name, data_type 
+FROM information_schema.columns 
+WHERE table_name IN ('utenti', 'timbrature', 'dipendenti_archiviati')
+ORDER BY table_name, ordinal_position;
+```
+
+#### 3. Configurazione Row Level Security (RLS)
+```sql
+-- ✅ Già incluso in setup-database.sql
+
+-- Verifica RLS attiva
+SELECT tablename, rowsecurity 
+FROM pg_tables 
+WHERE schemaname = 'public' 
+AND tablename IN ('utenti', 'timbrature', 'dipendenti_archiviati');
+```
+
+### 🔑 Gestione Credenziali
 
 #### Recupero API Keys
-Nel tuo progetto Supabase:
-1. **Settings** → **API**
-2. Copia questi valori:
-   ```
-   Project URL: https://[ID_PROGETTO].supabase.co
-   anon/public key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-   service_role key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (SOLO per admin)
-   ```
+```bash
+# Supabase Dashboard → Settings → API
+# 
+# 📋 Copia questi valori:
+# Project URL:    https://xxxxx.supabase.co
+# Anon public:    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+# Service role:   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (NON usare in frontend!)
+```
 
-#### Configurazione in Replit
-Aggiorna queste credenziali nei file:
-
-**File da modificare**:
-- `assets/scripts/supabase-client.js`
-- `index.html` (script inline)
-- `utenti.html` (script inline)
-- `ex-dipendenti.html` (script inline)
-
-**Template sostituzione**:
+#### Configurazione Client (Implementata)
+File **assets/scripts/supabase-client.js** (già configurato):
 ```javascript
-const supabase = createClient(
-  "https://[TUO_PROJECT_ID].supabase.co",  // Project URL
-  "[TUA_ANON_KEY]"                        // anon public key
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+export const supabaseClient = createClient(
+  "https://txmjqrnitfsiytbytxlc.supabase.co",  // ✅ Project URL attuale
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."  // ✅ Anon key attuale
 );
 ```
 
+#### Aggiornamento Configurazione
+Per cambiare progetto Supabase, aggiorna **4 file**:
+
+1. **assets/scripts/supabase-client.js** (principale)
+2. **index.html** (script inline timbrature)
+3. **utenti.html** (script inline gestione)
+4. **ex-dipendenti.html** (script inline archivio)
+
 ### 🔄 Sincronizzazione Schema Database
 
-#### Esecuzione Migrazioni
+#### Da Replit a Supabase
 ```sql
--- 1. Backup schema esistente
-SELECT table_name FROM information_schema.tables 
+-- 1. Esporta schema locale (se presente)
+pg_dump --schema-only your_local_db > schema_export.sql
+
+-- 2. Applica su Supabase (SQL Editor)
+-- Copia contenuto schema_export.sql
+```
+
+#### Modifica Schema Esistente
+```sql
+-- ✅ Pattern per aggiungere colonne
+ALTER TABLE utenti 
+ADD COLUMN IF NOT EXISTS nuova_colonna VARCHAR;
+
+-- ✅ Pattern per modificare colonne  
+ALTER TABLE dipendenti_archiviati
+ALTER COLUMN file_excel_path TYPE TEXT;
+
+-- ✅ Pattern per aggiungere indici
+CREATE INDEX IF NOT EXISTS idx_nome_indice 
+ON tabella(campo1, campo2);
+```
+
+#### Backup Schema
+```bash
+# Dal Dashboard Supabase
+# Settings → Database → Backup → Create backup
+# Frequenza: Prima di ogni modifica schema
+```
+
+### 🛠️ Comandi Utili Implementati
+
+#### Verifiche Database
+```sql
+-- Conteggio record per tabella
+SELECT 
+  'utenti' as tabella, COUNT(*) as records FROM utenti
+UNION ALL
+SELECT 
+  'timbrature', COUNT(*) FROM timbrature  
+UNION ALL
+SELECT 
+  'dipendenti_archiviati', COUNT(*) FROM dipendenti_archiviati;
+
+-- Performance query più pesanti
+EXPLAIN ANALYZE
+SELECT * FROM timbrature t
+JOIN utenti u ON t.pin = u.pin
+WHERE t.data BETWEEN '2024-01-01' AND '2024-12-31';
+
+-- Spazio occupato tabelle
+SELECT 
+  schemaname,
+  tablename,
+  attname,
+  n_distinct,
+  most_common_vals
+FROM pg_stats 
+WHERE tablename IN ('utenti', 'timbrature', 'dipendenti_archiviati');
+```
+
+#### Operazioni Maintenance
+```sql
+-- Pulizia dati test
+DELETE FROM timbrature WHERE pin = 99; -- PIN test
+
+-- Reset sequence (se necessario)
+SELECT setval('utenti_id_seq', (SELECT MAX(id) FROM utenti));
+
+-- Aggiorna statistiche tabelle
+ANALYZE utenti;
+ANALYZE timbrature;
+ANALYZE dipendenti_archiviati;
+```
+
+### 🔧 Troubleshooting Database
+
+#### Errori Comuni e Soluzioni
+
+##### Errore: "relation does not exist"
+```sql
+-- Verifica esistenza tabelle
+SELECT table_name 
+FROM information_schema.tables 
 WHERE table_schema = 'public';
 
--- 2. Applica nuovo schema
--- Esegui setup-database.sql completo nel SQL Editor
-
--- 3. Verifica tabelle create
-\dt public.*
+-- Se mancanti, riesegui setup-database.sql
 ```
 
-#### Comandi Utili Supabase
-
-**Reset completo database**:
+##### Errore: "duplicate key value violates unique constraint"
 ```sql
--- ⚠️ ATTENZIONE: Cancella tutti i dati!
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
--- Poi riesegui setup-database.sql
+-- Verifica duplicati PIN
+SELECT pin, COUNT(*) 
+FROM utenti 
+GROUP BY pin 
+HAVING COUNT(*) > 1;
+
+-- Risoluzione: aggiorna PIN duplicati
+UPDATE utenti SET pin = 
+  (SELECT COALESCE(MAX(pin), 0) + 1 FROM utenti u2 WHERE u2.id != utenti.id)
+WHERE pin IN (SELECT pin FROM utenti GROUP BY pin HAVING COUNT(*) > 1);
 ```
 
-**Seed dati di test**:
+##### Errore: "permission denied for table"
 ```sql
--- Inserisci utenti demo (già nel setup-database.sql)
-INSERT INTO public.utenti (pin, nome, cognome, email, ore_contrattuali) 
-VALUES (99, 'Test', 'User', 'test@example.com', 8.00)
-ON CONFLICT (pin) DO NOTHING;
+-- Verifica e ripristina RLS
+ALTER TABLE utenti ENABLE ROW LEVEL SECURITY;
+-- Crea policy se necessaria
+CREATE POLICY "Enable all operations" ON utenti FOR ALL USING (true);
 ```
 
-**Controllo integrità**:
-```sql
--- Verifica constraint e indici
-SELECT schemaname, tablename, indexname 
-FROM pg_indexes 
-WHERE schemaname = 'public';
-```
-
-### 📊 Monitoraggio e Performance
-
-#### Dashboard Controlli
-1. **Database** → **Tables**: Verifica struttura tabelle
-2. **Authentication** → **Policies**: Controlla RLS policies
-3. **Database** → **Backups**: Programma backup automatici
-4. **Settings** → **Database**: Monitora storage usage
-
-#### Ottimizzazioni Performance
-```sql
--- Analizza query lente
-SELECT * FROM pg_stat_statements 
-ORDER BY total_time DESC LIMIT 10;
-
--- Ricostruisci statistiche
-ANALYZE;
-
--- Verifica indici utilizzati
-EXPLAIN ANALYZE SELECT * FROM timbrature WHERE pin = 1;
-```
-
-### 🔧 Linee Guida Mantenimento
-
-#### Allineamento Codice-Database
-1. **Modifiche Schema**: Sempre via SQL Editor Supabase
-2. **Test Locale**: Usa sempre dati di test con PIN > 90
-3. **Backup**: Scarica backup settimanale da Dashboard
-4. **Versioning**: Documenta modifiche schema in `DB_API_DOCS.md`
-
-#### Workflow Aggiornamenti
-```bash
-# 1. Modifica locale in Replit
-# 2. Test con utenti di prova
-# 3. Backup Supabase manuale
-# 4. Applica modifiche schema su Supabase
-# 5. Verifica integrità dati
-# 6. Aggiorna documentazione
-```
-
-#### Sicurezza Best Practices
-- **Mai esporre service_role key** nel frontend
-- **Usa solo anon key** per operazioni pubbliche
-- **RLS attivo** su tutte le tabelle
-- **Backup automatici** configurati
-- **Monitoring attivo** su query anomale
-
-### 🆘 Troubleshooting Comune
-
-#### Errore Connessione
+#### Connection Issues
 ```javascript
-// Verifica configurazione
-console.log('Supabase URL:', supabase.supabaseUrl);
-console.log('Supabase Key:', supabase.supabaseKey.substring(0, 20) + '...');
+// ✅ Test connessione implementato
+async function testConnessione() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('utenti')
+      .select('count', { count: 'exact' });
+      
+    if (error) throw error;
+    console.log('✅ Connessione OK:', data);
+    return true;
+  } catch (error) {
+    console.error('❌ Connessione fallita:', error);
+    return false;
+  }
+}
 ```
 
-#### Errore RLS (Row Level Security)
+### 📊 Monitoring e Analytics
+
+#### Real-time Monitoring
+```javascript
+// ✅ Implementato logging operazioni
+console.log(`✅ Archiviazione completata per PIN ${pin}:`);
+console.log(`   • Nome: ${dipendente.nome} ${dipendente.cognome}`);
+console.log(`   • Timbrature archiviate: ${timbrature.length}`);
+console.log(`   • PIN liberato: ${pin}`);
+console.log(`   • File Excel: ${nomeFileExcel}`);
+```
+
+#### Performance Analytics
 ```sql
--- Disabilita temporaneamente per debug
-ALTER TABLE public.utenti DISABLE ROW LEVEL SECURITY;
--- Ricorda di riabilitare dopo test!
+-- Query più costose
+SELECT query, calls, total_time, mean_time
+FROM pg_stat_statements
+ORDER BY total_time DESC
+LIMIT 10;
+
+-- Lock monitoring  
+SELECT * FROM pg_locks 
+WHERE NOT GRANTED;
 ```
 
-#### Errore 23505 (PIN duplicato)
+### 🔄 Migration Strategy
+
+#### Schema Changes Workflow
+```bash
+# 1. Backup pre-migration
+# Supabase Dashboard → Settings → Database → Backup
+
+# 2. Test migration su staging
+# SQL Editor → Run migration script  
+
+# 3. Verifica integrità
+SELECT COUNT(*) FROM utenti;
+SELECT COUNT(*) FROM timbrature;
+
+# 4. Update application code
+# Aggiorna references a nuovi campi/tabelle
+
+# 5. Deploy
+git push origin main
+```
+
+#### Data Migration Pattern
 ```sql
--- Verifica PIN disponibili
-SELECT pin FROM generate_series(1, 99) pin 
-WHERE pin NOT IN (SELECT pin FROM utenti);
+-- ✅ Safe migration pattern
+BEGIN;
+
+-- Crea nuova struttura
+ALTER TABLE utenti ADD COLUMN nuovo_campo VARCHAR;
+
+-- Migra dati esistenti  
+UPDATE utenti SET nuovo_campo = 'default_value' WHERE nuovo_campo IS NULL;
+
+-- Valida migrazione
+SELECT COUNT(*) FROM utenti WHERE nuovo_campo IS NULL;
+-- Se = 0, procedi, altrimenti ROLLBACK
+
+COMMIT;
 ```
 
-#### Connessione Database Timeout
-- Verifica region Supabase (usa Europe-West)
-- Controlla limiti piano (free/pro)
-- Ottimizza query con troppi JOIN
+### 🛡️ Security Best Practices
 
-### 📞 Supporto
-- **Docs**: [supabase.com/docs](https://supabase.com/docs)
+#### Database Security Checklist
+```
+✅ Row Level Security attiva su tutte le tabelle
+✅ Anon key limitata a operazioni frontend necessarie
+✅ Service key NON esposta in frontend
+✅ Constraints attivi per validazione dati
+✅ Backup automatici configurati
+✅ SSL/TLS enforced su tutte le connessioni
+```
+
+#### API Security Implementation
+```javascript
+// ✅ Client configurato con sicurezza
+const supabaseClient = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY    // ✅ Solo anon key pubblica
+  // NO service key in frontend!
+);
+
+// ✅ Error handling che non espone dettagli
+export function gestisciErroreSupabase(error) {
+  console.error('Errore Supabase:', error); // Full log per dev
+  
+  // Mapping sicuro per utenti
+  switch (error?.code) {
+    case 'PGRST116': return 'Nessun dato trovato';
+    case '23505': return 'PIN già esistente';
+    default: return 'Errore durante operazione'; // Generic message
+  }
+}
+```
+
+### 📱 Real-time Features (Future)
+
+#### Preparazione Real-time
+```javascript
+// TODO: Real-time subscriptions
+const subscription = supabaseClient
+  .channel('timbrature-changes')
+  .on('postgres_changes', 
+    { event: 'INSERT', schema: 'public', table: 'timbrature' },
+    (payload) => {
+      console.log('🔔 Nuova timbratura:', payload.new);
+      // Aggiorna UI in real-time
+    }
+  )
+  .subscribe();
+```
+
+#### Offline Support Strategy
+```javascript
+// TODO: Service Worker + IndexedDB
+// Cache essenziale:
+// - Lista dipendenti attivi
+// - Timbrature giorno corrente
+// - Sync queue per operazioni offline
+```
+
+### 🎯 Production Deployment
+
+#### Environment Variables
+```bash
+# Per produzione, usa environment variables
+export SUPABASE_URL="https://xxx.supabase.co"
+export SUPABASE_ANON_KEY="your_anon_key"
+
+# Template .env (NON committare)
+SUPABASE_URL=https://txmjqrnitfsiytbytxlc.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiI...
+```
+
+#### Production Checklist
+```
+✅ Database backup recente
+✅ API keys corrette per produzione
+✅ RLS policies verificate
+✅ Performance acceptable su queries
+✅ Monitoring alerts configurati
+✅ SSL certificato valido
+```
+
+### 📞 Supporto Supabase
+
+#### Risorse Utili
+- **Documentazione**: [supabase.com/docs](https://supabase.com/docs)
 - **Community**: [Discord Supabase](https://discord.supabase.com)
-- **Dashboard**: Sezione Help nel progetto
+- **Status**: [status.supabase.com](https://status.supabase.com)
+- **GitHub**: [github.com/supabase](https://github.com/supabase)
+
+#### Debug Tools
+- **Dashboard Logs**: Real-time error tracking
+- **SQL Editor**: Query testing e optimization
+- **API Playground**: Test endpoints
+- **Performance Tab**: Slow query identification
+
+```

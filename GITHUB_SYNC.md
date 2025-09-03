@@ -1,284 +1,401 @@
 
 # GITHUB_SYNC.md
 
-## Sincronizzazione GitHub per BADGEBOX
+## Sincronizzazione GitHub - BADGEBOX
 
-### 🔧 Configurazione Repository Remoto
+### 🔧 Configurazione Repository
 
-#### Setup Iniziale GitHub in Replit
-1. **Tools** → **Git** → **Initialize Git Repository**
-2. **Icona Gear** → **Connect to GitHub**
-3. **Login GitHub** → **Configure** → **All repositories** → **Save**
-4. **Repository metadata**:
-   ```
-   Name: BADGEBOX-production
-   Description: Sistema gestione timbrature dipendenti
-   Visibility: Private (raccomandato)
-   ```
-5. **Create Repository on GitHub**
-
-#### Verifica Configurazione
+#### Setup Iniziale
 ```bash
-# Nel Shell di Replit, verifica remote
-git remote -v
-# Output atteso:
-# origin  https://github.com/[USERNAME]/BADGEBOX-production.git (fetch)
-# origin  https://github.com/[USERNAME]/BADGEBOX-production.git (push)
+# Se non già fatto, configura Git nel progetto
+git init
+git remote add origin https://github.com/USERNAME/badgebox.git
+
+# Configura credenziali
+git config user.name "Tuo Nome"
+git config user.email "tua.email@example.com"
 ```
 
-### 📋 Flusso di Lavoro Base
-
-#### Clone Progetto Esistente
-```bash
-# Solo se parti da repository esistente
-git clone https://github.com/[USERNAME]/BADGEBOX-production.git
-cd BADGEBOX-production
-npm install  # Installa dipendenze
-```
-
-#### Workflow Quotidiano
-
-**1. Pull ultime modifiche**
-```bash
-git pull origin main
-# Oppure usa "Sync with Remote" nel Git Pane
-```
-
-**2. Sviluppo locale**
-```bash
-npm run dev  # Avvia server sviluppo
-# Modifica file nel workspace
-# Test funzionalità
-```
-
-**3. Commit modifiche**
-```bash
-# Nel Git Pane di Replit:
-# 1. Review Changes
-# 2. Stage files (+ icon)
-# 3. Commit message
-# 4. "Stage and commit all changes"
-```
-
-**4. Push al repository**
-```bash
-# Git Pane: bottone "Push"
-# Oppure da Shell:
-git push origin main
-```
-
-### 🌿 Branching Strategy
-
-#### Creazione Branch per Feature
-```bash
-# Nel Git Pane: dropdown accanto "main"
-# Oppure da Shell:
-git checkout -b feature/nuova-funzionalità
-git push -u origin feature/nuova-funzionalità
-```
-
-#### Branch Raccomandati
-```
-main                    # Produzione stabile
-develop                 # Sviluppo attivo
-feature/nome-feature    # Singole funzionalità
-hotfix/correzione       # Fix urgenti produzione
-release/v1.2.0         # Preparazione release
-```
-
-#### Merge Strategy
-```bash
-# Completa feature
-git checkout main
-git pull origin main
-git merge feature/nuova-funzionalità
-git push origin main
-git branch -d feature/nuova-funzionalità  # Cleanup locale
-```
-
-### 🔄 Sincronizzazione Continua Replit ↔ GitHub
-
-#### Auto-sync Setup
-Nel file `.github-config.json` (già presente):
+#### Configurazione Replit-GitHub
+Il progetto include **`.github-config.json`** per sincronizzazione automatica:
 ```json
 {
-  "auto_upgrade": {
-    "enabled": true,
-    "require_confirmation": true,
-    "commit_prefix": "🔄 BADGEBOX Auto-Update"
-  }
+  "repository": "username/badgebox",
+  "branch": "main",
+  "auto_sync": true,
+  "sync_on_save": false
 }
 ```
 
-#### Script Sincronizzazione Automatica
-Usa `upgrade-github.js` per sync automatica:
+### 🔄 Workflow di Sincronizzazione
+
+#### Push Changes (Replit → GitHub)
 ```bash
-node upgrade-github.js
-# Output:
-# 🚀 BADGEBOX - Upgrade GitHub Automatico
-# ✅ Upgrade completato con successo!
+# Commit con messaggio descrittivo
+git add .
+git commit -m "feat: implementazione archiviazione dipendenti"
+
+# Push su repository remoto
+git push origin main
 ```
 
-#### Workflow Replit Integrato
+#### Pull Updates (GitHub → Replit)
 ```bash
-# Setup workflow automatico in Replit
-# .replit file configurato per:
-# 1. Auto-save files
-# 2. Hot reload
-# 3. Git tracking continuo
+# Verifica updates remotri
+git fetch origin
+
+# Applica modifiche
+git pull origin main
+
+# Risolvi eventuali conflitti
+git status
+# Modifica file in conflitto, poi:
+git add .
+git commit -m "resolve: merge conflicts"
 ```
 
-### 📝 Linee Guida Commit
+#### Sincronizzazione Automatica Replit
+Il pulsante **"Connect to GitHub"** nella sidebar Replit:
+1. Rileva modifiche automaticamente
+2. Propone commit message
+3. Push automatico configurabile
+4. Pull updates da GitHub
 
-#### Messaggi Standard
+### 🌿 Branching Strategy
+
+#### Development Flow
 ```bash
-# Formato: [TIPO] Descrizione breve
-# Tipi standard:
-✨ FEAT: Nuova funzionalità
-🐛 FIX: Correzione bug
-📚 DOCS: Aggiornamento documentazione
-💄 STYLE: Miglioramenti UI/CSS
-♻️ REFACTOR: Refactoring codice
-⚡ PERF: Ottimizzazioni performance
-🔧 CONFIG: Modifiche configurazione
-🚀 DEPLOY: Rilascio versione
+# Crea branch per nuove features
+git checkout -b feature/nuova-funzionalita
 
-# Esempi:
-git commit -m "✨ FEAT: Aggiungi archivio ex dipendenti"
-git commit -m "🐛 FIX: Correggi calcolo ore nel PDF export"
-git commit -m "📚 DOCS: Aggiorna documentazione Supabase"
+# Sviluppo e commit incrementali
+git add assets/scripts/nuovo-modulo.js
+git commit -m "feat: aggiunta gestione nuovo modulo"
+
+git add utenti.html  
+git commit -m "style: miglioramento UI modifica dipendente"
+
+# Merge su main
+git checkout main
+git merge feature/nuova-funzionalita
+git push origin main
 ```
 
-#### Convenzioni File
+#### Hotfix Flow  
 ```bash
-# Staging selettivo
-git add index.html style.css          # Solo file correlati
-git commit -m "💄 STYLE: Migliora layout mobile"
+# Fix urgenti su produzione
+git checkout -b hotfix/correzione-critica
 
-# Commit atomici (una funzionalità = un commit)
-# ❌ Evita commit con troppe modifiche
-# ✅ Preferisci commit piccoli e focalizzati
+# Apply fix
+git add fix-database.sql
+git commit -m "fix: correzione constraint PIN duplicati"
+
+# Deploy immediato
+git checkout main
+git merge hotfix/correzione-critica  
+git push origin main
 ```
 
-### 🔍 Integrazione Pre-commit e Qualità
+### 📝 Convenzioni Commit Implementate
 
-#### Pre-commit Hook Setup
+#### Commit Message Standard
 ```bash
-# Crea .git/hooks/pre-commit
+# ✅ Pattern implementato nel progetto:
+
+feat: aggiunta funzionalità archiviazione dipendenti
+fix: correzione WebSocket WSS per HTTPS compatibility
+style: miglioramento responsive design mobile  
+docs: aggiornamento documentazione completa
+refactor: riorganizzazione moduli in assets/scripts
+test: aggiunta test manual per export Excel
+chore: aggiornamento dipendenze Vite
+
+# Format standard:
+<tipo>: <descrizione breve>
+
+# Body opzionale per dettagli:
+feat: eliminazione pulsante ripristina dipendente
+
+Rimosso pulsante "Ripristina" da ex-dipendenti.html
+Eliminata funzione ripristinaDipendente() da codice  
+Aggiornata logica per impedire recupero dipendenti archiviati
+```
+
+#### Tipi Commit Utilizzati
+```
+feat     → Nuova funzionalità
+fix      → Correzione bug
+style    → Modifiche CSS/UI
+docs     → Aggiornamento documentazione
+refactor → Ristrutturazione codice senza modifiche funzionali
+test     → Aggiunta/modifica test
+chore    → Maintenance, aggiornamenti dipendenze
+perf     → Ottimizzazioni performance
+```
+
+### 🔄 Integrazione Continua
+
+#### Pre-commit Hooks (Configurabili)
+Crea **`.git/hooks/pre-commit`**:
+```bash
 #!/bin/sh
-echo "🔍 Controllo qualità codice..."
+# Pre-commit hook per qualità codice
+
+echo "🔍 Esecuzione checks pre-commit..."
+
+# Backup automatico pre-commit
+node backup-current-system.js
 
 # Verifica sintassi JavaScript
-find . -name "*.js" -not -path "./node_modules/*" | xargs node -c
+echo "📋 Verifica sintassi..."
+find assets/scripts -name "*.js" -exec node -c {} \;
 
-# Verifica HTML valido
-find . -name "*.html" | head -5 | xargs echo "HTML files OK"
+# Check trailing whitespace
+echo "🧹 Pulizia whitespace..."
+find . -name "*.js" -o -name "*.html" -o -name "*.css" | \
+  xargs sed -i 's/[[:space:]]*$//'
 
-echo "✅ Controlli passati - commit autorizzato"
+# Verifica size files
+echo "📏 Verifica dimensioni file..."
+find . -name "*.js" -o -name "*.html" -o -name "*.css" | \
+  while read file; do
+    size=$(stat -c%s "$file")
+    if [ $size -gt 500000 ]; then
+      echo "⚠️  File troppo grande: $file ($size bytes)"
+    fi
+  done
+
+echo "✅ Pre-commit checks completati"
 ```
 
-#### Regole Qualità (da GOVERNANCE.md)
+#### Post-commit Hooks
 ```bash
-# Prima di ogni commit:
-# 1. Test funzionalità su mobile/desktop
-# 2. Verifica console errors = 0
-# 3. Controllo responsive design
-# 4. Validazione forms
-# 5. Performance check (< 3sec load)
+#!/bin/sh
+# .git/hooks/post-commit
+
+# Log commit per tracking
+echo "$(date): $(git log -1 --pretty=format:'%h %s')" >> .git/commit-log
+
+# Trigger deploy se su branch main
+if [ "$(git branch --show-current)" = "main" ]; then
+  echo "🚀 Branch main aggiornato - Deploy automatico..."
+fi
 ```
 
-#### Code Review Checklist
-```markdown
-## Checklist Pre-Push
-- [ ] Codice testato localmente
-- [ ] Nessun console.error() in produzione
-- [ ] Mobile responsive verificato
-- [ ] Supabase connection OK
-- [ ] File di documentazione aggiornati
-- [ ] Commit message seguono convenzioni
-- [ ] Branch pulito (no merge conflicts)
-```
+### 📊 Tracking e Monitoring
 
-### 🚀 Deploy e Release
-
-#### Preparazione Release
+#### Git History Analysis
 ```bash
-# 1. Crea branch release
-git checkout -b release/v1.2.0
+# Statistiche commit
+git shortlog -sn --all
 
-# 2. Update versione in package.json
-# 3. Update CHANGELOG.md
-# 4. Final testing
+# Modifiche frequenti  
+git log --pretty=format: --name-only | sort | uniq -c | sort -rg
 
-# 5. Merge to main
+# Contributor activity
+git log --pretty=format:"%h %an %ad %s" --date=short | head -20
+```
+
+#### File Change Tracking
+```bash
+# Files modificati di recente
+git log --name-status --since="1 week ago"
+
+# Diff tra versioni
+git diff HEAD~1 HEAD --stat
+
+# Blame per troubleshooting  
+git blame assets/scripts/storico-logic.js
+```
+
+### 🔐 Security Git Workflow
+
+#### Sensitive Data Protection
+```bash
+# ✅ .gitignore configurato per:
+node_modules/
+*.env
+*.log  
+.DS_Store
+backup-*.json
+
+# Verifica nessun dato sensibile committato
+git log -p | grep -i "password\|key\|secret"
+```
+
+#### Credential Management
+```bash
+# ✅ Pattern sicuro implementato:
+# Credenziali Supabase in file pubblici (anon key OK)
+# NO service keys in repository
+# Environment variables per production
+```
+
+### 🚀 Deploy Automation
+
+#### Netlify Integration
+Il file **`netlify.toml`** configura deploy automatico:
+```toml
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[dev]
+  framework = "vite"
+  command = "npm run dev"
+  port = 5173
+```
+
+#### GitHub Actions (Configurabile)
+Template **`.github/workflows/deploy.yml`**:
+```yaml
+name: Deploy to Netlify
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install  
+      - run: npm run build
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=dist --prod
+```
+
+### 📋 Workflow Routine
+
+#### Daily Development
+```bash
+# 1. Start giornata - Pull updates
+git pull origin main
+
+# 2. Crea branch feature (opzionale)
+git checkout -b feature/nome-feature
+
+# 3. Sviluppo con commit frequenti  
+git add file-modificato.js
+git commit -m "feat: implementazione feature X"
+
+# 4. Push fine giornata
+git push origin feature/nome-feature
+```
+
+#### Weekly Maintenance
+```bash
+# Backup completo
+node backup-current-system.js
+
+# Merge branch sviluppo
 git checkout main
-git merge release/v1.2.0
-git tag v1.2.0
-git push origin main --tags
+git merge feature/branch-settimana
+git push origin main
+
+# Pulizia branch locali
+git branch -d feature/old-branch
+
+# Sync con remote
+git remote prune origin
 ```
 
-#### Deploy Automatico Replit
+### 🔄 Conflict Resolution
+
+#### Merge Conflicts
 ```bash
-# Il deploy su Replit è automatico da main branch
-# Configurazione in .replit e vite.config.js
-# Hot deploy: modifiche live immediatamente
+# Quando si presenta conflitto
+git status  # Vedi files in conflitto
+
+# Risolvi manualmente in editor
+# Cerca markers: <<<<<<< HEAD, =======, >>>>>>> 
+
+# Dopo risoluzione
+git add file-risolto.js
+git commit -m "resolve: merge conflict in file-risolto"
+git push origin main
 ```
 
-### 📊 Monitoring e Backup
+#### Common Conflicts in Project
+```javascript
+// Tipo conflitto più comune: configurazioni Supabase
+<<<<<<< HEAD
+const supabaseUrl = "https://old-url.supabase.co";
+=======
+const supabaseUrl = "https://new-url.supabase.co";
+>>>>>>> feature-branch
 
-#### Backup Repository
+// Risoluzione: mantieni URL produzione
+const supabaseUrl = "https://txmjqrnitfsiytbytxlc.supabase.co";
+```
+
+### 📈 Repository Health
+
+#### Metrics Tracking
 ```bash
-# Download ZIP completo
-# GitHub → Code → Download ZIP
+# Code churn (file modificati frequentemente)
+git log --name-only --pretty=format: | sort | uniq -c | sort -nr
 
-# Clone backup locale
-git clone --mirror https://github.com/[USER]/BADGEBOX-production.git
+# Commit frequency
+git log --pretty=format:"%ad" --date=short | uniq -c
+
+# Branch activity
+git for-each-ref --format='%(refname:short) %(committerdate)' refs/heads
 ```
 
-#### Analytics Commit
+#### Quality Gates
 ```bash
-# Statistiche repository
-git log --oneline --graph --all
-git shortlog -s -n  # Contributors stats
-git log --since="1 week ago" --oneline  # Recent activity
+# Pre-push quality check
+function pre_push_check() {
+  echo "🔍 Quality check pre-push..."
+  
+  # Verifica dimensione repository
+  du -sh .git
+  
+  # Conta file modificati
+  git diff --name-only HEAD~1 HEAD | wc -l
+  
+  # Verifica sintassi
+  find . -name "*.js" -exec node -c {} \;
+  
+  echo "✅ Quality check completato"
+}
 ```
 
-### 🆘 Troubleshooting Git
+### 🎯 Best Practices Implementate
 
-#### Reset a Commit Precedente
+#### Repository Organization
+```
+✅ Documentazione centralizzata nella root
+✅ Assets organizzati in sottocartelle
+✅ Scripts modulari con responsabilità singola
+✅ Configurazioni separate per environment
+✅ .gitignore completo e aggiornato
+```
+
+#### Collaboration Guidelines
+```
+✅ Commit message descriptivi e standardizzati
+✅ Branch naming: feature/, hotfix/, docs/
+✅ Pull request con review (se team)
+✅ No force push su main branch
+✅ Backup prima di operazioni rischiose
+```
+
+#### Code Review Process
 ```bash
-# Soft reset (mantiene modifiche)
-git reset --soft HEAD~1
-
-# Hard reset (⚠️ perde modifiche)
-git reset --hard HEAD~1
+# Review checklist per ogni commit
+□ Funzionalità testata manualmente
+□ Performance accettabile  
+□ Error handling implementato
+□ Documentazione aggiornata se necessaria
+□ Backward compatibility mantenuta
+□ Security implications valutate
 ```
 
-#### Risoluzione Merge Conflicts
-```bash
-# Quando appare conflitto:
-git status  # Vedi file conflicted
-# Modifica manualmente i file
-git add .
-git commit -m "🔧 RESOLVE: Merge conflict resolution"
 ```
-
-#### Sincronizzazione Fork/Branch Divergenti
-```bash
-git fetch origin
-git reset --hard origin/main  # ⚠️ Sovrascrive locale
-```
-
-#### Recovery Repository Corrotto
-```bash
-# Backup dati importanti
-# Re-clone repository
-git clone https://github.com/[USER]/BADGEBOX-production.git
-# Applica modifiche manuali
-```
-
-### 📞 Supporto e Risorse
-- **GitHub Docs**: [docs.github.com](https://docs.github.com)
-- **Git Reference**: [git-scm.com/docs](https://git-scm.com/docs)
-- **Replit Git Guide**: Console → Help → Git integration
-- **Issue Tracking**: GitHub Issues per bug e feature requests

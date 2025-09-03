@@ -1,188 +1,142 @@
 
 # DB_API_DOCS.md
 
-## Database Schema & API Documentation
+## Schema Database e API - BADGEBOX
 
-### 📊 Schema Database (Supabase PostgreSQL)
+### 📊 Database Schema (PostgreSQL - Supabase)
 
 #### Tabella `utenti` - Dipendenti Attivi
 ```sql
 CREATE TABLE utenti (
-  id SERIAL PRIMARY KEY,
-  pin INTEGER UNIQUE NOT NULL CHECK (pin >= 1 AND pin <= 99),
-  nome VARCHAR(50) NOT NULL,
-  cognome VARCHAR(50) NOT NULL,
-  email VARCHAR(100),
-  telefono VARCHAR(20),
-  ore_contrattuali DECIMAL(4,2) DEFAULT 8.00,
+  id BIGSERIAL PRIMARY KEY,
+  pin INTEGER UNIQUE NOT NULL,
+  nome VARCHAR NOT NULL,
+  cognome VARCHAR NOT NULL,
+  email VARCHAR,
+  telefono VARCHAR,
   descrizione_contratto TEXT,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+  ore_contrattuali DECIMAL(4,2) DEFAULT 8.00,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()),
+  CONSTRAINT pin_range CHECK (pin >= 1 AND pin <= 99)
 );
 
--- Indici
+-- Indici per performance
 CREATE UNIQUE INDEX idx_utenti_pin ON utenti(pin);
 CREATE INDEX idx_utenti_nome_cognome ON utenti(nome, cognome);
 ```
 
-**Vincoli & Validazioni**:
-- `pin`: Univoco, range 1-99, liberato quando dipendente archiviato
-- `ore_contrattuali`: Max ore giornaliere, default 8.00
-- `email`: Opzionale, format validation frontend
-- `nome`, `cognome`: Obbligatori, max 50 caratteri
+**Relazioni**: 
+- PIN → Chiave naturale per timbrature
+- **1:N** con timbrature (un utente, molte timbrature)
 
-#### Tabella `timbrature` - Registro Presenze
+#### Tabella `timbrature` - Registrazioni Entrata/Uscita
 ```sql
 CREATE TABLE timbrature (
-  id SERIAL PRIMARY KEY,
-  pin INTEGER NOT NULL,
-  tipo VARCHAR(10) NOT NULL CHECK (tipo IN ('entrata', 'uscita')),
-  nome VARCHAR(50) NOT NULL,
-  cognome VARCHAR(50) NOT NULL, 
+  id BIGSERIAL PRIMARY KEY,
+  pin INTEGER NOT NULL REFERENCES utenti(pin),
   data DATE NOT NULL,
   ore TIME NOT NULL,
-  giornologico DATE NOT NULL, -- Giorno lavorativo (shift notturni)
-  created_at TIMESTAMP DEFAULT NOW()
+  tipo VARCHAR(8) NOT NULL CHECK (tipo IN ('ENTRATA', 'USCITA')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
 );
 
--- Indici per performance
-CREATE INDEX idx_timbrature_pin ON timbrature(pin);
-CREATE INDEX idx_timbrature_data ON timbrature(data);
-CREATE INDEX idx_timbrature_pin_giornologico ON timbrature(pin, giornologico);
-CREATE INDEX idx_timbrature_created_at ON timbrature(created_at);
+-- Indici per query frequenti
+CREATE INDEX idx_timbrature_pin_data ON timbrature(pin, data);
+CREATE INDEX idx_timbrature_data_ore ON timbrature(data, ore);
+CREATE INDEX idx_timbrature_tipo ON timbrature(tipo);
+
+-- Constraint business logic
+CREATE UNIQUE INDEX idx_no_duplicate_entries ON timbrature(pin, data, tipo);
 ```
 
 **Business Logic**:
-- `giornologico`: Gestisce turni notturni (00:00-04:59 = giorno precedente)
-- `tipo`: Solo 'entrata' o 'uscita'
-- **Anti-duplicazione**: Blocca timbrature consecutive stesso tipo
+- **Anti-duplicazione**: Previene ENTRATA/USCITA duplicate nello stesso giorno
+- **Giorno logico**: 8:00-5:00 (timbrature 00:00-04:59 appartengono al giorno precedente)
+- **Calcolo ore**: Differenza tra prima ENTRATA e ultima USCITA del giorno
 
-#### Tabella `dipendenti_archiviati` - Archivio Storico
+#### Tabella `dipendenti_archiviati` - Ex Dipendenti
 ```sql
 CREATE TABLE dipendenti_archiviati (
-  id SERIAL PRIMARY KEY,
-  pin INTEGER NOT NULL, -- PIN originale (non più univoco qui)
-  nome VARCHAR(50) NOT NULL,
-  cognome VARCHAR(50) NOT NULL,
-  email VARCHAR(100),
-  telefono VARCHAR(20),
-  ore_contrattuali DECIMAL(4,2),
+  id BIGSERIAL PRIMARY KEY,
+  pin INTEGER NOT NULL,
+  nome VARCHAR NOT NULL,
+  cognome VARCHAR NOT NULL,
+  email VARCHAR,
+  telefono VARCHAR,
   descrizione_contratto TEXT,
-  data_archiviazione TIMESTAMP DEFAULT NOW(),
-  file_excel_path TEXT, -- JSON serializzato con dati completi
-  file_excel_name VARCHAR(255),
-  created_at TIMESTAMP DEFAULT NOW()
+  ore_contrattuali DECIMAL(4,2),
+  data_archiviazione TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()),
+  file_excel_path TEXT,
+  timbrature_totali INTEGER DEFAULT 0,
+  ore_lavorate_totali DECIMAL(8,2) DEFAULT 0.00
 );
 
--- Indici
-CREATE INDEX idx_dipendenti_archiviati_data ON dipendenti_archiviati(data_archiviazione);
-CREATE INDEX idx_dipendenti_archiviati_pin ON dipendenti_archiviati(pin);
+-- Indici per ricerche archivio
+CREATE INDEX idx_archiviati_data ON dipendenti_archiviati(data_archiviazione DESC);
+CREATE INDEX idx_archiviati_nome_cognome ON dipendenti_archiviati(nome, cognome);
 ```
 
-**Struttura `file_excel_path` (JSON)**:
-```json
-{
-  "dipendente": {
-    "pin": 10,
-    "nome": "Mario",
-    "cognome": "Rossi",
-    "email": "mario@example.com",
-    "telefono": "+39123456789",
-    "ore_contrattuali": 8.00,
-    "descrizione_contratto": "Contratto part-time"
-  },
-  "timbrature": [
-    {
-      "data": "2024-01-15",
-      "ore": "08:30:00",
-      "tipo": "entrata",
-      "pin": 10,
-      "nome": "Mario",
-      "cognome": "Rossi"
-    }
-  ],
-  "totaleTimbrature": 245,
-  "dataGenerazione": "2024-09-03T10:30:00Z",
-  "pinLiberato": 10
-}
-```
+**Processo Archiviazione**:
+1. Backup completo dati dipendente
+2. Generazione Excel con storico timbrature
+3. Calcolo statistiche finali
+4. Spostamento record da `utenti` a `dipendenti_archiviati`
+5. PIN liberato per riutilizzo
 
-### 🔗 Relazioni tra Tabelle
+### 🚀 API Endpoints (Supabase Client)
 
-#### Flusso Dati Principale
-```
-utenti (PIN attivo)
-   ↓ timbratura
-timbrature (storico presenze)
-   ↓ archiviazione  
-dipendenti_archiviati (PIN liberato) + JSON backup completo
-```
-
-#### Referential Integrity
-- **`timbrature.pin`** → deve esistere in `utenti.pin` (solo per utenti attivi)
-- **`dipendenti_archiviati.pin`** → PIN storico, non più vincolato
-- **Cascade**: Archiviazione manuale (mantiene storico)
-
-### 🎯 API Endpoints (Supabase REST)
-
-#### Autenticazione
+#### Configurazione Client
 ```javascript
-// Headers standard per tutte le chiamate
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// assets/scripts/supabase-client.js
+const supabaseClient = createClient(
+  "https://txmjqrnitfsiytbytxlc.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+);
 ```
 
-#### Gestione Utenti
+#### Operazioni Utenti
 
-**Recupera tutti utenti attivi**
+##### GET - Lista Dipendenti Attivi
 ```javascript
-const { data, error } = await supabase
+const { data: utenti, error } = await supabase
   .from("utenti")
   .select("*")
   .order("pin", { ascending: true });
 ```
 
-**Verifica utente per timbratura**
+##### POST - Nuovo Dipendente
 ```javascript
 const { data, error } = await supabase
   .from("utenti")
-  .select("nome, cognome, email, ore_contrattuali")
-  .eq("pin", parseInt(pin))
-  .single();
-```
-
-**Inserisci nuovo dipendente**
-```javascript
-const { error } = await supabase
-  .from("utenti")
-  .insert([{
-    pin: uniquePin,
+  .insert({
+    pin: numeroPIN,
     nome: nome.trim(),
     cognome: cognome.trim(),
-    email: email || null,
-    ore_contrattuali: 8.00
-  }]);
+    email: email?.trim(),
+    telefono: telefono?.trim(),
+    descrizione_contratto: descrizione?.trim(),
+    ore_contrattuali: parseFloat(oreContrattuali)
+  });
 ```
 
-#### Gestione Timbrature
-
-**Inserisci timbratura**
-```javascript
-const { error } = await supabase
-  .from("timbrature")
-  .insert([{
-    tipo: 'entrata', // o 'uscita'
-    pin: parseInt(pin),
-    nome: utente.nome,
-    cognome: utente.cognome,
-    data: DateTime.now().toISODate(), 
-    ore: DateTime.now().toFormat("HH:mm:ss"),
-    giornologico: calcolaGiornoLogico(DateTime.now())
-  }]);
-```
-
-**Recupera storico timbrature**
+##### PUT - Modifica Dipendente
 ```javascript
 const { data, error } = await supabase
+  .from("utenti")
+  .update({
+    nome: datiAggiornati.nome,
+    cognome: datiAggiornati.cognome,
+    // ... altri campi
+  })
+  .eq("pin", pin);
+```
+
+#### Operazioni Timbrature
+
+##### GET - Storico Timbrature
+```javascript
+// Con range date specifico
+const { data: timbrature, error } = await supabase
   .from("timbrature")
   .select("*")
   .eq("pin", parseInt(pin))
@@ -192,131 +146,237 @@ const { data, error } = await supabase
   .order("ore", { ascending: true });
 ```
 
-**Verifica ultima timbratura (anti-duplicazione)**
+##### POST - Nuova Timbratura
 ```javascript
 const { data, error } = await supabase
   .from("timbrature")
-  .select("tipo, created_at, data, ore")
-  .eq("pin", parseInt(pin))
-  .order("created_at", { ascending: false })
-  .limit(1);
+  .insert({
+    pin: parseInt(pinInserito),
+    data: dataOdierna,
+    ore: oraAttuale,
+    tipo: tipoTimbratura // 'ENTRATA' | 'USCITA'
+  });
 ```
 
-#### Gestione Archivio
-
-**Archivia dipendente completo**
+##### PUT - Modifica Timbratura
 ```javascript
-// 1. Backup dati completi
-const excelData = {
-  dipendente: dipendenteData,
-  timbrature: timbratureStoriche,
-  totaleTimbrature: count,
-  dataGenerazione: new Date().toISOString(),
-  pinLiberato: pin
-};
+const { data, error } = await supabase
+  .from("timbrature")
+  .update({
+    data: nuovaData,
+    ore: nuovaOra,
+    tipo: nuovoTipo
+  })
+  .eq("id", idTimbratura);
+```
 
-// 2. Inserisci in archivio
-const { error } = await supabase
-  .from("dipendenti_archiviati")
-  .insert([{
-    ...dipendenteData,
-    data_archiviazione: new Date().toISOString(),
-    file_excel_path: JSON.stringify(excelData),
-    file_excel_name: generateFileName()
-  }]);
-
-// 3. Rimuovi da utenti attivi (libera PIN)
-const { error: deleteError } = await supabase
-  .from("utenti")
+##### DELETE - Elimina Timbratura
+```javascript
+const { data, error } = await supabase
+  .from("timbrature")
   .delete()
-  .eq("pin", parseInt(pin));
+  .eq("id", idTimbratura);
 ```
 
-### ⚡ Performance Optimization
+#### Operazioni Archivio
 
-#### Query Patterns
+##### POST - Archivia Dipendente
 ```javascript
-// ✅ Select specifici (non SELECT *)
-.select("nome, cognome, email, ore_contrattuali")
+// 1. Recupera dati completi
+const { data: dipendente } = await supabase
+  .from("utenti")
+  .select("*")
+  .eq("pin", pin)
+  .single();
 
-// ✅ Filtri efficienti
-.eq("pin", parseInt(pin))        // Usa indice
-.gte("data", dataInizio)         // Range queries ottimizzate
-.order("created_at", { ascending: false })
+// 2. Recupera tutte le timbrature
+const { data: timbrature } = await supabase
+  .from("timbrature")
+  .select("*")
+  .eq("pin", pin);
 
-// ✅ Limit per pagination
-.limit(50)
+// 3. Calcola statistiche
+const oreTotali = calcolaOreTotali(timbrature);
+
+// 4. Inserisci in archivio
+const { data, error } = await supabase
+  .from("dipendenti_archiviati")
+  .insert({
+    pin: dipendente.pin,
+    nome: dipendente.nome,
+    cognome: dipendente.cognome,
+    email: dipendente.email,
+    telefono: dipendente.telefono,
+    descrizione_contratto: dipendente.descrizione_contratto,
+    ore_contrattuali: dipendente.ore_contrattuali,
+    file_excel_path: nomeFileExcel,
+    timbrature_totali: timbrature.length,
+    ore_lavorate_totali: oreTotali
+  });
+
+// 5. Elimina da tabella attivi
+await supabase.from("utenti").delete().eq("pin", pin);
 ```
 
-#### Caching Strategy
+##### GET - Lista Ex Dipendenti
 ```javascript
-// ✅ Cache per librerie pesanti
-let XLSXLib = null;
-if (!XLSXLib) {
-  XLSXLib = await import("https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.mjs");
+const { data: exDipendenti, error } = await supabase
+  .from("dipendenti_archiviati")
+  .select("*")
+  .order("data_archiviazione", { ascending: false });
+```
+
+##### DELETE - Elimina Definitivamente
+```javascript
+const { data, error } = await supabase
+  .from("dipendenti_archiviati")
+  .delete()
+  .eq("pin", pin);
+```
+
+### 🔍 Query Patterns Ottimizzate
+
+#### Range Date con Performance
+```javascript
+// Query con indici ottimizzati
+const { data } = await supabase
+  .from("timbrature")
+  .select("data, ore, tipo")
+  .eq("pin", pin)
+  .gte("data", "2024-01-01")
+  .lte("data", "2024-01-31")
+  .order("data", { ascending: true })
+  .order("ore", { ascending: true });
+```
+
+#### Aggregazioni Calcolate
+```javascript
+// Calcolo ore giornaliere
+function calcolaOreGiorno(timbratureGiorno) {
+  const entrate = timbratureGiorno.filter(t => t.tipo === 'ENTRATA');
+  const uscite = timbratureGiorno.filter(t => t.tipo === 'USCITA');
+  
+  if (entrate.length === 0 || uscite.length === 0) return 0;
+  
+  const primaEntrata = entrate[0].ore;
+  const ultimaUscita = uscite[uscite.length - 1].ore;
+  
+  return calcolaOre(primaEntrata, ultimaUscita);
 }
-
-// ✅ Cache DOM elements
-const tbody = document.getElementById("lista-dipendenti");
-const pinInput = document.getElementById("pinInput");
 ```
 
-### 🔐 Security & Validation
+### 🛡️ Validation & Security
 
 #### Input Validation
 ```javascript
-// ✅ Client-side validation
+// PIN validation
 function validatePIN(pin) {
-  const num = parseInt(pin);
-  return num >= 1 && num <= 99 && !isNaN(num);
+  const numPin = parseInt(pin);
+  return numPin >= 1 && numPin <= 99;
 }
 
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+// Date validation
+function validateDateRange(dataInizio, dataFine) {
+  const inicio = new Date(dataInizio);
+  const fine = new Date(dataFine);
+  return inicio <= fine && fine <= new Date();
 }
 
-// ✅ File upload validation
-function validateFile(file) {
+// File upload validation
+function validateFileUpload(file) {
   const maxSize = 5 * 1024 * 1024; // 5MB
-  const allowedTypes = ['application/pdf', 'application/msword'];
-  return file.size <= maxSize && allowedTypes.includes(file.type);
+  const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg'];
+  
+  if (file.size > maxSize) {
+    throw new Error("File troppo grande. Massimo 5MB.");
+  }
+  
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error("Tipo file non supportato.");
+  }
+  
+  return true;
 }
 ```
 
-#### Error Messages (User-Friendly)
+#### Error Handling Standard
 ```javascript
-// ✅ Messaggi chiari per utenti
-const errorMap = {
-  'PIN_NOT_FOUND': 'PIN non trovato. Verifica di aver inserito il PIN corretto.',
-  'DUPLICATE_ENTRY': 'Hai già registrato questa timbratura. Verifica l\'ultima operazione.',
-  'NETWORK_ERROR': 'Problema di connessione. Riprova tra qualche secondo.',
-  'VALIDATION_ERROR': 'Dati non validi. Controlla i campi evidenziati.'
-};
+// Gestione errori Supabase
+export function gestisciErroreSupabase(error) {
+  console.error('Errore Supabase:', error);
+  switch (error?.code) {
+    case 'PGRST116': return 'Nessun dato trovato';
+    case '23505': return 'PIN già esistente';
+    case '23503': return 'PIN non valido';
+    default: return error?.message || 'Errore sconosciuto';
+  }
+}
 ```
 
-### 📈 Monitoring & Analytics
+### 📋 Business Logic Rules
 
-#### Key Metrics da Monitorare
-- **Timbrature giornaliere**: Picchi e anomalie
-- **Errori frequenti**: Pattern di errori utente
-- **Performance query**: Tempo risposta database
-- **Usage patterns**: Pagine più utilizzate
+#### Timbrature Logic
+1. **Anti-duplicazione**: Max 1 ENTRATA e 1 USCITA per giorno
+2. **Giorno logico**: 8:00-5:00 (timbrature notturne → giorno precedente)
+3. **Validazione sequenza**: ENTRATA deve precedere USCITA
+4. **Calcolo automatico**: Ore = Ultima USCITA - Prima ENTRATA
 
-#### Logging Standards
+#### Archiviazione Logic
+1. **Backup completo**: Tutti i dati dipendente in Excel
+2. **Liberazione PIN**: Rende disponibile PIN per nuovi dipendenti
+3. **Conservazione storico**: Dati mantenuti in `dipendenti_archiviati`
+4. **Irreversibilità**: Archiviazione non può essere annullata
+
+#### Export Logic
+- **PDF**: Layout business con header aziendale
+- **Excel**: Dati completi con formattazione
+- **WhatsApp**: Formato text ottimizzato per mobile
+
+### 🔄 Data Lifecycle
+
+```
+Nuovo Dipendente → Utenti Attivi → Timbrature Giornaliere →
+Storico Accumulo → Archiviazione → Ex Dipendenti → Eliminazione
+```
+
+### 📱 Frontend State Management
+
+#### Modali State
 ```javascript
-// ✅ Log strutturati
-console.log('✅ Operazione completata:', {
-  operazione: 'archiviazione_dipendente',
-  pin: pin,
-  timestamp: new Date().toISOString(),
-  dettagli: { nome, cognome, timbratureCount }
-});
+// Pattern per gestione modali
+window.apriModal = (tipo) => document.getElementById(`modal${tipo}`).style.display = "flex";
+window.chiudiModal = (tipo) => document.getElementById(`modal${tipo}`).style.display = "none";
+```
 
-// ✅ Error logging
-console.error('❌ Errore:', {
-  operazione: 'inserimento_timbratura',
-  errore: error.message,
-  pin: pin,
-  timestamp: new Date().toISOString()
-});
+#### URL Parameters
+```javascript
+// Storico dipendente
+const urlParams = new URLSearchParams(window.location.search);
+const pin = urlParams.get("pin"); // Da utenti.html
+
+// Navigation pattern
+window.location.href = `storico.html?pin=${pin}`;
+```
+
+### 🎯 Performance Metrics
+
+#### Target Performance
+- **Page Load**: < 2s su 3G
+- **Database Query**: < 500ms
+- **File Export**: < 5s per 1 anno dati
+- **Mobile Response**: < 100ms touch feedback
+
+#### Monitoring Points
+```javascript
+// Performance logging
+console.time('pagina-load');
+// ...operazione...
+console.timeEnd('pagina-load');
+
+// Database performance
+console.time('query-timbrature');
+const data = await recuperaTimbrature(pin, start, end);
+console.timeEnd('query-timbrature');
+```
+
 ```
