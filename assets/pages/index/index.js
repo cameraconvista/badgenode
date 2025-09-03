@@ -27,7 +27,27 @@ function aggiornaDataOra() {
   };
   
   const dataOraFormattata = now.toLocaleDateString('it-IT', opzioni);
-  document.getElementById('dataOra').textContent = dataOraFormattata;
+  
+  // Aggiorna elementi se esistenti
+  const dataElement = document.getElementById('dataGiorno');
+  const oraElement = document.getElementById('ora');
+  
+  if (dataElement) {
+    dataElement.textContent = now.toLocaleDateString('it-IT', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+  
+  if (oraElement) {
+    oraElement.textContent = now.toLocaleTimeString('it-IT', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  }
 }
 
 // Funzione per gestire click sui numeri del keypad
@@ -238,11 +258,16 @@ function chiudiModalAdmin() {
   if (modal) modal.remove();
 }
 
-// Avvia l'aggiornamento dell'ora ogni secondo
-setInterval(aggiornaDataOra, 1000);
+//__moved__: setInterval(aggiornaDataOra, 1000);
 
 // Inizializza la data/ora al caricamento
-aggiornaDataOra();
+//__moved__: aggiornaDataOra();
+
+// --- SAFE WRAPPER: evita che errori blocchino il modulo ---
+function __safeAggiornaDataOra(){
+  try { if (typeof aggiornaDataOra === "function") aggiornaDataOra(); }
+  catch(e){ console.warn("[index] aggiornaDataOra: elemento mancante, skip", e && e.message ? e.message : e); }
+}
 
 // === Esposizione globale delle funzioni chiamate da attributi HTML ===
 // Esposizione per attributi onclick
@@ -251,3 +276,23 @@ try { if (typeof window.cancellaUltimo !== 'function' && typeof cancellaUltimo =
 try { if (typeof window.apriModalAdmin !== 'function' && typeof apriModalAdmin === 'function') { window.apriModalAdmin = apriModalAdmin; } } catch (e) {}
 try { if (typeof window.verificaPinAdmin !== 'function' && typeof verificaPinAdmin === 'function') { window.verificaPinAdmin = verificaPinAdmin; } } catch (e) {}
 try { if (typeof window.chiudiModalAdmin !== 'function' && typeof chiudiModalAdmin === 'function') { window.chiudiModalAdmin = chiudiModalAdmin; } } catch (e) {}
+
+// --- Bootstrap sicuro su DOM pronto ---
+(function __indexSafeInit__(){
+  // garantisce esecuzione dopo parsing completo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      __safeAggiornaDataOra();
+      try {
+        const __safeTick = () => { try { if (typeof aggiornaDataOra==='function') aggiornaDataOra(); } catch(_){} };
+        setInterval(__safeTick, 1000);
+      } catch(_){}
+    }, { once: true });
+  } else {
+    __safeAggiornaDataOra();
+    try {
+      const __safeTick = () => { try { if (typeof aggiornaDataOra==='function') aggiornaDataOra(); } catch(_){} };
+      setInterval(__safeTick, 1000);
+    } catch(_){}
+  }
+})();
