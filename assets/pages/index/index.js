@@ -14,58 +14,53 @@ let currentUser = null;
 
 // Funzione per aggiornare data e ora
 function aggiornaDataOra() {
-  const now = new Date();
-  const opzioni = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    timeZone: 'Europe/Rome'
-  };
-  
-  const dataOraFormattata = now.toLocaleDateString('it-IT', opzioni);
-  
-  // Aggiorna elementi se esistenti
-  const dataElement = document.getElementById('dataGiorno');
-  const oraElement = document.getElementById('ora');
-  
-  if (dataElement) {
-    dataElement.textContent = now.toLocaleDateString('it-IT', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }
-  
-  if (oraElement) {
-    oraElement.textContent = now.toLocaleTimeString('it-IT', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
+  try {
+    const now = new Date();
+    
+    // Aggiorna elementi se esistenti
+    const dataElement = document.getElementById('dataGiorno');
+    const oraElement = document.getElementById('ora');
+    
+    if (dataElement) {
+      dataElement.textContent = now.toLocaleDateString('it-IT', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    
+    if (oraElement) {
+      oraElement.textContent = now.toLocaleTimeString('it-IT', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+  } catch (error) {
+    // Gestione sicura degli errori senza spam in console
+    console.debug('[aggiornaDataOra] Elementi DOM non disponibili, skip aggiornamento');
   }
 }
 
 // Funzione per gestire click sui numeri del keypad
 async function clickNumero(numero) {
-  const display = document.getElementById('pinDisplay');
-  if (display.textContent.length < 2) {
-    display.textContent += numero;
+  const display = document.getElementById('pinInput');
+  if (display && display.value.length < 2) {
+    display.value += numero;
     
-    if (display.textContent.length === 2) {
-      await verificaPin(display.textContent);
+    if (display.value.length === 2) {
+      await verificaPin(display.value);
     }
   }
 }
 
 // Funzione per cancellare l'ultimo numero
 function cancellaUltimo() {
-  const display = document.getElementById('pinDisplay');
-  display.textContent = display.textContent.slice(0, -1);
+  const display = document.getElementById('pinInput');
+  if (display) {
+    display.value = display.value.slice(0, -1);
+  }
 }
 
 // Funzione per verificare il PIN
@@ -93,7 +88,8 @@ async function verificaPin(pin) {
   }
   
   // Reset del display
-  document.getElementById('pinDisplay').textContent = '';
+  const display = document.getElementById('pinInput');
+  if (display) display.value = '';
 }
 
 // Funzione per registrare la timbratura
@@ -150,26 +146,30 @@ async function registraTimbratura(utente) {
 
 // Funzione per mostrare messaggi di successo
 function mostraSuccesso(messaggio) {
-  const messaggioDiv = document.getElementById('messaggio');
-  messaggioDiv.innerHTML = messaggio;
-  messaggioDiv.className = 'messaggio successo';
-  messaggioDiv.style.display = 'block';
-  
-  setTimeout(() => {
-    messaggioDiv.style.display = 'none';
-  }, 3000);
+  const statusDiv = document.getElementById('status');
+  if (statusDiv) {
+    statusDiv.innerHTML = messaggio;
+    statusDiv.className = 'status-message visible success';
+    
+    setTimeout(() => {
+      statusDiv.className = 'status-message';
+      statusDiv.innerHTML = '';
+    }, 3000);
+  }
 }
 
 // Funzione per mostrare messaggi di errore
 function mostraErrore(messaggio) {
-  const messaggioDiv = document.getElementById('messaggio');
-  messaggioDiv.textContent = messaggio;
-  messaggioDiv.className = 'messaggio errore';
-  messaggioDiv.style.display = 'block';
-  
-  setTimeout(() => {
-    messaggioDiv.style.display = 'none';
-  }, 3000);
+  const statusDiv = document.getElementById('status');
+  if (statusDiv) {
+    statusDiv.textContent = messaggio;
+    statusDiv.className = 'status-message visible error';
+    
+    setTimeout(() => {
+      statusDiv.className = 'status-message';
+      statusDiv.textContent = '';
+    }, 3000);
+  }
 }
 
 // Funzione per aprire il modal admin
