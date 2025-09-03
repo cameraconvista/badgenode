@@ -1,0 +1,152 @@
+
+===============================================================================
+                    REPORT ANALISI ERRORI E CONFLITTI BADGEBOX
+===============================================================================
+Data generazione: $(date)
+Versione analizzata: Struttura cartelle e file JavaScript
+
+===============================================================================
+1. ERRORI CRITICI DI IMPORTAZIONE
+===============================================================================
+
+❌ ERRORE PRINCIPALE: File duplicati nella struttura
+- Il file `storico-logic.js` cerca di importare:
+  * `./timbrature-data.js` 
+  * `./timbrature-render.js`
+- Ma questi file esistono sia nella CARTELLA PRINCIPALE che in `assets/scripts/`
+
+CONFLITTO RILEVATO:
+- `/timbrature-data.js` (cartella principale)
+- `/assets/scripts/timbrature-data.js` (sotto-cartella)
+- `/timbrature-render.js` (cartella principale) 
+- `/assets/scripts/timbrature-render.js` (sotto-cartella)
+
+IMPATTO: Vite non riesce a risolvere correttamente gli import causando errori:
+"Failed to resolve import ./timbrature-data.js from assets/scripts/storico-logic.js"
+
+===============================================================================
+2. PROBLEMI DI STRUTTURA FILE
+===============================================================================
+
+❌ DUPLICAZIONE FILE UTILS:
+- `/calendar-utils.js` (cartella principale)
+- `/assets/scripts/calendar-utils.js` (contenuto differente!)
+
+⚠️  INCONSISTENZE RILEVATE:
+- calendar-utils.js principale: Contiene funzioni duplicate e codice ripetuto
+- calendar-utils.js in assets/scripts: Versione più pulita ma incompleta
+
+❌ IMPORTAZIONI ERRATE:
+Nel file `assets/scripts/storico-logic.js`:
+```javascript
+import { aggiungiOpzionePersonalizzato, aggiornaRange } from './calendar-utils.js';
+```
+Ma le funzioni `aggiornaRange` non esistono in calendar-utils.js!
+
+===============================================================================
+3. FUNZIONI MANCANTI/NON DEFINITE
+===============================================================================
+
+❌ FUNZIONI MANCANTI in calendar-utils.js:
+- `aggiornaRange()` - Importata ma non definita
+- `normalizzaData()` - Usata in timbrature-data.js ma non esportata
+- `formattaOre()` - Usata in timbrature-render.js ma implementazione incompleta
+
+❌ DIPENDENZE MANCANTI:
+- `supabaseClient` importato in timbrature-data.js ma percorso relativo potenzialmente errato
+- Riferimenti a './supabase-client.js' che potrebbe non esistere nel percorso corretto
+
+===============================================================================
+4. PROBLEMI DI LOGICA E IMPLEMENTAZIONE
+===============================================================================
+
+⚠️  PROBLEMI in timbrature-render.js:
+- Funzione `calcolaOreLavorate()` restituisce numero ma viene usata come oggetto
+- Inconsistenza nel calcolo ore: alcune volte decimale, altre volte oggetto
+- Metodo `normalizzaData()` chiamato ma non importato
+
+⚠️  PROBLEMI in timbrature-data.js:
+- Usa `parseInt(pin)` senza validazione
+- Gestione errori inconsistente
+- Filtro date potenzialmente problematico con timezone
+
+===============================================================================
+5. PROBLEMI DI CONFIGURAZIONE VITE
+===============================================================================
+
+❌ CONFLITTI PATH RESOLUTION:
+Vite non riesce a risolvere i moduli perché:
+1. Import relativi puntano a file nella stessa cartella
+2. Ma i file esistono sia nella root che in assets/scripts/
+3. Vite non sa quale versione usare
+
+❌ MODULE RESOLUTION:
+- storico-logic.js è in assets/scripts/ 
+- Cerca timbrature-data.js nella stessa cartella (assets/scripts/)
+- Ma potrebbe esistere anche nella root
+
+===============================================================================
+6. ERRORI DI CONSOLE RILEVATI
+===============================================================================
+
+Dai log della console:
+```
+[vite] Pre-transform error: Failed to resolve import "./timbrature-data.js"
+[vite] Pre-transform error: Failed to resolve import "./timbrature-render.js" 
+```
+
+CAUSA: Percorsi di import non corrispondono alla struttura file effettiva
+
+===============================================================================
+7. RACCOMANDAZIONI PER RISOLUZIONE
+===============================================================================
+
+🔧 AZIONI IMMEDIATE NECESSARIE:
+
+1. RIMUOVERE FILE DUPLICATI:
+   - Eliminare timbrature-data.js dalla root
+   - Eliminare timbrature-render.js dalla root
+   - Mantenere solo versioni in assets/scripts/
+
+2. UNIFICARE CALENDAR-UTILS:
+   - Unire le due versioni di calendar-utils.js
+   - Aggiungere funzioni mancanti (aggiornaRange, normalizzaData)
+   - Esportare tutte le funzioni necessarie
+
+3. CORREGGERE IMPORT:
+   - Verificare che tutti gli import puntino ai file corretti
+   - Aggiungere funzioni mancanti nelle loro definizioni
+
+4. VALIDARE LOGICA:
+   - Standardizzare il formato di ritorno di calcolaOreLavorate()
+   - Aggiungere validazione input
+   - Unificare gestione errori
+
+===============================================================================
+8. PRIORITÀ INTERVENTI
+===============================================================================
+
+🚨 PRIORITÀ MASSIMA:
+1. Risolvere duplicazione file (blocca completamente Vite)
+2. Aggiungere funzioni mancanti in calendar-utils.js
+
+⚠️  PRIORITÀ ALTA:
+3. Correggere logica calcolaOreLavorate()
+4. Verificare path supabase-client.js
+
+📋 PRIORITÀ MEDIA:
+5. Migliorare gestione errori
+6. Ottimizzare validazione input
+7. Pulire codice duplicato
+
+===============================================================================
+9. STATO CORRENTE APPLICAZIONE
+===============================================================================
+
+❌ NON FUNZIONANTE: L'applicazione non può essere avviata correttamente
+❌ ERRORI BLOCCANTI: Import non risolti impediscono il bundling
+⚠️  CODICE PRESENTE: La logica di business sembra implementata ma inaccessibile
+
+===============================================================================
+FINE REPORT - Richiede intervento immediato per risoluzione errori critici
+===============================================================================

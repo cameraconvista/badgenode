@@ -1,0 +1,8 @@
+node_modules
+attached_assets
+dist
+build
+.vscode
+.replit
+.cache
+*.log

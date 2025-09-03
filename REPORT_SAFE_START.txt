@@ -1,0 +1,49 @@
+=== REPORT SAFE START - BADGEBOX ===
+Generato: Wed Sep  3 04:21:32 PM UTC 2025
+
+📋 FILE HTML - RIGHE E DIMENSIONI:
+  • ex-dipendenti.html: 668 righe, 19518 bytes
+  • index.html: 338 righe, 13448 bytes
+  • storico.html: 146 righe, 7112 bytes
+  • utenti.html: 940 righe, 34285 bytes
+
+🎨 CSS/JS INLINE PER PAGINA:
+  • ex-dipendenti.html:
+    - CSS inline: 1 blocchi <style>
+    - JS inline: 1 blocchi <script>
+  • index.html:
+    - CSS inline: 0
+0 blocchi <style>
+    - JS inline: 3 blocchi <script>
+  • storico.html:
+    - CSS inline: 0
+0 blocchi <style>
+    - JS inline: 5 blocchi <script>
+  • utenti.html:
+    - CSS inline: 1 blocchi <style>
+    - JS inline: 1 blocchi <script>
+
+📏 FILE >500 E >800 RIGHE:
+  🔴 >800: total (8135 righe)
+  🔴 >800: ./utenti.html (940 righe)
+  🔴 >800: ./assets/styles/storico-styles.css (910 righe)
+  🟡 >500: ./ex-dipendenti.html (668 righe)
+  🟡 >500: ./GOVERNANCE.md (651 righe)
+  🟡 >500: ./FEATURES_MANUAL.md (522 righe)
+
+⚙️ CONFIGURAZIONE VITE:
+  • File configurazione: vite.config.js presente
+  • Porta: 5173
+  • Host: 0.0.0.0 (configurato)
+  • HMR: WebSocket configurato
+  • WSS: Protocol ws
+
+📦 DIPENDENZE PACKAGE.JSON:
+  • Vite: 5.4.2
+  • React: 19.1.0
+  • Script dev: npm run dev → vite
+
+🎯 STATUS ATTUALE:
+  • Branch: hardening/safe-refactor-sequenziale
+  • Backup: .backups/snapshot-BADGEBOX-/
+  • Pronto per: refactoring sequenziale sicuro
