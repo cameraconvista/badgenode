@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Gestione Utenti - BADGEBOX</title>
+
+  <!-- PWA Meta -->
+  <meta name="theme-color" content="#0d1b2b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
+
+  <!-- Icone PWA -->
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/BADGENODE.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/BADGENODE.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/BADGENODE.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="57x57" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="60x60" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="76x76" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
+  <meta name="msapplication-TileImage" content="assets/icons/BADGENODE.png" />
+  <meta name="msapplication-TileColor" content="#0d1b2b" />
+  <link rel="manifest" href="manifest.json" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="/assets/css/utenti.css">
+</head>
+<body>
+  <div class="container">
+    <img src="assets/icons/logoBN 2.png" alt="BadgeBox Logo" style="display:block; margin:-10px auto 20px; width:150px;" />
+    <h1>Archivio Dipendenti</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Storico</th>
+          <th>PIN</th>
+          <th>Nome</th>
+          <th>Cognome</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
+      <tbody id="lista-dipendenti">
+        <!-- Gli utenti verranno caricati dinamicamente -->
+      </tbody>
+    </table>
+
+    <div style="display: flex; justify-content: center; margin-top: 20px;">
+      <div style="width: 70%; display: flex; justify-content: space-between; align-items: center;">
+        <!-- Pulsante Login Utenti a sinistra -->
+        <button onclick="window.location.href='index.html'" style="
+          background-color: #b45309;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          min-width: 100px;
+          box-shadow: 0 2px 8px rgba(180, 83, 9, 0.3);
+        " onmouseover="this.style.backgroundColor='#92400e'; this.style.transform='translateY(-1px)'" 
+           onmouseout="this.style.backgroundColor='#b45309'; this.style.transform='translateY(0)'">
+          ← Login Utenti
+        </button>
+
+        <!-- Pulsanti a destra -->
+        <div style="display: flex; gap: 10px;">
+          <button onclick="apriModalNuovoDipendente()" style="
+            background-color: #16a34a;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+          " onmouseover="this.style.backgroundColor='#15803d'; this.style.transform='translateY(-1px)'" 
+             onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='translateY(0)'">
+            Aggiungi
+          </button>
+
+          <button onclick="window.location.href='ex-dipendenti.html'" style="
+            background-color: #ca8a04;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            box-shadow: 0 2px 8px rgba(202, 138, 4, 0.3);
+          " onmouseover="this.style.backgroundColor='#a16207'; this.style.transform='translateY(-1px)'" 
+             onmouseout="this.style.backgroundColor='#ca8a04'; this.style.transform='translateY(0)'">
+            ex Dipendenti
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Nuovo Dipendente -->
+  <div id="modalNuovoDipendente">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Aggiungi Nuovo Dipendente</h2>
+        <button class="close-btn" onclick="chiudiModalNuovoDipendente()">×</button>
+      </div>
+
+      <div class="sezione-modal">
+        <div class="sezione-titolo">👤 Dati Anagrafici</div>
+        <div class="campo-gruppo">
+          <div>
+            <div class="campo-label">Nome *</div>
+            <input type="text" class="campo-valore" id="nuovo-nome" required>
+          </div>
+          <div>
+            <div class="campo-label">Cognome *</div>
+            <input type="text" class="campo-valore" id="nuovo-cognome" required>
+          </div>
+        </div>
+        <div class="campo-gruppo">
+          <div>
+            <div class="campo-label">Email</div>
+            <input type="email" class="campo-valore" id="nuovo-email">
+          </div>
+          <div>
+            <div class="campo-label">Numero di Telefono</div>
+            <input type="text" class="campo-valore" id="nuovo-telefono" placeholder="Non disponibile">
+          </div>
+        </div>
+        <div class="campo-singolo">
+          <div class="campo-label">PIN (1-99)</div>
+          <input type="number" class="campo-valore" id="nuovo-pin" min="1" max="99">
+        </div>
+      </div>
+
+      <div class="sezione-modal">
+        <div class="sezione-titolo">📄 Contratto Attivo</div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Upload Contratto</div>
+          <div class="upload-area" id="nuovo-upload-area">
+            <input type="file" id="nuovo-file-input" accept=".pdf,.doc,.docx" style="display: none;">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text" id="nuovo-upload-text">
+              Trascina qui il file del contratto o clicca per selezionare<br>
+              <small>(PDF, DOC, DOCX - Max 5MB)</small>
+            </div>
+            <div class="file-info" id="nuovo-file-info" style="display: none;">
+              <div class="file-name" id="nuovo-file-name"></div>
+              <div class="file-size" id="nuovo-file-size"></div>
+              <button type="button" class="remove-file-btn" id="nuovo-remove-file-btn">Rimuovi</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Descrizione Contratto in Corso</div>
+          <textarea class="campo-valore campo-textarea" id="nuovo-descrizione-contratto" 
+                    placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
+        </div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Ore max giornaliere da contratto *</div>
+          <input type="number" class="campo-valore" id="nuovo-ore-contrattuali" 
+                 placeholder="8.00" step="0.25" min="0" max="24" value="8.00" required>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-annulla" onclick="annullaNuovoDipendente()">Annulla</button>
+        <button class="btn-salva" onclick="salvaNuovoDipendente()">Salva</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Dettagli Dipendente -->
+  <div id="modalDettagli">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitolo">Dettagli Dipendente</h2>
+        <button class="close-btn" onclick="chiudiModalDettagli()">×</button>
+      </div>
+
+      <div class="sezione-modal">
+        <div class="sezione-titolo">👤 Dati Anagrafici</div>
+        <div class="campo-gruppo">
+          <div>
+            <div class="campo-label">Nome *</div>
+            <input type="text" class="campo-valore" id="dettagli-nome" required>
+          </div>
+          <div>
+            <div class="campo-label">Cognome *</div>
+            <input type="text" class="campo-valore" id="dettagli-cognome" required>
+          </div>
+        </div>
+        <div class="campo-gruppo">
+          <div>
+            <div class="campo-label">Email</div>
+            <input type="email" class="campo-valore" id="dettagli-email">
+          </div>
+          <div>
+            <div class="campo-label">Numero di Telefono</div>
+            <input type="text" class="campo-valore" id="dettagli-telefono" placeholder="Non disponibile">
+          </div>
+        </div>
+      </div>
+
+      <div class="sezione-modal">
+        <div class="sezione-titolo">📄 Contratto Attivo</div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Upload Contratto</div>
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="file-input" accept=".pdf,.doc,.docx" style="display: none;">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text" id="upload-text">
+              Trascina qui il file del contratto o clicca per selezionare<br>
+              <small>(PDF, DOC, DOCX - Max 5MB)</small>
+            </div>
+            <div class="file-info" id="file-info" style="display: none;">
+              <div class="file-name" id="file-name"></div>
+              <div class="file-size" id="file-size"></div>
+              <button type="button" class="remove-file-btn" id="remove-file-btn">Rimuovi</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Descrizione Contratto in Corso</div>
+          <textarea class="campo-valore campo-textarea" id="dettagli-descrizione-contratto" 
+                    placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
+        </div>
+
+        <div class="campo-singolo">
+          <div class="campo-label">Ore max giornaliere da contratto *</div>
+          <input type="number" class="campo-valore" id="dettagli-ore-contrattuali" 
+                 placeholder="8.00" step="0.25" min="0" max="24" required>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-annulla" onclick="annullaModifiche()">Annulla</button>
+        <button class="btn-salva" onclick="salvaModifiche()">Salva</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/assets/pages/utenti/index.js"></script>
+</body>
+</html>
