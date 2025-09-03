@@ -130,7 +130,7 @@
     }
 
     /* Pulsanti azioni */
-    .download-btn, .restore-btn, .delete-btn {
+    .download-btn, .delete-btn {
       background: none;
       border: none;
       font-weight: 600;
@@ -153,10 +153,6 @@
     }
 
     .download-btn:hover, .download-btn:active {
-      transform: scale(0.95);
-    }
-
-    .restore-btn:hover, .restore-btn:active {
       transform: scale(0.95);
     }
 
@@ -201,7 +197,7 @@
 
     /* Touch Optimization */
     @media (pointer: coarse) {
-      .download-btn, .restore-btn, .delete-btn {
+      .download-btn, .delete-btn {
         min-width: 48px;
         min-height: 48px;
         padding: 10px;
@@ -323,7 +319,7 @@
       }
       
       /* Pulsanti azioni ottimizzati per touch */
-      .download-btn, .restore-btn, .delete-btn { 
+      .download-btn, .delete-btn { 
         min-width: 32px; 
         min-height: 32px;
         max-width: 32px;
@@ -426,7 +422,7 @@
         height: 48px;
       }
 
-      .download-btn, .restore-btn, .delete-btn {
+      .download-btn, .delete-btn {
         min-width: 28px;
         min-height: 28px;
         max-width: 28px;
@@ -453,7 +449,7 @@
       th, td { padding: 8px 6px; font-size: 13px; }
       th { font-size: 15px; height: 55px; }
       td { height: 55px; }
-      .download-btn, .restore-btn, .delete-btn { font-size: 18px; }
+      .download-btn, .delete-btn { font-size: 18px; }
     }
 
     @media (min-width: 769px) and (max-width: 1024px) {
@@ -464,7 +460,7 @@
       th, td { padding: 10px 8px; font-size: 15px; }
       th { font-size: 18px; height: 60px; }
       td { height: 50px; }
-      .download-btn, .restore-btn, .delete-btn { font-size: 20px; }
+      .download-btn, .delete-btn { font-size: 20px; }
     }
 
     @media (min-width: 1025px) {
@@ -475,7 +471,7 @@
       td { height: 55px; }
       th { font-size: 20px; height: 64px; }
       td { font-size: 18px; }
-      .download-btn, .restore-btn, .delete-btn { font-size: 22px; }
+      .download-btn, .delete-btn { font-size: 22px; }
     }
 
     @media (orientation: landscape) and (max-height: 600px) {
@@ -485,7 +481,7 @@
       table { font-size: 12px; }
       th { height: 45px; font-size: 14px; }
       td { height: 40px; font-size: 12px; }
-      .download-btn, .restore-btn, .delete-btn { font-size: 14px; }
+      .download-btn, .delete-btn { font-size: 14px; }
     }
   </style>
 </head>
@@ -571,9 +567,6 @@
                 <button class="download-btn" onclick="scaricaExcel('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Scarica Excel">
                   <img src="assets/icons/esporta.png" alt="Esporta Excel" style="width: 24px; height: 24px;" />
                 </button>
-                <button class="restore-btn" onclick="ripristinaDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Ripristina">
-                  ↩️
-                </button>
                 <button class="delete-btn" onclick="eliminaExDipendente('${exDipendente.id}', '${exDipendente.nome}', '${exDipendente.cognome}')" title="Elimina Definitivamente">
                   ❌
                 </button>
@@ -641,76 +634,7 @@
       }
     };
 
-    window.ripristinaDipendente = async (id, nome, cognome) => {
-      if (!confirm(`Sei sicuro di voler ripristinare ${nome} ${cognome} tra i dipendenti attivi?`)) return;
-      if (!confirm("ATTENZIONE: Le timbrature archiviate NON verranno ripristinate.\nIl dipendente tornerà attivo con storico vuoto.\nConfermi il ripristino?")) return;
-
-      try {
-        const { data: exDipendente, error: errorRecupero } = await supabase
-          .from("dipendenti_archiviati")
-          .select("*")
-          .eq("id", id)
-          .single();
-
-        if (errorRecupero) {
-          console.error("Errore recupero ex dipendente:", errorRecupero);
-          alert("Errore durante il recupero: " + errorRecupero.message);
-          return;
-        }
-
-        const { data: pinEsistente, error: errorPin } = await supabase
-          .from("utenti")
-          .select("pin")
-          .eq("pin", exDipendente.pin);
-
-        if (errorPin) {
-          console.error("Errore verifica PIN:", errorPin);
-          alert("Errore durante la verifica PIN: " + errorPin.message);
-          return;
-        }
-
-        if (pinEsistente && pinEsistente.length > 0) {
-          alert(`Impossibile ripristinare: PIN ${exDipendente.pin} già in uso da un altro dipendente attivo`);
-          return;
-        }
-
-        const { error: errorInserimento } = await supabase
-          .from("utenti")
-          .insert([{
-            pin: exDipendente.pin,
-            nome: exDipendente.nome,
-            cognome: exDipendente.cognome,
-            email: exDipendente.email,
-            telefono: exDipendente.telefono,
-            ore_contrattuali: exDipendente.ore_contrattuali,
-            descrizione_contratto: exDipendente.descrizione_contratto
-          }]);
-
-        if (errorInserimento) {
-          console.error("Errore inserimento utente:", errorInserimento);
-          alert("Errore durante il ripristino: " + errorInserimento.message);
-          return;
-        }
-
-        const { error: errorRimozione } = await supabase
-          .from("dipendenti_archiviati")
-          .delete()
-          .eq("id", id);
-
-        if (errorRimozione) {
-          console.error("Errore rimozione da archivio:", errorRimozione);
-          alert("Errore durante la rimozione dall'archivio: " + errorRimozione.message);
-          return;
-        }
-
-        alert(`✅ ${nome} ${cognome} ripristinato con successo!\nIl dipendente è tornato attivo con PIN ${exDipendente.pin}.`);
-        caricaExDipendenti();
-
-      } catch (error) {
-        console.error("Errore imprevisto:", error);
-        alert("Errore durante il ripristino");
-      }
-    };
+    
 
     window.eliminaExDipendente = async (id, nome, cognome) => {
       if (!confirm(`⚠️ ATTENZIONE! Stai per eliminare DEFINITIVAMENTE l'ex dipendente:\n\n${nome} ${cognome}\n\nQuesta azione eliminerà:\n• L'ex dipendente dall'archivio\n• Tutti i suoi dati archiviati\n• Il file Excel associato\n\nQuesta operazione NON può essere annullata!\n\nSei sicuro di voler procedere?`)) return;
