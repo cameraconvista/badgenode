@@ -7,9 +7,7 @@ export default defineConfig({
   server: {
     hmr: false
   },
-  preview: {allowedHosts: [/\.replit\.dev$/, /\.repl\.co$/, 'localhost'],
-host: true,
-
+  preview: {
     port: 5173,
     strictPort: true
   }
