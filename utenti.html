@@ -386,7 +386,7 @@
         btn.disabled = false;
       }
     };
-    window.archiviaUtente = async (pin) => {
+    const archiviaUtente = async (pin) => {
       if (!confirm("Sei sicuro di voler archiviare questo dipendente?\n\nIl dipendente verrà rimosso dai dipendenti attivi e il suo PIN tornerà disponibile.")) {
         return;
       }
@@ -484,6 +484,9 @@
         alert(`Errore durante l'archiviazione: ${error.message}`);
       }
     };
+    
+    // Espone la funzione globalmente per gli attributi onclick
+    window.archiviaUtente = archiviaUtente;
     window.eliminaUtente = (pin, nome, cognome) => {
       if (confirm(`Sei sicuro di voler eliminare definitivamente ${nome} ${cognome}?`)) {
         alert(`Dipendente ${nome} ${cognome} eliminato (funzione in fase di implementazione)`);
