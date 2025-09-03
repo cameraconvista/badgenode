@@ -732,9 +732,102 @@
         btn.disabled = false;
       }
     };
-    window.archiviaUtente = (pin) => {
-      if (confirm("Sei sicuro di voler archiviare questo dipendente?")) {
-        alert(`Dipendente con PIN ${pin} archiviato (funzione in fase di implementazione)`);
+    window.archiviaUtente = async (pin) => {
+      if (!confirm("Sei sicuro di voler archiviare questo dipendente?\n\nIl dipendente verrà rimosso dai dipendenti attivi e il suo PIN tornerà disponibile.")) {
+        return;
+      }
+
+      try {
+        console.log(`🗃️ Avvio archiviazione dipendente PIN ${pin}...`);
+
+        // 1. Recupera dati completi del dipendente
+        const { data: dipendente, error: errorDipendente } = await supabase
+          .from("utenti")
+          .select("*")
+          .eq("pin", parseInt(pin))
+          .single();
+
+        if (errorDipendente || !dipendente) {
+          throw new Error(`Dipendente con PIN ${pin} non trovato: ${errorDipendente?.message}`);
+        }
+
+        // 2. Recupera tutte le timbrature storiche del dipendente
+        const { data: timbrature, error: errorTimbrature } = await supabase
+          .from("timbrature")
+          .select("*")
+          .eq("pin", parseInt(pin))
+          .order("data", { ascending: true })
+          .order("ore", { ascending: true });
+
+        if (errorTimbrature) {
+          console.warn("Errore recupero timbrature:", errorTimbrature);
+        }
+
+        // 3. Genera dati Excel completi (formato JSON serializzato)
+        const dataGenerazione = new Date().toISOString();
+        const excelData = {
+          dipendente: {
+            pin: dipendente.pin,
+            nome: dipendente.nome,
+            cognome: dipendente.cognome,
+            email: dipendente.email,
+            telefono: dipendente.telefono,
+            ore_contrattuali: dipendente.ore_contrattuali,
+            descrizione_contratto: dipendente.descrizione_contratto
+          },
+          timbrature: timbrature || [],
+          totaleTimbrature: (timbrature || []).length,
+          dataGenerazione: dataGenerazione,
+          pinLiberato: dipendente.pin // Traccia che questo PIN è ora libero
+        };
+
+        const nomeFileExcel = `${dipendente.nome}_${dipendente.cognome}_completo_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+        // 4. Inserisci nella tabella dipendenti_archiviati
+        const { error: errorArchiviazione } = await supabase
+          .from("dipendenti_archiviati")
+          .insert([{
+            pin: dipendente.pin,
+            nome: dipendente.nome,
+            cognome: dipendente.cognome,
+            email: dipendente.email,
+            telefono: dipendente.telefono,
+            ore_contrattuali: dipendente.ore_contrattuali,
+            descrizione_contratto: dipendente.descrizione_contratto,
+            data_archiviazione: dataGenerazione,
+            file_excel_path: JSON.stringify(excelData), // Serializza come JSON
+            file_excel_name: nomeFileExcel
+          }]);
+
+        if (errorArchiviazione) {
+          throw new Error(`Errore durante l'archiviazione: ${errorArchiviazione.message}`);
+        }
+
+        // 5. Rimuovi dipendente dalla tabella utenti attivi (libera il PIN)
+        const { error: errorRimozione } = await supabase
+          .from("utenti")
+          .delete()
+          .eq("pin", parseInt(pin));
+
+        if (errorRimozione) {
+          throw new Error(`Errore durante la rimozione: ${errorRimozione.message}`);
+        }
+
+        // Successo!
+        alert(`✅ Dipendente ${dipendente.nome} ${dipendente.cognome} archiviato con successo!\n\n📊 Dati archiviati:\n• ${(timbrature || []).length} timbrature storiche\n• File Excel generato: ${nomeFileExcel}\n• PIN ${pin} ora disponibile per nuovi dipendenti\n\nIl dipendente è ora consultabile in "ex Dipendenti".`);
+        
+        console.log(`✅ Archiviazione completata per PIN ${pin}:`);
+        console.log(`   • Nome: ${dipendente.nome} ${dipendente.cognome}`);
+        console.log(`   • Timbrature archiviate: ${(timbrature || []).length}`);
+        console.log(`   • PIN liberato: ${pin}`);
+        console.log(`   • File Excel: ${nomeFileExcel}`);
+
+        // Ricarica la tabella per riflettere le modifiche
+        caricaUtenti();
+
+      } catch (error) {
+        console.error("❌ Errore durante l'archiviazione:", error);
+        alert(`Errore durante l'archiviazione: ${error.message}`);
       }
     };
     window.eliminaUtente = (pin, nome, cognome) => {
