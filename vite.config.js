@@ -1,16 +1,20 @@
-import { defineConfig } from 'vite'
 
-// Config minimale, sicura:
-// - dev server con HMR disattivato (evita WS in dev)
-// - preview statica su 5173 (nessun WS)
+import { defineConfig } from 'vite';
+
 export default defineConfig({
   server: {
-    hmr: false
-  },
-  preview: {allowedHosts: [/\.replit\.dev$/, /\.repl\.co$/, 'localhost'],
-host: true,
-
+    host: true,
     port: 5173,
-    strictPort: true
-  }
-})
+    strictPort: true,
+    hmr: false,
+    // consente qualsiasi host (utile su Replit)
+    allowedHosts: true,
+  },
+  preview: {
+    host: true,
+    port: 5173,
+    strictPort: true,
+    // consente qualsiasi host (utile su Replit)
+    allowedHosts: true,
+  },
+});
