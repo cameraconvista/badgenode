@@ -328,7 +328,9 @@ body {
 .storico-table-wrap {
   max-height: calc(100vh - 300px);
   overflow-y: auto;
+  overflow-x: auto;
   position: relative;
+  border-radius: 8px;
 }
 
 .tabella-container {
@@ -378,7 +380,7 @@ table tbody tr:not(:last-child) td {
 }
 
 table th {
-  background-color: #1f3a56;
+  background-color: #1f3a56 !important;
   font-weight: 600;
   font-size: 15px;
   /* patch: scroll + sticky storico */
@@ -386,7 +388,7 @@ table th {
   top: 0;
   z-index: 15;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  background-color: #1f3a56 !important;
+  backdrop-filter: blur(2px);
 }
 
 table td {
