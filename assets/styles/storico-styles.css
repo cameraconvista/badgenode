@@ -1085,6 +1085,10 @@ table tfoot.totali {
   font-weight: 600;
 }
 
+.totali__label {
+  text-align: left !important; /* forza allineamento a sinistra */
+}
+
 .totali__ore span,
 .totali__extra span {
   display: inline-block;
