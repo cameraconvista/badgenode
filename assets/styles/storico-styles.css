@@ -322,9 +322,10 @@ body {
   padding: 13px;
   overflow: hidden;
   overflow-x: auto;
-  /* patch: scroll + sticky storico */
-  max-height: calc(100vh - 280px);
+  /* Espansione orizzontale della tabella */
+  max-height: calc(100vh - 340px);
   overflow-y: auto;
+  position: relative;
 }
 
 .tabella-container {
@@ -332,10 +333,12 @@ body {
   border-radius: 0;
   padding: 0;
   overflow: hidden;
+  padding-bottom: 60px; /* Spazio per la barra totali fissa */
 }
 
 table {
-  width: 100%;
+  width: 120%; /* Espansione orizzontale della tabella */
+  min-width: 1000px; /* Larghezza minima per garantire spazio */
   border-collapse: separate;
   border-spacing: 0;
   background-color: transparent;
@@ -540,6 +543,7 @@ button#btnChiudi {
   margin-right: auto;
   gap: 12px;
   margin-top: 8px;
+  margin-bottom: 20px; /* Spazio per la barra totali fissa */
   padding: 4px 0;
 }
 
@@ -688,6 +692,19 @@ button#btnChiudi {
 
 /* Media query per schermi molto piccoli */
 @media (max-width: 480px) {
+  .barra-totali-fissa {
+    bottom: 70px;
+    width: calc(100% - 20px);
+    padding: 8px 12px;
+    font-size: 14px;
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .barra-totali-fissa .label {
+    font-size: 12px;
+  }
   .filtro-temporale {
     gap: 12px;
     padding: 0 10px;
@@ -1061,15 +1078,48 @@ button#btnChiudi {
   }
 }
 
-/* patch: footer totali sticky + allineamento colonne */
+/* Barra totali fissa indipendente dallo scroll */
+.barra-totali-fissa {
+  position: fixed;
+  bottom: 80px; /* Sopra i pulsanti in fondo */
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 860px; /* Stessa larghezza della tabella */
+  background: linear-gradient(135deg, #1f3a56, #2d4a63);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: white;
+}
+
+.barra-totali-fissa .label {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.barra-totali-fissa .ore {
+  color: #ffff99;
+  font-weight: 700;
+}
+
+.barra-totali-fissa .extra {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+/* Rimuovi il vecchio footer sticky dalla tabella */
 table.storico-table tfoot.totali,
 .storico-table tfoot.totali,
 table tfoot.totali {
-  position: sticky;
-  bottom: 0;
-  background: var(--bg-dark, #162432);
-  z-index: 2;                 /* sopra alle righe */
-  box-shadow: 0 -2px 6px rgba(0,0,0,.25);
+  display: none !important;
 }
 
 .totali__label,
@@ -1077,23 +1127,7 @@ table tfoot.totali {
 .totali__extra,
 .totali td,
 .totali th {
-  height: 48px;               /* uguale alle righe della tabella */
-  padding: 8px 12px;
-  vertical-align: middle;
-  border-top: 1px solid rgba(255,255,255,.08);
-  color: inherit;             /* non cambiare la palette */
-  font-weight: 600;
-}
-
-.totali__label {
-  text-align: left !important; /* forza allineamento a sinistra */
-}
-
-.totali__ore span,
-.totali__extra span {
-  display: inline-block;
-  min-width: 3ch;             /* evita "salti" */
-  text-align: right;          /* numeri allineati come nelle celle sopra */
+  display: none !important;
 }
 
 /* se esiste un vecchio box totali sotto la tabella, nascondilo */
