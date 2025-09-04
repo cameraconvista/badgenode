@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no" />
+  <title>Storico Timbrature - BADGEBOX</title>
+  
+  <!-- PWA Meta -->
+  <meta name="theme-color" content="#0d1b2b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
+  
+  <!-- Icone PWA -->
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
+  <link rel="manifest" href="manifest.json" />
+  
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="assets/styles/storico-styles.css" />
+</head>
+<body>
+  <div class="container" style="position: relative;">
+    <button id="torna-utenti" class="btn-torna-utenti" title="Torna a Utenti" data-action="back">
+      ⬅
+    </button>
+    <div style="position: relative; text-align: center; margin-bottom: 10px;">
+      <img src="assets/icons/logo.png" alt="BadgeBox Logo" style="width: 120px; height: auto; margin-bottom: -5px;" />
+      <p class="titolo-piccolo">Storico Timbrature</p>
+      <h1 id="intestazione" class="titolo-grande">Nome Cognome</h1>
+    </div>
+
+    <div class="filtro-temporale">
+      <select id="filtro-mese">
+        <option value="corrente">Mese corrente</option>
+        <option value="precedente">Mese precedente</option>
+        <option value="due-precedenti">2 mesi precedenti</option>
+      </select>
+      <div class="data-container">
+        <input type="date" id="data-inizio" />
+        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-inizio" />
+      </div>
+      <div class="data-container">
+        <input type="date" id="data-fine" />
+        <img src="assets/icons/calendario.png" class="icona-calendario-campo" alt="Calendario" data-campo="data-fine" />
+      </div>
+    </div>
+
+    <div class="tabella-wrapper">
+      <div class="tabella-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Entrata</th>
+              <th>Uscita</th>
+              <th>Ore</th>
+              <th>EXTRA</th>
+              <th>Modifica</th>
+            </tr>
+          </thead>
+          <tbody id="storico-body"\1></tbody>
+          <tfoot class="totali">
+            <tr>
+              <!-- "TOTALE MENSILE" occupa le prime 3 colonne (Data, Entrata, Uscita) -->
+              <th scope="row" colspan="3" class="totali__label">TOTALE MENSILE</th>
+
+              <!-- questi due vanno sotto le colonne "Ore" ed "Extra" -->
+              <td class="totali__ore"><span id="totale-ore">0.00</span></td>
+              <td class="totali__extra"><span id="totale-extra">0.00</span></td>
+
+              <!-- ultima colonna "Modifica" resta vuota per allineamento -->
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="pulsanti-basso">
+      <button id="btn-invia" title="Scarica PDF">
+        <img src="assets/icons/pdf.png" alt="PDF" />
+      </button>
+      <button id="btn-esporta" title="Esporta Excel">
+        <img src="assets/icons/esporta.png" alt="Esporta Excel" />
+      </button>
+    </div>
+  </div>
+
+  <div id="modalOverlay">
+    <div id="modal">
+      <h2>Modifica Timbrature</h2>
+      <form id="modaleForm">
+        <label>Data:</label>
+        <input type="date" id="modale-data" disabled />
+        <label for="modale-entrata">Entrata:</label>
+        <input type="time" id="modale-entrata" />
+        <label for="modale-uscita">Uscita:</label>
+        <input type="time" id="modale-uscita" />
+        <div class="modal-btns">
+          <button type="button" id="btnSalva">Salva</button>
+          <button type="button" id="btnElimina">Elimina</button>
+          <button type="button" id="btnChiudi">Chiudi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="assets/pages/storico/index.js"></script>
+</body>
+</html>
