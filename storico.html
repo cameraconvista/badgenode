@@ -4,18 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no" />
   <title>Storico Timbrature - BADGEBOX</title>
-
+  
   <!-- PWA Meta -->
   <meta name="theme-color" content="#0d1b2b" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
-
+  
   <!-- Icone PWA -->
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/BADGENODE.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
   <link rel="manifest" href="manifest.json" />
-
+  
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="assets/styles/storico-styles.css" />
 </head>
@@ -59,16 +59,22 @@
               <th>Modifica</th>
             </tr>
           </thead>
-          <tbody id="storico-body"></tbody>
+          <tbody id="storico-body"\1></tbody>
+          <tfoot class="totali">
+            <tr>
+              <!-- "TOTALE MENSILE" occupa le prime 3 colonne (Data, Entrata, Uscita) -->
+              <th scope="row" colspan="3" class="totali__label">TOTALE MENSILE</th>
+
+              <!-- questi due vanno sotto le colonne "Ore" ed "Extra" -->
+              <td class="totali__ore"><span id="totale-ore">0.00</span></td>
+              <td class="totali__extra"><span id="totale-extra">0.00</span></td>
+
+              <!-- ultima colonna "Modifica" resta vuota per allineamento -->
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
-    </div>
-
-    <div class="totali-barra">
-      <div class="totali-label">TOTALE MENSILE</div>
-      <div class="totali-ore"><span id="totale-ore">0.00</span></div>
-      <div class="totali-extra"><span id="totale-extra">0.00</span></div>
-      <div class="totali-modifica"></div>
     </div>
 
     <div class="pulsanti-basso">

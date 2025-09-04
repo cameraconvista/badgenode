@@ -84,9 +84,9 @@ async function aggiornaDati() {
       const result = renderizzaTabella(dipendente, timbrature, dataInizio?.value, dataFine?.value, currentTbody, footerTbody, pin);
       totaleMensile = result?.totaleMensile || '—';
       
-      // Aggiorna i nuovi elementi del footer con i valori corretti
-      if (totaleOreEl) totaleOreEl.textContent = result?.totaleMensile || '0.00';
-      if (totaleExtraEl) totaleExtraEl.textContent = Number(result?.totaleMensileExtra ?? 0).toFixed(2);
+      // Aggiorna i nuovi elementi del footer
+      if (totaleOreEl) totaleOreEl.textContent = Number(result?.totaleOre ?? 0).toFixed(2);
+      if (totaleExtraEl) totaleExtraEl.textContent = Number(result?.totaleExtra ?? 0).toFixed(2);
       
       // Se non ci sono dati, mostra messaggio
       if (!timbrature || timbrature.length === 0) {
