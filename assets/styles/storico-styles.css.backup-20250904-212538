@@ -322,8 +322,7 @@ body {
   padding: 13px;
   overflow: hidden;
   overflow-x: auto;
-  /* patch: scroll + sticky storico */
-  max-height: calc(100vh - 280px);
+  max-height: 60vh;
   overflow-y: auto;
 }
 
@@ -371,10 +370,6 @@ table th {
   background-color: #1f3a56;
   font-weight: 600;
   font-size: 15px;
-  /* patch: scroll + sticky storico */
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 
 table td {
@@ -388,21 +383,6 @@ table tr.weekend td {
 
 table tr:last-child td {
   border-bottom: none;
-}
-
-/* patch: scroll + sticky storico */
-table tfoot tr td {
-  background-color: #1f3a56;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  font-weight: 600;
-}
-
-/* patch: allineamento righe identico */
-table tbody tr td {
-  padding: 6px 12px;
-  line-height: 1.2;
 }
 
 /* Colonna icona modifica */
