@@ -25,38 +25,67 @@ const footerTbody = getElementSafely("totale-footer");
 const totaleOreEl = getElementSafely("totale-ore");
 const totaleExtraEl = getElementSafely("totale-extra");
 
-// Funzione helper per aggiornare i totali nella UI
-function aggiornaTotali(timbratureAggiornate = timbrature) {
-  let oreTotali = 0;
-  let extraTotali = 0;
+// Funzione per aggiornare i totali (con parsing robusto)
+function aggiornaTotali(recordsVisibili) {
+  const num = v => parseFloat(String(v).replace(',', '.')) || 0;
+  
+  let totOre = 0;
+  let totExtra = 0;
 
-  timbratureAggiornate.forEach(t => {
-    const ore = parseFloat(t.ore || '0');
-    const extra = parseFloat(t.extra || '0');
-    oreTotali += ore;
-    extraTotali += extra;
-  });
+  // Se non vengono passati records, usa i dati globali
+  const datiDaAnalizzare = recordsVisibili || timbrature;
+  
+  if (datiDaAnalizzare && Array.isArray(datiDaAnalizzare)) {
+    datiDaAnalizzare.forEach(record => {
+      totOre += num(record.ore);
+      totExtra += num(record.extra);
+    });
+  }
 
-  if (totaleOreEl) {
-    totaleOreEl.textContent = oreTotali.toFixed(2);
+  // Aggiorna gli elementi della barra totali
+  const totOreEl = document.getElementById('storico-tot-ore');
+  const totExtraEl = document.getElementById('storico-tot-extra');
+  
+  if (totOreEl) {
+    totOreEl.textContent = totOre.toFixed(2);
   }
-  if (totaleExtraEl) {
-    totaleExtraEl.textContent = extraTotali.toFixed(2);
+  if (totExtraEl) {
+    totExtraEl.textContent = totExtra.toFixed(2);
   }
-  console.log('📊 Totali aggiornati:', { oreTotali, extraTotali });
+  
+  console.log('📊 Totali aggiornati:', { totOre: totOre.toFixed(2), totExtra: totExtra.toFixed(2) });
 }
 
 // Funzione per sincronizzare le colonne del footer con quelle della tabella
 function syncFooterColumns() {
-  const headerCells = document.querySelectorAll('#storico-header th'); // Assumendo che ci sia un thead con id storico-header
-  const footerCells = document.querySelectorAll('#totale-footer td');
+  const headerCells = document.querySelectorAll('.storico-table thead th');
+  const totaliBar = document.getElementById('storico-totali');
+  
+  if (!headerCells.length || !totaliBar) return;
 
-  if (headerCells.length === footerCells.length) {
-    footerCells.forEach((cell, index) => {
-      if (headerCells[index]) {
-        cell.style.width = headerCells[index].offsetWidth + 'px';
-      }
-    });
+  // Costruisci la stringa gridTemplateColumns dalle larghezze dei th
+  const colWidths = Array.from(headerCells).map(th => th.offsetWidth + 'px');
+  totaliBar.style.gridTemplateColumns = colWidths.join(' ');
+
+  // Trova gli indici delle colonne "Ore" e "Extra"
+  let indexOre = -1;
+  let indexExtra = -1;
+  
+  headerCells.forEach((th, index) => {
+    const text = th.textContent.toLowerCase().trim();
+    if (text === 'ore') indexOre = index;
+    if (text === 'extra') indexExtra = index;
+  });
+
+  // Posiziona i totali nelle colonne corrette
+  const totOreEl = document.getElementById('storico-tot-ore');
+  const totExtraEl = document.getElementById('storico-tot-extra');
+  
+  if (totOreEl && indexOre >= 0) {
+    totOreEl.style.gridColumn = (indexOre + 1) + ' / span 1';
+  }
+  if (totExtraEl && indexExtra >= 0) {
+    totExtraEl.style.gridColumn = (indexExtra + 1) + ' / span 1';
   }
 }
 
@@ -125,13 +154,16 @@ async function aggiornaDati() {
         aggiornaTotali([]);
       } else {
         // Aggiorna i totali con i dati renderizzati
-        aggiornaTotali();
+        aggiornaTotali(timbrature);
       }
 
       // Sincronizza le colonne del footer
       setTimeout(() => {
         syncFooterColumns();
       }, 100);
+      
+      // Aggiungi listener per resize
+      window.addEventListener('resize', syncFooterColumns);
     }
   } catch (error) {
     console.error('❌ Errore nel caricamento dati:', error);

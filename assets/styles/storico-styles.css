@@ -1114,25 +1114,34 @@ table tfoot.totali {
   display: grid;
   gap: 0;
   align-items: center;
-  background: rgba(9, 22, 34, 0.96);
+  background: rgba(30, 41, 59, 0.98);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 6px 12px;
-  margin-top: -1px;
+  padding: 11px 12px;
+  margin-top: 0;
   backdrop-filter: blur(8px);
+  height: auto;
+  min-height: 48px;
 }
 
 .storico-totali-bar .label {
-  grid-column: 1 / span 3;
+  grid-column: 1 / span 1;
   text-align: left;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: white;
+  padding: 0 12px;
 }
 
-.storico-totali-bar .tot-ore,
-.storico-totali-bar .tot-extra {
-  text-align: right;
+.storico-totali-bar .tot-ore {
+  text-align: center;
   font-weight: 700;
-  color: #ffd666;
-  padding: 0 8px;
+  color: #ffff99;
+  padding: 0 12px;
+}
+
+.storico-totali-bar .tot-extra {
+  text-align: center;
+  font-weight: 700;
+  color: #fbbf24;
+  padding: 0 12px;
 }
