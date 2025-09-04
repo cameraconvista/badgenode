@@ -1,0 +1,45 @@
+// storico index bootstrap (safe)
+(function(){
+  const g = (n,f)=>{ try{ if(typeof window[n]!=='function' && typeof f==='function'){ window[n]=f; } }catch(_){ } };
+  // Aggiungi qui alias comuni nel caso vengano usati inline in storico.html:
+  // Esempi (sostituisci solo se realmente presenti inline):
+  // g('filtraStorico', typeof filtraStorico==='function'? filtraStorico : undefined);
+  // g('exportExcel',  typeof exportExcel ==='function'? exportExcel  : undefined);
+  // g('exportPDF',    typeof exportPDF   ==='function'? exportPDF    : undefined);
+})();
+(function(){
+  const g = (n,f)=>{ try{ if(typeof window[n]!=='function' && typeof f==='function'){ window[n]=f; } }catch(_){ } };
+  // Aggiungi qui alias comuni nel caso vengano usati inline in storico.html:
+  // Esempi (sostituisci solo se realmente presenti inline):
+  // g('filtraStorico', typeof filtraStorico==='function'? filtraStorico : undefined);
+  // g('exportExcel',  typeof exportExcel ==='function'? exportExcel  : undefined);
+  // g('exportPDF',    typeof exportPDF   ==='function'? exportPDF    : undefined);
+})();
+// === AUTO-EXPOSE storico (generated 20250903-233138) ===
+// === /AUTO-EXPOSE ===
+
+/* AUTO-BOOT storico */
+(function () {
+  const boot = () => {
+    try {
+      const qs = new URLSearchParams(location.search);
+      const pin =
+        qs.get('pin') || qs.get('pin1') || qs.get('pin_utente') || qs.get('pinUtente') || '';
+
+      // Prova le inizializzazioni più probabili, nell'ordine
+      if (typeof initStorico    === 'function') { initStorico(pin);    return; }
+      if (typeof caricaStorico  === 'function') { caricaStorico(pin);  return; }
+      if (typeof loadStorico    === 'function') { loadStorico(pin);    return; }
+      if (typeof renderStorico  === 'function') { renderStorico(pin);  return; }
+      if (typeof main           === 'function') { try { main(); } catch (_) {} }
+    } catch (e) {
+      console.error('BOOT storico error:', e);
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+})();

@@ -1,0 +1,207 @@
+// storico index bootstrap (safe)
+(function(){
+  const g = (n,f)=>{ try{ if(typeof window[n]!=='function' && typeof f==='function'){ window[n]=f; } }catch(_){ } };
+  // Aggiungi qui alias comuni nel caso vengano usati inline in storico.html:
+  // Esempi (sostituisci solo se realmente presenti inline):
+  // g('filtraStorico', typeof filtraStorico==='function'? filtraStorico : undefined);
+  // g('exportExcel',  typeof exportExcel ==='function'? exportExcel  : undefined);
+  // g('exportPDF',    typeof exportPDF   ==='function'? exportPDF    : undefined);
+})();
+(function(){
+  const g = (n,f)=>{ try{ if(typeof window[n]!=='function' && typeof f==='function'){ window[n]=f; } }catch(_){ } };
+  // Aggiungi qui alias comuni nel caso vengano usati inline in storico.html:
+  // Esempi (sostituisci solo se realmente presenti inline):
+  // g('filtraStorico', typeof filtraStorico==='function'? filtraStorico : undefined);
+  // g('exportExcel',  typeof exportExcel ==='function'? exportExcel  : undefined);
+  // g('exportPDF',    typeof exportPDF   ==='function'? exportPDF    : undefined);
+})();
+// === AUTO-EXPOSE storico (generated 20250903-233138) ===
+// === /AUTO-EXPOSE ===
+
+/* AUTO-BOOT storico */
+(function () {
+  const boot = () => {
+    try {
+      const qs = new URLSearchParams(location.search);
+      const pin =
+        qs.get('pin') || qs.get('pin1') || qs.get('pin_utente') || qs.get('pinUtente') || '';
+
+      // Prova le inizializzazioni più probabili, nell'ordine
+      if (typeof initStorico    === 'function') { initStorico(pin);    return; }
+      if (typeof caricaStorico  === 'function') { caricaStorico(pin);  return; }
+      if (typeof loadStorico    === 'function') { loadStorico(pin);    return; }
+      if (typeof renderStorico  === 'function') { renderStorico(pin);  return; }
+      if (typeof main           === 'function') { try { main(); } catch (_) {} }
+    } catch (e) {
+      console.error('BOOT storico error:', e);
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+
+/* === PATCH STORICO (back+bootstrap) === */
+(() => {
+  if (window.__storicoPatchApplied) return;
+  window.__storicoPatchApplied = true;
+
+  // Delegato per bottone "indietro/torna"
+  function bindBackDelegate() {
+    document.addEventListener('click', (ev) => {
+      const sel = [
+        '[data-action="back"]',
+        '.back', '.btn-back', '.torna', '.indietro',
+        '[aria-label*="indietro"]', '[title*="indietro"]',
+        '[aria-label*="torna"]',   '[title*="torna"]'
+      ].join(',');
+      const el = ev.target.closest(sel);
+      if (!el) return;
+      ev.preventDefault();
+      try {
+        if (history.length > 1) history.back();
+        else location.href = 'utenti.html';
+      } catch (_) {
+        location.href = 'utenti.html';
+      }
+    }, { passive: false });
+  }
+
+  // Espone globalmente alcune funzioni se definite nel modulo (idempotente)
+  function exposeLikely(names) {
+    names.forEach(n => {
+      try {
+        if (typeof window[n] !== 'function' && typeof eval(n) === 'function') {
+          window[n] = eval(n);
+        }
+      } catch {}
+    });
+  }
+
+  // Bootstrap: prova init note e scatena change sui filtri per forzare il render
+  function bootStorico() {
+    const qs = new URLSearchParams(location.search);
+    const pin = qs.get('pin') || qs.get('pin1') || qs.get('pin_utente') || qs.get('pinUtente') || '';
+
+    const candidates = [
+      'initStorico','caricaStorico','loadStorico','renderStorico',
+      'mostraStorico','aggiornaStorico','popolaStorico'
+    ];
+    exposeLikely(candidates);
+
+    let started = false;
+    for (const n of candidates) {
+      if (typeof window[n] === 'function') {
+        try { window[n](pin); started = true; break; } catch {}
+      }
+    }
+
+    // Fallback: scatena eventi cambio sui filtri tipici per innescare i listener esistenti
+    setTimeout(() => {
+      const selects = Array.from(document.querySelectorAll('select'));
+      const dates   = Array.from(document.querySelectorAll('input[type="date"]'));
+      [...selects, ...dates].forEach(el => {
+        try { el.dispatchEvent(new Event('change', { bubbles: true })); } catch {}
+      });
+    }, started ? 150 : 50);
+  }
+
+  const ready = (fn) => {
+    if (document.readyState === 'loading')
+      document.addEventListener('DOMContentLoaded', fn, { once: true });
+    else fn();
+  };
+
+  ready(() => { bindBackDelegate(); bootStorico(); });
+
+  // Utilità diagnosi veloce da console
+  window.__storicoDiag = () => {
+    const names = ['initStorico','caricaStorico','loadStorico','renderStorico','mostraStorico','aggiornaStorico','popolaStorico'];
+    return names.filter(n => typeof window[n] === 'function');
+  };
+})();
+ /* === /PATCH STORICO === */
+
+/* === PATCH STORICO (back+bootstrap) === */
+(() => {
+  if (window.__storicoPatchApplied) return;
+  window.__storicoPatchApplied = true;
+
+  // Delegato per bottone "indietro/torna"
+  function bindBackDelegate() {
+    document.addEventListener('click', (ev) => {
+      const sel = [
+        '[data-action="back"]',
+        '.back', '.btn-back', '.torna', '.indietro',
+        '[aria-label*="indietro"]', '[title*="indietro"]',
+        '[aria-label*="torna"]',   '[title*="torna"]'
+      ].join(',');
+      const el = ev.target.closest(sel);
+      if (!el) return;
+      ev.preventDefault();
+      try {
+        if (history.length > 1) history.back();
+        else location.href = 'utenti.html';
+      } catch (_) {
+        location.href = 'utenti.html';
+      }
+    }, { passive: false });
+  }
+
+  // Espone globalmente alcune funzioni se definite nel modulo (idempotente)
+  function exposeLikely(names) {
+    names.forEach(n => {
+      try {
+        if (typeof window[n] !== 'function' && typeof eval(n) === 'function') {
+          window[n] = eval(n);
+        }
+      } catch {}
+    });
+  }
+
+  // Bootstrap: prova init note e scatena change sui filtri per forzare il render
+  function bootStorico() {
+    const qs = new URLSearchParams(location.search);
+    const pin = qs.get('pin') || qs.get('pin1') || qs.get('pin_utente') || qs.get('pinUtente') || '';
+
+    const candidates = [
+      'initStorico','caricaStorico','loadStorico','renderStorico',
+      'mostraStorico','aggiornaStorico','popolaStorico'
+    ];
+    exposeLikely(candidates);
+
+    let started = false;
+    for (const n of candidates) {
+      if (typeof window[n] === 'function') {
+        try { window[n](pin); started = true; break; } catch {}
+      }
+    }
+
+    // Fallback: scatena eventi cambio sui filtri tipici per innescare i listener esistenti
+    setTimeout(() => {
+      const selects = Array.from(document.querySelectorAll('select'));
+      const dates   = Array.from(document.querySelectorAll('input[type="date"]'));
+      [...selects, ...dates].forEach(el => {
+        try { el.dispatchEvent(new Event('change', { bubbles: true })); } catch {}
+      });
+    }, started ? 150 : 50);
+  }
+
+  const ready = (fn) => {
+    if (document.readyState === 'loading')
+      document.addEventListener('DOMContentLoaded', fn, { once: true });
+    else fn();
+  };
+
+  ready(() => { bindBackDelegate(); bootStorico(); });
+
+  // Utilità diagnosi veloce da console
+  window.__storicoDiag = () => {
+    const names = ['initStorico','caricaStorico','loadStorico','renderStorico','mostraStorico','aggiornaStorico','popolaStorico'];
+    return names.filter(n => typeof window[n] === 'function');
+  };
+})();
+ /* === /PATCH STORICO === */

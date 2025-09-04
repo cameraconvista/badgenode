@@ -1,0 +1,154 @@
+== DIAG STORICO @ 20250904-084400 ==
+Branch: hardening/safe-refactor-2025-09-04
+
+Files:
+ - storico.html: OK
+ - assets/pages/storico/index.js: OK
+ - assets/pages/utenti/index.js: OK
+
+== HTML: <head> primi 40 righe ==
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no" />
+  <title>Storico Timbrature - BADGEBOX</title>
+
+  <!-- PWA Meta -->
+  <meta name="theme-color" content="#0d1b2b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
+
+  <!-- Icone PWA -->
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/BADGENODE.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/BADGENODE.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/BADGENODE.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="57x57" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="60x60" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="76x76" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/BADGENODE.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
+  <meta name="msapplication-TileImage" content="assets/icons/BADGENODE.png" />
+  <meta name="msapplication-TileColor" content="#0d1b2b" />
+  <link rel="manifest" href="manifest.json" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="assets/styles/storico-styles.css" />
+  <link rel="stylesheet" href="/assets/css/storico.css" />
+</head>
+<body>
+  <div class="container">
+    <button id="torna-utenti" class="btn-torna-utenti" title="Torna a Utenti">
+      ⬅
+
+== HTML: blocco tabella/tbody (contesto) ==
+88:          <table>
+89:            <thead>
+99:          </table>
+102:          <table>
+103:            <tbody id="storico-body"></tbody>
+104:          </table>
+107:          <table>
+108:            <tbody id="totale-footer"></tbody>
+109:          </table>
+
+-- estratto tabella --
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Entrata</th>
+                <th>Uscita</th>
+                <th>Ore</th>
+                <th>Extra</th>
+                <th>Modifica</th>
+              </tr>
+            </thead>
+          </table>
+          <table>
+            <tbody id="storico-body"></tbody>
+          </table>
+          <table>
+            <tbody id="totale-footer"></tbody>
+          </table>
+
+== HTML: possibili bottoni back/indietro ==
+39:    <button id="torna-utenti" class="btn-torna-utenti" title="Torna a Utenti">
+
+== HTML: attributi inline che chiamano funzioni ==
+
+== HTML: script inclusi ==
+141:  <script type="module" src="assets/pages/storico/index.js"></script>
+
+== JS: funzioni disponibili (nomi) ==
+3:  const g = (n,f)=>{ try{ if(typeof window[n]!=='function' && typeof f==='function'){ window[n]=f; } }catch(_){ } };
+11:  const g = (n,f)=>{ try{ if(typeof window[n]!=='function' && typeof f==='function'){ window[n]=f; } }catch(_){ } };
+23:  const boot = () => {
+53:  function bindBackDelegate() {
+74:  function exposeLikely(names) {
+85:  function bootStorico() {
+112:  const ready = (fn) => {
+134:  function bindBackDelegate() {
+155:  function exposeLikely(names) {
+166:  function bootStorico() {
+193:  const ready = (fn) => {
+214:  const once = (fn) => { let done=false; return (...a)=>{ if(!done){ done=true; try{fn(...a);}catch(e){console.error(e);} } } };
+215:  const qs  = (s, r=document) => r.querySelector(s);
+218:  function getPin() {
+226:  function goBack(ev){
+
+== JS: cerca funzioni di storico ==
+30:      if (typeof initStorico    === 'function') { initStorico(pin);    return; }
+31:      if (typeof caricaStorico  === 'function') { caricaStorico(pin);  return; }
+33:      if (typeof renderStorico  === 'function') { renderStorico(pin);  return; }
+52:  // Delegato per bottone "indietro/torna"
+57:        '.back', '.btn-back', '.torna', '.indietro',
+58:        '[aria-label*="indietro"]', '[title*="indietro"]',
+59:        '[aria-label*="torna"]',   '[title*="torna"]'
+90:      'initStorico','caricaStorico','loadStorico','renderStorico',
+122:    const names = ['initStorico','caricaStorico','loadStorico','renderStorico','mostraStorico','aggiornaStorico','popolaStorico'];
+133:  // Delegato per bottone "indietro/torna"
+138:        '.back', '.btn-back', '.torna', '.indietro',
+139:        '[aria-label*="indietro"]', '[title*="indietro"]',
+140:        '[aria-label*="torna"]',   '[title*="torna"]'
+171:      'initStorico','caricaStorico','loadStorico','renderStorico',
+203:    const names = ['initStorico','caricaStorico','loadStorico','renderStorico','mostraStorico','aggiornaStorico','popolaStorico'];
+226:  function goBack(ev){
+234:  window.goBackStorico = goBack;
+236:  // Delegato super tollerante: .back, .indietro, [data-action=back], aria-label*="torna/indietro"
+237:  const BACK_SEL = '[data-action="back"], .indietro, .back, [aria-label*="torna" i], [aria-label*="indietro" i], a[href="#indietro"]';
+240:    if (t) goBack(e);
+247:      if (typeof window.caricaStorico === 'function') { window.caricaStorico(pin); return; }
+248:      if (typeof window.initStorico   === 'function') { window.initStorico(pin);   return; }
+249:      if (typeof window.renderStorico === 'function') { window.renderStorico(pin); return; }
+268:      caricaStorico: typeof window.caricaStorico,
+269:      initStorico:   typeof window.initStorico,
+270:      renderStorico: typeof window.renderStorico
+
+== JS: attacchi eventi (document|window) ==
+41:    document.addEventListener('DOMContentLoaded', boot, { once: true });
+54:    document.addEventListener('click', (ev) => {
+114:      document.addEventListener('DOMContentLoaded', fn, { once: true });
+135:    document.addEventListener('click', (ev) => {
+195:      document.addEventListener('DOMContentLoaded', fn, { once: true });
+238:  document.addEventListener('click', (e) => {
+259:    document.addEventListener('DOMContentLoaded', boot, {once:true});
+
+== JS: selettori tabella/righe ==
+
+== JS: uso Supabase (se presente) ==
+104:      const selects = Array.from(document.querySelectorAll('select'));
+105:      const dates   = Array.from(document.querySelectorAll('input[type="date"]'));
+185:      const selects = Array.from(document.querySelectorAll('select'));
+186:      const dates   = Array.from(document.querySelectorAll('input[type="date"]'));
+
+== UTENTI: link o navigazione verso storico ==
+313:        <td><a href="storico.html?pin=${utente.pin}" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" /></a></td>
+== HTML ultima riga (verifica chiusura) ==

@@ -18,10 +18,40 @@
   
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="assets/styles/storico-styles.css" />
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.icona-calendario-campo').forEach(icon => {
+        icon.addEventListener('click', function (e) {
+          e.preventDefault();
+          const campoId = this.getAttribute('data-campo');
+          const campo = document.getElementById(campoId);
+          if (campo) {
+            try {
+              campo.focus();
+              if (campo.showPicker && typeof campo.showPicker === 'function') {
+                campo.showPicker();
+              }
+            } catch (err) {
+              campo.focus();
+            }
+          }
+        });
+
+        const tornaBtn = document.getElementById("torna-archivio");
+        if (tornaBtn) {
+          tornaBtn.addEventListener("click", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pin = urlParams.get("pin");
+            window.location.href = "index.html" + (pin ? "?pin=" + pin : "");
+          });
+        }
+      });
+    });
+  </script>
 </head>
 <body>
   <div class="container" style="position: relative;">
-    <button id="torna-utenti" class="btn-torna-utenti" title="Torna a Utenti" data-action="back">
+    <button id="torna-utenti" class="btn-torna-utenti" title="Torna a Utenti">
       ⬅
     </button>
     <div style="position: relative; text-align: center; margin-bottom: 10px;">
@@ -93,6 +123,8 @@
     </div>
   </div>
 
-  <script type="module" src="assets/pages/storico/index.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script type="module" src="assets/scripts/storico-logic.js"></script>
 </body>
 </html>
