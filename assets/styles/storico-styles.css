@@ -326,8 +326,7 @@ body {
 
 /* Wrapper scroll specifico per storico */
 .storico-table-wrap {
-  width: 100%;
-  max-height: calc(100vh - 280px);
+  max-height: calc(100vh - 300px);
   overflow-y: auto;
   overflow-x: auto;
   position: relative;
@@ -353,13 +352,6 @@ table {
 .storico-table {
   min-width: 1200px;
   width: 100%;
-}
-
-/* patch storico: scroll + sticky totali */
-.storico-table-wrap table {
-  width: 100%;
-  table-layout: fixed;
-  min-width: 980px;
 }
 
 table th, table td {
@@ -1117,41 +1109,6 @@ table tfoot.totali {
 /* se esiste un vecchio box totali sotto la tabella, nascondilo */
 .pulsanti-basso.totali, .box-totali-sotto { 
   display: none !important; 
-}
-
-/* patch storico: scroll + sticky totali */
-#storico-totali {
-  position: sticky;
-  bottom: 0;
-  z-index: 2;
-  width: 100%;
-  display: grid;
-  align-items: center;
-  grid-template-columns: var(--col-data, 18%) var(--col-ent, 14%) var(--col-usc, 14%) var(--col-ore, 18%) var(--col-extra, 18%) var(--col-mod, 18%);
-  padding: 8px 12px;
-  line-height: 1.2;
-  background: var(--storico-tot-bg, rgba(12, 18, 28, 0.9));
-  backdrop-filter: saturate(120%) blur(0px);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-#storico-tot-label {
-  grid-column: 1 / 4;
-  text-align: left;
-  font-weight: 600;
-  letter-spacing: .3px;
-}
-
-#storico-tot-ore {
-  grid-column: 4;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#storico-tot-extra {
-  grid-column: 5;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
 }
 
 /* Barra totali fissa + griglia per l'allineamento */
