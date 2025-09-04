@@ -59,7 +59,7 @@
               <th>Modifica</th>
             </tr>
           </thead>
-          <tbody id="storico-body"\1></tbody>
+          <tbody id="storico-body"></tbody>
           <tfoot>
             <tr id="totale-footer">
               <td><strong>TOTALE</strong></td>
