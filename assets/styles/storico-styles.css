@@ -322,6 +322,8 @@ body {
   padding: 13px;
   overflow: hidden;
   overflow-x: auto;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .tabella-container {
