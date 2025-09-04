@@ -25,35 +25,32 @@ const footerTbody = getElementSafely("totale-footer");
 const totaleOreEl = getElementSafely("totale-ore");
 const totaleExtraEl = getElementSafely("totale-extra");
 
-// Funzione per aggiornare i totali (con parsing robusto)
-function aggiornaTotali(recordsVisibili) {
-  const num = v => parseFloat(String(v).replace(',', '.')) || 0;
-  
-  let totOre = 0;
-  let totExtra = 0;
-
-  // Se non vengono passati records, usa i dati globali
-  const datiDaAnalizzare = recordsVisibili || timbrature;
-  
-  if (datiDaAnalizzare && Array.isArray(datiDaAnalizzare)) {
-    datiDaAnalizzare.forEach(record => {
-      totOre += num(record.ore);
-      totExtra += num(record.extra);
-    });
-  }
-
-  // Aggiorna gli elementi della barra totali
+// Funzione per aggiornare i totali (usa i risultati del renderer)
+function aggiornaTotali(resultFromRenderer) {
   const totOreEl = document.getElementById('storico-tot-ore');
   const totExtraEl = document.getElementById('storico-tot-extra');
   
-  if (totOreEl) {
-    totOreEl.textContent = totOre.toFixed(2);
+  if (resultFromRenderer) {
+    // Usa i totali calcolati dal renderer
+    if (totOreEl) {
+      totOreEl.textContent = resultFromRenderer.totaleMensile || '0.00';
+    }
+    if (totExtraEl) {
+      const extraFormatted = resultFromRenderer.totaleMensileExtra > 0 
+        ? resultFromRenderer.totaleMensileExtra.toFixed(2) 
+        : '0.00';
+      totExtraEl.textContent = extraFormatted;
+    }
+    
+    console.log('📊 Totali aggiornati:', { 
+      totOre: resultFromRenderer.totaleMensile, 
+      totExtra: resultFromRenderer.totaleMensileExtra.toFixed(2) 
+    });
+  } else {
+    // Reset a zero se non ci sono dati
+    if (totOreEl) totOreEl.textContent = '0.00';
+    if (totExtraEl) totExtraEl.textContent = '0.00';
   }
-  if (totExtraEl) {
-    totExtraEl.textContent = totExtra.toFixed(2);
-  }
-  
-  console.log('📊 Totali aggiornati:', { totOre: totOre.toFixed(2), totExtra: totExtra.toFixed(2) });
 }
 
 // Funzione per sincronizzare le colonne del footer con quelle della tabella
@@ -151,10 +148,10 @@ async function aggiornaDati() {
       // Se non ci sono dati, mostra messaggio
       if (!timbrature || timbrature.length === 0) {
         currentTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #64748b;">Nessun record trovato per il periodo selezionato</td></tr>';
-        aggiornaTotali([]);
+        aggiornaTotali(null);
       } else {
-        // Aggiorna i totali con i dati renderizzati
-        aggiornaTotali(timbrature);
+        // Aggiorna i totali con i risultati del renderer
+        aggiornaTotali(result);
       }
 
       // Sincronizza le colonne del footer
