@@ -22,6 +22,8 @@ const selectFiltro = getElementSafely("filtro-mese");
 const dataInizio = getElementSafely("data-inizio");
 const dataFine = getElementSafely("data-fine");
 const footerTbody = getElementSafely("totale-footer");
+const totaleOreEl = getElementSafely("totale-ore");
+const totaleExtraEl = getElementSafely("totale-extra");
 
 // Verifica che il tbody esista, altrimenti mostra messaggio
 function ensureTbodyExists() {
@@ -81,6 +83,10 @@ async function aggiornaDati() {
     if (currentTbody) {
       const result = renderizzaTabella(dipendente, timbrature, dataInizio?.value, dataFine?.value, currentTbody, footerTbody, pin);
       totaleMensile = result?.totaleMensile || '—';
+      
+      // Aggiorna i nuovi elementi del footer
+      if (totaleOreEl) totaleOreEl.textContent = Number(result?.totaleOre ?? 0).toFixed(2);
+      if (totaleExtraEl) totaleExtraEl.textContent = Number(result?.totaleExtra ?? 0).toFixed(2);
       
       // Se non ci sono dati, mostra messaggio
       if (!timbrature || timbrature.length === 0) {

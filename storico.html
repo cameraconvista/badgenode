@@ -60,14 +60,17 @@
             </tr>
           </thead>
           <tbody id="storico-body"\1></tbody>
-          <tfoot>
-            <tr id="totale-footer">
-              <td><strong>TOTALE</strong></td>
-              <td>—</td>
-              <td>—</td>
-              <td><strong>—</strong></td>
-              <td><strong>—</strong></td>
-              <td>—</td>
+          <tfoot class="totali">
+            <tr>
+              <!-- "TOTALE MENSILE" occupa le prime 3 colonne (Data, Entrata, Uscita) -->
+              <th scope="row" colspan="3" class="totali__label">TOTALE MENSILE</th>
+
+              <!-- questi due vanno sotto le colonne "Ore" ed "Extra" -->
+              <td class="totali__ore"><span id="totale-ore">0.00</span></td>
+              <td class="totali__extra"><span id="totale-extra">0.00</span></td>
+
+              <!-- ultima colonna "Modifica" resta vuota per allineamento -->
+              <td></td>
             </tr>
           </tfoot>
         </table>

@@ -1060,3 +1060,39 @@ button#btnChiudi {
     right: 12px;
   }
 }
+
+/* patch: footer totali sticky + allineamento colonne */
+table.storico-table tfoot.totali,
+.storico-table tfoot.totali,
+table tfoot.totali {
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-dark, #162432);
+  z-index: 2;                 /* sopra alle righe */
+  box-shadow: 0 -2px 6px rgba(0,0,0,.25);
+}
+
+.totali__label,
+.totali__ore,
+.totali__extra,
+.totali td,
+.totali th {
+  height: 48px;               /* uguale alle righe della tabella */
+  padding: 8px 12px;
+  vertical-align: middle;
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: inherit;             /* non cambiare la palette */
+  font-weight: 600;
+}
+
+.totali__ore span,
+.totali__extra span {
+  display: inline-block;
+  min-width: 3ch;             /* evita "salti" */
+  text-align: right;          /* numeri allineati come nelle celle sopra */
+}
+
+/* se esiste un vecchio box totali sotto la tabella, nascondilo */
+.pulsanti-basso.totali, .box-totali-sotto { 
+  display: none !important; 
+}
