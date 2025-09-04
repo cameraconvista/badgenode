@@ -328,6 +328,7 @@ body {
 .storico-table-wrap {
   max-height: calc(100vh - 300px);
   overflow-y: auto;
+  position: relative;
 }
 
 .tabella-container {
@@ -385,6 +386,7 @@ table th {
   top: 0;
   z-index: 15;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: #1f3a56 !important;
 }
 
 table td {
