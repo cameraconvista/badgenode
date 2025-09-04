@@ -4,8 +4,15 @@ import { calcolaOreLavorate, formattaOre, normalizzaData } from './calendar-util
 import { apriModaleModifica } from './modale-modifica.js';
 
 export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, tbody, footerTbody, pin) {
+  if (!tbody) {
+    console.warn("tbody non trovato, impossibile renderizzare la tabella");
+    return { totaleMensile: '0.00', totaleMensileExtra: 0 };
+  }
+  
   tbody.innerHTML = "";
-  footerTbody.innerHTML = "";
+  if (footerTbody) {
+    footerTbody.innerHTML = "";
+  }
 
   const start = new Date(dataInizio + 'T00:00:00');
   const end = new Date(dataFine + 'T00:00:00');
@@ -100,7 +107,9 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
     <td style="text-align: center;">${totaleExtraContent}</td>
     <td></td>
   `;
-  footerTbody.appendChild(rigaTotale);
+  if (footerTbody) {
+    footerTbody.appendChild(rigaTotale);
+  }
 
   return {
     totaleMensile: totaleMensileOre.toFixed(2),

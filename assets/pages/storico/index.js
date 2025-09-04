@@ -81,6 +81,11 @@ async function aggiornaDati() {
     if (currentTbody) {
       const result = renderizzaTabella(dipendente, timbrature, dataInizio?.value, dataFine?.value, currentTbody, footerTbody, pin);
       totaleMensile = result?.totaleMensile || '—';
+      
+      // Se non ci sono dati, mostra messaggio
+      if (!timbrature || timbrature.length === 0) {
+        currentTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #64748b;">Nessun record trovato per il periodo selezionato</td></tr>';
+      }
     }
   } catch (error) {
     console.error('❌ Errore nel caricamento dati:', error);
