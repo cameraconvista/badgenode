@@ -25,6 +25,41 @@ const footerTbody = getElementSafely("totale-footer");
 const totaleOreEl = getElementSafely("totale-ore");
 const totaleExtraEl = getElementSafely("totale-extra");
 
+// Funzione helper per aggiornare i totali nella UI
+function aggiornaTotali(timbratureAggiornate = timbrature) {
+  let oreTotali = 0;
+  let extraTotali = 0;
+
+  timbratureAggiornate.forEach(t => {
+    const ore = parseFloat(t.ore || '0');
+    const extra = parseFloat(t.extra || '0');
+    oreTotali += ore;
+    extraTotali += extra;
+  });
+
+  if (totaleOreEl) {
+    totaleOreEl.textContent = oreTotali.toFixed(2);
+  }
+  if (totaleExtraEl) {
+    totaleExtraEl.textContent = extraTotali.toFixed(2);
+  }
+  console.log('📊 Totali aggiornati:', { oreTotali, extraTotali });
+}
+
+// Funzione per sincronizzare le colonne del footer con quelle della tabella
+function syncFooterColumns() {
+  const headerCells = document.querySelectorAll('#storico-header th'); // Assumendo che ci sia un thead con id storico-header
+  const footerCells = document.querySelectorAll('#totale-footer td');
+
+  if (headerCells.length === footerCells.length) {
+    footerCells.forEach((cell, index) => {
+      if (headerCells[index]) {
+        cell.style.width = headerCells[index].offsetWidth + 'px';
+      }
+    });
+  }
+}
+
 // Verifica che il tbody esista, altrimenti mostra messaggio
 function ensureTbodyExists() {
   const tbody = document.getElementById("storico-body");
@@ -81,17 +116,22 @@ async function aggiornaDati() {
 
     const currentTbody = ensureTbodyExists();
     if (currentTbody) {
-      const result = renderizzaTabella(dipendente, timbrature, dataInizio?.value, dataFine?.value, currentTbody, footerTbody, pin);
+      const result = renderizzaTabella(dipendente, timbrature, dataInizio?.value, dataFine?.value, currentTbody, null, pin);
       totaleMensile = result?.totaleMensile || '—';
-      
-      // Aggiorna i nuovi elementi del footer
-      if (totaleOreEl) totaleOreEl.textContent = Number(result?.totaleOre ?? 0).toFixed(2);
-      if (totaleExtraEl) totaleExtraEl.textContent = Number(result?.totaleExtra ?? 0).toFixed(2);
-      
+
       // Se non ci sono dati, mostra messaggio
       if (!timbrature || timbrature.length === 0) {
         currentTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #64748b;">Nessun record trovato per il periodo selezionato</td></tr>';
+        aggiornaTotali([]);
+      } else {
+        // Aggiorna i totali con i dati renderizzati
+        aggiornaTotali();
       }
+
+      // Sincronizza le colonne del footer
+      setTimeout(() => {
+        syncFooterColumns();
+      }, 100);
     }
   } catch (error) {
     console.error('❌ Errore nel caricamento dati:', error);
@@ -166,10 +206,10 @@ if (btnInvia) {
     const originalHTML = btnInvia.innerHTML;
     btnInvia.innerHTML = "Generando...";
     btnInvia.disabled = true;
-    
+
     try {
       console.log('📄 Inizio generazione PDF...');
-      
+
       // Carica dinamicamente la libreria jsPDF
       if (!window.jspdf) {
         const script = document.createElement('script');
@@ -180,34 +220,34 @@ if (btnInvia) {
           script.onerror = reject;
         });
       }
-      
+
       const { jsPDF } = window.jspdf || {};
       if (!jsPDF) {
         throw new Error('Libreria PDF non disponibile');
       }
-      
+
       const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
       const doc = new jsPDF();
-      
+
       // Header del documento
       doc.setFontSize(20);
       doc.text("CAMERA CON VISTA Bistrot", 105, 20, { align: "center" });
-      
+
       doc.setFontSize(16);
       doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 35, { align: "center" });
-      
+
       // Informazioni dipendente
       const dataInizioFormatted = new Date(dataInizio?.value).toLocaleDateString('it-IT');
       const dataFineFormatted = new Date(dataFine?.value).toLocaleDateString('it-IT');
-      
+
       doc.setFontSize(12);
       doc.text(`Dipendente: ${nomeCompleto} (PIN: ${pin})`, 20, 55);
       doc.text(`Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}`, 20, 65);
       doc.text(`Ore totali: ${totaleMensile}`, 20, 75);
-      
+
       // Linea separatrice
       doc.line(20, 85, 190, 85);
-      
+
       // Header tabella
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
@@ -216,12 +256,12 @@ if (btnInvia) {
       doc.text("Uscita", 120, 100);
       doc.text("Ore", 160, 100);
       doc.line(20, 105, 190, 105);
-      
+
       // Dati tabella
       doc.setFont("helvetica", "normal");
       let y = 115;
       const righe = document.querySelectorAll('#storico-body tr');
-      
+
       righe.forEach(riga => {
         const celle = riga.querySelectorAll('td');
         if (celle.length >= 4 && y < 270) {
@@ -229,7 +269,7 @@ if (btnInvia) {
           const entrata = celle[1].textContent.trim();
           const uscita = celle[2].textContent.trim();
           const ore = celle[3].textContent.trim();
-          
+
           // Solo righe con dati significativi
           if (entrata !== '—' || uscita !== '—' || ore !== '0.00') {
             doc.text(data, 20, y);
@@ -240,17 +280,17 @@ if (btnInvia) {
           }
         }
       });
-      
+
       // Footer
       doc.setFontSize(8);
       doc.text(`Generato il: ${new Date().toLocaleString('it-IT')}`, 20, 285);
-      
+
       // Salva il PDF
       const nomeFile = `${nomeCompleto.replace(/\s+/g, '_')}_timbrature_${dataInizio?.value}_${dataFine?.value}.pdf`;
       doc.save(nomeFile);
-      
+
       console.log('✅ PDF generato con successo:', nomeFile);
-      
+
     } catch (error) {
       console.error('❌ Errore generazione PDF:', error);
       alert('Errore durante la generazione del PDF. Riprova.');
@@ -268,14 +308,14 @@ if (btnEsporta) {
     const originalText = btnEsporta.textContent;
     btnEsporta.textContent = "Generando Excel...";
     btnEsporta.disabled = true;
-    
+
     try {
       // Lazy load con cache
       if (!XLSXLib) {
         console.log('📥 Caricamento libreria Excel...');
         XLSXLib = await import("https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.mjs");
       }
-      
+
       const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
       const dataInizioFormatted = new Date(dataInizio?.value).toLocaleDateString('it-IT');
       const dataFineFormatted = new Date(dataFine?.value).toLocaleDateString('it-IT');
@@ -310,7 +350,7 @@ if (btnEsporta) {
       const wb = XLSXLib.utils.book_new();
       XLSXLib.utils.book_append_sheet(wb, ws, 'Timbrature');
       XLSXLib.writeFile(wb, `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio?.value}_${dataFine?.value}.xlsx`);
-      
+
     } catch (error) {
       console.error('❌ Errore generazione Excel:', error);
       alert('Errore durante la generazione del file Excel');
@@ -355,17 +395,17 @@ function setupBackButton() {
       '[aria-label*="indietro"]', '[title*="indietro"]',
       '[aria-label*="torna"]', '[title*="torna"]'
     ].join(',');
-    
+
     const el = ev.target.closest(selectors);
     if (!el) return;
-    
+
     ev.preventDefault();
-    
+
     try {
       // Prova a mantenere il PIN se presente
       const urlParams = new URLSearchParams(window.location.search);
       const pin = urlParams.get('pin');
-      
+
       if (pin) {
         window.location.href = `utenti.html?pin=${encodeURIComponent(pin)}`;
       } else {
@@ -386,11 +426,11 @@ function setupBackButton() {
 // === INIZIALIZZAZIONE ===
 function initStorico() {
   console.log('🚀 Inizializzazione pagina storico...');
-  
+
   // Setup eventi
   setupCalendarIcons();
   setupBackButton();
-  
+
   // Caricamento iniziale con range di default
   if (selectFiltro && dataInizio && dataFine) {
     const valoreDefault = 'corrente';

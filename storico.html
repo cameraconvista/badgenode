@@ -46,9 +46,9 @@
       </div>
     </div>
 
-    <div class="tabella-wrapper">
+    <div class="tabella-wrapper storico-table-wrap">
       <div class="tabella-container">
-        <table>
+        <table class="storico-table">
           <thead>
             <tr>
               <th>Data</th>
@@ -59,22 +59,16 @@
               <th>Modifica</th>
             </tr>
           </thead>
-          <tbody id="storico-body"\1></tbody>
-          <tfoot class="totali">
-            <tr>
-              <!-- "TOTALE MENSILE" occupa le prime 3 colonne (Data, Entrata, Uscita) -->
-              <th scope="row" colspan="3" class="totali__label">TOTALE MENSILE</th>
-
-              <!-- questi due vanno sotto le colonne "Ore" ed "Extra" -->
-              <td class="totali__ore"><span id="totale-ore">0.00</span></td>
-              <td class="totali__extra"><span id="totale-extra">0.00</span></td>
-
-              <!-- ultima colonna "Modifica" resta vuota per allineamento -->
-              <td></td>
-            </tr>
-          </tfoot>
+          <tbody id="storico-body"></tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Barra totali fissa sotto la tabella -->
+    <div id="storico-totali" class="storico-totali-bar" aria-live="polite">
+      <div class="label">TOTALE MENSILE</div>
+      <div class="tot-ore" id="storico-tot-ore">0.00</div>
+      <div class="tot-extra" id="storico-tot-extra">0.00</div>
     </div>
 
     <div class="pulsanti-basso">

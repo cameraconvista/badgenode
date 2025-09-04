@@ -322,8 +322,11 @@ body {
   padding: 13px;
   overflow: hidden;
   overflow-x: auto;
-  /* patch: scroll + sticky storico */
-  max-height: calc(100vh - 280px);
+}
+
+/* Wrapper scroll specifico per storico */
+.storico-table-wrap {
+  max-height: calc(100vh - 300px);
   overflow-y: auto;
 }
 
@@ -340,6 +343,12 @@ table {
   border-spacing: 0;
   background-color: transparent;
   border-radius: 0;
+}
+
+/* Tabella storico più larga ma responsive */
+.storico-table {
+  min-width: 1200px;
+  width: 100%;
 }
 
 table th, table td {
@@ -1095,4 +1104,35 @@ table tfoot.totali {
 /* se esiste un vecchio box totali sotto la tabella, nascondilo */
 .pulsanti-basso.totali, .box-totali-sotto { 
   display: none !important; 
+}
+
+/* Barra totali fissa + griglia per l'allineamento */
+.storico-totali-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: grid;
+  gap: 0;
+  align-items: center;
+  background: rgba(9, 22, 34, 0.96);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px 12px;
+  margin-top: -1px;
+  backdrop-filter: blur(8px);
+}
+
+.storico-totali-bar .label {
+  grid-column: 1 / span 3;
+  text-align: left;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: white;
+}
+
+.storico-totali-bar .tot-ore,
+.storico-totali-bar .tot-extra {
+  text-align: right;
+  font-weight: 700;
+  color: #ffd666;
+  padding: 0 8px;
 }
