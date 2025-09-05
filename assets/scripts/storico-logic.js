@@ -24,7 +24,13 @@ async function aggiornaDati() {
   dipendente = d;
   timbrature = t;
 
-  if (dipendente) intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
+  // Imposta sempre il nome del dipendente, indipendentemente dalle timbrature
+  if (dipendente) {
+    intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
+  } else {
+    intestazione.textContent = `PIN ${pin} - Utente non trovato`;
+  }
+  
   const result = renderizzaTabella(dipendente, timbrature, dataInizio.value, dataFine.value, tbody, footerTbody, pin);
   totaleMensile = result?.totaleMensile || '—';
 }

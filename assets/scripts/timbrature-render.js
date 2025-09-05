@@ -7,6 +7,31 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
   tbody.innerHTML = "";
   footerTbody.innerHTML = "";
 
+  // Se non ci sono timbrature, mostra messaggio di stato vuoto
+  if (!timbrature || timbrature.length === 0) {
+    const rigaVuota = document.createElement("tr");
+    rigaVuota.innerHTML = `
+      <td colspan="6" style="text-align: center; padding: 40px; color: #a0aec0; font-style: italic;">
+        Nessuna timbratura nel periodo selezionato
+      </td>
+    `;
+    tbody.appendChild(rigaVuota);
+    
+    // Riga totale anche quando vuoto
+    const rigaTotale = document.createElement("tr");
+    rigaTotale.innerHTML = `
+      <td style="text-align:left;">TOTALE MENSILE</td>
+      <td></td>
+      <td></td>
+      <td style="color: #ffff99;">0.00</td>
+      <td style="text-align: center;"></td>
+      <td></td>
+    `;
+    footerTbody.appendChild(rigaTotale);
+    
+    return { totaleMensile: '0.00', totaleMensileExtra: 0 };
+  }
+
   const start = new Date(dataInizio + 'T00:00:00');
   const end = new Date(dataFine + 'T00:00:00');
   const giorniSettimana = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
