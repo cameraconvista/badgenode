@@ -33,6 +33,22 @@
   <link rel="preconnect" href="https://*.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://*.supabase.co">
 
+  <script>
+  (function () {
+    if (location.protocol !== 'https:') return;
+    const OldWS = window.WebSocket;
+    window.WebSocket = function (url, protocols) {
+      try {
+        if (typeof url === 'string' && /:\/\/(0\.0\.0\.0|127\.0\.0\.1|localhost):517\d/.test(url)) {
+          throw new Error('HMR disabled on HTTPS');
+        }
+      } catch (e) {}
+      return new OldWS(url, protocols);
+    };
+    window.WebSocket.prototype = OldWS.prototype;
+  })();
+  </script>
+
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="assets/styles/storico-styles.css" />
 </head>
