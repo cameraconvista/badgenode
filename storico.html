@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -32,7 +31,9 @@
 
   <link rel="preconnect" href="https://*.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://*.supabase.co">
+  <script defer src="/assets/scripts/perf.patch.js"></script>
 
+  <!-- Fonts e CSS -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="assets/styles/storico-styles.css" />
 </head>
@@ -125,12 +126,12 @@
         <input type="date" id="modale-data-entrata" />
         <label for="modale-entrata">Ora Entrata:</label>
         <input type="time" id="modale-entrata" />
-        
+
         <label for="modale-data-uscita">Data Uscita:</label>
         <input type="date" id="modale-data-uscita" />
         <label for="modale-uscita">Ora Uscita:</label>
         <input type="time" id="modale-uscita" />
-        
+
         <div class="modal-btns">
           <button type="button" id="btnSalva">Salva</button>
           <button type="button" id="btnElimina">Elimina</button>
@@ -147,4 +148,3 @@
   <script type="module" src="assets/scripts/storico-logic.js"></script>
 </body>
 </html>
-</replit_final_file>
