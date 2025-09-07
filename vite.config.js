@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite'
 
 export default defineConfig({
@@ -12,7 +11,7 @@ export default defineConfig({
     allowedHosts: ['.replit.dev'], // supporta tutti i sottodomini
     hmr: {
       host: '0.0.0.0',
-      protocol: 'ws',
+      protocol: 'wss',
     },
   },
 })
