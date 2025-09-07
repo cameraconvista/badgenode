@@ -175,5 +175,59 @@
   <script type="module" src="assets/scripts/calendario-popup.js"></script>
   <script type="module" src="assets/scripts/modale-modifica.js"></script>
   <script type="module" src="assets/scripts/storico-logic.js"></script>
+
+  <script>
+    // Funzione per eliminazione completa dipendente
+    async function eliminaDipendente() {
+      const pinCorrente = new URLSearchParams(window.location.search).get('pin');
+
+      if (!pinCorrente) {
+        alert('Errore: PIN non trovato nella URL');
+        return;
+      }
+
+      const conferma = confirm(`Sei sicuro di voler eliminare definitivamente il dipendente con PIN ${pinCorrente}?\n\nQuesta operazione cancellerà:\n- Tutte le timbrature del dipendente\n- Il record del dipendente\n\nL'operazione NON è reversibile.`);
+
+      if (!conferma) {
+        return;
+      }
+
+      try {
+        console.log(`🗑️ Inizio eliminazione dipendente PIN: ${pinCorrente}`);
+
+        // Step 1: Elimina tutte le timbrature del dipendente
+        const { error: errorTimbrature } = await supabaseClient
+          .from('timbrature')
+          .delete()
+          .eq('pin', parseInt(pinCorrente));
+
+        if (errorTimbrature) {
+          throw new Error(`Errore eliminazione timbrature: ${errorTimbrature.message}`);
+        }
+
+        console.log(`✅ Timbrature eliminate per PIN ${pinCorrente}`);
+
+        // Step 2: Elimina il record del dipendente
+        const { error: errorDipendente } = await supabaseClient
+          .from('utenti')
+          .delete()
+          .eq('pin', parseInt(pinCorrente));
+
+        if (errorDipendente) {
+          throw new Error(`Errore eliminazione dipendente: ${errorDipendente.message}`);
+        }
+
+        console.log(`✅ Dipendente eliminato per PIN ${pinCorrente}`);
+
+        // Successo: mostra conferma e redirect
+        alert(`Dipendente con PIN ${pinCorrente} eliminato con successo!`);
+        window.location.href = 'utenti.html';
+
+      } catch (error) {
+        console.error('❌ Errore durante eliminazione dipendente:', error);
+        alert(`Errore durante l'eliminazione: ${error.message}\n\nVerifica la console per maggiori dettagli.`);
+      }
+    }
+  </script>
 </body>
 </html>
