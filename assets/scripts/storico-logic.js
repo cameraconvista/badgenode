@@ -255,12 +255,12 @@ document.getElementById("btn-esporta")?.addEventListener("click", async () => {
 
   document.querySelectorAll('#storico-body tr').forEach(r => {
     const c = r.querySelectorAll('td');
-    if (c.length >= 4) {
+    if (c.length >= 6) {  // Verifica che ci siano almeno 6 colonne
       dati.push([
-        c[0].textContent.trim(),
-        c[1].textContent.trim(),
-        c[2].textContent.trim(),
-        c[3].textContent.trim()
+        c[0].textContent.trim(),  // Data
+        c[2].textContent.trim(),  // Entrata (colonna 2)
+        c[3].textContent.trim(),  // Uscita (colonna 3)
+        c[4].textContent.trim()   // Ore Giornaliere (colonna 4)
       ]);
     }
   });
