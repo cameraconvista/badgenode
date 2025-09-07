@@ -59,45 +59,7 @@ document.getElementById("torna-utenti")?.addEventListener("click", () => {
   window.location.href = "utenti.html";
 });
 
-document.getElementById("btn-whatsapp")?.addEventListener("click", () => {
-  const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
-  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
-  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
 
-  let tabellaTimbrature = '';
-  document.querySelectorAll('#storico-body tr').forEach(row => {
-    const celle = row.querySelectorAll('td');
-    if (celle.length >= 6) {  // Verifica che ci siano almeno 6 colonne
-      const data = celle[0].textContent.trim();
-      const entrata = celle[2].textContent.trim();  // Colonna 2 = Entrata
-      const uscita = celle[3].textContent.trim();   // Colonna 3 = Uscita
-      
-      // Includi solo le righe con almeno una timbratura
-      if (entrata !== '—' || uscita !== '—') {
-        // Formattazione con spaziatura fissa come richiesto
-        const dataFormatted = data.padEnd(20, ' ');
-        const entrataFormatted = entrata.padEnd(8, ' ');
-        tabellaTimbrature += `${dataFormatted}  ${entrataFormatted}  ${uscita}\n`;
-      }
-    }
-  });
-
-  const messaggio = `*CAMERA CON VISTA Bistrot*
-
-*RIEPILOGO MENSILE TIMBRATURE*
-
-*${nomeCompleto}* (PIN: ${pin})
-Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}
-Ore totali: *${totaleMensile}*
-
-*DETTAGLIO TIMBRATURE:*
-
-Data                    Entrata   Uscita
-${tabellaTimbrature || 'Nessuna timbratura nel periodo'}
-Generato il: ${new Date().toLocaleDateString('it-IT')} alle ${new Date().toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'})}`;
-  
-  window.open(`https://wa.me/?text=${encodeURIComponent(messaggio)}`, '_blank');
-});
 
 // Cache per librerie
 let XLSXLib = null;
