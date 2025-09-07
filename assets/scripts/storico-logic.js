@@ -119,7 +119,7 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
             
             // Calcola proporzioni corrette basate sull'immagine reale
             const aspectRatio = logoImg.naturalWidth / logoImg.naturalHeight;
-            const logoHeight = 15; // Altezza fissa appropriata
+            const logoHeight = 7.5; // Altezza ridotta del 50%
             const logoWidth = logoHeight * aspectRatio; // Larghezza proporzionale
             
             // Usa dimensioni più grandi per il canvas per migliorare la qualità
