@@ -4,17 +4,17 @@ import { calcolaOreLavorate, formattaOre, normalizzaData } from './calendar-util
 import { apriModaleModifica } from './modale-modifica.js';
 
 // Helper functions for date range iteration
-function toISODate(d) { 
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0,10); 
+function toISODate(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).toISOString().slice(0, 10);
 }
 
 function eachDay(startDate, endDate) {
-  const out = []; 
+  const out = [];
   const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
   const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-  while (d <= end) { 
-    out.push(new Date(d)); 
-    d.setDate(d.getDate() + 1); 
+  while (d <= end) {
+    out.push(new Date(d));
+    d.setDate(d.getDate() + 1);
   }
   return out;
 }
@@ -61,8 +61,8 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
       oreTotaliGiorno = calcolaOreLavorate(entrata.ore, uscita.ore);
     }
 
-    const entrataDisplay = timbratureEntrata.length > 0 ? timbratureEntrata[0].ore.slice(0,5) : '—';
-    const uscitaDisplay = timbratureUscita.length > 0 ? timbratureUscita[timbratureUscita.length - 1].ore.slice(0,5) : '—';
+    const entrataDisplay = timbratureEntrata.length > 0 ? timbratureEntrata[0].ore.slice(0, 5) : '—';
+    const uscitaDisplay = timbratureUscita.length > 0 ? timbratureUscita[timbratureUscita.length - 1].ore.slice(0, 5) : '—';
     const oreDisplay = oreTotaliGiorno.toFixed(2);
 
     const oreContrattuali = parseFloat(dipendente?.ore_contrattuali) || 8.00;
