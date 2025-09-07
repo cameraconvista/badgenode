@@ -74,28 +74,27 @@ document.getElementById("btn-whatsapp")?.addEventListener("click", () => {
       
       // Includi solo le righe con almeno una timbratura
       if (entrata !== '—' || uscita !== '—') {
-        // Formato più pulito per WhatsApp senza padding che non funziona bene
-        tabellaTimbrature += `${data} | ${entrata} | ${uscita}\n`;
+        // Formattazione con spaziatura fissa come richiesto
+        const dataFormatted = data.padEnd(20, ' ');
+        const entrataFormatted = entrata.padEnd(8, ' ');
+        tabellaTimbrature += `${dataFormatted}  ${entrataFormatted}  ${uscita}\n`;
       }
     }
   });
 
-  const messaggio = `🏢 *CAMERA CON VISTA Bistrot*
+  const messaggio = `*CAMERA CON VISTA Bistrot*
 
-📋 *RIEPILOGO MENSILE TIMBRATURE*
+*RIEPILOGO MENSILE TIMBRATURE*
 
-👤 *${nomeCompleto}* (PIN: ${pin})
-📅 Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}
-⏱️ Ore totali: *${totaleMensile}*
+*${nomeCompleto}* (PIN: ${pin})
+Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}
+Ore totali: *${totaleMensile}*
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+*DETTAGLIO TIMBRATURE:*
 
-📊 *DETTAGLIO TIMBRATURE:*
-
-Data | Entrata | Uscita
-${tabellaTimbrature || 'Nessuna timbratura nel periodo'}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📅 Generato il: ${new Date().toLocaleDateString('it-IT')} alle ${new Date().toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'})}`;
+Data                    Entrata   Uscita
+${tabellaTimbrature || 'Nessuna timbratura nel periodo'}
+Generato il: ${new Date().toLocaleDateString('it-IT')} alle ${new Date().toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'})}`;
   
   window.open(`https://wa.me/?text=${encodeURIComponent(messaggio)}`, '_blank');
 });
