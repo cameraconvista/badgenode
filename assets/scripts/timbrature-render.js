@@ -84,7 +84,7 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
       <td>${uscitaDisplay}</td>
       <td style="color: #ffff99;">${oreDisplay}</td>
       <td style="text-align: center;">${extraContent}</td>
-      <td>
+      <td style="text-align: center;">
         ${hasTimbrature || true ? `<img
           src="assets/icons/matita-colorata.png"
           class="modifica-icon"
@@ -92,7 +92,15 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
           data-timbratura-id="${timbraturaId}"
           title="Modifica"
           alt="Modifica"
-        />` : '—'}
+          style="margin-right: 8px;"
+        />` : ''}
+        <button 
+          class="elimina-dipendente-btn"
+          title="Elimina dipendente definitivamente"
+          style="background: none; border: none; font-size: 16px; color: #dc2626; cursor: pointer; margin-left: 4px;"
+        >
+          ❌
+        </button>
       </td>
     `;
 
@@ -105,6 +113,20 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
       btnModifica.addEventListener('click', (e) => {
         e.preventDefault();
         apriModaleModifica(dataISO, timbratureEntrata, timbratureUscita, pin, timbraturaId);
+      });
+    }
+
+    // Aggiungi evento click al pulsante elimina dipendente
+    const btnElimina = riga.querySelector('.elimina-dipendente-btn');
+    if (btnElimina) {
+      btnElimina.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Chiama la funzione eliminaDipendente definita in storico.html
+        if (typeof window.eliminaDipendente === 'function') {
+          window.eliminaDipendente();
+        } else {
+          alert('Funzione eliminaDipendente non disponibile');
+        }
       });
     }
   }
