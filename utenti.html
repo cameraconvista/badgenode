@@ -917,6 +917,10 @@
       const sizeEl = document.getElementById(sizeId);
       const removeBtn = document.getElementById(removeBtnId);
 
+      // Evita listener duplicati controllando se già configurato
+      if (area.dataset.uploadConfigured) return;
+      area.dataset.uploadConfigured = 'true';
+
       area.addEventListener("click", () => input.click());
       area.addEventListener("dragover", (e) => { e.preventDefault(); area.classList.add("dragover"); });
       area.addEventListener("dragleave", () => area.classList.remove("dragover"));
