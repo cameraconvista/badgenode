@@ -9,7 +9,6 @@ export default defineConfig({
     hmr: {
       protocol: 'wss',
       clientPort: 443,
-      host: process.env.REPL_SLUG ? `${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` : 'localhost',
       path: '/_vite_hmr'
     },
   },
