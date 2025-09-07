@@ -127,6 +127,7 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
     <td style="text-align:left;">TOTALE MENSILE</td>
     <td></td>
     <td></td>
+    <td></td>
     <td style="color: #ffff99;">${totaleMensileOre.toFixed(2)}</td>
     <td style="text-align: center;">${totaleExtraContent}</td>
     <td></td>
