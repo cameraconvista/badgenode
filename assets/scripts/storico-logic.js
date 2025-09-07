@@ -185,11 +185,11 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
     
     righe.forEach(riga => {
       const celle = riga.querySelectorAll('td');
-      if (celle.length >= 4 && y < 270) {
+      if (celle.length >= 5 && y < 270) {
         const data = celle[0].textContent.trim();
-        const entrata = celle[1].textContent.trim();
-        const uscita = celle[2].textContent.trim();
-        const ore = celle[3].textContent.trim();
+        const entrata = celle[2].textContent.trim();  // Colonna 2 = Entrata
+        const uscita = celle[3].textContent.trim();   // Colonna 3 = Uscita
+        const ore = celle[4].textContent.trim();      // Colonna 4 = Ore
         
         // Solo righe con dati significativi
         if (entrata !== '—' || uscita !== '—' || ore !== '0.00') {
