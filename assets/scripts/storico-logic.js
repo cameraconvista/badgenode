@@ -108,23 +108,42 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
     try {
       // Carica e inserisci il logo
       const logoImg = new Image();
-      logoImg.src = 'assets/icons/Logo ccv black.png';
+      logoImg.crossOrigin = 'anonymous'; // Per evitare problemi CORS
       
-      // Converti immagine in base64 per jsPDF
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = logoImg.naturalWidth || 200;
-      canvas.height = logoImg.naturalHeight || 60;
-      ctx.drawImage(logoImg, 0, 0);
-      const logoBase64 = canvas.toDataURL('image/png');
+      await new Promise((resolve, reject) => {
+        logoImg.onload = () => {
+          try {
+            // Converti immagine in base64 per jsPDF
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Dimensioni ottimali per il logo
+            const logoWidth = 80;
+            const logoHeight = 20;
+            
+            canvas.width = logoWidth;
+            canvas.height = logoHeight;
+            
+            // Disegna l'immagine scalata
+            ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
+            const logoBase64 = canvas.toDataURL('image/png');
+            
+            // Inserisci logo centrato
+            doc.addImage(logoBase64, 'PNG', 65, 10, logoWidth, logoHeight);
+            resolve();
+          } catch (e) {
+            reject(e);
+          }
+        };
+        
+        logoImg.onerror = () => reject(new Error('Immagine non trovata'));
+        logoImg.src = 'assets/icons/Logo ccv black.png';
+      });
       
-      // Inserisci logo centrato (larghezza max 80mm, altezza proporzionale)
-      doc.addImage(logoBase64, 'PNG', 65, 10, 80, 20);
     } catch (error) {
       console.warn('Errore caricamento logo:', error);
-      // Fallback: usa solo il testo del sottotitolo
-      doc.setFontSize(20);
-      doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 20, { align: "center" });
+      // Fallback: usa solo il testo del sottotitolo senza logo
+      console.log('📄 Continuo senza logo...');
     }
     
     doc.setFontSize(16);
