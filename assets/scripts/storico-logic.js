@@ -101,7 +101,11 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
       throw new Error('Libreria PDF non disponibile');
     }
     
-    const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
+    // Usa il nome del dipendente se disponibile, altrimenti usa il nome dall'intestazione
+    const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 
+                        (intestazione.textContent.includes('PIN') ? intestazione.textContent.replace(/PIN \d+ - /, '') : 
+                        intestazione.textContent);
+    
     const doc = new jsPDF();
     
     // Header del documento - Logo aziendale
@@ -185,20 +189,18 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
     
     righe.forEach(riga => {
       const celle = riga.querySelectorAll('td');
-      if (celle.length >= 5 && y < 270) {
+      if (celle.length >= 6 && y < 270) {  // Verifica che ci siano almeno 6 colonne
         const data = celle[0].textContent.trim();
         const entrata = celle[2].textContent.trim();  // Colonna 2 = Entrata
         const uscita = celle[3].textContent.trim();   // Colonna 3 = Uscita
         const ore = celle[4].textContent.trim();      // Colonna 4 = Ore
         
-        // Solo righe con dati significativi
-        if (entrata !== '—' || uscita !== '—' || ore !== '0.00') {
-          doc.text(data, 20, y);
-          doc.text(entrata, 70, y);
-          doc.text(uscita, 120, y);
-          doc.text(ore, 160, y);
-          y += 8;
-        }
+        // Includi tutte le righe, anche quelle senza timbrature per mostrare il periodo
+        doc.text(data, 20, y);
+        doc.text(entrata, 70, y);
+        doc.text(uscita, 120, y);
+        doc.text(ore, 160, y);
+        y += 8;
       }
     });
     
