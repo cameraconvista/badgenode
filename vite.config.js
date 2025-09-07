@@ -7,9 +7,10 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: ['.replit.dev', '.repl.co'], // supporta tutti i sottodomini Replit
     hmr: {
+      protocol: 'wss',
       clientPort: 443,
-      protocol: 'wss'
-      // host sarà automaticamente il pubblico hostname Replit
+      host: process.env.REPL_SLUG ? `${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` : 'localhost',
+      path: '/_vite_hmr'
     },
   },
 })
