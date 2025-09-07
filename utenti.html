@@ -861,9 +861,52 @@
         alert(`Errore durante l'archiviazione: ${error.message}`);
       }
     };
-    window.eliminaUtente = (pin, nome, cognome) => {
-      if (confirm(`Sei sicuro di voler eliminare definitivamente ${nome} ${cognome}?`)) {
-        alert(`Dipendente ${nome} ${cognome} eliminato (funzione in fase di implementazione)`);
+    window.eliminaUtente = async (pin, nome, cognome) => {
+      if (!confirm(`⚠️ ATTENZIONE! Stai per eliminare DEFINITIVAMENTE il dipendente:\n\n${nome} ${cognome} (PIN ${pin})\n\nQuesta operazione cancellerà:\n• Tutte le timbrature del dipendente\n• Il record del dipendente\n• Tutti i dati associati\n\nL'operazione NON è reversibile!\n\nSei sicuro di voler procedere?`)) {
+        return;
+      }
+
+      // Seconda conferma per sicurezza
+      if (!confirm(`⚠️ ULTIMA CONFERMA!\n\nStai per eliminare definitivamente ${nome} ${cognome}.\n\nQuesta azione non può essere annullata!\n\nClicca OK per confermare l'eliminazione definitiva.`)) {
+        return;
+      }
+
+      try {
+        console.log(`🗑️ Inizio eliminazione definitiva dipendente PIN: ${pin}`);
+
+        // Step 1: Elimina tutte le timbrature del dipendente
+        const { error: errorTimbrature } = await supabase
+          .from('timbrature')
+          .delete()
+          .eq('pin', parseInt(pin));
+
+        if (errorTimbrature) {
+          throw new Error(`Errore eliminazione timbrature: ${errorTimbrature.message}`);
+        }
+
+        console.log(`✅ Timbrature eliminate per PIN ${pin}`);
+
+        // Step 2: Elimina il record del dipendente
+        const { error: errorDipendente } = await supabase
+          .from('utenti')
+          .delete()
+          .eq('pin', parseInt(pin));
+
+        if (errorDipendente) {
+          throw new Error(`Errore eliminazione dipendente: ${errorDipendente.message}`);
+        }
+
+        console.log(`✅ Dipendente eliminato per PIN ${pin}`);
+
+        // Successo: mostra conferma e ricarica lista
+        alert(`✅ Dipendente ${nome} ${cognome} (PIN ${pin}) eliminato definitivamente!\n\nTutte le timbrature e i dati associati sono stati rimossi dal sistema.`);
+        
+        // Ricarica la lista dipendenti per riflettere le modifiche
+        caricaUtenti();
+
+      } catch (error) {
+        console.error('❌ Errore durante eliminazione dipendente:', error);
+        alert(`Errore durante l'eliminazione: ${error.message}\n\nVerifica la console per maggiori dettagli.`);
       }
     };
 
