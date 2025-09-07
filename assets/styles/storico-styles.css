@@ -302,6 +302,9 @@ th {
   font-weight: 600;
   font-size: 16px;
   padding: 6px 4px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 td {
