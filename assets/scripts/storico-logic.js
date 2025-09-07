@@ -117,9 +117,10 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            // Dimensioni ridotte del 50% per il logo
-            const logoWidth = 40;
-            const logoHeight = 10;
+            // Calcola proporzioni corrette basate sull'immagine reale
+            const aspectRatio = logoImg.naturalWidth / logoImg.naturalHeight;
+            const logoHeight = 15; // Altezza fissa appropriata
+            const logoWidth = logoHeight * aspectRatio; // Larghezza proporzionale
             
             // Usa dimensioni più grandi per il canvas per migliorare la qualità
             const canvasScale = 4; // Factor per alta qualità
@@ -130,12 +131,13 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
             
-            // Disegna l'immagine scalata con alta qualità
+            // Disegna l'immagine scalata con alta qualità mantenendo proporzioni
             ctx.drawImage(logoImg, 0, 0, canvas.width, canvas.height);
             const logoBase64 = canvas.toDataURL('image/png', 1.0); // Qualità massima
             
-            // Inserisci logo centrato (dimensioni ridotte del 50%)
-            doc.addImage(logoBase64, 'PNG', 85, 10, logoWidth, logoHeight);
+            // Centra il logo orizzontalmente nel PDF
+            const xPosition = (210 - logoWidth) / 2; // 210mm è la larghezza A4
+            doc.addImage(logoBase64, 'PNG', xPosition, 10, logoWidth, logoHeight);
             resolve();
           } catch (e) {
             reject(e);
