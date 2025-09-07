@@ -551,15 +551,16 @@
   </div>
 
   <script type="module">
+    // Supabase Client Centralizzato
     import { supabaseClient } from './assets/scripts/supabase-client.js';
-
-    const supabase = supabaseClient;
+    // Compatibilità retro: espone client come variabile globale
+    window.supabase = supabaseClient;
 
     const tbody = document.getElementById("lista-ex-dipendenti");
 
     async function caricaExDipendenti() {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await window.supabase
           .from("dipendenti_archiviati")
           .select("*")
           .order("data_archiviazione", { ascending: false });
@@ -615,7 +616,7 @@
 
     window.scaricaExcel = async (id, nome, cognome) => {
       try {
-        const { data, error } = await supabase
+        const { data, error } = await window.supabase
           .from("dipendenti_archiviati")
           .select("file_excel_path, file_excel_name")
           .eq("id", id)
@@ -673,14 +674,14 @@
       if (!confirm(`⚠️ ULTIMA CONFERMA!\n\nStai per eliminare definitivamente ${nome} ${cognome}.\n\nDigita "ELIMINA" per confermare:`)) return;
 
       try {
-        const { error } = await supabase
+        const { error: deleteError } = await window.supabase
           .from("dipendenti_archiviati")
           .delete()
           .eq("id", id);
 
-        if (error) {
-          console.error("Errore eliminazione ex dipendente:", error);
-          alert("Errore durante l'eliminazione: " + error.message);
+        if (deleteError) {
+          console.error("Errore eliminazione ex dipendente:", deleteError);
+          alert("Errore durante l'eliminazione: " + deleteError.message);
           return;
         }
 

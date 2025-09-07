@@ -1,4 +1,3 @@
-
 // Client Supabase configurato
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -7,7 +6,15 @@ export const supabaseClient = createClient(
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
 );
 
-// Funzioni di utilità per gestire errori Supabase
+// Esporta il client per essere utilizzato in altri moduli
+export { supabaseClient };
+
+// Compatibilità retro: espone client anche come variabile globale se window esiste
+if (typeof window !== 'undefined') {
+    window.supabaseClient = supabaseClient;
+}
+
+// Funzione helper per gestire gli errori Supabase
 export function gestisciErroreSupabase(error) {
   console.error('Errore Supabase:', error);
   switch (error?.code) {
