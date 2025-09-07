@@ -67,10 +67,10 @@ document.getElementById("btn-whatsapp")?.addEventListener("click", () => {
   let tabellaTimbrature = '';
   document.querySelectorAll('#storico-body tr').forEach(row => {
     const celle = row.querySelectorAll('td');
-    if (celle.length >= 3) {
+    if (celle.length >= 6) {  // Verifica che ci siano almeno 6 colonne
       const data = celle[0].textContent.trim();
-      const entrata = celle[1].textContent.trim();
-      const uscita = celle[2].textContent.trim();
+      const entrata = celle[2].textContent.trim();  // Colonna 2 = Entrata
+      const uscita = celle[3].textContent.trim();   // Colonna 3 = Uscita
       if (entrata !== '—' || uscita !== '—') {
         tabellaTimbrature += `${data.padEnd(10)} ${entrata.padEnd(10)} ${uscita}\n`;
       }
