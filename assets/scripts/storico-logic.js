@@ -104,37 +104,56 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
     const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
     const doc = new jsPDF();
     
-    // Header del documento
-    doc.setFontSize(20);
-    doc.text("CAMERA CON VISTA Bistrot", 105, 20, { align: "center" });
+    // Header del documento - Logo aziendale
+    try {
+      // Carica e inserisci il logo
+      const logoImg = new Image();
+      logoImg.src = 'assets/icons/Logo ccv black.png';
+      
+      // Converti immagine in base64 per jsPDF
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = logoImg.naturalWidth || 200;
+      canvas.height = logoImg.naturalHeight || 60;
+      ctx.drawImage(logoImg, 0, 0);
+      const logoBase64 = canvas.toDataURL('image/png');
+      
+      // Inserisci logo centrato (larghezza max 80mm, altezza proporzionale)
+      doc.addImage(logoBase64, 'PNG', 65, 10, 80, 20);
+    } catch (error) {
+      console.warn('Errore caricamento logo:', error);
+      // Fallback: usa solo il testo del sottotitolo
+      doc.setFontSize(20);
+      doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 20, { align: "center" });
+    }
     
     doc.setFontSize(16);
-    doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 35, { align: "center" });
+    doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 40, { align: "center" });
     
     // Informazioni dipendente
     const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
     const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
     
     doc.setFontSize(12);
-    doc.text(`Dipendente: ${nomeCompleto} (PIN: ${pin})`, 20, 55);
-    doc.text(`Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}`, 20, 65);
-    doc.text(`Ore totali: ${totaleMensile}`, 20, 75);
+    doc.text(`Dipendente: ${nomeCompleto} (PIN: ${pin})`, 20, 60);
+    doc.text(`Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}`, 20, 70);
+    doc.text(`Ore totali: ${totaleMensile}`, 20, 80);
     
     // Linea separatrice
-    doc.line(20, 85, 190, 85);
+    doc.line(20, 90, 190, 90);
     
     // Header tabella
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
-    doc.text("Data", 20, 100);
-    doc.text("Entrata", 70, 100);
-    doc.text("Uscita", 120, 100);
-    doc.text("Ore", 160, 100);
-    doc.line(20, 105, 190, 105);
+    doc.text("Data", 20, 105);
+    doc.text("Entrata", 70, 105);
+    doc.text("Uscita", 120, 105);
+    doc.text("Ore", 160, 105);
+    doc.line(20, 110, 190, 110);
     
     // Dati tabella
     doc.setFont("helvetica", "normal");
-    let y = 115;
+    let y = 120;
     const righe = document.querySelectorAll('#storico-body tr');
     
     righe.forEach(riga => {
