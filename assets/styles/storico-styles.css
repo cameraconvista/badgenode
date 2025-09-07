@@ -283,7 +283,6 @@ th, td {
   padding: 4px 6px;
   text-align: center;
   color: var(--text-color);
-  width: 16.66%;
   box-sizing: border-box;
   font-size: 14px;
 }
@@ -788,11 +787,13 @@ button {
     text-align: left;
     padding-left: 2px;
   }
-  th:nth-child(2), td:nth-child(2) { width: 15%; }
-  th:nth-child(3), td:nth-child(3) { width: 15%; }
-  th:nth-child(4), td:nth-child(4) { width: 20%; }
-  th:nth-child(5), td:nth-child(5) { width: 15%; }
-  th:nth-child(6), td:nth-child(6) { width: 15%; }
+  th:nth-child(2), td:nth-child(2) { width: 15%; } /* Mese */
+  th:nth-child(3), td:nth-child(3) { width: 15%; } /* Entrata */
+  th:nth-child(4), td:nth-child(4) { width: 20%; } /* Uscita */
+  th:nth-child(5), td:nth-child(5) { width: 15%; } /* Ore */
+  th:nth-child(6), td:nth-child(6) { width: 15%; } /* Extra */
+  th:nth-child(7), td:nth-child(7) { width: 15%; } /* Modifica */
+
 
   .modifica-icon {
     width: 16px;
@@ -908,4 +909,36 @@ button {
   td {
     height: 26px;
   }
+}
+
+/* Nuova regola per allineamento larghezza colonne */
+.tabella-container th:nth-child(1) { width: 120px; } /* Data */
+.tabella-container th:nth-child(2) { width: 110px; } /* Mese */
+.tabella-container th:nth-child(3) { width: 80px; }  /* Entrata */
+.tabella-container th:nth-child(4) { width: 80px; }  /* Uscita */
+.tabella-container th:nth-child(5) { width: 70px; }  /* Ore */
+.tabella-container th:nth-child(6) { width: 70px; }  /* Extra */
+.tabella-container th:nth-child(7) { width: 80px; }  /* Modifica */
+
+.tabella-container td:nth-child(1) { width: 120px; } /* Data */
+.tabella-container td:nth-child(2) { width: 110px; } /* Mese */
+.tabella-container td:nth-child(3) { width: 80px; }  /* Entrata */
+.tabella-container td:nth-child(4) { width: 80px; }  /* Uscita */
+.tabella-container td:nth-child(5) { width: 70px; }  /* Ore */
+.tabella-container td:nth-child(6) { width: 70px; }  /* Extra */
+.tabella-container td:nth-child(7) { width: 80px; }  /* Modifica */
+
+/* Regole per mobile */
+@media (max-width: 480px) and (orientation: portrait) {
+  .tabella-container th:nth-child(1), td:nth-child(1) {
+    width: 20%;
+    text-align: left;
+    padding-left: 2px;
+  }
+  .tabella-container th:nth-child(2), td:nth-child(2) { width: 15%; } /* Mese */
+  .tabella-container th:nth-child(3), td:nth-child(3) { width: 15%; } /* Entrata */
+  .tabella-container th:nth-child(4), td:nth-child(4) { width: 20%; } /* Uscita */
+  .tabella-container th:nth-child(5), td:nth-child(5) { width: 15%; } /* Ore */
+  .tabella-container th:nth-child(6), td:nth-child(6) { width: 15%; } /* Extra */
+  .tabella-container th:nth-child(7), td:nth-child(7) { width: 15%; } /* Modifica */
 }

@@ -76,10 +76,18 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
     const timbraturaId = timbratureEntrata.length > 0 ? timbratureEntrata[0].id : 'nuovo';
     const hasTimbrature = timbratureOggi.length > 0;
 
+    // Calcola il mese per questa riga
+    const mesiItaliani = [
+      "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
+      "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"
+    ];
+    const meseAnno = `${mesiItaliani[current.getMonth()]} ${current.getFullYear()}`;
+
     const riga = document.createElement("tr");
     if (current.getDay() === 0 || current.getDay() === 6) riga.classList.add('weekend');
     riga.innerHTML = `
       <td style="text-align: left;">${dataFormattata}</td>
+      <td style="text-align: center; color: #94a3b8; font-size: 0.9em;">${meseAnno}</td>
       <td>${entrataDisplay}</td>
       <td>${uscitaDisplay}</td>
       <td style="color: #ffff99;">${oreDisplay}</td>
