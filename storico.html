@@ -228,6 +228,14 @@
         alert(`Errore durante l'eliminazione: ${error.message}\n\nVerifica la console per maggiori dettagli.`);
       }
     }
+
+    document.getElementById("torna-utenti")?.addEventListener("click", () => {
+      window.location.href = "utenti.html";
+    });
+
+    document.getElementById("btn-elimina-dipendente")?.addEventListener("click", () => {
+      eliminaDipendente();
+    });
   </script>
 </body>
 </html>
