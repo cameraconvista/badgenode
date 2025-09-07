@@ -1,12 +1,41 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+  <script>
+  (function () {
+    if (location.protocol !== 'https:') return;  // only on https
+    var HMR = /:\/\/(0\.0\.0\.0|127\.0\.0\.1|localhost):517\d/;
+
+    // Patch WebSocket (block only Vite HMR)
+    var OldWS = window.WebSocket;
+    window.WebSocket = function (url, protocols) {
+      try { if (typeof url === 'string' && HMR.test(url)) throw new Error('HMR disabled on HTTPS'); }
+      catch (e) { console.debug('[HMR muted]', e.message); return { close(){}, readyState: 3, addEventListener(){}, removeEventListener(){}, send(){} }; }
+      var ws = new OldWS(url, protocols);
+      return ws;
+    };
+    if (OldWS) window.WebSocket.prototype = OldWS.prototype;
+
+    // Patch EventSource (some setups use it for HMR)
+    var OldES = window.EventSource;
+    if (OldES) {
+      window.EventSource = function (url, conf) {
+        if (typeof url === 'string' && HMR.test(url)) {
+          console.debug('[HMR muted] EventSource blocked');
+          return { close(){}, readyState: 2, onopen:null, onmessage:null, onerror:null, addEventListener(){}, removeEventListener(){} };
+        }
+        return new OldES(url, conf);
+      };
+      window.EventSource.prototype = OldES.prototype;
+    }
+  })();
+  </script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Gestione Utenti - BADGEBOX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  <title>Gestione Dipendenti - BADGEBOX</title>
 
   <!-- PWA Meta -->
-  <meta name="theme-color" content="#0d1b2b" />
+  <meta name="theme-color" content="#0d1b2a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
@@ -26,7 +55,7 @@
   <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/BADGENODE.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/BADGENODE.png" />
   <meta name="msapplication-TileImage" content="assets/icons/BADGENODE.png" />
-  <meta name="msapplication-TileColor" content="#0d1b2b" />
+  <meta name="msapplication-TileColor" content="#0d1b2a" />
   <link rel="manifest" href="manifest.json" />
 
   <script defer src="/assets/scripts/perf.patch.js"></script>
@@ -816,7 +845,7 @@
 
         // Successo!
         alert(`✅ Dipendente ${dipendente.nome} ${dipendente.cognome} archiviato con successo!\n\n📊 Dati archiviati:\n• ${(timbrature || []).length} timbrature storiche\n• File Excel generato: ${nomeFileExcel}\n• PIN ${pin} ora disponibile per nuovi dipendenti\n\nIl dipendente è ora consultabile in "ex Dipendenti".`);
-        
+
         console.log(`✅ Archiviazione completata per PIN ${pin}:`);
         console.log(`   • Nome: ${dipendente.nome} ${dipendente.cognome}`);
         console.log(`   • Timbrature archiviate: ${(timbrature || []).length}`);

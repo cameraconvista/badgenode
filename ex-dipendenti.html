@@ -1,6 +1,35 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+  <script>
+  (function () {
+    if (location.protocol !== 'https:') return;  // only on https
+    var HMR = /:\/\/(0\.0\.0\.0|127\.0\.0\.1|localhost):517\d/;
+
+    // Patch WebSocket (block only Vite HMR)
+    var OldWS = window.WebSocket;
+    window.WebSocket = function (url, protocols) {
+      try { if (typeof url === 'string' && HMR.test(url)) throw new Error('HMR disabled on HTTPS'); }
+      catch (e) { console.debug('[HMR muted]', e.message); return { close(){}, readyState: 3, addEventListener(){}, removeEventListener(){}, send(){} }; }
+      var ws = new OldWS(url, protocols);
+      return ws;
+    };
+    if (OldWS) window.WebSocket.prototype = OldWS.prototype;
+
+    // Patch EventSource (some setups use it for HMR)
+    var OldES = window.EventSource;
+    if (OldES) {
+      window.EventSource = function (url, conf) {
+        if (typeof url === 'string' && HMR.test(url)) {
+          console.debug('[HMR muted] EventSource blocked');
+          return { close(){}, readyState: 2, onopen:null, onmessage:null, onerror:null, addEventListener(){}, removeEventListener(){} };
+        }
+        return new OldES(url, conf);
+      };
+      window.EventSource.prototype = OldES.prototype;
+    }
+  })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
   <title>Ex Dipendenti - BADGEBOX</title>
