@@ -334,8 +334,8 @@ tr.weekend td {
 
 .btn-torna-utenti {
   position: absolute;
-  top: 60px;
-  left: 20px;
+  top: 8px;
+  left: 8px;
   background: rgba(60, 60, 60, 0.9);
   color: white;
   border: 2px solid rgba(120, 120, 120, 0.4);
@@ -738,8 +738,8 @@ button {
   .btn-torna-utenti {
     width: 36px;
     height: 36px;
-    top: 8px;
-    left: 8px;
+    top: 4px;
+    left: 4px;
     font-size: 16px;
   }
 
@@ -918,7 +918,7 @@ button {
 .tabella-container th:nth-child(4) { width: 80px; }  /* Uscita */
 .tabella-container th:nth-child(5) { width: 70px; }  /* Ore */
 .tabella-container th:nth-child(6) { width: 70px; }  /* Extra */
-.tabella-container th:nth-child(7) { width: 80px; }  /* Modifica */
+.tabella-container th:nth-child(7) { width: 50px; }  /* Modifica - ridotta */
 
 .tabella-container td:nth-child(1) { width: 120px; } /* Data */
 .tabella-container td:nth-child(2) { width: 110px; } /* Mese */
@@ -926,7 +926,7 @@ button {
 .tabella-container td:nth-child(4) { width: 80px; }  /* Uscita */
 .tabella-container td:nth-child(5) { width: 70px; }  /* Ore */
 .tabella-container td:nth-child(6) { width: 70px; }  /* Extra */
-.tabella-container td:nth-child(7) { width: 80px; }  /* Modifica */
+.tabella-container td:nth-child(7) { width: 50px; }  /* Modifica - ridotta */
 
 /* Regole per mobile */
 @media (max-width: 480px) and (orientation: portrait) {
@@ -940,5 +940,5 @@ button {
   .tabella-container th:nth-child(4), td:nth-child(4) { width: 20%; } /* Uscita */
   .tabella-container th:nth-child(5), td:nth-child(5) { width: 15%; } /* Ore */
   .tabella-container th:nth-child(6), td:nth-child(6) { width: 15%; } /* Extra */
-  .tabella-container th:nth-child(7), td:nth-child(7) { width: 15%; } /* Modifica */
+  .tabella-container th:nth-child(7), td:nth-child(7) { width: 10%; } /* Modifica - ridotta */
 }
