@@ -117,19 +117,25 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            // Dimensioni ottimali per il logo
-            const logoWidth = 80;
-            const logoHeight = 20;
+            // Dimensioni ridotte del 50% per il logo
+            const logoWidth = 40;
+            const logoHeight = 10;
             
-            canvas.width = logoWidth;
-            canvas.height = logoHeight;
+            // Usa dimensioni più grandi per il canvas per migliorare la qualità
+            const canvasScale = 4; // Factor per alta qualità
+            canvas.width = logoWidth * canvasScale;
+            canvas.height = logoHeight * canvasScale;
             
-            // Disegna l'immagine scalata
-            ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
-            const logoBase64 = canvas.toDataURL('image/png');
+            // Abilita anti-aliasing per qualità migliore
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
             
-            // Inserisci logo centrato
-            doc.addImage(logoBase64, 'PNG', 65, 10, logoWidth, logoHeight);
+            // Disegna l'immagine scalata con alta qualità
+            ctx.drawImage(logoImg, 0, 0, canvas.width, canvas.height);
+            const logoBase64 = canvas.toDataURL('image/png', 1.0); // Qualità massima
+            
+            // Inserisci logo centrato (dimensioni ridotte del 50%)
+            doc.addImage(logoBase64, 'PNG', 85, 10, logoWidth, logoHeight);
             resolve();
           } catch (e) {
             reject(e);
