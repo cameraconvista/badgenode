@@ -2,16 +2,14 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   server: {
-    host: '0.0.0.0',
+    host: "0.0.0.0",
     port: 5173,
     strictPort: true,
-    watch: {
-      usePolling: true,
-    },
-    allowedHosts: ['.replit.dev'], // supporta tutti i sottodomini
+    allowedHosts: ['.replit.dev', '.repl.co'], // supporta tutti i sottodomini Replit
     hmr: {
-      host: '0.0.0.0',
-      protocol: 'wss',
+      clientPort: 443,
+      protocol: 'wss'
+      // host sarà automaticamente il pubblico hostname Replit
     },
   },
 })
