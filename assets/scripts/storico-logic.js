@@ -73,8 +73,9 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
   try {
     console.log('📄 Inizio generazione PDF...');
     
-    // Usa la libreria jsPDF già caricata nel HTML
-    const { jsPDF } = window.jspdf || {};
+    // Carica jsPDF dinamicamente (lazy loading)
+    const jsPDFModule = await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    const { jsPDF } = jsPDFModule.default || window.jspdf || {};
     if (!jsPDF) {
       throw new Error('Libreria PDF non disponibile');
     }
