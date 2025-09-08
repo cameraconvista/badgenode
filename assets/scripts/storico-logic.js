@@ -204,8 +204,111 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
 });
 
 // Event listener per il bottone Excel
-document.getElementById("btn-excel")?.addEventListener("click", () => {
-  alert("Funzionalità Excel temporaneamente disabilitata durante la migrazione");
+document.getElementById("btn-excel")?.addEventListener("click", async () => {
+  const btn = document.getElementById("btn-excel");
+  if (!btn) return;
+  
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = "Generando...";
+  btn.disabled = true;
+  
+  try {
+    console.log('📊 Inizio generazione Excel...');
+    
+    // Carica SheetJS dinamicamente (lazy loading)
+    const XLSX = await import('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    if (!XLSX.default) {
+      throw new Error('Libreria Excel non disponibile');
+    }
+    const { utils, writeFile } = XLSX.default;
+    
+    // Usa il nome del dipendente se disponibile, altrimenti usa il nome dall'intestazione
+    const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 
+                        (intestazione.textContent.includes('PIN') ? intestazione.textContent.replace(/PIN \d+ - /, '') : 
+                        intestazione.textContent);
+    
+    // Prepara i dati per il foglio Excel
+    const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
+    const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
+    
+    // Crea struttura dati Excel identica al PDF
+    const worksheetData = [];
+    
+    // Header del documento
+    worksheetData.push(['RIEPILOGO MENSILE TIMBRATURE'], [''], 
+                      [`Dipendente: ${nomeCompleto} (PIN: ${pin})`],
+                      [`Periodo: dal ${dataInizioFormatted} al ${dataFineFormatted}`],
+                      [`Ore totali: ${totaleMensile}`],
+                      [''], // Riga vuota come separatore
+                      ['Data', 'Entrata', 'Uscita', 'Ore']); // Header tabella
+    
+    // Raccoglie dati dalla tabella (stessa logica del PDF)
+    const righe = document.querySelectorAll('#storico-body tr');
+    
+    righe.forEach(riga => {
+      const celle = riga.querySelectorAll('td');
+      if (celle.length >= 6) {  // Verifica che ci siano almeno 6 colonne
+        const data = celle[0].textContent.trim();
+        const entrata = celle[2].textContent.trim();  // Colonna 2 = Entrata
+        const uscita = celle[3].textContent.trim();   // Colonna 3 = Uscita
+        const ore = celle[4].textContent.trim();      // Colonna 4 = Ore
+        
+        // Includi tutte le righe, anche quelle senza timbrature per mostrare il periodo
+        worksheetData.push([data, entrata, uscita, ore]);
+      }
+    });
+    
+    // Footer (riga vuota + data generazione)
+    worksheetData.push([''], [`Generato il: ${new Date().toLocaleString('it-IT')}`]);
+    
+    // Crea il workbook e worksheet
+    const workbook = utils.book_new();
+    const worksheet = utils.aoa_to_sheet(worksheetData);
+    
+    // Imposta larghezze colonne ottimali
+    const columnWidths = [
+      { wch: 12 }, // Data
+      { wch: 10 }, // Entrata 
+      { wch: 10 }, // Uscita
+      { wch: 8 }   // Ore
+    ];
+    worksheet['!cols'] = columnWidths;
+    
+    // Stile per il titolo principale (riga 1)
+    if (worksheet['A1']) {
+      worksheet['A1'].s = {
+        font: { bold: true, sz: 14 },
+        alignment: { horizontal: 'center' }
+      };
+    }
+    
+    // Stile per header tabella (riga 7)
+    ['A7', 'B7', 'C7', 'D7'].forEach(cell => {
+      if (worksheet[cell]) {
+        worksheet[cell].s = {
+          font: { bold: true },
+          fill: { fgColor: { rgb: 'E6E6E6' } }
+        };
+      }
+    });
+    
+    // Aggiungi foglio al workbook
+    utils.book_append_sheet(workbook, worksheet, 'Timbrature');
+    
+    // Salva il file Excel
+    const nomeFile = `${nomeCompleto.replace(/\s+/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.xlsx`;
+    writeFile(workbook, nomeFile);
+    
+    console.log('✅ Excel generato con successo:', nomeFile);
+    
+  } catch (error) {
+    console.error('❌ Errore generazione Excel:', error);
+    alert('Errore durante la generazione del file Excel. Riprova.');
+  } finally {
+    // Ripristina bottone
+    btn.innerHTML = originalHTML;
+    btn.disabled = false;
+  }
 });
 
 // Caricamento iniziale
