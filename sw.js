@@ -1,7 +1,7 @@
 // BADGEBOX Service Worker - STEP 8
 // PWA offline support con caching sicuro
 
-const CACHE_VERSION = 'v1.0.2-logo';
+const CACHE_VERSION = 'v1.0.4-dev-bypass';
 const STATIC_CACHE = `badgebox-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `badgebox-runtime-${CACHE_VERSION}`;
 
@@ -28,7 +28,9 @@ const STATIC_ASSETS = [
   '/assets/icons/pdf.png',
   '/assets/icons/esporta.png',
   '/assets/icons/cancella.png',
-  '/assets/icons/invia.png'
+  '/assets/icons/invia.png',
+  // CSS files
+  '/assets/styles/app-corner-brand.css'
 ];
 
 // Install: precache degli asset statici
@@ -86,8 +88,13 @@ self.addEventListener('fetch', (event) => {
     return; // Lascia che vada direttamente alla rete
   }
   
-  // Navigazioni HTML: Network-First → fallback offline.html
+  // Navigazioni HTML: Skip cache durante sviluppo su localhost
   if (request.mode === 'navigate') {
+    // DEVELOPMENT MODE: Non cachare navigazioni su localhost
+    if (url.hostname === 'localhost') {
+      return; // Skip SW, use direct fetch
+    }
+    
     event.respondWith(
       fetch(request)
         .then((response) => {
