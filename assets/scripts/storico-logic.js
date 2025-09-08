@@ -61,8 +61,6 @@ document.getElementById("torna-utenti")?.addEventListener("click", () => {
 
 
 
-// Cache per librerie
-let XLSXLib = null;
 
 document.getElementById("btn-invia")?.addEventListener("click", async () => {
   const btn = document.getElementById("btn-invia");
@@ -204,62 +202,6 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
   }
 });
 
-document.getElementById("btn-esporta")?.addEventListener("click", async () => {
-  // Mostra loading
-  const btn = document.getElementById("btn-esporta");
-  const originalText = btn.textContent;
-  btn.textContent = "Generando Excel...";
-  btn.disabled = true;
-  
-  try {
-    // Lazy load con cache
-    if (!XLSXLib) {
-      console.log('📥 Caricamento libreria Excel...');
-      XLSXLib = await import("https://cdn.sheetjs.com/xlsx-0.20.0/package/xlsx.mjs");
-    }
-    
-    const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 'Utente';
-  const dataInizioFormatted = new Date(dataInizio.value).toLocaleDateString('it-IT');
-  const dataFineFormatted = new Date(dataFine.value).toLocaleDateString('it-IT');
-
-  const dati = [
-    ['CAMERA CON VISTA Bistrot'],
-    ['RIEPILOGO MENSILE TIMBRATURE'],
-    [''],
-    ['Dipendente:', `${nomeCompleto} (PIN: ${pin})`],
-    ['Periodo:', `dal ${dataInizioFormatted} al ${dataFineFormatted}`],
-    ['Ore totali:', totaleMensile],
-    [''],
-    ['Data', 'Entrata', 'Uscita', 'Ore Giornaliere']
-  ];
-
-  document.querySelectorAll('#storico-body tr').forEach(r => {
-    const c = r.querySelectorAll('td');
-    if (c.length >= 6) {  // Verifica che ci siano almeno 6 colonne
-      dati.push([
-        c[0].textContent.trim(),  // Data
-        c[2].textContent.trim(),  // Entrata (colonna 2)
-        c[3].textContent.trim(),  // Uscita (colonna 3)
-        c[4].textContent.trim()   // Ore Giornaliere (colonna 4)
-      ]);
-    }
-  });
-
-  dati.push([''], ['TOTALE MENSILE', '', '', totaleMensile], ['Generato il:', new Date().toLocaleString('it-IT')]);
-  const ws = XLSXLib.utils.aoa_to_sheet(dati);
-  ws['!cols'] = [{ wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 16 }];
-  const wb = XLSXLib.utils.book_new();
-  XLSXLib.utils.book_append_sheet(wb, ws, 'Timbrature');
-  XLSXLib.writeFile(wb, `${nomeCompleto.replace(/\s/g, '_')}_timbrature_${dataInizio.value}_${dataFine.value}.xlsx`);
-  } catch (error) {
-    console.error('❌ Errore generazione Excel:', error);
-    alert('Errore durante la generazione del file Excel');
-  } finally {
-    // Ripristina bottone
-    btn.textContent = originalText;
-    btn.disabled = false;
-  }
-});
 
 // Caricamento iniziale
 if (selectFiltro && dataInizio && dataFine) {
