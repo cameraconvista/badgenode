@@ -144,11 +144,34 @@
       vertical-align: middle;
     }
 
-    /* Larghezze colonne */
-    th:nth-child(1), td:nth-child(1) { width: 25%; }
-    th:nth-child(2), td:nth-child(2) { width: 25%; }
-    th:nth-child(3), td:nth-child(3) { width: 33.5%; }
-    th:nth-child(4), td:nth-child(4) { width: 16.5%; min-width: 50px; }
+    /* Larghezze colonne ottimizzate */
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    
+    th:nth-child(1), td:nth-child(1) { 
+      width: 20%; 
+      min-width: 100px;
+      text-align: left;
+      padding-left: 12px;
+    }
+    th:nth-child(2), td:nth-child(2) { 
+      width: 20%; 
+      min-width: 100px;
+      text-align: left;
+      padding-left: 12px;
+    }
+    th:nth-child(3), td:nth-child(3) { 
+      width: 35%; 
+      min-width: 120px;
+      text-align: center;
+    }
+    th:nth-child(4), td:nth-child(4) { 
+      width: 25%; 
+      min-width: 120px;
+      text-align: center;
+    }
 
     /* Azioni container */
     td:nth-child(4) {
@@ -326,21 +349,25 @@
 
       /* Ottimizza distribuzione colonne per mobile verticale */
       th:nth-child(1), td:nth-child(1) { 
-        width: 22%; 
+        width: 18%; 
         text-align: left;
         padding-left: 4px;
-      }
-      th:nth-child(2), td:nth-child(2) { 
-        width: 22%; 
-        text-align: left;
-        padding-left: 4px;
-      }
-      th:nth-child(3), td:nth-child(3) { 
-        width: 26%; 
         font-size: 9px;
       }
+      th:nth-child(2), td:nth-child(2) { 
+        width: 18%; 
+        text-align: left;
+        padding-left: 4px;
+        font-size: 9px;
+      }
+      th:nth-child(3), td:nth-child(3) { 
+        width: 32%; 
+        font-size: 9px;
+        text-align: center;
+      }
       th:nth-child(4), td:nth-child(4) { 
-        width: 30%; 
+        width: 32%; 
+        text-align: center;
       }
 
       /* Ottimizza container azioni per mobile */
