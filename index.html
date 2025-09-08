@@ -322,15 +322,8 @@
         };
 
         const { error } = await window.supabase
-                    .from('timbrature')
-                    .insert([
-                        {
-                            pin: pin,
-                            data: oggi,
-                            ore: oraAttuale,
-                            tipo: tipo
-                        }
-                    ]);
+          .from('timbrature')
+          .insert([nuovaTimbratura]);
 
         if (error) {
           console.error("Errore inserimento timbratura:", error);
