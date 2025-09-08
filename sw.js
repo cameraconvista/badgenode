@@ -1,7 +1,7 @@
 // BADGEBOX Service Worker - STEP 8
 // PWA offline support con caching sicuro
 
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.0.1-icons';
 const STATIC_CACHE = `badgebox-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `badgebox-runtime-${CACHE_VERSION}`;
 
