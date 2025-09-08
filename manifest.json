@@ -10,14 +10,22 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "assets/icons/logo home.png",
+      "src": "assets/icons/logo-home-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "assets/icons/logo home.png",
+      "src": "assets/icons/logo-home-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/logo-home-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
