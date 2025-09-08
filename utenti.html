@@ -1027,7 +1027,7 @@
   <!-- PWA Service Worker Registration -->
   <script>
     // Service Worker registration per PWA
-    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    if ('serviceWorker' in navigator && location.protocol === 'https:' && !location.hostname.includes('localhost')) {
       window.addEventListener('DOMContentLoaded', () => {
         navigator.serviceWorker.register('/sw.js')
           .then((registration) => {
