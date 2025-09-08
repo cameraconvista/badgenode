@@ -202,6 +202,10 @@ document.getElementById("btn-invia")?.addEventListener("click", async () => {
   }
 });
 
+// Event listener per il bottone Excel
+document.getElementById("btn-excel")?.addEventListener("click", () => {
+  alert("Funzionalità Excel temporaneamente disabilitata durante la migrazione");
+});
 
 // Caricamento iniziale
 if (selectFiltro && dataInizio && dataFine) {
