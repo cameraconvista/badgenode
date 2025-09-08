@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - BADGEBOX</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0d1b2b 0%, #1e293b 100%);
+      color: white;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .offline-container {
+      max-width: 400px;
+      padding: 40px 20px;
+    }
+    
+    .offline-icon {
+      font-size: 64px;
+      margin-bottom: 24px;
+      opacity: 0.7;
+    }
+    
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      opacity: 0.9;
+      margin-bottom: 32px;
+    }
+    
+    .retry-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.2s;
+    }
+    
+    .retry-btn:hover {
+      background: #2563eb;
+    }
+    
+    .home-link {
+      margin-top: 16px;
+    }
+    
+    .home-link a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .home-link a:hover {
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-container">
+    <div class="offline-icon">📱</div>
+    <h1>Sei offline</h1>
+    <p>
+      Non è possibile connettersi al server.<br>
+      Controlla la connessione e riprova.
+    </p>
+    
+    <button class="retry-btn" onclick="window.location.reload()">
+      Riprova
+    </button>
+    
+    <div class="home-link">
+      <a href="/">← Torna alla home</a>
+    </div>
+  </div>
+
+  <script>
+    // Ricarica automaticamente quando torna online
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+    
+    // Mostra stato connessione
+    if (navigator.onLine) {
+      document.body.innerHTML += '<div style="position: fixed; bottom: 20px; right: 20px; background: #10b981; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Connesso ✓</div>';
+      setTimeout(() => window.location.reload(), 1000);
+    }
+  </script>
+</body>
+</html>
