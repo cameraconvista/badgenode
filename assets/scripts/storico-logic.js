@@ -216,11 +216,12 @@ document.getElementById("btn-excel")?.addEventListener("click", async () => {
     console.log('📊 Inizio generazione Excel...');
     
     // Carica SheetJS dinamicamente (lazy loading)
-    const XLSX = await import('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
-    if (!XLSX.default) {
+    const XLSXModule = await import('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    const XLSX = XLSXModule.default || window.XLSX;
+    if (!XLSX) {
       throw new Error('Libreria Excel non disponibile');
     }
-    const { utils, writeFile } = XLSX.default;
+    const { utils, writeFile } = XLSX;
     
     // Usa il nome del dipendente se disponibile, altrimenti usa il nome dall'intestazione
     const nomeCompleto = dipendente ? `${dipendente.nome} ${dipendente.cognome}` : 
