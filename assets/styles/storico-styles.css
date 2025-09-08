@@ -327,12 +327,16 @@ tr.weekend td {
 
 /* Pulsanti */
 .modifica-icon {
-  cursor: pointer;
+  cursor: pointer !important;
   user-select: none;
-  display: inline-block;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
   line-height: 1;
-  width: 20px;
-  height: 20px;
+  width: 20px !important;
+  height: 20px !important;
+  position: relative !important;
+  z-index: 999 !important;
 }
 
 .btn-torna-utenti {
@@ -363,11 +367,17 @@ tr.weekend td {
 
 .pulsanti-alto,
 .pulsanti-basso {
-  display: flex;
+  display: flex !important;
   gap: 12px;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+}
+
+/* Forza visualizzazione pulsante Excel */
+#btn-excel {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .pulsanti-basso {
@@ -944,4 +954,4 @@ button {
   .tabella-container th:nth-child(5), td:nth-child(5) { width: 15%; } /* Ore */
   .tabella-container th:nth-child(6), td:nth-child(6) { width: 15%; } /* Extra */
   .tabella-container th:nth-child(7), td:nth-child(7) { width: 10%; } /* Modifica - ridotta */
-}
+}CACHE BUSTER: 1757371013

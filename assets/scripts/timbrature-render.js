@@ -138,4 +138,4 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
     totaleMensile: totaleMensileOre.toFixed(2),
     totaleMensileExtra: totaleMensileExtra,
   };
-}
+}// CACHE BUSTER: 1757371014
