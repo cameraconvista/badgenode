@@ -22,11 +22,13 @@ const STATIC_ASSETS = [
   '/assets/icons/bagdenodelogo.png',
   // Icone UI comuni
   '/assets/icons/calendario.png',
-  '/assets/icons/freccia-sinistra.png',
+  '/assets/icons/freccia.png',
   '/assets/icons/matita-colorata.png',
   '/assets/icons/orologio.png',
   '/assets/icons/pdf.png',
-  '/assets/icons/esporta.png'
+  '/assets/icons/esporta.png',
+  '/assets/icons/cancella.png',
+  '/assets/icons/invia.png'
 ];
 
 // Install: precache degli asset statici

@@ -25,3 +25,7 @@
 # 5) Font (se presenti)
 /assets/*.woff2
   Cache-Control: public, max-age=31536000, immutable
+
+# 6) Service Worker - nessun caching per aggiornamenti rapidi
+/sw.js
+  Cache-Control: no-cache
