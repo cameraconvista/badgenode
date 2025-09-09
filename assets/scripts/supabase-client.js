@@ -1,4 +1,4 @@
-// Client Supabase configurato
+
 import { createClient } from '@supabase/supabase-js';
 
 function readMeta(name) {
@@ -6,30 +6,24 @@ function readMeta(name) {
   return el?.content || '';
 }
 
-// Diagnostica ENV presenza (senza stampare le chiavi)
+const url =
+  import.meta.env?.VITE_SUPABASE_URL ||
+  readMeta('supabase-url');
+
+const anonKey =
+  import.meta.env?.VITE_SUPABASE_ANON_KEY ||
+  readMeta('supabase-anon-key');
+
 console.info('[SUPABASE] env present', {
   hasUrl: !!(import.meta.env?.VITE_SUPABASE_URL),
   hasAnon: !!(import.meta.env?.VITE_SUPABASE_ANON_KEY)
 });
 
-const url =
-  import.meta.env?.VITE_SUPABASE_URL ||
-  (window.__SUPABASE__ && window.__SUPABASE__.url) ||
-  readMeta('supabase-url');
-
-const anonKey =
-  import.meta.env?.VITE_SUPABASE_ANON_KEY ||
-  (window.__SUPABASE__ && window.__SUPABASE__.anonKey) ||
-  readMeta('supabase-anon-key');
-
 if (!url || !anonKey) {
-  // Log non sensibile: non stampiamo le chiavi, solo presenza/assenza
   console.error('[SUPABASE] Config mancante', { hasUrl: !!url, hasAnonKey: !!anonKey });
 }
 
-export const supabase = createClient(url, anonKey, {
-  auth: { persistSession: false },
-});
+export const supabase = createClient(url, anonKey, { auth: { persistSession: false } });
 
 export async function pingSupabase() {
   try {
