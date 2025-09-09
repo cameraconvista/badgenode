@@ -46,6 +46,7 @@ body {
   align-items: center;
   gap: clamp(10px, 3vw, 15px);
   background-color: #1e293b;
+  background-image: none !important;
   border-radius: clamp(12px, 4vw, 20px);
   padding: clamp(20px, 5vw, 30px) clamp(15px, 4vw, 25px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -53,12 +54,7 @@ body {
   margin: auto;
 }
 
-/* LOGO */
-.logo {
-  width: clamp(90px, 25vw, 120px);
-  height: auto;
-  margin-bottom: 0;
-}
+/* LOGO - Removed */
 
 /* DATA E ORA */
 .date-time-section {
