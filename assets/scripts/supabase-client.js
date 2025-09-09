@@ -1,77 +1,48 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
 
-import { createClient } from '@supabase/supabase-js';
+const SUPABASE_URL = 'https://txmjqrnitfsiytbytxlc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjU1MzE4NTYsImV4cCI6MjA0MTEwNzg1Nn0.2W_1oe8mSGCOdFqp-BXEFgqhJpUhGpWvNLHlc_PGJkU';
 
-const url = import.meta.env?.VITE_SUPABASE_URL;
-const anonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
-
-console.info('[SUPABASE] env present', {
-  hasUrl: !!(import.meta.env?.VITE_SUPABASE_URL),
-  hasAnon: !!(import.meta.env?.VITE_SUPABASE_ANON_KEY)
+export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true
+  },
+  db: {
+    schema: 'public'
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'badgebox@1.0.0'
+    }
+  }
 });
 
-if (!url || !anonKey) {
-  console.error('[SUPABASE] Config mancante', { hasUrl: !!url, hasAnonKey: !!anonKey });
-}
-
-export const supabase = createClient(url, anonKey, { auth: { persistSession: false } });
-export const supabaseClient = supabase; // Alias per compatibilità
-
-export async function pingSupabase() {
-  try {
-    const res = await fetch(url, { method: 'HEAD', mode: 'cors' });
-    return { ok: res.ok, status: res.status };
-  } catch (e) {
-    return { ok: false, error: String(e) };
-  }
-}
-
-// Compatibilità retro: espone client anche come variabile globale se window esiste
-if (typeof window !== 'undefined') {
-    window.supabaseClient = supabase;
-}
-
-// Funzione helper per gestire gli errori Supabase
+// Funzione helper per gestire errori
 export function gestisciErroreSupabase(error) {
   console.error('Errore Supabase:', error);
+
   switch (error?.code) {
     case 'PGRST116': return 'Nessun dato trovato';
     case '23505': return 'PIN già esistente';
-    default: return error?.message || 'Errore sconosciuto';
+    case '42P01': return 'Tabella non trovata';
+    case 'PGRST301': return 'Permesso negato';
+    default: return 'Errore durante l\'operazione';
   }
 }
 
-// Funzioni helper per le timbrature
-export async function recuperaTimbrature(pin, dataInizio, dataFine) {
+// Test connessione
+export async function testConnessione() {
   try {
-    const { data, error } = await supabase
-      .from("timbrature")
-      .select("*")
-      .eq("pin", parseInt(pin))
-      .gte("data", dataInizio)
-      .lte("data", dataFine)
-      .order("data", { ascending: true })
-      .order("ore", { ascending: true });
+    const { data, error } = await supabaseClient
+      .from('utenti')
+      .select('count', { count: 'exact', head: true });
 
     if (error) throw error;
-    return data || [];
+    console.log('✅ Connessione Supabase OK');
+    return true;
   } catch (error) {
-    console.error("Errore recupero timbrature:", error);
-    throw error;
-  }
-}
-
-export async function recuperaUtente(pin) {
-  try {
-    const { data, error } = await supabase
-      .from("utenti")
-      .select("nome, cognome, email, ore_contrattuali")
-      .eq("pin", parseInt(pin))
-      .single();
-
-    if (error) throw error;
-    return data;
-  } catch (error) {
-    console.error("Errore recupero utente:", error);
-    throw error;
+    console.error('❌ Errore connessione Supabase:', error);
+    return false;
   }
 }
