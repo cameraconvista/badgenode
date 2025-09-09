@@ -56,7 +56,7 @@ function renderUtenti(utenti) {
     <tr>
       <td>
         <a href="storico.html?pin=${utente.pin}" style="color: #60a5fa; text-decoration: none;">
-          📊
+          <img src="assets/icons/orologio.png" alt="Storico" style="width: 20px; height: 20px;" />
         </a>
       </td>
       <td>${utente.pin}</td>
