@@ -6,6 +6,8 @@
   --border-color: #334155;
   --text-color: white;
   --text-muted: #a0aec0;
+  --pdf-color: #ef4444;
+  --excel-color: #22c55e;
 }
 
 body {
@@ -983,4 +985,60 @@ button {
   .app-corner-brand__img {
     width: 36px;
   }
+}
+
+/* Stili moderni per icone PDF ed Excel */
+.btn-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+}
+
+.btn-icon svg {
+  width: 28px;
+  height: 28px;
+  transition: all 0.3s ease;
+}
+
+.btn-icon .btn-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.pdf-icon svg {
+  color: var(--pdf-color);
+}
+
+.excel-icon svg {
+  color: var(--excel-color);
+}
+
+.pulsanti-alto button:hover .btn-icon svg {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.pulsanti-alto button:hover .btn-label {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.pulsanti-alto button {
+  background: rgba(30, 41, 59, 0.4) !important;
+  border: 1px solid rgba(75, 85, 99, 0.3) !important;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease !important;
+}
+
+.pulsanti-alto button:hover {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border-color: rgba(156, 163, 175, 0.5) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
