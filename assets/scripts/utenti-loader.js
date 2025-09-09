@@ -239,11 +239,42 @@ window.archiviaUtente = async function(pin, nome, cognome) {
   }
 };
 
-window.eliminaUtente = function(pin, nome, cognome) {
-  if (confirm(`Eliminare ${nome} ${cognome} (PIN: ${pin})?`)) {
-    console.log('Elimina utente PIN:', pin);
-    // TODO: implementare eliminazione
-    alert('Funzione elimina in sviluppo');
+window.eliminaUtente = async function(pin, nome, cognome) {
+  if (!confirm(`ATTENZIONE: Vuoi eliminare definitivamente ${nome} ${cognome} (PIN: ${pin})?\n\nQuesta azione NON può essere annullata e rimuoverà:\n• Il dipendente dal sistema\n• Tutte le sue timbrature\n• I dati non saranno recuperabili\n\nProcedere con l'eliminazione?`)) return;
+  
+  try {
+    console.log(`🗑️ Eliminazione definitiva per PIN ${pin}: ${nome} ${cognome}`);
+    
+    // 1. Elimina tutte le timbrature del dipendente
+    const { error: timbratureError } = await supabase
+      .from('timbrature')
+      .delete()
+      .eq('pin', parseInt(pin));
+    
+    if (timbratureError) {
+      console.error('Errore eliminazione timbrature:', timbratureError);
+      // Continua comunque con l'eliminazione dell'utente
+    }
+    
+    // 2. Elimina il dipendente dalla tabella utenti
+    const { error: utenteError } = await supabase
+      .from('utenti')
+      .delete()
+      .eq('pin', parseInt(pin));
+    
+    if (utenteError) {
+      throw new Error(`Errore durante l'eliminazione: ${utenteError.message}`);
+    }
+    
+    console.log(`✅ Eliminazione completata per PIN ${pin}: ${nome} ${cognome}`);
+    alert(`✅ ${nome} ${cognome} eliminato definitivamente dal sistema.\n\nTutte le timbrature sono state rimosse e il PIN ${pin} è ora disponibile.`);
+    
+    // Ricarica la pagina per aggiornare la lista
+    setTimeout(() => location.reload(), 1000);
+    
+  } catch (error) {
+    console.error('❌ Errore durante l\'eliminazione:', error);
+    alert('Errore durante l\'eliminazione: ' + (error.message || 'Errore sconosciuto'));
   }
 };
 
