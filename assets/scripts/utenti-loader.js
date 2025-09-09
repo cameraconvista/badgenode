@@ -1,35 +1,5 @@
 import { supabase } from './supabase-client.js';
 
-// Cella AZIONI: bottoni con data-action + classi legacy (per compatibilità)
-function renderAzioniCell(pin) {
-  return `
-    <button type="button"
-            class="btn-modifica edit-btn"
-            data-action="edit" data-pin="${pin}"
-            title="Modifica">
-      <img src="assets/icons/matita-colorata.png" alt="Modifica" class="icon-16" />
-    </button>
-    <button type="button"
-            class="btn-archivia archive-btn"
-            data-action="archive" data-pin="${pin}"
-            title="Archivia">
-      <img src="public/icons/archive.png" alt="Archivia" class="icon-16" />
-    </button>
-  `;
-}
-
-// Cella STORICO: link con icona clock (resta <a>, non <button>)
-function renderStoricoCell(pin) {
-  return `
-    <a href="storico.html?pin=${pin}"
-       class="link-storico storico-link"
-       data-action="storico" data-pin="${pin}"
-       title="Storico timbrature">
-      <img src="public/icons/clock.png" alt="Storico" class="icon-16" />
-    </a>
-  `;
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
   console.info('[UTENTI] init DOMContentLoaded');
   console.time('[UTENTI] load');
@@ -38,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data, error, status } = await supabase
       .from('utenti')
       .select('*')
-      .order('pin', { ascending: true });
+      .order('cognome', { ascending: true });
 
     if (error) {
       console.error('[UTENTI] supabase error', { status, error });
@@ -62,35 +32,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   } finally {
     console.timeEnd('[UTENTI] load');
   }
-
-  const tbody = document.getElementById('lista-dipendenti');
-  if (tbody && !tbody.__actionsBound) {
-    tbody.addEventListener('click', (e) => {
-      const el = e.target.closest('[data-action]');
-      if (!el) return;
-      const action = el.dataset.action;
-      const pin = el.dataset.pin;
-      if (!pin) return;
-      try {
-        if (action === 'edit') {
-          // preferisci funzione legacy se esiste
-          if (typeof window.apriModaleModifica === 'function') return window.apriModaleModifica(pin);
-          if (typeof window.openEditModal === 'function') return window.openEditModal(pin);
-        }
-        if (action === 'archive') {
-          if (typeof window.archiviaDipendente === 'function') return window.archiviaDipendente(pin);
-          if (typeof window.archiveUser === 'function') return window.archiveUser(pin);
-        }
-        if (action === 'storico') {
-          // Link già gestito via href; niente da fare.
-          return;
-        }
-      } catch (err) {
-        console.error('[UTENTI] action error', action, pin, err);
-      }
-    });
-    tbody.__actionsBound = true;
-  }
 });
 
 function renderUtenti(utenti) {
@@ -110,43 +51,25 @@ function renderUtenti(utenti) {
     return;
   }
 
-  tbody.innerHTML = utenti.map(dipendente => {
-    const row = document.createElement('tr');
-
-    // Cella Storico
-    const storicoCell = row.insertCell();
-    storicoCell.innerHTML = renderStoricoCell(dipendente.pin);
-
-    // Cella PIN
-    const pinCell = row.insertCell();
-    pinCell.textContent = dipendente.pin;
-
-    // Cella Nome
-    const nomeCell = row.insertCell();
-    nomeCell.textContent = dipendente.nome;
-
-    // Cella Cognome
-    const cognomeCell = row.insertCell();
-    cognomeCell.textContent = dipendente.cognome;
-
-    // Cella Email
-    const emailCell = row.insertCell();
-    emailCell.textContent = dipendente.email || 'Non specificata';
-
-    // Cella Telefono
-    const telefonoCell = row.insertCell();
-    telefonoCell.textContent = dipendente.telefono || 'Non disponibile';
-
-    // Cella Ore Max Giornaliere
-    const oreMaxCell = row.insertCell();
-    oreMaxCell.textContent = dipendente.ore_max_giornaliere || '8,00';
-
-    // Cella Azioni
-    const azioniCell = row.insertCell();
-    azioniCell.innerHTML = renderAzioniCell(dipendente.pin);
-
-    return row.outerHTML;
-  }).join('');
+  tbody.innerHTML = utenti.map(utente => `
+    <tr>
+      <td>
+        <a href="storico.html?pin=${utente.pin}" style="color: #60a5fa; text-decoration: none;">
+          <img src="assets/icons/orologio.png" alt="Storico" style="width: 20px; height: 20px;" />
+        </a>
+      </td>
+      <td>${utente.pin}</td>
+      <td>${utente.nome}</td>
+      <td>${utente.cognome}</td>
+      <td>
+        <button onclick="modificaUtente('${utente.pin}')" title="Modifica">✏️</button>
+        <button onclick="archiviaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
+                title="Archivia dipendente" style="color: #f59e0b;">📦</button>
+        <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
+                title="Elimina" style="color: #ef4444;">❌</button>
+      </td>
+    </tr>
+  `).join('');
 
   console.info('[UTENTI] render complete', utenti.length, 'users');
 }
@@ -184,7 +107,7 @@ window.modificaUtente = async function(pin) {
     const modal = document.getElementById('modalModificaDipendente');
     const modalTitle = document.getElementById('modalTitleModifica');
     const inputNome = document.getElementById('inputNomeModifica');
-    const inputCognome = document.getElementById('inputCognomeModifica');
+    const inputCognome = document.getElementById('inputCognomeModifica'); 
     const inputEmail = document.getElementById('inputEmailModifica');
     const inputOre = document.getElementById('inputOreModifica');
     const btnSalva = document.getElementById('btnSalvaModifica');
