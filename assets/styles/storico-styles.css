@@ -253,7 +253,7 @@ body {
   min-height: 0;
   position: relative;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 10px;
+  padding-bottom: 60px;
 }
 
 .tabella-header,
@@ -263,12 +263,10 @@ body {
 }
 
 .tabella-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   border-top: 2px solid var(--border-color);
   z-index: 10;
+  margin-top: 8px;
 }
 
 table {
@@ -822,7 +820,8 @@ button {
 
   .tabella-footer {
     height: 32px;
-    bottom: 0;
+    position: relative;
+    margin-top: 4px;
   }
 
   .tabella-footer td {
