@@ -156,8 +156,8 @@ window.archiviaUtente = async function(pin, nome, cognome) {
         pin: dipendenteData.pin,
         nome: dipendenteData.nome,
         cognome: dipendenteData.cognome,
-        email: dipendenteData.email,
-        telefono: dipendenteData.telefono,
+        email: dipendenteData.email || 'Non disponibile',
+        telefono: dipendenteData.telefono || 'Non disponibile',
         ore_contrattuali: dipendenteData.ore_contrattuali,
         data_archiviazione: new Date().toISOString(),
         file_excel_path: JSON.stringify(excelData),
@@ -187,8 +187,21 @@ window.archiviaUtente = async function(pin, nome, cognome) {
 
     alert(`✅ Dipendente ${nome} ${cognome} archiviato con successo!\n\n📊 Riepilogo archiviazione:\n• Timbrature salvate: ${timbratureData?.length || 0}\n• PIN liberato: ${pin}\n• File Excel generato\n\nIl dipendente è ora disponibile nella sezione "ex Dipendenti".`);
 
-    // Ricarica la pagina per aggiornare la lista
-    setTimeout(() => location.reload(), 1500);
+    // Rimuovi la riga dalla tabella senza ricaricare
+    const rows = document.querySelectorAll('#lista-dipendenti tr');
+    const targetRow = Array.from(rows).find(row => {
+      const pinCell = row.cells[1]; // Colonna PIN è la seconda (indice 1)
+      return pinCell && pinCell.textContent.trim() === pin.toString();
+    });
+    
+    if (targetRow) {
+      targetRow.style.transition = 'opacity 0.5s ease';
+      targetRow.style.opacity = '0';
+      setTimeout(() => targetRow.remove(), 500);
+    } else {
+      // Fallback: ricarica pagina se non trova la riga
+      setTimeout(() => location.reload(), 1000);
+    }
 
   } catch (error) {
     console.error('❌ Errore durante l\'archiviazione:', error);
@@ -226,8 +239,21 @@ window.eliminaUtente = async function(pin, nome, cognome) {
     console.log(`✅ Eliminazione completata per PIN ${pin}: ${nome} ${cognome}`);
     alert(`✅ ${nome} ${cognome} eliminato definitivamente dal sistema.\n\nTutte le timbrature sono state rimosse e il PIN ${pin} è ora disponibile.`);
     
-    // Ricarica la pagina per aggiornare la lista
-    setTimeout(() => location.reload(), 1000);
+    // Rimuovi la riga dalla tabella senza ricaricare
+    const rows = document.querySelectorAll('#lista-dipendenti tr');
+    const targetRow = Array.from(rows).find(row => {
+      const pinCell = row.cells[1]; // Colonna PIN è la seconda (indice 1)
+      return pinCell && pinCell.textContent.trim() === pin.toString();
+    });
+    
+    if (targetRow) {
+      targetRow.style.transition = 'opacity 0.5s ease';
+      targetRow.style.opacity = '0';
+      setTimeout(() => targetRow.remove(), 500);
+    } else {
+      // Fallback: ricarica pagina se non trova la riga
+      setTimeout(() => location.reload(), 1000);
+    }
     
   } catch (error) {
     console.error('❌ Errore durante l\'eliminazione:', error);
