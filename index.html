@@ -238,25 +238,21 @@
       if (modal) modal.remove();
     }
 
-    document.querySelectorAll(".keypad-button").forEach((key) => {
+    // Gestione click sui pulsanti numerici
+    document.querySelectorAll(".keypad-button").forEach((key, index) => {
       key.addEventListener("click", () => {
         const valore = key.textContent.trim();
-        console.log('🔧 Pulsante cliccato:', valore, 'Caratteri:', [...valore].map(c => c.charCodeAt(0)));
         
         if (valore === "C") {
-          console.log('🔧 Pulendo PIN...');
           pulisciPin();
-        } else if (valore.includes("⚙") || valore === "⚙️" || valore === "⚙") {
-          console.log('🔧 Rilevato pulsante ingranaggio!');
-          if (!window.supabase) {
-            console.log('🔧 Supabase non caricato');
-            mostraStatus("Sistema in caricamento, riprova tra qualche secondo...", "warning", 3000);
-            return;
+        } else if (index === 11 || valore.includes("⚙")) { // Il pulsante ingranaggio è in posizione 11 (ultimo)
+          const adminPin = prompt("Inserisci PIN Amministratore:");
+          if (adminPin === "1909") {
+            window.location.href = "utenti.html";
+          } else if (adminPin !== null) {
+            alert("PIN non valido. Accesso negato.");
           }
-          console.log('🔧 Aprendo modal admin...');
-          verificaAccessoAdmin();
-        } else if (pinInput.value.length < 2) {
-          console.log('🔧 Aggiungendo numero:', valore);
+        } else if (pinInput.value.length < 2 && !isNaN(valore)) {
           pinInput.value += valore;
         }
       });
