@@ -236,7 +236,7 @@ body {
   background-color: var(--bg-panel);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-  max-height: 1350px;
+  max-height: 1450px;
   padding: 6px;
   overflow: hidden;
   display: flex;
@@ -246,7 +246,7 @@ body {
 .tabella-container,
 .tabella-body-wrapper {
   background-color: transparent;
-  max-height: 1300px;
+  max-height: 1400px;
   overflow: auto;
   display: flex;
   flex-direction: column;
