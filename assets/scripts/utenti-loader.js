@@ -1,34 +1,14 @@
-// Usa il client Supabase globale dall'HTML
-const supabase = window.supabase;
+// Importa direttamente il client Supabase
+import { supabaseClient } from './supabase-client.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.info('[UTENTI] init DOMContentLoaded');
   console.time('[UTENTI] load');
 
-  // Aspetta che il client Supabase sia disponibile con retry
-  let retries = 0;
-  const maxRetries = 10;
-  
-  while (!window.supabase && retries < maxRetries) {
-    console.log(`[UTENTI] Waiting for Supabase client... (${retries + 1}/${maxRetries})`);
-    await new Promise(resolve => setTimeout(resolve, 100));
-    retries++;
-  }
-  
-  if (!window.supabase) {
-    console.error('[UTENTI] Supabase client non disponibile dopo retry');
-    document.getElementById('lista-dipendenti').innerHTML = `
-      <tr><td colspan="5" style="color: red; text-align: center; padding: 20px;">
-        Errore: Client Supabase non inizializzato
-      </td></tr>
-    `;
-    return;
-  }
-
-  console.log('[UTENTI] Supabase client disponibile, caricamento dati...');
+  console.log('[UTENTI] Client Supabase importato, caricamento dati...');
 
   try {
-    const { data, error, status } = await window.supabase
+    const { data, error, status } = await supabaseClient
       .from('utenti')
       .select('*')
       .order('pin', { ascending: true });
@@ -113,7 +93,7 @@ window.archiviaUtente = async function(pin, nome, cognome) {
     console.log(`   • Nome: ${nome} ${cognome}`);
 
     // 1. Recupera tutti i dati del dipendente
-    const { data: dipendenteData, error: dipendenteError } = await window.supabase
+    const { data: dipendenteData, error: dipendenteError } = await supabaseClient
       .from('utenti')
       .select('*')
       .eq('pin', parseInt(pin))
@@ -124,7 +104,7 @@ window.archiviaUtente = async function(pin, nome, cognome) {
     }
 
     // 2. Recupera tutte le timbrature del dipendente
-    const { data: timbratureData, error: timbratureError } = await window.supabase
+    const { data: timbratureData, error: timbratureError } = await supabaseClient
       .from('timbrature')
       .select('*')
       .eq('pin', parseInt(pin))
@@ -152,7 +132,7 @@ window.archiviaUtente = async function(pin, nome, cognome) {
     };
 
     // 4. Inserisci nella tabella dipendenti_archiviati
-    const { data: archiviatiData, error: archiviatiError } = await window.supabase
+    const { data: archiviatiData, error: archiviatiError } = await supabaseClient
       .from('dipendenti_archiviati')
       .insert({
         pin: dipendenteData.pin,
@@ -172,7 +152,7 @@ window.archiviaUtente = async function(pin, nome, cognome) {
     }
 
     // 5. Elimina il dipendente dalla tabella utenti (libera il PIN)
-    const { error: deleteError } = await window.supabase
+    const { error: deleteError } = await supabaseClient
       .from('utenti')
       .delete()
       .eq('pin', parseInt(pin));
@@ -218,7 +198,7 @@ window.eliminaUtente = async function(pin, nome, cognome) {
     console.log(`🗑️ Eliminazione definitiva per PIN ${pin}: ${nome} ${cognome}`);
     
     // 1. Elimina tutte le timbrature del dipendente
-    const { error: timbratureError } = await window.supabase
+    const { error: timbratureError } = await supabaseClient
       .from('timbrature')
       .delete()
       .eq('pin', parseInt(pin));
@@ -229,7 +209,7 @@ window.eliminaUtente = async function(pin, nome, cognome) {
     }
     
     // 2. Elimina il dipendente dalla tabella utenti
-    const { error: utenteError } = await window.supabase
+    const { error: utenteError } = await supabaseClient
       .from('utenti')
       .delete()
       .eq('pin', parseInt(pin));
@@ -317,7 +297,7 @@ window.salvaModificaDipendente = async function() {
   try {
     console.log(`💾 Salvataggio modifiche per PIN ${pin}:`, { nome, cognome, email, telefono, oreContrattuali });
 
-    const { error } = await window.supabase
+    const { error } = await supabaseClient
       .from('utenti')
       .update({
         nome: nome,

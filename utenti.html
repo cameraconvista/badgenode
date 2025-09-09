@@ -713,7 +713,7 @@
         console.log('💾 Creazione nuovo dipendente:', { nome, cognome, pin });
 
         // Inserisci nel database
-        const { data, error } = await window.supabase
+        const { data, error } = await supabaseClient
           .from('utenti')
           .insert({
             pin: pin,
