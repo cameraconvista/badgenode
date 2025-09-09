@@ -1,203 +1,101 @@
-// BADGEBOX Service Worker - STEP 8
-// PWA offline support con caching sicuro
-
-const CACHE_VERSION = 'v1.0.4-dev-bypass';
-const STATIC_CACHE = `badgebox-static-${CACHE_VERSION}`;
-const RUNTIME_CACHE = `badgebox-runtime-${CACHE_VERSION}`;
-
-// Assets da pre-cachare (app shell)
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/utenti.html', 
-  '/storico.html',
-  '/ex-dipendenti.html',
-  '/offline.html',
+/* BADGENODE Service Worker - navigation fallback + asset caching */
+const CACHE_VERSION = 'v3';
+const STATIC_CACHE = `static-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
+const PRECACHE_URLS = [
+  '/',              // start_url
+  '/offline.html',  // fallback pagina offline
   '/manifest.json',
-  '/style.css',
-  // Icone PWA essenziali
-  '/assets/icons/badgenode-192.png',
-  '/assets/icons/badgenode-512.png',
-  '/assets/icons/bnapp.png',
-  '/assets/icons/bagdenodelogo.png',
-  // Icone UI comuni
-  '/assets/icons/calendario.png',
-  '/assets/icons/freccia.png',
-  '/assets/icons/matita-colorata.png',
-  '/assets/icons/orologio.png',
-  '/assets/icons/pdf.png',
-  '/assets/icons/esporta.png',
-  '/assets/icons/cancella.png',
-  '/assets/icons/invia.png',
-  // CSS files
-  '/assets/styles/app-corner-brand.css'
+  '/favicon.ico',   // evita errori in console offline
+  // Nota: gli asset fingerprintati verranno presi runtime con cache-first
 ];
 
-// Install: precache degli asset statici
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing...');
-  
   event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => {
-        console.log('[SW] Pre-caching static assets');
-        return cache.addAll(STATIC_ASSETS);
-      })
-      .catch((error) => {
-        console.error('[SW] Pre-cache failed:', error);
-        // Non bloccare l'install per errori di cache
-      })
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
   );
-  
-  // Forza l'attivazione del nuovo SW
   self.skipWaiting();
 });
 
-// Activate: pulizia cache vecchie
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating...');
-  
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== STATIC_CACHE && cacheName !== RUNTIME_CACHE) {
-              console.log('[SW] Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => ![STATIC_CACHE, RUNTIME_CACHE].includes(k))
+        .map(k => caches.delete(k))
+      )
+    )
   );
-  
-  // Prendi controllo di tutti i client immediatamente
   self.clients.claim();
 });
 
-// Fetch: strategie di cache per diversi tipi di risorsa
+/* Strategie:
+   - HTML: network-first con fallback offline.html
+   - Asset fingerprintati (css/js/png/webp… in /assets/): cache-first
+   - Icone (png, svg, ico nella root): stale-while-revalidate
+   - Supabase: network-only (bypass SW)
+*/
+const ASSETS_REGEX = /^\/assets\/.+\.(?:js|css|png|webp|jpg|svg|ico)$/i;
+const ROOT_ICONS_REGEX = /^\/(?:favicon\.ico|.*\.png|.*\.svg)$/i;
+const SUPABASE_REGEX = /^https?:\/\/([a-z0-9-]+\.)*supabase\.co\//i;
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
-  
-  // ESCLUDERE SEMPRE Supabase da qualsiasi cache
-  if (url.hostname.includes('supabase.co') || 
-      url.pathname.includes('/rest/v1/') ||
-      url.pathname.includes('/storage/v1/')) {
-    console.log('[SW] Network-only for Supabase:', url.pathname);
-    return; // Lascia che vada direttamente alla rete
-  }
-  
-  // Navigazioni HTML: Skip cache durante sviluppo su localhost
+
+  // Bypassa Supabase completamente
+  if (SUPABASE_REGEX.test(request.url)) return;
+
+  // Navigazioni (HTML)
   if (request.mode === 'navigate') {
-    // DEVELOPMENT MODE: Non cachare navigazioni su localhost
-    if (url.hostname === 'localhost') {
-      return; // Skip SW, use direct fetch
-    }
-    
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Cache la risposta se è una pagina HTML principale
-          if (response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(RUNTIME_CACHE)
-              .then((cache) => cache.put(request, responseClone));
-          }
-          return response;
-        })
-        .catch(() => {
-          // Offline: ritorna la pagina offline
-          console.log('[SW] Navigate offline, serving offline.html');
-          return caches.match('/offline.html')
-            .then((offlineResponse) => offlineResponse || new Response('Offline'));
-        })
-    );
+    event.respondWith((async () => {
+      try {
+        const net = await fetch(request);
+        // Cache "page shell" in background (best-effort)
+        const cache = await caches.open(RUNTIME_CACHE);
+        cache.put(request, net.clone()).catch(()=>{});
+        return net;
+      } catch (_) {
+        // Fallback: pagina visitata in cache o offline.html
+        const cache = await caches.open(RUNTIME_CACHE);
+        const cached = await cache.match(request);
+        if (cached) return cached;
+        const precached = await caches.open(STATIC_CACHE);
+        return (await precached.match('/offline.html')) || Response.error();
+      }
+    })());
     return;
   }
-  
-  // Asset statici fingerprintati (/assets/): Cache-First
-  if (url.pathname.startsWith('/assets/') && 
-      (url.pathname.includes('.js') || url.pathname.includes('.css'))) {
-    event.respondWith(
-      caches.match(request)
-        .then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          return fetch(request)
-            .then((response) => {
-              if (response.status === 200) {
-                const responseClone = response.clone();
-                caches.open(STATIC_CACHE)
-                  .then((cache) => cache.put(request, responseClone));
-              }
-              return response;
-            });
-        })
-        .catch(() => {
-          // Fallback vuoto per asset mancanti
-          return new Response('', { status: 404 });
-        })
-    );
-    return;
-  }
-  
-  // Icone (/assets/icons/): Stale-While-Revalidate
-  if (url.pathname.startsWith('/assets/icons/')) {
-    event.respondWith(
-      caches.match(request)
-        .then((cachedResponse) => {
-          const fetchPromise = fetch(request)
-            .then((response) => {
-              if (response.status === 200) {
-                const responseClone = response.clone();
-                caches.open(STATIC_CACHE)
-                  .then((cache) => cache.put(request, responseClone));
-              }
-              return response;
-            })
-            .catch(() => null);
-          
-          // Ritorna cache se disponibile, altrimenti aspetta network
-          return cachedResponse || fetchPromise;
-        })
-    );
-    return;
-  }
-  
-  // HTML statici: Cache-First con network fallback
-  if (request.url.includes('.html') || request.url.includes('manifest.json')) {
-    event.respondWith(
-      caches.match(request)
-        .then((cachedResponse) => {
-          return cachedResponse || fetch(request)
-            .then((response) => {
-              if (response.status === 200) {
-                const responseClone = response.clone();
-                caches.open(STATIC_CACHE)
-                  .then((cache) => cache.put(request, responseClone));
-              }
-              return response;
-            });
-        })
-        .catch(() => {
-          // Per errori di rete, ritorna offline.html se è una navigazione
-          if (request.mode === 'navigate') {
-            return caches.match('/offline.html');
-          }
-          return new Response('Offline', { status: 503 });
-        })
-    );
-    return;
-  }
-});
 
-// Gestione messaggi dal main thread
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+  // Asset fingerprintati in /assets -> cache-first
+  const url = new URL(request.url);
+  if (url.origin === self.location.origin && ASSETS_REGEX.test(url.pathname)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(RUNTIME_CACHE);
+      const cached = await cache.match(request);
+      if (cached) return cached;
+      try {
+        const net = await fetch(request);
+        cache.put(request, net.clone()).catch(()=>{});
+        return net;
+      } catch (_) {
+        return cached || Response.error();
+      }
+    })());
+    return;
   }
-});
 
-console.log('[SW] Service Worker loaded');
+  // Icone root -> stale-while-revalidate
+  if (url.origin === self.location.origin && ROOT_ICONS_REGEX.test(url.pathname)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(RUNTIME_CACHE);
+      const cached = await cache.match(request);
+      const netPromise = fetch(request).then(res => {
+        cache.put(request, res.clone()).catch(()=>{});
+        return res;
+      }).catch(()=>null);
+      return cached || (await netPromise) || Response.error();
+    })());
+    return;
+  }
+
+  // Default: passa rete
+});

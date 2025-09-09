@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -55,6 +56,7 @@
       text-decoration: none;
       display: inline-block;
       transition: background-color 0.2s;
+      margin-right: 16px;
     }
     
     .retry-btn:hover {
@@ -78,12 +80,9 @@
 </head>
 <body>
   <div class="offline-container">
-    <div class="offline-icon">📱</div>
+    <div class="offline-icon">📡</div>
     <h1>Sei offline</h1>
-    <p>
-      Non è possibile connettersi al server.<br>
-      Controlla la connessione e riprova.
-    </p>
+    <p>Non è possibile connettersi a Internet. Controlla la tua connessione e riprova.</p>
     
     <button class="retry-btn" onclick="window.location.reload()">
       Riprova
@@ -93,18 +92,5 @@
       <a href="/">← Torna alla home</a>
     </div>
   </div>
-
-  <script>
-    // Ricarica automaticamente quando torna online
-    window.addEventListener('online', () => {
-      window.location.reload();
-    });
-    
-    // Mostra stato connessione
-    if (navigator.onLine) {
-      document.body.innerHTML += '<div style="position: fixed; bottom: 20px; right: 20px; background: #10b981; padding: 8px 16px; border-radius: 6px; font-size: 12px;">Connesso ✓</div>';
-      setTimeout(() => window.location.reload(), 1000);
-    }
-  </script>
 </body>
 </html>
