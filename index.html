@@ -241,8 +241,9 @@
     document.querySelectorAll(".keypad-button").forEach((key) => {
       key.addEventListener("click", () => {
         const valore = key.textContent;
+        console.log('Pulsante cliccato:', valore, 'Codici:', [...valore].map(c => c.charCodeAt(0)));
         if (valore === "C") pulisciPin();
-        else if (valore === "⚙️") {
+        else if (valore.includes("⚙") || valore === "⚙️" || valore === "⚙") {
           if (!window.supabase) {
             mostraStatus("Sistema in caricamento, riprova tra qualche secondo...", "warning", 3000);
             return;
