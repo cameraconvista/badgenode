@@ -1,119 +1,220 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Offline - BADGEBOX</title>
+  <title>BADGEBOX - Offline</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #0d1b2b 0%, #1e293b 100%);
-      color: white;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #f1f5f9;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      text-align: center;
+      justify-content: center;
+      padding: 20px;
     }
-    
+
     .offline-container {
-      max-width: 400px;
-      padding: 40px 20px;
+      text-align: center;
+      max-width: 500px;
+      padding: 40px;
+      background: rgba(30, 41, 59, 0.8);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
-    
+
     .offline-icon {
-      font-size: 64px;
-      margin-bottom: 24px;
-      opacity: 0.7;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 30px;
+      background: #ef4444;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: white;
     }
-    
+
     h1 {
-      font-size: 24px;
-      margin-bottom: 16px;
+      color: #38bdf8;
+      margin-bottom: 20px;
+      font-size: 2rem;
       font-weight: 600;
     }
-    
+
     p {
-      font-size: 16px;
-      line-height: 1.5;
-      opacity: 0.9;
-      margin-bottom: 32px;
+      color: #94a3b8;
+      margin-bottom: 30px;
+      line-height: 1.6;
+      font-size: 1.1rem;
     }
-    
-    .retry-btn {
-      background: #3b82f6;
+
+    .retry-button {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
       color: white;
       border: none;
-      border-radius: 8px;
       padding: 12px 24px;
-      font-size: 16px;
-      font-weight: 600;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-right: 12px;
+    }
+
+    .retry-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .home-button {
+      background: rgba(148, 163, 184, 0.2);
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
       text-decoration: none;
       display: inline-block;
-      transition: background-color 0.2s;
-      margin-right: 16px;
     }
-    
-    .retry-btn:hover {
-      background: #2563eb;
+
+    .home-button:hover {
+      background: rgba(148, 163, 184, 0.3);
+      border-color: rgba(148, 163, 184, 0.5);
     }
-    
-    .home-link {
-      margin-top: 16px;
+
+    .network-status {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
     }
-    
-    .home-link a {
+
+    .network-status.online {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .network-status.offline {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .debug-info {
+      margin-top: 20px;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      font-size: 0.8rem;
       color: #94a3b8;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    
-    .home-link a:hover {
-      color: #cbd5e1;
+      text-align: left;
     }
   </style>
 </head>
 <body>
   <div class="offline-container">
-    <div class="offline-icon">📡</div>
-    <h1>Sei offline</h1>
-    <p>Non è possibile connettersi a Internet. Controlla la tua connessione e riprova.</p>
-    
-    <button class="retry-btn" onclick="window.location.reload()">
-      Riprova
-    </button>
-    
-    <div class="home-link">
-      <a href="/" onclick="navigateToHome(event)">← Torna alla home</a>
-      <br><br>
-      <a href="/utenti.html" onclick="navigateToAdmin(event)">🔧 Area Admin</a>
+    <div class="offline-icon">
+      📱
+    </div>
+    <h1>BADGEBOX Offline</h1>
+    <p>Al momento non è possibile connettersi al server. L'app può ancora funzionare in modalità limitata per le timbrature di base.</p>
+
+    <div>
+      <button class="retry-button" onclick="window.location.reload()">
+        🔄 Riprova
+      </button>
+      <a href="/" class="home-button" onclick="event.preventDefault(); goHome();">
+        🏠 Torna alla Home
+      </a>
+    </div>
+
+    <div id="networkStatus" class="network-status offline">
+      📡 Stato connessione: Offline
+    </div>
+
+    <div id="debugInfo" class="debug-info">
+      URL: <span id="currentUrl"></span><br>
+      Timestamp: <span id="timestamp"></span>
     </div>
   </div>
 
   <script>
-    function navigateToHome(event) {
-      event.preventDefault();
-      window.location.href = '/';
+    // Mostra info debug
+    document.getElementById('currentUrl').textContent = window.location.href;
+    document.getElementById('timestamp').textContent = new Date().toLocaleString();
+
+    function goHome() {
+      // Prova prima la cache, poi navigazione diretta
+      if ('caches' in window) {
+        caches.match('/index.html').then(response => {
+          if (response) {
+            window.location.href = '/';
+          } else {
+            window.location.href = '/';
+          }
+        });
+      } else {
+        window.location.href = '/';
+      }
     }
-    
-    function navigateToAdmin(event) {
-      event.preventDefault();
-      window.location.href = '/utenti.html';
+
+    // Controlla stato connessione
+    function updateNetworkStatus() {
+      const statusEl = document.getElementById('networkStatus');
+      if (navigator.onLine) {
+        statusEl.className = 'network-status online';
+        statusEl.innerHTML = '✅ Stato connessione: Online - Ricaricamento automatico...';
+        // Auto-reload dopo 1 secondo se torna online
+        setTimeout(() => {
+          if (navigator.onLine) {
+            window.location.href = '/';
+          }
+        }, 1000);
+      } else {
+        statusEl.className = 'network-status offline';
+        statusEl.innerHTML = '📡 Stato connessione: Offline';
+      }
     }
-    
-    // Prova a ricaricare la pagina ogni 30 secondi se online
+
+    // Controlla connessione all'avvio
+    updateNetworkStatus();
+
+    // Ascolta cambimenti stato connessione
+    window.addEventListener('online', updateNetworkStatus);
+    window.addEventListener('offline', updateNetworkStatus);
+
+    // Controlla connessione ogni 5 secondi
+    setInterval(updateNetworkStatus, 5000);
+
+    // Prova a connettersi periodicamente
     setInterval(() => {
       if (navigator.onLine) {
-        console.log('Network detected, attempting reload...');
-        window.location.reload();
+        fetch('/', { method: 'HEAD', cache: 'no-cache' })
+          .then(() => {
+            console.log('Server raggiungibile, reindirizzamento...');
+            window.location.href = '/';
+          })
+          .catch(() => {
+            console.log('Server non raggiungibile');
+          });
       }
-    }, 30000);
+    }, 10000);
   </script>
-  </div>
 </body>
 </html>

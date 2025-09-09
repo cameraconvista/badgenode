@@ -3,19 +3,16 @@
 
 # 1) HTML: nessun caching aggressivo
 /*
- Content-Type: text/html; charset=UTF-8
- Cache-Control: no-cache, no-store, must-revalidate
- Pragma: no-cache
- Expires: 0
-
-/*
+  Content-Type: text/html; charset=UTF-8
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Cross-Origin-Embedder-Policy: unsafe-none
-  Cross-Opener-Policy: unsafe-none
-  Content-Security-Policy: frame-ancestors 'self' https://*.spock.replit.dev https://*.replit.dev https://*.replit.co
+  Cross-Origin-Opener-Policy: unsafe-none
 */
 
 # 2) Asset fingerprintati (hash nel nome) generati da Vite: JS/CSS/immagini sotto /assets/

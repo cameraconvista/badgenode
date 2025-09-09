@@ -1,6 +1,6 @@
 
 /* BADGENODE Service Worker - navigation fallback + asset caching */
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
@@ -11,7 +11,9 @@ const PRECACHE_URLS = [
   '/offline.html',  
   '/manifest.json',
   '/favicon.ico',
-  '/style.css'
+  '/style.css',
+  '/assets/icons/badgenode-192.png',
+  '/assets/icons/badgenode-512.png'
 ];
 
 // Skip waiting e claim clients in modo più sicuro
