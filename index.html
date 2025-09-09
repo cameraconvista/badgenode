@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no" />
-  
+
   <title>BADGEBOX - Sistema Timbrature</title>
 
   <!-- PWA Meta -->
@@ -241,14 +241,21 @@
     // Gestione click sui pulsanti numerici  
     document.querySelectorAll(".keypad-button").forEach((key, index) => {
       key.addEventListener("click", () => {
-        const valore = key.textContent;
-        if (valore === "C") pulisciPin();
-        else if (index === 11) {
-          const adminPin = prompt("PIN Amministratore:");
-          if (adminPin === "1909") window.location.href = "utenti.html";
-          else if (adminPin) alert("PIN non valido. Accesso negato.");
-        }
-        else if (pinInput.value.length < 2) pinInput.value += valore;
+        const text = key.textContent;
+        // Pulsante ingranaggio - Accesso admin
+          if (text.includes("⚙") || this.id === 'admin-btn') {
+            e.preventDefault();
+            e.stopPropagation();
+            const pin = prompt("PIN Amministratore:");
+            if (pin === "1909") {
+              console.log("🔓 Accesso admin autorizzato, navigazione a utenti.html");
+              window.location.href = "utenti.html";
+            } else if (pin && pin.trim() !== "") {
+              alert("PIN errato!");
+            }
+            return;
+          }
+        else if (pinInput.value.length < 2) pinInput.value += text;
       });
     });
 
