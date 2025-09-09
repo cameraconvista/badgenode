@@ -265,8 +265,85 @@ window.eliminaUtente = async function(pin, nome, cognome) {
 
 
 window.modificaUtente = function(pin, nome, cognome, email, telefono, descrizioneContratto, oreContrattuali) {
-  console.log('✏️ Modifica dipendente:', { pin, nome, cognome });
-  alert(`🔧 Funzione modifica dipendente in sviluppo\n\nDipendente: ${nome} ${cognome} (PIN: ${pin})\nEmail: ${email || 'Non disponibile'}\nTelefono: ${telefono || 'Non disponibile'}\nOre contrattuali: ${oreContrattuali}`);
+  console.log('✏️ Apertura modale modifica per:', { pin, nome, cognome });
+  
+  // Memorizza il PIN originale per l'update
+  window.currentEditingPin = pin;
+  
+  // Precompila i campi del modale
+  document.getElementById('modifica-nome').value = nome;
+  document.getElementById('modifica-cognome').value = cognome;
+  document.getElementById('modifica-email').value = email || '';
+  document.getElementById('modifica-telefono').value = telefono || '';
+  document.getElementById('modifica-pin').value = pin;
+  document.getElementById('modifica-descrizione-contratto').value = descrizioneContratto || '';
+  document.getElementById('modifica-ore-contrattuali').value = oreContrattuali || 8.0;
+  
+  // Mostra il modale
+  document.getElementById('modalModificaDipendente').style.display = 'flex';
+};
+
+window.chiudiModalModificaDipendente = function() {
+  document.getElementById('modalModificaDipendente').style.display = 'none';
+  window.currentEditingPin = null;
+};
+
+window.annullaModificaDipendente = function() {
+  if (confirm('Annullare le modifiche? Tutti i cambiamenti andranno persi.')) {
+    window.chiudiModalModificaDipendente();
+  }
+};
+
+window.salvaModificaDipendente = async function() {
+  const pin = window.currentEditingPin;
+  const nome = document.getElementById('modifica-nome').value.trim();
+  const cognome = document.getElementById('modifica-cognome').value.trim();
+  const email = document.getElementById('modifica-email').value.trim();
+  const telefono = document.getElementById('modifica-telefono').value.trim();
+  const descrizioneContratto = document.getElementById('modifica-descrizione-contratto').value.trim();
+  const oreContrattuali = parseFloat(document.getElementById('modifica-ore-contrattuali').value) || 8.0;
+
+  // Validazione campi obbligatori
+  if (!nome || !cognome) {
+    alert('⚠️ Nome e Cognome sono obbligatori!');
+    return;
+  }
+
+  if (oreContrattuali <= 0 || oreContrattuali > 24) {
+    alert('⚠️ Le ore contrattuali devono essere tra 0.25 e 24!');
+    return;
+  }
+
+  try {
+    console.log(`💾 Salvataggio modifiche per PIN ${pin}:`, { nome, cognome, email, telefono, oreContrattuali });
+
+    const { error } = await window.supabase
+      .from('utenti')
+      .update({
+        nome: nome,
+        cognome: cognome,
+        email: email || null,
+        telefono: telefono || null,
+        descrizione_contratto: descrizioneContratto || null,
+        ore_contrattuali: oreContrattuali
+      })
+      .eq('pin', parseInt(pin));
+
+    if (error) {
+      throw new Error(`Errore durante l'aggiornamento: ${error.message}`);
+    }
+
+    console.log(`✅ Dipendente PIN ${pin} aggiornato con successo`);
+    alert(`✅ Dipendente ${nome} ${cognome} aggiornato con successo!`);
+    
+    // Chiudi modale e ricarica lista
+    window.chiudiModalModificaDipendente();
+    setTimeout(() => location.reload(), 500);
+
+  } catch (error) {
+    console.error('❌ Errore durante il salvataggio:', error);
+    alert('Errore durante il salvataggio: ' + (error.message || 'Errore sconosciuto'));
+  }
 };
 
 // Esposizione funzioni globali DOPO le definizioni
@@ -275,5 +352,8 @@ console.log('[UTENTI] Funzioni globali registrate:', {
   archiviaUtente: typeof window.archiviaUtente, 
   eliminaUtente: typeof window.eliminaUtente,
   modificaUtente: typeof window.modificaUtente,
+  chiudiModalModificaDipendente: typeof window.chiudiModalModificaDipendente,
+  salvaModificaDipendente: typeof window.salvaModificaDipendente,
+  annullaModificaDipendente: typeof window.annullaModificaDipendente,
   apriStorico: typeof window.apriStorico
 });
