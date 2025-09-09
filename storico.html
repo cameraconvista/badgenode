@@ -62,7 +62,7 @@
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://txmjqrnitfsiytbytxlc.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://txmjqrnitfsiytbytxlc.supabase.co">
-  
+
   <!-- Preload risorse critiche -->
   <link rel="preload" href="utenti.html" as="document">
   <link rel="preload" href="style.css" as="style">
@@ -189,10 +189,9 @@
       window.location.href = "utenti.html";
     });
   </script>
-  
+
   <!-- PWA Service Worker Registration -->
   <script>
-    // Service Worker registration per PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')

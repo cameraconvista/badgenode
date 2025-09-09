@@ -1,102 +1,147 @@
 
 /* BADGENODE Service Worker - navigation fallback + asset caching */
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
-  '/',              // start_url
-  '/offline.html',  // fallback pagina offline
+  '/',              
+  '/index.html',
+  '/utenti.html',
+  '/storico.html', 
+  '/offline.html',  
   '/manifest.json',
-  '/favicon.ico',   // evita errori in console offline
-  // Nota: gli asset fingerprintati verranno presi runtime con cache-first
+  '/favicon.ico',
+  '/style.css'
 ];
 
 self.addEventListener('install', (event) => {
+  console.log('[SW] Installing...');
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS))
+    caches.open(STATIC_CACHE)
+      .then((cache) => {
+        console.log('[SW] Precaching files');
+        return cache.addAll(PRECACHE_URLS);
+      })
+      .catch((err) => {
+        console.error('[SW] Precache failed:', err);
+      })
   );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating...');
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => ![STATIC_CACHE, RUNTIME_CACHE].includes(k))
-        .map(k => caches.delete(k))
+      Promise.all(
+        keys.filter(k => ![STATIC_CACHE, RUNTIME_CACHE].includes(k))
+          .map(k => {
+            console.log('[SW] Deleting old cache:', k);
+            return caches.delete(k);
+          })
       )
     )
   );
   self.clients.claim();
 });
 
-/* Strategie:
-   - HTML: network-first con fallback offline.html
-   - Asset fingerprintati (css/js/png/webp… in /assets/): cache-first
-   - Icone (png, svg, ico nella root): stale-while-revalidate
-   - Supabase: network-only (bypass SW)
-*/
 const ASSETS_REGEX = /^\/assets\/.+\.(?:js|css|png|webp|jpg|svg|ico)$/i;
 const ROOT_ICONS_REGEX = /^\/(?:favicon\.ico|.*\.png|.*\.svg)$/i;
 const SUPABASE_REGEX = /^https?:\/\/([a-z0-9-]+\.)*supabase\.co\//i;
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
+  const url = new URL(request.url);
 
   // Bypassa Supabase completamente
-  if (SUPABASE_REGEX.test(request.url)) return;
+  if (SUPABASE_REGEX.test(request.url)) {
+    console.log('[SW] Bypassing Supabase:', request.url);
+    return;
+  }
 
-  // Navigazioni (HTML)
+  // Navigazioni HTML - network-first con fallback offline
   if (request.mode === 'navigate') {
+    console.log('[SW] Navigation request:', request.url);
     event.respondWith((async () => {
       try {
-        const net = await fetch(request);
-        // Cache "page shell" in background (best-effort)
+        // Prova la rete prima
+        const netResponse = await fetch(request);
+        console.log('[SW] Navigation network success');
+        
+        // Cache in background
         const cache = await caches.open(RUNTIME_CACHE);
-        cache.put(request, net.clone()).catch(()=>{});
-        return net;
-      } catch (_) {
-        // Fallback: pagina visitata in cache o offline.html
+        cache.put(request, netResponse.clone()).catch(()=>{});
+        
+        return netResponse;
+      } catch (err) {
+        console.log('[SW] Navigation network failed, trying cache');
+        
+        // Prova cache della pagina specifica
         const cache = await caches.open(RUNTIME_CACHE);
         const cached = await cache.match(request);
-        if (cached) return cached;
-        const precached = await caches.open(STATIC_CACHE);
-        return (await precached.match('/offline.html')) || Response.error();
+        if (cached) {
+          console.log('[SW] Serving cached page');
+          return cached;
+        }
+        
+        // Prova cache statica
+        const staticCache = await caches.open(STATIC_CACHE);
+        const staticCached = await staticCache.match(request);
+        if (staticCached) {
+          console.log('[SW] Serving static cached page');
+          return staticCached;
+        }
+        
+        // Fallback alla pagina offline
+        console.log('[SW] Serving offline page');
+        const offlinePage = await staticCache.match('/offline.html');
+        return offlinePage || new Response('Offline', { status: 503 });
       }
     })());
     return;
   }
 
-  // Asset fingerprintati in /assets -> cache-first
-  const url = new URL(request.url);
+  // Asset fingerprintati - cache-first
   if (url.origin === self.location.origin && ASSETS_REGEX.test(url.pathname)) {
     event.respondWith((async () => {
       const cache = await caches.open(RUNTIME_CACHE);
       const cached = await cache.match(request);
-      if (cached) return cached;
+      
+      if (cached) {
+        console.log('[SW] Serving cached asset:', url.pathname);
+        return cached;
+      }
+      
       try {
-        const net = await fetch(request);
-        cache.put(request, net.clone()).catch(()=>{});
-        return net;
-      } catch (_) {
-        return cached || Response.error();
+        const netResponse = await fetch(request);
+        console.log('[SW] Caching new asset:', url.pathname);
+        cache.put(request, netResponse.clone()).catch(()=>{});
+        return netResponse;
+      } catch (err) {
+        console.log('[SW] Asset fetch failed:', url.pathname);
+        return cached || new Response('Asset not available', { status: 503 });
       }
     })());
     return;
   }
 
-  // Icone root -> stale-while-revalidate
+  // Icone root - stale-while-revalidate
   if (url.origin === self.location.origin && ROOT_ICONS_REGEX.test(url.pathname)) {
     event.respondWith((async () => {
       const cache = await caches.open(RUNTIME_CACHE);
       const cached = await cache.match(request);
+      
+      // Aggiorna in background
       const netPromise = fetch(request).then(res => {
         cache.put(request, res.clone()).catch(()=>{});
         return res;
       }).catch(()=>null);
-      return cached || (await netPromise) || Response.error();
+      
+      return cached || (await netPromise) || new Response('Icon not available', { status: 503 });
     })());
     return;
   }
 
-  // Default: passa rete
+  // Default: passa alla rete
+  console.log('[SW] Default fetch:', request.url);
 });

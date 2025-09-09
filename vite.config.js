@@ -1,31 +1,22 @@
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
 
-export default defineConfig({
+export default {
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        utenti: resolve(__dirname, 'utenti.html'),
-        storico: resolve(__dirname, 'storico.html'),
-        exdipendenti: resolve(__dirname, 'ex-dipendenti.html')
+        main: 'index.html',
+        utenti: 'utenti.html',
+        storico: 'storico.html',
+        exdipendenti: 'ex-dipendenti.html',
+        offline: 'offline.html'
       }
-    },
-    copyPublicDir: true
-  },
-  publicDir: 'public',
-  server: {
-    host: "0.0.0.0",
-    port: 5173,
-    strictPort: false,
-    allowedHosts: true,
-    hmr: {
-      port: 5173
-    },
-    fs: {
-      allow: ['..']
     }
   },
-  // Serve assets folder anche in development
-  assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg']
-})
+  server: {
+    host: '0.0.0.0',
+    port: 5173
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 5000
+  }
+}

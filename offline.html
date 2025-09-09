@@ -89,8 +89,31 @@
     </button>
     
     <div class="home-link">
-      <a href="/">← Torna alla home</a>
+      <a href="/" onclick="navigateToHome(event)">← Torna alla home</a>
+      <br><br>
+      <a href="/utenti.html" onclick="navigateToAdmin(event)">🔧 Area Admin</a>
     </div>
+  </div>
+
+  <script>
+    function navigateToHome(event) {
+      event.preventDefault();
+      window.location.href = '/';
+    }
+    
+    function navigateToAdmin(event) {
+      event.preventDefault();
+      window.location.href = '/utenti.html';
+    }
+    
+    // Prova a ricaricare la pagina ogni 30 secondi se online
+    setInterval(() => {
+      if (navigator.onLine) {
+        console.log('Network detected, attempting reload...');
+        window.location.reload();
+      }
+    }, 30000);
+  </script>
   </div>
 </body>
 </html>
