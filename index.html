@@ -239,24 +239,47 @@
     }
 
     // Gestione click sui pulsanti numerici
-    document.querySelectorAll(".keypad-button").forEach((key, index) => {
-      key.addEventListener("click", () => {
-        const valore = key.textContent.trim();
-        
-        if (valore === "C") {
-          pulisciPin();
-        } else if (index === 11 || valore.includes("⚙")) { // Il pulsante ingranaggio è in posizione 11 (ultimo)
-          const adminPin = prompt("Inserisci PIN Amministratore:");
-          if (adminPin === "1909") {
-            window.location.href = "utenti.html";
-          } else if (adminPin !== null) {
-            alert("PIN non valido. Accesso negato.");
+    function inizializzaPulsanti() {
+      console.log("🔧 Inizializzando pulsanti...");
+      const pulsanti = document.querySelectorAll(".keypad-button");
+      console.log("🔧 Trovati", pulsanti.length, "pulsanti");
+      
+      pulsanti.forEach((key, index) => {
+        console.log(`🔧 Pulsante ${index}:`, key.textContent.trim());
+        key.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const valore = this.textContent.trim();
+          console.log("🔧 CLICK su pulsante:", valore, "indice:", index);
+          
+          if (valore === "C") {
+            console.log("🔧 Pulisco PIN");
+            pulisciPin();
+          } else if (index === 11 || valore.includes("⚙") || valore === "⚙️") {
+            console.log("🔧 ACCESSO ADMIN RICHIESTO!");
+            const adminPin = prompt("Inserisci PIN Amministratore:");
+            console.log("🔧 PIN inserito:", adminPin ? "***" : "null");
+            if (adminPin === "1909") {
+              console.log("🔧 PIN CORRETTO - Reindirizzamento...");
+              window.location.href = "utenti.html";
+            } else if (adminPin !== null) {
+              console.log("🔧 PIN ERRATO");
+              alert("PIN non valido. Accesso negato.");
+            }
+          } else if (pinInput.value.length < 2 && !isNaN(valore)) {
+            console.log("🔧 Aggiunto numero:", valore);
+            pinInput.value += valore;
           }
-        } else if (pinInput.value.length < 2 && !isNaN(valore)) {
-          pinInput.value += valore;
-        }
+        });
       });
-    });
+    }
+    
+    // Inizializza pulsanti quando il DOM è pronto
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', inizializzaPulsanti);
+    } else {
+      inizializzaPulsanti();
+    }
 
     async function verificaUtente(pin) {
       const { data, error } = await window.supabase
