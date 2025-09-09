@@ -1,11 +1,34 @@
-import { supabase } from './supabase-client.js';
+// Usa il client Supabase globale dall'HTML
+const supabase = window.supabase;
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.info('[UTENTI] init DOMContentLoaded');
   console.time('[UTENTI] load');
 
+  // Aspetta che il client Supabase sia disponibile con retry
+  let retries = 0;
+  const maxRetries = 10;
+  
+  while (!window.supabase && retries < maxRetries) {
+    console.log(`[UTENTI] Waiting for Supabase client... (${retries + 1}/${maxRetries})`);
+    await new Promise(resolve => setTimeout(resolve, 100));
+    retries++;
+  }
+  
+  if (!window.supabase) {
+    console.error('[UTENTI] Supabase client non disponibile dopo retry');
+    document.getElementById('lista-dipendenti').innerHTML = `
+      <tr><td colspan="5" style="color: red; text-align: center; padding: 20px;">
+        Errore: Client Supabase non inizializzato
+      </td></tr>
+    `;
+    return;
+  }
+
+  console.log('[UTENTI] Supabase client disponibile, caricamento dati...');
+
   try {
-    const { data, error, status } = await supabase
+    const { data, error, status } = await window.supabase
       .from('utenti')
       .select('*')
       .order('pin', { ascending: true });
@@ -75,24 +98,17 @@ function renderUtenti(utenti) {
 }
 
 // Funzione per aprire lo storico
-  function apriStorico(pin, nome, cognome) {
-    console.log('🔍 Apertura storico per:', { pin, nome, cognome });
-    window.location.href = `storico.html?pin=${pin}&nome=${encodeURIComponent(nome)}&cognome=${encodeURIComponent(cognome)}`;
-  }
-
-  // Funzioni globali
-    window.modificaUtente = modificaUtente;
-    window.eliminaUtente = eliminaUtente;
-    window.archiviaUtente = archiviaUtente;
-    window.apriStorico = apriStorico;
-
+function apriStorico(pin, nome, cognome) {
+  console.log('🔍 Apertura storico per:', { pin, nome, cognome });
+  window.location.href = `storico.html?pin=${pin}&nome=${encodeURIComponent(nome)}&cognome=${encodeURIComponent(cognome)}`;
+}
 
 window.modificaUtente = async function(pin) {
   try {
     console.log('🔧 Modifica utente PIN:', pin);
 
     // Recupera i dati attuali del dipendente
-    const { data: utente, error } = await supabase
+    const { data: utente, error } = await window.supabase
       .from('utenti')
       .select('*')
       .eq('pin', parseInt(pin))
@@ -154,7 +170,7 @@ window.archiviaUtente = async function(pin, nome, cognome) {
     console.log(`   • Nome: ${nome} ${cognome}`);
 
     // 1. Recupera tutti i dati del dipendente
-    const { data: dipendenteData, error: dipendenteError } = await supabase
+    const { data: dipendenteData, error: dipendenteError } = await window.supabase
       .from('utenti')
       .select('*')
       .eq('pin', parseInt(pin))
@@ -165,7 +181,7 @@ window.archiviaUtente = async function(pin, nome, cognome) {
     }
 
     // 2. Recupera tutte le timbrature del dipendente
-    const { data: timbratureData, error: timbratureError } = await supabase
+    const { data: timbratureData, error: timbratureError } = await window.supabase
       .from('timbrature')
       .select('*')
       .eq('pin', parseInt(pin))
@@ -193,7 +209,7 @@ window.archiviaUtente = async function(pin, nome, cognome) {
     };
 
     // 4. Inserisci nella tabella dipendenti_archiviati
-    const { data: archiviatiData, error: archiviatiError } = await supabase
+    const { data: archiviatiData, error: archiviatiError } = await window.supabase
       .from('dipendenti_archiviati')
       .insert({
         pin: dipendenteData.pin,
@@ -213,7 +229,7 @@ window.archiviaUtente = async function(pin, nome, cognome) {
     }
 
     // 5. Elimina il dipendente dalla tabella utenti (libera il PIN)
-    const { error: deleteError } = await supabase
+    const { error: deleteError } = await window.supabase
       .from('utenti')
       .delete()
       .eq('pin', parseInt(pin));
@@ -246,7 +262,7 @@ window.eliminaUtente = async function(pin, nome, cognome) {
     console.log(`🗑️ Eliminazione definitiva per PIN ${pin}: ${nome} ${cognome}`);
     
     // 1. Elimina tutte le timbrature del dipendente
-    const { error: timbratureError } = await supabase
+    const { error: timbratureError } = await window.supabase
       .from('timbrature')
       .delete()
       .eq('pin', parseInt(pin));
@@ -257,7 +273,7 @@ window.eliminaUtente = async function(pin, nome, cognome) {
     }
     
     // 2. Elimina il dipendente dalla tabella utenti
-    const { error: utenteError } = await supabase
+    const { error: utenteError } = await window.supabase
       .from('utenti')
       .delete()
       .eq('pin', parseInt(pin));
@@ -307,7 +323,7 @@ window.salvaModificheUtente = async function(pin) {
     console.log('💾 Salvataggio modifiche per PIN:', pin);
 
     // Aggiorna nel database
-    const { error } = await supabase
+    const { error } = await window.supabase
       .from('utenti')
       .update({
         nome: nome,
@@ -322,7 +338,7 @@ window.salvaModificheUtente = async function(pin) {
     }
 
     // Aggiorna anche le timbrature esistenti con i nuovi nome/cognome
-    await supabase
+    await window.supabase
       .from('timbrature')
       .update({
         nome: nome,
@@ -341,3 +357,12 @@ window.salvaModificheUtente = async function(pin) {
     alert('Errore nel salvataggio: ' + (error.message || 'Errore sconosciuto'));
   }
 };
+
+// Esposizione funzioni globali DOPO le definizioni
+window.apriStorico = apriStorico;
+console.log('[UTENTI] Funzioni globali registrate:', {
+  modificaUtente: typeof window.modificaUtente,
+  archiviaUtente: typeof window.archiviaUtente, 
+  eliminaUtente: typeof window.eliminaUtente,
+  apriStorico: typeof window.apriStorico
+});
