@@ -197,9 +197,19 @@ git add . && git commit -m "fix: correzione WebSocket WSS per HTTPS"
 ```
 ✅ Moduli organizzati:     assets/scripts/*.js
 ✅ Stili separati:        assets/styles/*.css  
-✅ Icone ottimizzate:     assets/icons/*.png
+✅ Icone ottimizzate:     assets/icons/*.png + public/assets/icons/*.png
 ✅ Docs centralizzate:    *.md nella root
 ✅ Config separate:       .github-config.json, netlify.toml
+✅ Icon paths standard:   SEMPRE /assets/icons/ (slash iniziale obbligatorio)
+```
+
+#### CRITICAL Standards - Icon Paths
+```
+❌ NEVER USE: src="assets/icons/file.png"
+✅ ALWAYS USE: src="/assets/icons/file.png"
+
+Motivo: Vite dev server serve solo da public/ con percorsi assoluti
+Violazione causa: Icone invisibili in development, funzionanti solo in production
 ```
 
 #### Size Limits Implementati

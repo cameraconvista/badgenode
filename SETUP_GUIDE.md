@@ -156,6 +156,17 @@ ORDER BY ore DESC;
 3. Browser supporta download automatico
 4. Cache libreria (`XLSXLib` variable)
 
+#### Problema: Icone non visibili in development
+**Sintomo**: Icone non caricate nella preview Replit (funzionano nel deploy)
+**Causa**: Vite dev server richiede percorsi assoluti `/assets/icons/` invece di `assets/icons/`
+**Soluzione**: SEMPRE usare `/assets/icons/` in tutti i file HTML/JS:
+```html
+<!-- ✅ CORRETTO -->
+<img src="/assets/icons/orologio.png" alt="Storico" />
+<!-- ❌ SBAGLIATO -->
+<img src="assets/icons/orologio.png" alt="Storico" />
+```
+
 #### Problema: Modali non responsive
 **Soluzione**: Verificato in `style.css`:
 ```css

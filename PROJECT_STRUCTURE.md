@@ -31,20 +31,21 @@
 ### 📂 assets/
 Directory per tutte le risorse statiche dell'applicazione.
 
-#### 📁 assets/icons/
-- **Responsabilità**: Icone e loghi dell'applicazione
+#### 📁 assets/icons/ e public/assets/icons/
+- **Responsabilità**: Icone e loghi dell'applicazione (duplicati per compatibility dev/prod)
 - **Convenzione naming**: lowercase con trattini per icone generiche
+- **Percorsi utilizzati**: SEMPRE `/assets/icons/` (con slash iniziale) per compatibilità Vite
 ```
 icons/
 ├── BADGENODE.png           # Logo principale app
+├── badgenode-192.png       # Logo PWA 192x192
+├── badgenode-512.png       # Logo PWA 512x512
+├── bnapp.png              # Logo app corner brand
 ├── calendario.png          # Icona calendario (📅)
 ├── cancella.png           # Icona eliminazione (🗑️)
 ├── esporta.png            # Icona esportazione Excel (📊)
 ├── freccia.png            # Icone navigazione (←)
-├── googlesheet.png        # Icona Google Sheets (🟢)
 ├── invia.png              # Icona invio PDF (📄)
-├── logo.png               # Logo standard
-├── logo home.png          # Logo homepage
 ├── logoBN 2.png           # Logo alternativo
 ├── matita-colorata.png    # Icona modifica (✏️)
 ├── orologio.png           # Icona storico timbrature (🕐)
