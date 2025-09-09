@@ -1,12 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <script>
   (function () {
-    if (location.protocol !== 'https:') return;  // only on https
+    if (location.protocol !== 'https:') return;
     var HMR = /:\/\/(0\.0\.0\.0|127\.0\.0\.1|localhost):517\d/;
-
-    // Patch WebSocket (block only Vite HMR)
     var OldWS = window.WebSocket;
     window.WebSocket = function (url, protocols) {
       try { if (typeof url === 'string' && HMR.test(url)) throw new Error('HMR disabled on HTTPS'); }
@@ -15,8 +14,6 @@
       return ws;
     };
     if (OldWS) window.WebSocket.prototype = OldWS.prototype;
-
-    // Patch EventSource (some setups use it for HMR)
     var OldES = window.EventSource;
     if (OldES) {
       window.EventSource = function (url, conf) {
@@ -32,7 +29,6 @@
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Gestione Dipendenti - BADGEBOX</title>
 
   <!-- PWA Meta -->
@@ -113,12 +109,11 @@
       vertical-align: middle;
     }
 
-    /* Larghezza colonne - Nome e Cognome ridotte del 50%, Azioni ridotta del 70% */
-    th:nth-child(1), td:nth-child(1) { width: 12%; }    /* Storico */
-    th:nth-child(2), td:nth-child(2) { width: 12%; }    /* PIN */
-    th:nth-child(3), td:nth-child(3) { width: 17.5%; }  /* Nome - ridotta del 50% */
-    th:nth-child(4), td:nth-child(4) { width: 17.5%; }  /* Cognome - ridotta del 50% */
-    th:nth-child(5), td:nth-child(5) { width: 12.3%; }  /* Azioni - ridotta del 70% */
+    th:nth-child(1), td:nth-child(1) { width: 12%; }
+    th:nth-child(2), td:nth-child(2) { width: 12%; }
+    th:nth-child(3), td:nth-child(3) { width: 17.5%; }
+    th:nth-child(4), td:nth-child(4) { width: 17.5%; }
+    th:nth-child(5), td:nth-child(5) { width: 12.3%; }
 
     th {
       height: 54px;
@@ -262,67 +257,6 @@
       resize: vertical;
     }
 
-    .upload-area {
-      border: 2px dashed #4b5563;
-      border-radius: 8px;
-      padding: 25px;
-      text-align: center;
-      background: #374151;
-      transition: border-color 0.3s;
-    }
-
-    .upload-area:hover {
-      border-color: #60a5fa;
-    }
-
-    .upload-icon {
-      font-size: 32px;
-      color: #6b7280;
-      margin-bottom: 10px;
-    }
-
-    .upload-text {
-      color: #9ca3af;
-      font-size: 14px;
-    }
-
-    .upload-area.dragover {
-      border-color: #3b82f6;
-      background-color: #1e40af;
-    }
-
-    .file-info {
-      color: #10b981;
-      font-size: 14px;
-      text-align: left;
-    }
-
-    .file-name {
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    .file-size {
-      color: #6b7280;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-
-    .remove-file-btn {
-      background-color: #dc2626;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .remove-file-btn:hover {
-      background-color: #b91c1c;
-    }
-
     .modal-actions {
       display: flex;
       justify-content: flex-end;
@@ -362,7 +296,7 @@
       background-color: #15803d;
     }
 
-    /* Media queries ottimizzate - mantengono proporzioni colonne */
+    /* Media queries ottimizzate */
     @media (max-width: 480px) {
       .container { padding: 8px; }
       h1 { font-size: 20px; margin-bottom: 15px; }
@@ -371,7 +305,6 @@
       th { font-size: 11px; height: 40px; }
       td { height: 35px; }
       td button { font-size: 12px; padding: 1px; }
-      /* Mantieni larghezze anche su mobile */
       th:nth-child(1), td:nth-child(1) { width: 8% !important; }
       th:nth-child(2), td:nth-child(2) { width: 8% !important; }
       th:nth-child(3), td:nth-child(3) { width: 35% !important; }
@@ -444,7 +377,6 @@
 
     <div style="display: flex; justify-content: center; margin-top: 20px;">
       <div style="width: 70%; display: flex; justify-content: space-between; align-items: center;">
-        <!-- Pulsante Login Utenti a sinistra -->
         <button onclick="window.location.href='index.html'" style="
           background-color: #b45309;
           color: white;
@@ -462,7 +394,6 @@
           ← Login Utenti
         </button>
 
-        <!-- Pulsanti a destra -->
         <div style="display: flex; gap: 10px;">
           <button onclick="apriModalNuovoDipendente()" style="
             background-color: #16a34a;
@@ -540,30 +471,11 @@
 
       <div class="sezione-modal">
         <div class="sezione-titolo">📄 Contratto Attivo</div>
-
-        <div class="campo-singolo">
-          <div class="campo-label">Upload Contratto</div>
-          <div class="upload-area" id="nuovo-upload-area">
-            <input type="file" id="nuovo-file-input" accept=".pdf,.doc,.docx" style="display: none;">
-            <div class="upload-icon">📄</div>
-            <div class="upload-text" id="nuovo-upload-text">
-              Trascina qui il file del contratto o clicca per selezionare<br>
-              <small>(PDF, DOC, DOCX - Max 5MB)</small>
-            </div>
-            <div class="file-info" id="nuovo-file-info" style="display: none;">
-              <div class="file-name" id="nuovo-file-name"></div>
-              <div class="file-size" id="nuovo-file-size"></div>
-              <button type="button" class="remove-file-btn" id="nuovo-remove-file-btn">Rimuovi</button>
-            </div>
-          </div>
-        </div>
-
         <div class="campo-singolo">
           <div class="campo-label">Descrizione Contratto in Corso</div>
           <textarea class="campo-valore campo-textarea" id="nuovo-descrizione-contratto"
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
-
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto *</div>
           <input type="number" class="campo-valore" id="nuovo-ore-contrattuali"
@@ -572,7 +484,7 @@
       </div>
 
       <div class="modal-actions">
-        <button class="btn-annulla" onclick="annullaNuovoDipendente()">Annulla</button>
+        <button class="btn-annulla" onclick="chiudiModalNuovoDipendente()">Annulla</button>
         <button class="btn-salva" onclick="salvaNuovoDipendente()">Salva</button>
       </div>
     </div>
@@ -616,30 +528,11 @@
 
       <div class="sezione-modal">
         <div class="sezione-titolo">📄 Contratto Attivo</div>
-
-        <div class="campo-singolo">
-          <div class="campo-label">Upload Contratto</div>
-          <div class="upload-area" id="modifica-upload-area">
-            <input type="file" id="modifica-file-input" accept=".pdf,.doc,.docx" style="display: none;">
-            <div class="upload-icon">📄</div>
-            <div class="upload-text" id="modifica-upload-text">
-              Trascina qui il file del contratto o clicca per selezionare<br>
-              <small>(PDF, DOC, DOCX - Max 5MB)</small>
-            </div>
-            <div class="file-info" id="modifica-file-info" style="display: none;">
-              <div class="file-name" id="modifica-file-name"></div>
-              <div class="file-size" id="modifica-file-size"></div>
-              <button type="button" class="remove-file-btn" id="modifica-remove-file-btn">Rimuovi</button>
-            </div>
-          </div>
-        </div>
-
         <div class="campo-singolo">
           <div class="campo-label">Descrizione Contratto in Corso</div>
           <textarea class="campo-valore campo-textarea" id="modifica-descrizione-contratto"
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
-
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto *</div>
           <input type="number" class="campo-valore" id="modifica-ore-contrattuali"
@@ -648,159 +541,45 @@
       </div>
 
       <div class="modal-actions">
-        <button class="btn-annulla" onclick="annullaModificaDipendente()">Annulla</button>
+        <button class="btn-annulla" onclick="chiudiModalModificaDipendente()">Annulla</button>
         <button class="btn-salva" onclick="salvaModificaDipendente()">Salva</button>
       </div>
     </div>
   </div>
 
-  <!-- Supabase Client Centralizzato -->
+  <!-- Script principale unificato -->
   <script type="module">
     import { supabaseClient } from './assets/scripts/supabase-client.js';
-    // Compatibilità retro: espone client come variabile globale
+    
+    // Espone client globalmente per compatibilità
     window.supabase = supabaseClient;
+    
+    let currentEditingPin = null;
 
-    // Funzioni per il modale nuovo dipendente
-    window.apriModalNuovoDipendente = function() {
-      const modal = document.getElementById('modalNuovoDipendente');
-      if (modal) {
-        modal.style.display = 'block';
-
-        // Reset del form
-        document.getElementById('nuovo-nome').value = '';
-        document.getElementById('nuovo-cognome').value = '';
-        document.getElementById('nuovo-email').value = '';
-        document.getElementById('nuovo-telefono').value = '';
-        document.getElementById('nuovo-pin').value = '';
-
-        // Focus sul primo campo
-        setTimeout(() => {
-          document.getElementById('nuovo-nome').focus();
-        }, 100);
-      }
-    };
-
-    window.chiudiModalNuovoDipendente = function() {
-      const modal = document.getElementById('modalNuovoDipendente');
-      if (modal) {
-        modal.style.display = 'none';
-      }
-    };
-
-    window.annullaNuovoDipendente = function() {
-      chiudiModalNuovoDipendente();
-    };
-
-    window.salvaNuovoDipendente = async function() {
+    // Caricamento utenti ottimizzato
+    async function caricaUtenti() {
       try {
-        const nome = document.getElementById('nuovo-nome').value.trim();
-        const cognome = document.getElementById('nuovo-cognome').value.trim();
-        const email = document.getElementById('nuovo-email').value.trim();
-        const telefono = document.getElementById('nuovo-telefono').value.trim();
-        const pin = parseInt(document.getElementById('nuovo-pin').value);
-
-        // Validazione
-        if (!nome || !cognome) {
-          alert('Nome e Cognome sono obbligatori');
-          return;
-        }
-
-        if (!pin || pin < 1 || pin > 99) {
-          alert('PIN deve essere tra 1 e 99');
-          return;
-        }
-
-        console.log('💾 Creazione nuovo dipendente:', { nome, cognome, pin });
-
-        // Inserisci nel database
         const { data, error } = await supabaseClient
-          .from('utenti')
-          .insert({
-            pin: pin,
-            nome: nome,
-            cognome: cognome,
-            email: email || null,
-            telefono: telefono || null,
-            ore_contrattuali: 8.0
-          })
-          .select();
-
-        if (error) {
-          if (error.code === '23505') {
-            alert('Errore: PIN già esistente. Scegli un PIN diverso.');
-          } else {
-            throw error;
-          }
-          return;
-        }
-
-        alert(`✅ Dipendente ${nome} ${cognome} aggiunto con successo!\nPIN assegnato: ${pin}`);
-
-        // Chiudi il modale e ricarica la lista
-        chiudiModalNuovoDipendente();
-        setTimeout(() => location.reload(), 500);
-
-      } catch (error) {
-        console.error('❌ Errore nel salvataggio:', error);
-        alert('Errore nel salvataggio: ' + (error.message || 'Errore sconosciuto'));
-      }
-    };
-  </script>
-  <script type="module">
-    // Aspetta che Supabase sia disponibile
-    window.addEventListener('DOMContentLoaded', async () => {
-      // Verifica che supabase sia caricato
-      if (!window.supabase) {
-        console.error('[UTENTI] Supabase client non disponibile');
-        document.getElementById('lista-dipendenti').innerHTML = `
-          <tr><td colspan="5" style="color: red; text-align: center; padding: 20px;">
-            Errore: Database non disponibile
-          </td></tr>
-        `;
-        return;
-      }
-
-      console.info('[UTENTI] init DOMContentLoaded');
-      console.time('[UTENTI] load');
-
-      try {
-        const { data, error, status } = await window.supabase
           .from('utenti')
           .select('*')
           .order('pin', { ascending: true });
 
-        if (error) {
-          console.error('[UTENTI] supabase error', { status, error });
-          document.getElementById('lista-dipendenti').innerHTML = `
-            <tr><td colspan="5" style="color: red; text-align: center; padding: 20px;">
-              Errore caricamento utenti: ${error.message}
-            </td></tr>
-          `;
-          return;
-        }
-
-        console.debug('[UTENTI] rows', data?.length ?? 0);
+        if (error) throw error;
+        
         renderUtenti(data || []);
-      } catch (e) {
-        console.error('[UTENTI] exception', e);
+      } catch (error) {
+        console.error('Errore caricamento utenti:', error);
         document.getElementById('lista-dipendenti').innerHTML = `
           <tr><td colspan="5" style="color: red; text-align: center; padding: 20px;">
-            Errore di connessione: ${e.message}
+            Errore caricamento: ${error.message}
           </td></tr>
         `;
-      } finally {
-        console.timeEnd('[UTENTI] load');
       }
-    });
+    }
 
     function renderUtenti(utenti) {
       const tbody = document.getElementById('lista-dipendenti');
-
-      if (!tbody) {
-        console.error('[UTENTI] Elemento lista-dipendenti non trovato');
-        return;
-      }
-
+      
       if (utenti.length === 0) {
         tbody.innerHTML = `
           <tr><td colspan="5" style="text-align: center; padding: 20px; color: #94a3b8;">
@@ -830,173 +609,92 @@
           </td>
         </tr>
       `).join('');
-
-      console.info('[UTENTI] render complete', utenti.length, 'users');
     }
 
-    // Funzioni globali per gestione utenti
-    window.archiviaUtente = async function(pin, nome, cognome) {
-      if (!confirm(`⚠️ ATTENZIONE! Stai per archiviare il dipendente:\n\n${nome} ${cognome} (PIN: ${pin})\n\nQuesta azione:\n• Sposterà il dipendente nell'archivio\n• Genererà un file Excel con tutto lo storico\n• Libererà il PIN per nuovi dipendenti\n\nProcedere con l'archiviazione?`)) return;
-
-      try {
-        console.log(`🗂️ Inizio archiviazione per PIN ${pin}:`);
-        
-        const { data: dipendenteData, error: dipendenteError } = await window.supabase
-          .from('utenti')
-          .select('*')
-          .eq('pin', parseInt(pin))
-          .single();
-
-        if (dipendenteError || !dipendenteData) {
-          throw new Error('Dipendente non trovato nel database');
-        }
-
-        const { data: timbratureData, error: timbratureError } = await window.supabase
-          .from('timbrature')
-          .select('*')
-          .eq('pin', parseInt(pin))
-          .order('data', { ascending: true })
-          .order('ore', { ascending: true });
-
-        if (timbratureError) {
-          console.error('Errore recupero timbrature:', timbratureError);
-        }
-
-        const excelData = {
-          dipendente: {
-            pin: dipendenteData.pin,
-            nome: dipendenteData.nome,
-            cognome: dipendenteData.cognome,
-            email: dipendenteData.email || 'Non disponibile',
-            telefono: dipendenteData.telefono || 'Non disponibile',
-            ore_contrattuali: dipendenteData.ore_contrattuali || 8.0
-          },
-          timbrature: timbratureData || [],
-          totaleTimbrature: timbratureData?.length || 0,
-          dataGenerazione: new Date().toISOString()
-        };
-
-        const { data: archiviatiData, error: archiviatiError } = await window.supabase
-          .from('dipendenti_archiviati')
-          .insert({
-            pin: dipendenteData.pin,
-            nome: dipendenteData.nome,
-            cognome: dipendenteData.cognome,
-            email: dipendenteData.email || 'Non disponibile',
-            telefono: dipendenteData.telefono || 'Non disponibile',
-            ore_contrattuali: dipendenteData.ore_contrattuali,
-            data_archiviazione: new Date().toISOString(),
-            file_excel_path: JSON.stringify(excelData),
-            file_excel_name: `${nome}_${cognome}_timbrature_completo.csv`
-          })
-          .select();
-
-        if (archiviatiError) {
-          throw new Error(`Errore durante l'archiviazione: ${archiviatiError.message}`);
-        }
-
-        const { error: deleteError } = await window.supabase
-          .from('utenti')
-          .delete()
-          .eq('pin', parseInt(pin));
-
-        if (deleteError) {
-          console.error('Errore eliminazione dipendente:', deleteError);
-        }
-
-        alert(`✅ Dipendente ${nome} ${cognome} archiviato con successo!\n\n📊 Riepilogo archiviazione:\n• Timbrature salvate: ${timbratureData?.length || 0}\n• PIN liberato: ${pin}\n• File Excel generato\n\nIl dipendente è ora disponibile nella sezione "ex Dipendenti".`);
-
-        const rows = document.querySelectorAll('#lista-dipendenti tr');
-        const targetRow = Array.from(rows).find(row => {
-          const pinCell = row.cells[1];
-          return pinCell && pinCell.textContent.trim() === pin.toString();
-        });
-        
-        if (targetRow) {
-          targetRow.style.transition = 'opacity 0.5s ease';
-          targetRow.style.opacity = '0';
-          setTimeout(() => targetRow.remove(), 500);
-        } else {
-          setTimeout(() => location.reload(), 1000);
-        }
-
-      } catch (error) {
-        console.error('❌ Errore durante l\'archiviazione:', error);
-        alert('Errore durante l\'archiviazione: ' + (error.message || 'Errore sconosciuto'));
-      }
+    // Gestione modali
+    window.apriModalNuovoDipendente = function() {
+      document.getElementById('modalNuovoDipendente').style.display = 'flex';
+      // Reset form
+      ['nuovo-nome', 'nuovo-cognome', 'nuovo-email', 'nuovo-telefono', 'nuovo-pin', 'nuovo-descrizione-contratto'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('nuovo-ore-contrattuali').value = '8.00';
+      setTimeout(() => document.getElementById('nuovo-nome').focus(), 100);
     };
 
-    window.eliminaUtente = async function(pin, nome, cognome) {
-      if (!confirm(`ATTENZIONE: Vuoi eliminare definitivamente ${nome} ${cognome} (PIN: ${pin})?\n\nQuesta azione NON può essere annullata e rimuoverà:\n• Il dipendente dal sistema\n• Tutte le sue timbrature\n• I dati non saranno recuperabili\n\nProcedere con l'eliminazione?`)) return;
-      
+    window.chiudiModalNuovoDipendente = () => {
+      document.getElementById('modalNuovoDipendente').style.display = 'none';
+    };
+
+    window.salvaNuovoDipendente = async function() {
       try {
-        const { error: timbratureError } = await window.supabase
-          .from('timbrature')
-          .delete()
-          .eq('pin', parseInt(pin));
-        
-        if (timbratureError) {
-          console.error('Errore eliminazione timbrature:', timbratureError);
+        const nome = document.getElementById('nuovo-nome').value.trim();
+        const cognome = document.getElementById('nuovo-cognome').value.trim();
+        const email = document.getElementById('nuovo-email').value.trim();
+        const telefono = document.getElementById('nuovo-telefono').value.trim();
+        const pin = parseInt(document.getElementById('nuovo-pin').value);
+        const descrizioneContratto = document.getElementById('nuovo-descrizione-contratto').value.trim();
+        const oreContrattuali = parseFloat(document.getElementById('nuovo-ore-contrattuali').value) || 8.0;
+
+        if (!nome || !cognome) {
+          alert('Nome e Cognome sono obbligatori');
+          return;
         }
-        
-        const { error: utenteError } = await window.supabase
+
+        if (!pin || pin < 1 || pin > 99) {
+          alert('PIN deve essere tra 1 e 99');
+          return;
+        }
+
+        const { error } = await supabaseClient
           .from('utenti')
-          .delete()
-          .eq('pin', parseInt(pin));
-        
-        if (utenteError) {
-          throw new Error(`Errore durante l'eliminazione: ${utenteError.message}`);
+          .insert({
+            pin,
+            nome,
+            cognome,
+            email: email || null,
+            telefono: telefono || null,
+            descrizione_contratto: descrizioneContratto || null,
+            ore_contrattuali: oreContrattuali
+          });
+
+        if (error) {
+          if (error.code === '23505') {
+            alert('Errore: PIN già esistente. Scegli un PIN diverso.');
+          } else {
+            throw error;
+          }
+          return;
         }
-        
-        alert(`✅ ${nome} ${cognome} eliminato definitivamente dal sistema.\n\nTutte le timbrature sono state rimosse e il PIN ${pin} è ora disponibile.`);
-        
-        const rows = document.querySelectorAll('#lista-dipendenti tr');
-        const targetRow = Array.from(rows).find(row => {
-          const pinCell = row.cells[1];
-          return pinCell && pinCell.textContent.trim() === pin.toString();
-        });
-        
-        if (targetRow) {
-          targetRow.style.transition = 'opacity 0.5s ease';
-          targetRow.style.opacity = '0';
-          setTimeout(() => targetRow.remove(), 500);
-        } else {
-          setTimeout(() => location.reload(), 1000);
-        }
-        
+
+        alert(`✅ Dipendente ${nome} ${cognome} aggiunto con successo!`);
+        window.chiudiModalNuovoDipendente();
+        caricaUtenti();
+
       } catch (error) {
-        console.error('❌ Errore durante l\'eliminazione:', error);
-        alert('Errore durante l\'eliminazione: ' + (error.message || 'Errore sconosciuto'));
+        console.error('Errore salvataggio:', error);
+        alert('Errore nel salvataggio: ' + error.message);
       }
     };
 
     window.modificaUtente = function(pin, nome, cognome, email, telefono, descrizioneContratto, oreContrattuali) {
-      window.currentEditingPin = pin;
-      
+      currentEditingPin = pin;
       document.getElementById('modifica-nome').value = nome;
       document.getElementById('modifica-cognome').value = cognome;
-      document.getElementById('modifica-email').value = email || '';
-      document.getElementById('modifica-telefono').value = telefono || '';
+      document.getElementById('modifica-email').value = email;
+      document.getElementById('modifica-telefono').value = telefono;
       document.getElementById('modifica-pin').value = pin;
-      document.getElementById('modifica-descrizione-contratto').value = descrizioneContratto || '';
-      document.getElementById('modifica-ore-contrattuali').value = oreContrattuali || 8.0;
-      
+      document.getElementById('modifica-descrizione-contratto').value = descrizioneContratto;
+      document.getElementById('modifica-ore-contrattuali').value = oreContrattuali;
       document.getElementById('modalModificaDipendente').style.display = 'flex';
     };
 
-    window.chiudiModalModificaDipendente = function() {
+    window.chiudiModalModificaDipendente = () => {
       document.getElementById('modalModificaDipendente').style.display = 'none';
-      window.currentEditingPin = null;
-    };
-
-    window.annullaModificaDipendente = function() {
-      if (confirm('Annullare le modifiche? Tutti i cambiamenti andranno persi.')) {
-        window.chiudiModalModificaDipendente();
-      }
+      currentEditingPin = null;
     };
 
     window.salvaModificaDipendente = async function() {
-      const pin = window.currentEditingPin;
       const nome = document.getElementById('modifica-nome').value.trim();
       const cognome = document.getElementById('modifica-cognome').value.trim();
       const email = document.getElementById('modifica-email').value.trim();
@@ -1005,55 +703,121 @@
       const oreContrattuali = parseFloat(document.getElementById('modifica-ore-contrattuali').value) || 8.0;
 
       if (!nome || !cognome) {
-        alert('⚠️ Nome e Cognome sono obbligatori!');
-        return;
-      }
-
-      if (oreContrattuali <= 0 || oreContrattuali > 24) {
-        alert('⚠️ Le ore contrattuali devono essere tra 0.25 e 24!');
+        alert('Nome e Cognome sono obbligatori');
         return;
       }
 
       try {
-        const { error } = await window.supabase
+        const { error } = await supabaseClient
           .from('utenti')
           .update({
-            nome: nome,
-            cognome: cognome,
+            nome,
+            cognome,
             email: email || null,
             telefono: telefono || null,
             descrizione_contratto: descrizioneContratto || null,
             ore_contrattuali: oreContrattuali
           })
-          .eq('pin', parseInt(pin));
+          .eq('pin', parseInt(currentEditingPin));
 
-        if (error) {
-          throw new Error(`Errore durante l'aggiornamento: ${error.message}`);
-        }
+        if (error) throw error;
 
         alert(`✅ Dipendente ${nome} ${cognome} aggiornato con successo!`);
-        
         window.chiudiModalModificaDipendente();
-        setTimeout(() => location.reload(), 500);
+        caricaUtenti();
 
       } catch (error) {
-        console.error('❌ Errore durante il salvataggio:', error);
-        alert('Errore durante il salvataggio: ' + (error.message || 'Errore sconosciuto'));
+        console.error('Errore aggiornamento:', error);
+        alert('Errore durante l\'aggiornamento: ' + error.message);
       }
     };
+
+    window.archiviaUtente = async function(pin, nome, cognome) {
+      if (!confirm(`⚠️ Archiviare ${nome} ${cognome}?\n\nQuesta azione sposterà il dipendente nell'archivio e libererà il PIN.`)) return;
+
+      try {
+        const { data: dipendente, error: dipendenteError } = await supabaseClient
+          .from('utenti')
+          .select('*')
+          .eq('pin', parseInt(pin))
+          .single();
+
+        if (dipendenteError) throw new Error('Dipendente non trovato');
+
+        const { data: timbrature } = await supabaseClient
+          .from('timbrature')
+          .select('*')
+          .eq('pin', parseInt(pin))
+          .order('data', { ascending: true });
+
+        const { error: archiviatiError } = await supabaseClient
+          .from('dipendenti_archiviati')
+          .insert({
+            pin: dipendente.pin,
+            nome: dipendente.nome,
+            cognome: dipendente.cognome,
+            email: dipendente.email,
+            telefono: dipendente.telefono,
+            ore_contrattuali: dipendente.ore_contrattuali,
+            data_archiviazione: new Date().toISOString(),
+            file_excel_path: JSON.stringify({ dipendente, timbrature: timbrature || [] }),
+            file_excel_name: `${nome}_${cognome}_timbrature.csv`
+          });
+
+        if (archiviatiError) throw archiviatiError;
+
+        const { error: deleteError } = await supabaseClient
+          .from('utenti')
+          .delete()
+          .eq('pin', parseInt(pin));
+
+        if (deleteError) console.error('Errore eliminazione:', deleteError);
+
+        alert(`✅ ${nome} ${cognome} archiviato con successo!\nTimbrature salvate: ${timbrature?.length || 0}\nPIN ${pin} ora disponibile.`);
+        caricaUtenti();
+
+      } catch (error) {
+        console.error('Errore archiviazione:', error);
+        alert('Errore durante l\'archiviazione: ' + error.message);
+      }
+    };
+
+    window.eliminaUtente = async function(pin, nome, cognome) {
+      if (!confirm(`ATTENZIONE: Eliminare definitivamente ${nome} ${cognome}?\n\nQuesta azione NON può essere annullata.`)) return;
+      
+      try {
+        const { error: timbratureError } = await supabaseClient
+          .from('timbrature')
+          .delete()
+          .eq('pin', parseInt(pin));
+        
+        if (timbratureError) console.error('Errore eliminazione timbrature:', timbratureError);
+        
+        const { error: utenteError } = await supabaseClient
+          .from('utenti')
+          .delete()
+          .eq('pin', parseInt(pin));
+        
+        if (utenteError) throw utenteError;
+        
+        alert(`✅ ${nome} ${cognome} eliminato definitivamente.\nPIN ${pin} ora disponibile.`);
+        caricaUtenti();
+        
+      } catch (error) {
+        console.error('Errore eliminazione:', error);
+        alert('Errore durante l\'eliminazione: ' + error.message);
+      }
+    };
+
+    // Inizializzazione
+    document.addEventListener('DOMContentLoaded', caricaUtenti);
   </script>
 
-  <!-- PWA Service Worker Registration -->
+  <!-- PWA Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((registration) => {
-            console.log('[SW] Registered:', registration.scope);
-          })
-          .catch((error) => {
-            console.error('[SW] Registration failed:', error);
-          });
+        navigator.serviceWorker.register('/sw.js').catch(console.error);
       });
     }
   </script>
