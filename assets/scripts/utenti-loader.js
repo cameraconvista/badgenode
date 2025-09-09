@@ -1,10 +1,9 @@
-
 import { supabase } from './supabase-client.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   console.info('[UTENTI] init DOMContentLoaded');
   console.time('[UTENTI] load');
-  
+
   try {
     const { data, error, status } = await supabase
       .from('utenti')
@@ -20,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       `;
       return;
     }
-    
+
     console.debug('[UTENTI] rows', data?.length ?? 0);
     renderUtenti(data || []);
   } catch (e) {
@@ -37,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function renderUtenti(utenti) {
   const tbody = document.getElementById('lista-dipendenti');
-  
+
   if (!tbody) {
     console.error('[UTENTI] Elemento lista-dipendenti non trovato');
     return;
@@ -75,11 +74,23 @@ function renderUtenti(utenti) {
   console.info('[UTENTI] render complete', utenti.length, 'users');
 }
 
-// Funzioni globali per i pulsanti
+// Funzione per aprire lo storico
+  function apriStorico(pin, nome, cognome) {
+    console.log('🔍 Apertura storico per:', { pin, nome, cognome });
+    window.location.href = `storico.html?pin=${pin}&nome=${encodeURIComponent(nome)}&cognome=${encodeURIComponent(cognome)}`;
+  }
+
+  // Funzioni globali
+    window.modificaUtente = modificaUtente;
+    window.eliminaDipendente = eliminaDipendente;
+    window.archiviaDipendente = archiviaDipendente;
+    window.apriStorico = apriStorico;
+
+
 window.modificaUtente = async function(pin) {
   try {
     console.log('🔧 Modifica utente PIN:', pin);
-    
+
     // Recupera i dati attuali del dipendente
     const { data: utente, error } = await supabase
       .from('utenti')
@@ -125,7 +136,7 @@ window.modificaUtente = async function(pin) {
 
     // Mostra il modale
     modal.style.display = 'block';
-    
+
     // Focus sul primo campo
     if (inputNome) inputNome.focus();
 
@@ -289,7 +300,7 @@ window.salvaModificheUtente = async function(pin) {
       .eq('pin', parseInt(pin));
 
     alert(`✅ Dipendente ${nome} ${cognome} aggiornato con successo!`);
-    
+
     // Chiudi il modale e ricarica la lista
     chiudiModaleModifica();
     setTimeout(() => location.reload(), 500);
