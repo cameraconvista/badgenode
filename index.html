@@ -242,7 +242,13 @@
       key.addEventListener("click", () => {
         const valore = key.textContent;
         if (valore === "C") pulisciPin();
-        else if (valore === "⚙️") verificaAccessoAdmin();
+        else if (valore === "⚙️") {
+          if (!window.supabase) {
+            mostraStatus("Sistema in caricamento, riprova tra qualche secondo...", "warning", 3000);
+            return;
+          }
+          verificaAccessoAdmin();
+        }
         else if (pinInput.value.length < 2) pinInput.value += valore;
       });
     });
