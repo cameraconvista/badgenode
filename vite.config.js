@@ -21,6 +21,11 @@ export default defineConfig({
     allowedHosts: true,
     hmr: {
       port: 5173
+    },
+    fs: {
+      allow: ['..']
     }
   },
+  // Serve assets folder anche in development
+  assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg']
 })

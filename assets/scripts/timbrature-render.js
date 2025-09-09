@@ -94,7 +94,7 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
       <td style="text-align: center;">${extraContent}</td>
       <td style="text-align: center;">
         <img
-          src="/assets/icons/matita-colorata.png"
+          src="assets/icons/matita-colorata.png"
           class="modifica-icon"
           data-data="${dataISO}"
           data-timbratura-id="${timbraturaId}"
