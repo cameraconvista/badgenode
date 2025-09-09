@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 
 const url = import.meta.env?.VITE_SUPABASE_URL;
@@ -13,6 +14,7 @@ if (!url || !anonKey) {
 }
 
 export const supabase = createClient(url, anonKey, { auth: { persistSession: false } });
+export const supabaseClient = supabase; // Alias per compatibilità
 
 export async function pingSupabase() {
   try {
