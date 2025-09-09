@@ -64,6 +64,8 @@ function renderUtenti(utenti) {
       <td>${utente.cognome}</td>
       <td>
         <button onclick="modificaUtente('${utente.pin}')" title="Modifica">✏️</button>
+        <button onclick="archiviaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
+                title="Archivia dipendente" style="color: #f59e0b;">📦</button>
         <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
                 title="Elimina" style="color: #ef4444;">❌</button>
       </td>
