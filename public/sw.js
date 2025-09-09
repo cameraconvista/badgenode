@@ -1,14 +1,13 @@
-
 /* BADGENODE Service Worker - navigation fallback + asset caching */
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v5';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
-  '/',              
+  '/',
   '/index.html',
   '/utenti.html',
-  '/storico.html', 
-  '/offline.html',  
+  '/storico.html',
+  '/offline.html',
   '/manifest.json',
   '/favicon.ico',
   '/style.css',
@@ -52,6 +51,7 @@ self.addEventListener('activate', (event) => {
 
 const ASSETS_REGEX = /^\/assets\/.+\.(?:js|css|png|webp|jpg|svg|ico)$/i;
 const ROOT_ICONS_REGEX = /^\/(?:favicon\.ico|.*\.png|.*\.svg)$/i;
+const PUB_ICONS_REGEX = /^\/icons\/.*$/i;
 const SUPABASE_REGEX = /^https?:\/\/([a-z0-9-]+\.)*supabase\.co\//i;
 
 self.addEventListener('fetch', (event) => {
@@ -76,15 +76,15 @@ self.addEventListener('fetch', (event) => {
         // Prova la rete prima
         const netResponse = await fetch(request);
         console.log('[SW] Navigation network success');
-        
+
         // Cache in background
         const cache = await caches.open(RUNTIME_CACHE);
         cache.put(request, netResponse.clone()).catch(()=>{});
-        
+
         return netResponse;
       } catch (err) {
         console.log('[SW] Navigation network failed, trying cache');
-        
+
         // Prova cache della pagina specifica
         const cache = await caches.open(RUNTIME_CACHE);
         const cached = await cache.match(request);
@@ -92,7 +92,7 @@ self.addEventListener('fetch', (event) => {
           console.log('[SW] Serving cached page');
           return cached;
         }
-        
+
         // Prova cache statica
         const staticCache = await caches.open(STATIC_CACHE);
         const staticCached = await staticCache.match(request);
@@ -100,7 +100,7 @@ self.addEventListener('fetch', (event) => {
           console.log('[SW] Serving static cached page');
           return staticCached;
         }
-        
+
         // Fallback alla pagina offline
         console.log('[SW] Serving offline page');
         const offlinePage = await staticCache.match('/offline.html');
@@ -115,12 +115,12 @@ self.addEventListener('fetch', (event) => {
     event.respondWith((async () => {
       const cache = await caches.open(RUNTIME_CACHE);
       const cached = await cache.match(request);
-      
+
       if (cached) {
         console.log('[SW] Serving cached asset:', url.pathname);
         return cached;
       }
-      
+
       try {
         const netResponse = await fetch(request);
         console.log('[SW] Caching new asset:', url.pathname);
@@ -134,18 +134,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Icone root - stale-while-revalidate
-  if (url.origin === self.location.origin && ROOT_ICONS_REGEX.test(url.pathname)) {
+  // Icone root e /icons/* -> stale-while-revalidate
+  if (url.origin === self.location.origin && (ROOT_ICONS_REGEX.test(url.pathname) || PUB_ICONS_REGEX.test(url.pathname))) {
     event.respondWith((async () => {
       const cache = await caches.open(RUNTIME_CACHE);
       const cached = await cache.match(request);
-      
+
       // Aggiorna in background
       const netPromise = fetch(request).then(res => {
         cache.put(request, res.clone()).catch(()=>{});
         return res;
       }).catch(()=>null);
-      
+
       return cached || (await netPromise) || new Response('Icon not available', { status: 503 });
     })());
     return;
