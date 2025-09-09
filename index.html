@@ -259,12 +259,23 @@
     document.querySelectorAll(".keypad-button").forEach((key, index) => {
       key.addEventListener("click", () => {
         const text = key.textContent;
+        
         // Pulsante ingranaggio - Accesso admin
-          if (key.id === 'settings-btn') { // Usa l'ID per identificare il pulsante ingranaggio
-            apriImpostazioni(); // Chiama la nuova funzione globale
-            return;
-          }
-        else if (pinInput.value.length < 2) pinInput.value += text;
+        if (key.id === 'settings-btn') {
+          apriImpostazioni();
+          return;
+        }
+        
+        // Pulsante C - Cancella PIN
+        if (text === 'C') {
+          pinInput.value = '';
+          return;
+        }
+        
+        // Pulsanti numerici - Inserisci cifra
+        if (pinInput.value.length < 2 && /^[0-9]$/.test(text)) {
+          pinInput.value += text;
+        }
       });
     });
 
