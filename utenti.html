@@ -2,31 +2,6 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <script>
-  (function () {
-    if (location.protocol !== 'https:') return;
-    var HMR = /:\/\/(0\.0\.0\.0|127\.0\.0\.1|localhost):517\d/;
-    var OldWS = window.WebSocket;
-    window.WebSocket = function (url, protocols) {
-      try { if (typeof url === 'string' && HMR.test(url)) throw new Error('HMR disabled on HTTPS'); }
-      catch (e) { console.debug('[HMR muted]', e.message); return { close(){}, readyState: 3, addEventListener(){}, removeEventListener(){}, send(){} }; }
-      var ws = new OldWS(url, protocols);
-      return ws;
-    };
-    if (OldWS) window.WebSocket.prototype = OldWS.prototype;
-    var OldES = window.EventSource;
-    if (OldES) {
-      window.EventSource = function (url, conf) {
-        if (typeof url === 'string' && HMR.test(url)) {
-          console.debug('[HMR muted] EventSource blocked');
-          return { close(){}, readyState: 2, onopen:null, onmessage:null, onerror:null, addEventListener(){}, removeEventListener(){} };
-        }
-        return new OldES(url, conf);
-      };
-      window.EventSource.prototype = OldES.prototype;
-    }
-  })();
-  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestione Dipendenti - BADGEBOX</title>
@@ -38,31 +13,12 @@
   <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
 
   <!-- Icone PWA -->
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/badgenode-192.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="57x57" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="60x60" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="72x72" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="76x76" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="114x114" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/badgenode-192.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/badgenode-192.png" />
-  <meta name="msapplication-TileImage" content="assets/icons/badgenode-192.png" />
-  <meta name="msapplication-TileColor" content="#0d1b2a" />
   <link rel="manifest" href="manifest.json" />
 
   <!-- Performance optimizations -->
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://txmjqrnitfsiytbytxlc.supabase.co" crossorigin>
-  <link rel="dns-prefetch" href="https://txmjqrnitfsiytbytxlc.supabase.co">
-
-  <!-- Preload risorse critiche -->
-  <link rel="preload" href="storico.html" as="document">
   <link rel="preload" href="style.css" as="style">
 
   <!-- Stili dal file CSS esterno -->
@@ -522,7 +478,7 @@
         </div>
         <div class="campo-singolo">
           <div class="campo-label">PIN (1-99)</div>
-          <input type="number" class="campo-valore" id="modifica-pin" min="1" max="99" readonly style="background-color: #f3f4f6; color: #6b7280; cursor: not-allowed;">
+          <input type="number" class="campo-valore" id="modifica-pin" min="1" max="99" readonly style="background-color: #374151; color: #94a3b8; cursor: not-allowed;">
         </div>
       </div>
 
@@ -547,30 +503,34 @@
     </div>
   </div>
 
-  <!-- Script principale unificato -->
+  <!-- Script principale -->
   <script type="module">
     import { supabaseClient } from './assets/scripts/supabase-client.js';
     
-    // Espone client globalmente per compatibilità
-    window.supabase = supabaseClient;
-    
     let currentEditingPin = null;
 
-    // Caricamento utenti ottimizzato
+    // Caricamento utenti
     async function caricaUtenti() {
       try {
+        console.log('[UTENTI] Caricamento in corso...');
+        
         const { data, error } = await supabaseClient
           .from('utenti')
           .select('*')
           .order('pin', { ascending: true });
 
-        if (error) throw error;
+        if (error) {
+          console.error('[UTENTI] Errore Supabase:', error);
+          throw error;
+        }
         
+        console.log('[UTENTI] Utenti caricati:', data?.length || 0);
         renderUtenti(data || []);
+        
       } catch (error) {
-        console.error('Errore caricamento utenti:', error);
+        console.error('[UTENTI] Errore caricamento:', error);
         document.getElementById('lista-dipendenti').innerHTML = `
-          <tr><td colspan="5" style="color: red; text-align: center; padding: 20px;">
+          <tr><td colspan="5" style="color: #ef4444; text-align: center; padding: 20px;">
             Errore caricamento: ${error.message}
           </td></tr>
         `;
@@ -580,6 +540,11 @@
     function renderUtenti(utenti) {
       const tbody = document.getElementById('lista-dipendenti');
       
+      if (!tbody) {
+        console.error('[UTENTI] Elemento lista-dipendenti non trovato');
+        return;
+      }
+
       if (utenti.length === 0) {
         tbody.innerHTML = `
           <tr><td colspan="5" style="text-align: center; padding: 20px; color: #94a3b8;">
@@ -593,18 +558,18 @@
         <tr>
           <td>
             <a href="storico.html?pin=${utente.pin}" style="color: #60a5fa; text-decoration: none;">
-              <img src="/assets/icons/orologio.png" alt="Storico" style="width: 20px; height: 20px;" />
+              <img src="assets/icons/orologio.png" alt="Storico" style="width: 20px; height: 20px;" />
             </a>
           </td>
           <td>${utente.pin}</td>
           <td>${utente.nome}</td>
           <td>${utente.cognome}</td>
           <td>
-            <button onclick="modificaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}', '${utente.email || ''}', '${utente.telefono || ''}', '${utente.descrizione_contratto || ''}', ${utente.ore_contrattuali || 8.0})" 
+            <button onclick="modificaUtente(${utente.pin}, '${utente.nome}', '${utente.cognome}', '${utente.email || ''}', '${utente.telefono || ''}', '${utente.descrizione_contratto || ''}', ${utente.ore_contrattuali || 8.0})" 
                     title="Modifica dipendente" style="color: #3b82f6;">✏️</button>
-            <button onclick="archiviaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
+            <button onclick="archiviaUtente(${utente.pin}, '${utente.nome}', '${utente.cognome}')" 
                     title="Archivia dipendente" style="color: #f59e0b;">📦</button>
-            <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
+            <button onclick="eliminaUtente(${utente.pin}, '${utente.nome}', '${utente.cognome}')" 
                     title="Elimina" style="color: #ef4444;">❌</button>
           </td>
         </tr>
