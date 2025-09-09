@@ -129,7 +129,7 @@
     function aggiornaDataOra() {
       const ora = DateTime.now().setZone("Europe/Rome");
       document.getElementById("dataGiorno").textContent = `${giorni[ora.weekday % 7]} ${ora.day} ${mesi[ora.month - 1]}`;
-      document.getElementById("ora").textContent = ora.toFormat("HH:mm");
+      document.getElementById("ora").textContent = ora.toFormat("HH:mm:ss");
     }
 
     function mostraStatus(messaggio, tipo = "info", durata = 3000) {
