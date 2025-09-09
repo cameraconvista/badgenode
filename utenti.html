@@ -650,8 +650,95 @@
 
   <!-- Supabase Client Centralizzato -->
   <script type="module">
-    import { supabase } from './assets/scripts/supabase-client.js';
-    window.supabase = supabase;
+    import { supabaseClient } from './assets/scripts/supabase-client.js';
+    // Compatibilità retro: espone client come variabile globale
+    window.supabase = supabaseClient;
+
+    // Funzioni per il modale nuovo dipendente
+    window.apriModalNuovoDipendente = function() {
+      const modal = document.getElementById('modalNuovoDipendente');
+      if (modal) {
+        modal.style.display = 'block';
+
+        // Reset del form
+        document.getElementById('nuovo-nome').value = '';
+        document.getElementById('nuovo-cognome').value = '';
+        document.getElementById('nuovo-email').value = '';
+        document.getElementById('nuovo-telefono').value = '';
+        document.getElementById('nuovo-pin').value = '';
+
+        // Focus sul primo campo
+        setTimeout(() => {
+          document.getElementById('nuovo-nome').focus();
+        }, 100);
+      }
+    };
+
+    window.chiudiModalNuovoDipendente = function() {
+      const modal = document.getElementById('modalNuovoDipendente');
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    };
+
+    window.annullaNuovoDipendente = function() {
+      chiudiModalNuovoDipendente();
+    };
+
+    window.salvaNuovoDipendente = async function() {
+      try {
+        const nome = document.getElementById('nuovo-nome').value.trim();
+        const cognome = document.getElementById('nuovo-cognome').value.trim();
+        const email = document.getElementById('nuovo-email').value.trim();
+        const telefono = document.getElementById('nuovo-telefono').value.trim();
+        const pin = parseInt(document.getElementById('nuovo-pin').value);
+
+        // Validazione
+        if (!nome || !cognome) {
+          alert('Nome e Cognome sono obbligatori');
+          return;
+        }
+
+        if (!pin || pin < 1 || pin > 99) {
+          alert('PIN deve essere tra 1 e 99');
+          return;
+        }
+
+        console.log('💾 Creazione nuovo dipendente:', { nome, cognome, pin });
+
+        // Inserisci nel database
+        const { data, error } = await window.supabase
+          .from('utenti')
+          .insert({
+            pin: pin,
+            nome: nome,
+            cognome: cognome,
+            email: email || null,
+            telefono: telefono || null,
+            ore_contrattuali: 8.0
+          })
+          .select();
+
+        if (error) {
+          if (error.code === '23505') {
+            alert('Errore: PIN già esistente. Scegli un PIN diverso.');
+          } else {
+            throw error;
+          }
+          return;
+        }
+
+        alert(`✅ Dipendente ${nome} ${cognome} aggiunto con successo!\nPIN assegnato: ${pin}`);
+
+        // Chiudi il modale e ricarica la lista
+        chiudiModalNuovoDipendente();
+        setTimeout(() => location.reload(), 500);
+
+      } catch (error) {
+        console.error('❌ Errore nel salvataggio:', error);
+        alert('Errore nel salvataggio: ' + (error.message || 'Errore sconosciuto'));
+      }
+    };
   </script>
   <script type="module" src="assets/scripts/utenti-loader.js"></script>
 
