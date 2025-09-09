@@ -157,7 +157,7 @@
     }
 
     /* Modali */
-    #modalNuovoDipendente, #modalDettagli {
+    #modalNuovoDipendente {
       position: fixed;
       top: 0;
       left: 0;
@@ -576,77 +576,6 @@
     </div>
   </div>
 
-  <!-- Modale Dettagli Dipendente -->
-  <div id="modalDettagli">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title" id="modalTitolo">Dettagli Dipendente</h2>
-        <button class="close-btn" onclick="chiudiModalDettagli()">×</button>
-      </div>
-
-      <div class="sezione-modal">
-        <div class="sezione-titolo">👤 Dati Anagrafici</div>
-        <div class="campo-gruppo">
-          <div>
-            <div class="campo-label">Nome *</div>
-            <input type="text" class="campo-valore" id="dettagli-nome" required>
-          </div>
-          <div>
-            <div class="campo-label">Cognome *</div>
-            <input type="text" class="campo-valore" id="dettagli-cognome" required>
-          </div>
-        </div>
-        <div class="campo-gruppo">
-          <div>
-            <div class="campo-label">Email</div>
-            <input type="email" class="campo-valore" id="dettagli-email">
-          </div>
-          <div>
-            <div class="campo-label">Numero di Telefono</div>
-            <input type="text" class="campo-valore" id="dettagli-telefono" placeholder="Non disponibile">
-          </div>
-        </div>
-      </div>
-
-      <div class="sezione-modal">
-        <div class="sezione-titolo">📄 Contratto Attivo</div>
-
-        <div class="campo-singolo">
-          <div class="campo-label">Upload Contratto</div>
-          <div class="upload-area" id="upload-area">
-            <input type="file" id="file-input" accept=".pdf,.doc,.docx" style="display: none;">
-            <div class="upload-icon">📄</div>
-            <div class="upload-text" id="upload-text">
-              Trascina qui il file del contratto o clicca per selezionare<br>
-              <small>(PDF, DOC, DOCX - Max 5MB)</small>
-            </div>
-            <div class="file-info" id="file-info" style="display: none;">
-              <div class="file-name" id="file-name"></div>
-              <div class="file-size" id="file-size"></div>
-              <button type="button" class="remove-file-btn" id="remove-file-btn">Rimuovi</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="campo-singolo">
-          <div class="campo-label">Descrizione Contratto in Corso</div>
-          <textarea class="campo-valore campo-textarea" id="dettagli-descrizione-contratto"
-                    placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
-        </div>
-
-        <div class="campo-singolo">
-          <div class="campo-label">Ore max giornaliere da contratto *</div>
-          <input type="number" class="campo-valore" id="dettagli-ore-contrattuali"
-                 placeholder="8.00" step="0.25" min="0" max="24" required>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-annulla" onclick="annullaModifiche()">Annulla</button>
-        <button class="btn-salva" onclick="salvaModifiche()">Salva</button>
-      </div>
-    </div>
-  </div>
 
 
   <!-- Supabase Client Centralizzato -->
