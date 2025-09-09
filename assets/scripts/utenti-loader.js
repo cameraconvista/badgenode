@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data, error, status } = await supabase
       .from('utenti')
       .select('*')
-      .order('cognome', { ascending: true });
+      .order('pin', { ascending: true });
 
     if (error) {
       console.error('[UTENTI] supabase error', { status, error });
@@ -82,8 +82,8 @@ function renderUtenti(utenti) {
 
   // Funzioni globali
     window.modificaUtente = modificaUtente;
-    window.eliminaDipendente = eliminaDipendente;
-    window.archiviaDipendente = archiviaDipendente;
+    window.eliminaUtente = eliminaUtente;
+    window.archiviaUtente = archiviaUtente;
     window.apriStorico = apriStorico;
 
 
