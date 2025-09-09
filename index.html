@@ -261,7 +261,14 @@
             console.log("🔧 PIN inserito:", adminPin ? "***" : "null");
             if (adminPin === "1909") {
               console.log("🔧 PIN CORRETTO - Reindirizzamento...");
-              window.location.href = "utenti.html";
+              // Controlla se siamo in build (preview) o dev
+              if (window.location.port === "5000") {
+                // Preview mode - usa il path del build
+                window.location.href = "assets/utenti-BohNukWm.html";
+              } else {
+                // Dev mode - usa il path normale
+                window.location.href = "utenti.html";
+              }
             } else if (adminPin !== null) {
               console.log("🔧 PIN ERRATO");
               alert("PIN non valido. Accesso negato.");
