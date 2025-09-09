@@ -15,6 +15,7 @@ export default {
     host: '0.0.0.0',
     port: 5173,
     strictPort: true,
+    allowedHosts: true,
     cors: {
       origin: true,
       credentials: true
@@ -35,6 +36,7 @@ export default {
     host: '0.0.0.0',
     port: 5000,
     strictPort: true,
+    allowedHosts: true,
     cors: {
       origin: true,
       credentials: true
