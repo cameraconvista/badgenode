@@ -1,4 +1,5 @@
 
+
 import { supabase, pingSupabase } from './supabase-client.js';
 
 async function loadUtenti() {
@@ -42,3 +43,4 @@ document.addEventListener('DOMContentLoaded', loadUtenti);
 
 // Export per uso manuale
 window.loadUtenti = loadUtenti;
+

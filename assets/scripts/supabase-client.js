@@ -6,6 +6,12 @@ function readMeta(name) {
   return el?.content || '';
 }
 
+// Diagnostica ENV presenza (senza stampare le chiavi)
+console.info('[SUPABASE] env present', {
+  hasUrl: !!(import.meta.env?.VITE_SUPABASE_URL),
+  hasAnon: !!(import.meta.env?.VITE_SUPABASE_ANON_KEY)
+});
+
 const url =
   import.meta.env?.VITE_SUPABASE_URL ||
   (window.__SUPABASE__ && window.__SUPABASE__.url) ||
