@@ -455,7 +455,7 @@
           transition: all 0.3s ease;
           min-width: 100px;
           box-shadow: 0 2px 8px rgba(180, 83, 9, 0.3);
-        " onmouseover="this.style.backgroundColor='#92400e'; this.style.transform='translateY(-1px)'" 
+        " onmouseover="this.style.backgroundColor='#92400e'; this.style.transform='translateY(-1px)'"
            onmouseout="this.style.backgroundColor='#b45309'; this.style.transform='translateY(0)'">
           ← Login Utenti
         </button>
@@ -474,7 +474,7 @@
             transition: all 0.3s ease;
             min-width: 80px;
             box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
-          " onmouseover="this.style.backgroundColor='#15803d'; this.style.transform='translateY(-1px)'" 
+          " onmouseover="this.style.backgroundColor='#15803d'; this.style.transform='translateY(-1px)'"
              onmouseout="this.style.backgroundColor='#16a34a'; this.style.transform='translateY(0)'">
             Aggiungi
           </button>
@@ -491,7 +491,7 @@
             transition: all 0.3s ease;
             min-width: 80px;
             box-shadow: 0 2px 8px rgba(202, 138, 4, 0.3);
-          " onmouseover="this.style.backgroundColor='#a16207'; this.style.transform='translateY(-1px)'" 
+          " onmouseover="this.style.backgroundColor='#a16207'; this.style.transform='translateY(-1px)'"
              onmouseout="this.style.backgroundColor='#ca8a04'; this.style.transform='translateY(0)'">
             ex Dipendenti
           </button>
@@ -558,13 +558,13 @@
 
         <div class="campo-singolo">
           <div class="campo-label">Descrizione Contratto in Corso</div>
-          <textarea class="campo-valore campo-textarea" id="nuovo-descrizione-contratto" 
+          <textarea class="campo-valore campo-textarea" id="nuovo-descrizione-contratto"
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
 
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto *</div>
-          <input type="number" class="campo-valore" id="nuovo-ore-contrattuali" 
+          <input type="number" class="campo-valore" id="nuovo-ore-contrattuali"
                  placeholder="8.00" step="0.25" min="0" max="24" value="8.00" required>
         </div>
       </div>
@@ -630,13 +630,13 @@
 
         <div class="campo-singolo">
           <div class="campo-label">Descrizione Contratto in Corso</div>
-          <textarea class="campo-valore campo-textarea" id="dettagli-descrizione-contratto" 
+          <textarea class="campo-valore campo-textarea" id="dettagli-descrizione-contratto"
                     placeholder="Inserisci la descrizione del contratto attuale..."></textarea>
         </div>
 
         <div class="campo-singolo">
           <div class="campo-label">Ore max giornaliere da contratto *</div>
-          <input type="number" class="campo-valore" id="dettagli-ore-contrattuali" 
+          <input type="number" class="campo-valore" id="dettagli-ore-contrattuali"
                  placeholder="8.00" step="0.25" min="0" max="24" required>
         </div>
       </div>
@@ -644,6 +644,38 @@
       <div class="modal-actions">
         <button class="btn-annulla" onclick="annullaModifiche()">Annulla</button>
         <button class="btn-salva" onclick="salvaModifiche()">Salva</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Modifica Dipendente -->
+  <div id="modalModificaDipendente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; min-width: 400px;">
+      <h3 id="modalTitleModifica">🔧 Modifica Dipendente</h3>
+
+      <div style="margin-bottom: 15px;">
+        <label>Nome:</label>
+        <input type="text" id="inputNomeModifica" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label>Cognome:</label>
+        <input type="text" id="inputCognomeModifica" required style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <label>Email:</label>
+        <input type="email" id="inputEmailModifica" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label>Ore Contrattuali:</label>
+        <input type="number" id="inputOreModifica" min="1" max="12" step="0.5" value="8" style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;">
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button id="btnAnnullaModifica" style="padding: 8px 16px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer;">Annulla</button>
+        <button id="btnSalvaModifica" style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Salva</button>
       </div>
     </div>
   </div>
