@@ -1,18 +1,7 @@
-
 import { createClient } from '@supabase/supabase-js';
 
-function readMeta(name) {
-  const el = document.querySelector(`meta[name="${name}"]`);
-  return el?.content || '';
-}
-
-const url =
-  import.meta.env?.VITE_SUPABASE_URL ||
-  readMeta('supabase-url');
-
-const anonKey =
-  import.meta.env?.VITE_SUPABASE_ANON_KEY ||
-  readMeta('supabase-anon-key');
+const url = import.meta.env?.VITE_SUPABASE_URL;
+const anonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
 
 console.info('[SUPABASE] env present', {
   hasUrl: !!(import.meta.env?.VITE_SUPABASE_URL),

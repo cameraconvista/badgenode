@@ -1,5 +1,9 @@
+import { defineConfig } from 'vite'
 
-export default {
+export default defineConfig({
+  optimizeDeps: {
+    include: ['@supabase/supabase-js']
+  },
   build: {
     rollupOptions: {
       input: {
@@ -46,4 +50,4 @@ export default {
       'Cross-Origin-Opener-Policy': 'unsafe-none'
     }
   }
-}
+})
