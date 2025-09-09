@@ -240,17 +240,25 @@
 
     document.querySelectorAll(".keypad-button").forEach((key) => {
       key.addEventListener("click", () => {
-        const valore = key.textContent;
-        console.log('Pulsante cliccato:', valore, 'Codici:', [...valore].map(c => c.charCodeAt(0)));
-        if (valore === "C") pulisciPin();
-        else if (valore.includes("⚙") || valore === "⚙️" || valore === "⚙") {
+        const valore = key.textContent.trim();
+        console.log('🔧 Pulsante cliccato:', valore, 'Caratteri:', [...valore].map(c => c.charCodeAt(0)));
+        
+        if (valore === "C") {
+          console.log('🔧 Pulendo PIN...');
+          pulisciPin();
+        } else if (valore.includes("⚙") || valore === "⚙️" || valore === "⚙") {
+          console.log('🔧 Rilevato pulsante ingranaggio!');
           if (!window.supabase) {
+            console.log('🔧 Supabase non caricato');
             mostraStatus("Sistema in caricamento, riprova tra qualche secondo...", "warning", 3000);
             return;
           }
+          console.log('🔧 Aprendo modal admin...');
           verificaAccessoAdmin();
+        } else if (pinInput.value.length < 2) {
+          console.log('🔧 Aggiungendo numero:', valore);
+          pinInput.value += valore;
         }
-        else if (pinInput.value.length < 2) pinInput.value += valore;
       });
     });
 
