@@ -10,8 +10,10 @@ export default defineConfig({
         storico: resolve(__dirname, 'storico.html'),
         exdipendenti: resolve(__dirname, 'ex-dipendenti.html')
       }
-    }
+    },
+    copyPublicDir: true
   },
+  publicDir: 'public',
   server: {
     host: "0.0.0.0",
     port: 5173,
