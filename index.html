@@ -105,7 +105,7 @@
       <button class="keypad-button">9</button>
       <button class="keypad-button">C</button>
       <button class="keypad-button">0</button>
-      <button class="keypad-button">⚙️</button>
+      <button class="keypad-button" id="admin-btn">⚙️</button>
     </div>
     <div class="date-time-section">
       <div class="date-text" id="dataGiorno"></div>
@@ -238,39 +238,57 @@
       if (modal) modal.remove();
     }
 
-    // SOLUZIONE DIRETTA - gestione pulsanti
-    window.onload = function() {
-      const pulsanti = document.querySelectorAll(".keypad-button");
+    // PULSANTE INGRANAGGIO - APPROCCIO BRUTALE E DIRETTO
+    document.addEventListener('DOMContentLoaded', function() {
       
-      pulsanti.forEach((pulsante, index) => {
-        pulsante.onclick = function() {
-          const testo = this.textContent.trim();
+      // Metodo 1: Target diretto del pulsante ingranaggio
+      const adminBtn = document.getElementById('admin-btn');
+      if (adminBtn) {
+        adminBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const pin = prompt("PIN Amministratore:");
+          if (pin === "1909") {
+            window.location.href = "utenti.html";
+          } else if (pin) {
+            alert("PIN errato!");
+          }
+        });
+      }
+      
+      // Metodo 2: Gestione di tutti i pulsanti
+      const pulsanti = document.querySelectorAll(".keypad-button");
+      pulsanti.forEach((btn, index) => {
+        btn.addEventListener('click', function(e) {
+          const text = this.textContent.trim();
           
-          // PULSANTE INGRANAGGIO - ULTIMO DELLA GRIGLIA (posizione 11)
-          if (index === 11) {
+          // Pulsante C
+          if (text === "C") {
+            document.getElementById("pinInput").value = "";
+            return;
+          }
+          
+          // Pulsante ingranaggio (ultima posizione O per testo)
+          if (index === 11 || text.includes("⚙") || this.id === 'admin-btn') {
+            e.preventDefault();
+            e.stopPropagation();
             const pin = prompt("PIN Amministratore:");
             if (pin === "1909") {
-              // Vai alla pagina utenti
-              window.open("utenti.html", "_self");
+              window.location.href = "utenti.html";
             } else if (pin) {
               alert("PIN errato!");
             }
             return;
           }
           
-          // Pulsante C
-          if (testo === "C") {
-            pinInput.value = "";
-            return;
-          }
-          
           // Pulsanti numerici
-          if (testo >= "0" && testo <= "9" && pinInput.value.length < 2) {
-            pinInput.value += testo;
+          const pinInput = document.getElementById("pinInput");
+          if (text >= "0" && text <= "9" && pinInput.value.length < 2) {
+            pinInput.value += text;
           }
-        };
+        });
       });
-    };
+    });
 
     async function verificaUtente(pin) {
       const { data, error } = await window.supabase
