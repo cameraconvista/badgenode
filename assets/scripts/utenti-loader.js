@@ -92,71 +92,42 @@ window.modificaUtente = async function(pin) {
       return;
     }
 
-    // Crea e mostra il modale di modifica
-    const modalHTML = `
-      <div id="modalModificaUtente" style="
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-        background: rgba(0,0,0,0.7); display: flex; align-items: center; 
-        justify-content: center; z-index: 10000;">
-        <div style="
-          background: #1e293b; padding: 30px; border-radius: 12px; 
-          width: 90%; max-width: 500px; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-          
-          <h3 style="margin-top: 0; color: #fbbf24; text-align: center;">
-            ✏️ Modifica Dipendente (PIN: ${pin})
-          </h3>
-          
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nome:</label>
-            <input type="text" id="modificaNome" value="${utente.nome}" style="
-              width: 100%; padding: 10px; border: 1px solid #475569; border-radius: 6px; 
-              background: #334155; color: white; font-size: 16px;">
-          </div>
-          
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Cognome:</label>
-            <input type="text" id="modificaCognome" value="${utente.cognome}" style="
-              width: 100%; padding: 10px; border: 1px solid #475569; border-radius: 6px; 
-              background: #334155; color: white; font-size: 16px;">
-          </div>
-          
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
-            <input type="email" id="modificaEmail" value="${utente.email || ''}" style="
-              width: 100%; padding: 10px; border: 1px solid #475569; border-radius: 6px; 
-              background: #334155; color: white; font-size: 16px;">
-          </div>
-          
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Ore Contrattuali:</label>
-            <input type="number" id="modificaOre" value="${utente.ore_contrattuali || 8}" 
-                   min="1" max="12" step="0.5" style="
-              width: 100%; padding: 10px; border: 1px solid #475569; border-radius: 6px; 
-              background: #334155; color: white; font-size: 16px;">
-          </div>
-          
-          <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="chiudiModaleModifica()" style="
-              padding: 12px 24px; background: #6b7280; color: white; border: none; 
-              border-radius: 6px; cursor: pointer; font-weight: bold;">
-              Annulla
-            </button>
-            <button onclick="salvaModificheUtente(${pin})" style="
-              padding: 12px 24px; background: #059669; color: white; border: none; 
-              border-radius: 6px; cursor: pointer; font-weight: bold;">
-              💾 Salva
-            </button>
-          </div>
-          
-        </div>
-      </div>
-    `;
+    // Usa il modale esistente nell'HTML
+    const modal = document.getElementById('modalModificaDipendente');
+    const modalTitle = document.getElementById('modalTitleModifica');
+    const inputNome = document.getElementById('inputNomeModifica');
+    const inputCognome = document.getElementById('inputCognomeModifica'); 
+    const inputEmail = document.getElementById('inputEmailModifica');
+    const inputOre = document.getElementById('inputOreModifica');
+    const btnSalva = document.getElementById('btnSalvaModifica');
+    const btnAnnulla = document.getElementById('btnAnnullaModifica');
 
-    // Aggiungi il modale al DOM
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    if (!modal) {
+      console.error('❌ Modale esistente non trovato');
+      alert('Errore: Modale di modifica non disponibile');
+      return;
+    }
+
+    // Precompila i campi con i dati attuali
+    if (modalTitle) modalTitle.textContent = `🔧 Modifica Dipendente (PIN: ${pin})`;
+    if (inputNome) inputNome.value = utente.nome || '';
+    if (inputCognome) inputCognome.value = utente.cognome || '';
+    if (inputEmail) inputEmail.value = utente.email || '';
+    if (inputOre) inputOre.value = utente.ore_contrattuali || 8;
+
+    // Configura i pulsanti
+    if (btnSalva) {
+      btnSalva.onclick = () => salvaModificheUtente(pin);
+    }
+    if (btnAnnulla) {
+      btnAnnulla.onclick = chiudiModaleModifica;
+    }
+
+    // Mostra il modale
+    modal.style.display = 'block';
     
     // Focus sul primo campo
-    document.getElementById('modificaNome').focus();
+    if (inputNome) inputNome.focus();
 
   } catch (error) {
     console.error('❌ Errore modifica utente:', error);
@@ -267,18 +238,18 @@ window.eliminaUtente = function(pin, nome, cognome) {
 
 // Funzioni per il modale di modifica
 window.chiudiModaleModifica = function() {
-  const modal = document.getElementById('modalModificaUtente');
+  const modal = document.getElementById('modalModificaDipendente');
   if (modal) {
-    modal.remove();
+    modal.style.display = 'none';
   }
 };
 
 window.salvaModificheUtente = async function(pin) {
   try {
-    const nome = document.getElementById('modificaNome').value.trim();
-    const cognome = document.getElementById('modificaCognome').value.trim();
-    const email = document.getElementById('modificaEmail').value.trim();
-    const oreContrattuali = parseFloat(document.getElementById('modificaOre').value);
+    const nome = document.getElementById('inputNomeModifica').value.trim();
+    const cognome = document.getElementById('inputCognomeModifica').value.trim();
+    const email = document.getElementById('inputEmailModifica').value.trim();
+    const oreContrattuali = parseFloat(document.getElementById('inputOreModifica').value);
 
     // Validazione
     if (!nome || !cognome) {
