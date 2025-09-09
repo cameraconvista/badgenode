@@ -13,10 +13,22 @@ export default {
   },
   server: {
     host: '0.0.0.0',
-    port: 5173
+    port: 5173,
+    strictPort: true,
+    cors: true,
+    hmr: {
+      port: 5173,
+      host: '0.0.0.0'
+    },
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'unsafe-none',
+      'Cross-Origin-Opener-Policy': 'unsafe-none'
+    }
   },
   preview: {
     host: '0.0.0.0',
-    port: 5000
+    port: 5000,
+    strictPort: true,
+    cors: true
   }
 }

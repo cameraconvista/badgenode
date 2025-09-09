@@ -1,6 +1,6 @@
 
 /* BADGENODE Service Worker - navigation fallback + asset caching */
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `runtime-${CACHE_VERSION}`;
 const PRECACHE_URLS = [
@@ -13,6 +13,9 @@ const PRECACHE_URLS = [
   '/favicon.ico',
   '/style.css'
 ];
+
+// Skip waiting e claim clients in modo più sicuro
+const SKIP_WAITING = true;
 
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing...');
@@ -53,9 +56,13 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Bypassa Supabase completamente
-  if (SUPABASE_REGEX.test(request.url)) {
-    console.log('[SW] Bypassing Supabase:', request.url);
+  // Skip cross-origin requests e Supabase
+  if (url.origin !== self.location.origin || SUPABASE_REGEX.test(request.url)) {
+    return;
+  }
+
+  // Skip WebSocket e EventSource requests
+  if (request.url.includes('ws://') || request.url.includes('wss://') || request.headers.get('Accept') === 'text/event-stream') {
     return;
   }
 
