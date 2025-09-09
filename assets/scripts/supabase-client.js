@@ -1,14 +1,42 @@
 // Client Supabase configurato
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { createClient } from '@supabase/supabase-js';
 
-export const supabaseClient = createClient(
-  "https://txmjqrnitfsiytbytxlc.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1MzY1MDcsImV4cCI6MjA2NzExMjUwN30.lag16Oxh_UQL4WOeU9-pVxIzvUyiNQMhKUY5Y5s9DPg"
-);
+function readMeta(name) {
+  const el = document.querySelector(`meta[name="${name}"]`);
+  return el?.content || '';
+}
+
+const url =
+  import.meta.env?.VITE_SUPABASE_URL ||
+  (window.__SUPABASE__ && window.__SUPABASE__.url) ||
+  readMeta('supabase-url');
+
+const anonKey =
+  import.meta.env?.VITE_SUPABASE_ANON_KEY ||
+  (window.__SUPABASE__ && window.__SUPABASE__.anonKey) ||
+  readMeta('supabase-anon-key');
+
+if (!url || !anonKey) {
+  // Log non sensibile: non stampiamo le chiavi, solo presenza/assenza
+  console.error('[SUPABASE] Config mancante', { hasUrl: !!url, hasAnonKey: !!anonKey });
+}
+
+export const supabase = createClient(url, anonKey, {
+  auth: { persistSession: false },
+});
+
+export async function pingSupabase() {
+  try {
+    const res = await fetch(url, { method: 'HEAD', mode: 'cors' });
+    return { ok: res.ok, status: res.status };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
 
 // Compatibilità retro: espone client anche come variabile globale se window esiste
 if (typeof window !== 'undefined') {
-    window.supabaseClient = supabaseClient;
+    window.supabaseClient = supabase;
 }
 
 // Funzione helper per gestire gli errori Supabase
@@ -24,7 +52,7 @@ export function gestisciErroreSupabase(error) {
 // Funzioni helper per le timbrature
 export async function recuperaTimbrature(pin, dataInizio, dataFine) {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from("timbrature")
       .select("*")
       .eq("pin", parseInt(pin))
@@ -43,7 +71,7 @@ export async function recuperaTimbrature(pin, dataInizio, dataFine) {
 
 export async function recuperaUtente(pin) {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from("utenti")
       .select("nome, cognome, email, ore_contrattuali")
       .eq("pin", parseInt(pin))
