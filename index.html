@@ -87,7 +87,69 @@
       });
     }
   </script>
+  
+</head>
+<body>
+  <div class="main-container">
+    <img src="assets/icons/BNLOGO.png" alt="BADGENODE" class="logo" style="width: 160px; height: auto; margin-bottom: 20px;" />
+    <input type="text" id="pinInput" class="pin-display" placeholder="PIN" readonly maxlength="4" />
+    <div id="status" class="status-message"></div>
+    <div class="keypad">
+      <button class="keypad-button">1</button>
+      <button class="keypad-button">2</button>
+      <button class="keypad-button">3</button>
+      <button class="keypad-button">4</button>
+      <button class="keypad-button">5</button>
+      <button class="keypad-button">6</button>
+      <button class="keypad-button">7</button>
+      <button class="keypad-button">8</button>
+      <button class="keypad-button">9</button>
+      <button class="keypad-button">C</button>
+      <button class="keypad-button">0</button>
+      <button class="keypad-button" id="settings-btn" type="button" title="Impostazioni" aria-label="Impostazioni">⚙️</button>
+    </div>
+    <div class="date-time-section">
+      <div class="date-text" id="dataGiorno"></div>
+      <div class="time-text" id="ora"></div>
+    </div>
+    <div class="action-buttons">
+      <button class="action-button entrata">Entrata</button>
+      <button class="action-button uscita">Uscita</button>
+    </div>
+  </div>
+
+
   <script>
+    const { DateTime } = luxon;
+    const giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
+    const mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+    const pinInput = document.getElementById("pinInput");
+    const status = document.getElementById("status");
+
+    function aggiornaDataOra() {
+      const ora = DateTime.now().setZone("Europe/Rome");
+      document.getElementById("dataGiorno").textContent = `${giorni[ora.weekday % 7]} ${ora.day} ${mesi[ora.month - 1]}`;
+      document.getElementById("ora").textContent = ora.toFormat("HH:mm");
+    }
+
+    function mostraStatus(messaggio, tipo = "info", durata = 3000) {
+      status.textContent = messaggio;
+
+      // Applica l'animazione lampeggiante per le timbrature (entrata e uscita)
+      if (tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"))) {
+        status.className = `status-message ${tipo} visible timbratura-flash`;
+        // Per le timbrature, usa sempre 7 secondi
+        setTimeout(() => status.className = "status-message", 7000);
+      } else {
+        status.className = `status-message ${tipo} visible`;
+        setTimeout(() => status.className = "status-message", durata);
+      }
+    }
+
+    function pulisciPin() {
+      pinInput.value = "";
+    }
+
     // Funzione globale per aprire impostazioni/admin
     window.apriImpostazioni = function() {
       const pinDisplay = document.getElementById('pinInput');
@@ -217,157 +279,6 @@
         modal.remove();
       }
     }
-  </script>
-</head>
-<body>
-  <div class="main-container">
-    <img src="assets/icons/BNLOGO.png" alt="BADGENODE" class="logo" style="width: 160px; height: auto; margin-bottom: 20px;" />
-    <input type="text" id="pinInput" class="pin-display" placeholder="PIN" readonly maxlength="2" />
-    <div id="status" class="status-message"></div>
-    <div class="keypad">
-      <button class="keypad-button">1</button>
-      <button class="keypad-button">2</button>
-      <button class="keypad-button">3</button>
-      <button class="keypad-button">4</button>
-      <button class="keypad-button">5</button>
-      <button class="keypad-button">6</button>
-      <button class="keypad-button">7</button>
-      <button class="keypad-button">8</button>
-      <button class="keypad-button">9</button>
-      <button class="keypad-button">C</button>
-      <button class="keypad-button">0</button>
-      <button class="keypad-button" id="settings-btn" type="button" title="Impostazioni" aria-label="Impostazioni">⚙️</button>
-    </div>
-    <div class="date-time-section">
-      <div class="date-text" id="dataGiorno"></div>
-      <div class="time-text" id="ora"></div>
-    </div>
-    <div class="action-buttons">
-      <button class="action-button entrata">Entrata</button>
-      <button class="action-button uscita">Uscita</button>
-    </div>
-  </div>
-
-
-  <script>
-    const { DateTime } = luxon;
-    const giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
-    const mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-    const pinInput = document.getElementById("pinInput");
-    const status = document.getElementById("status");
-
-    function aggiornaDataOra() {
-      const ora = DateTime.now().setZone("Europe/Rome");
-      document.getElementById("dataGiorno").textContent = `${giorni[ora.weekday % 7]} ${ora.day} ${mesi[ora.month - 1]}`;
-      document.getElementById("ora").textContent = ora.toFormat("HH:mm");
-    }
-
-    function mostraStatus(messaggio, tipo = "info", durata = 3000) {
-      status.textContent = messaggio;
-
-      // Applica l'animazione lampeggiante per le timbrature (entrata e uscita)
-      if (tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"))) {
-        status.className = `status-message ${tipo} visible timbratura-flash`;
-        // Per le timbrature, usa sempre 7 secondi
-        setTimeout(() => status.className = "status-message", 7000);
-      } else {
-        status.className = `status-message ${tipo} visible`;
-        setTimeout(() => status.className = "status-message", durata);
-      }
-    }
-
-    function pulisciPin() {
-      pinInput.value = "";
-    }
-
-    function verificaAccessoAdmin() {
-      // Crea modal personalizzato
-      const modalHTML = `
-        <div id="adminModal" style="
-          position: fixed; 
-          top: 0; 
-          left: 0; 
-          width: 100%; 
-          height: 100%; 
-          background: rgba(0,0,0,0.8); 
-          z-index: 9999; 
-          display: flex; 
-          align-items: center; 
-          justify-content: center;
-        ">
-          <div style="
-            background: #1e293b; 
-            padding: 30px; 
-            border-radius: 15px; 
-            text-align: center; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            min-width: 300px;
-          ">
-            <h3 style="color: white; margin-bottom: 20px;">Accesso Amministratore</h3>
-            <input 
-              type="password" 
-              id="adminPinInput" 
-              placeholder="Inserisci PIN admin" 
-              style="
-                width: 100%; 
-                padding: 12px; 
-                font-size: 18px; 
-                text-align: center; 
-                border: none; 
-                border-radius: 8px; 
-                margin-bottom: 20px;
-                letter-spacing: 2px;
-              "
-            />
-            <div>
-              <button onclick="verificaPinAdmin()" style="
-                background: #15803d; 
-                color: white; 
-                border: none; 
-                padding: 12px 20px; 
-                margin: 0 10px; 
-                border-radius: 8px; 
-                cursor: pointer; 
-                font-size: 16px;
-              ">Conferma</button>
-              <button onclick="chiudiModalAdmin()" style="
-                background: #dc2626; 
-                color: white; 
-                border: none; 
-                padding: 12px 20px; 
-                margin: 0 10px; 
-                border-radius: 8px; 
-                cursor: pointer; 
-                font-size: 16px;
-              ">Annulla</button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      document.body.insertAdjacentHTML('beforeend', modalHTML);
-      document.getElementById('adminPinInput').focus();
-
-      // Gestisce Enter
-      document.getElementById('adminPinInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') verificaPinAdmin();
-      });
-    }
-
-    function verificaPinAdmin() {
-      const pinAdmin = document.getElementById('adminPinInput').value;
-      if (pinAdmin === "1909") {
-        window.location.href = "utenti.html";
-      } else {
-        alert("PIN non valido. Accesso negato.");
-        chiudiModalAdmin();
-      }
-    }
-
-    function chiudiModalAdmin() {
-      const modal = document.getElementById('adminModal');
-      if (modal) modal.remove();
-    }
 
     // Gestione click sui pulsanti numerici  
     document.querySelectorAll(".keypad-button").forEach((key, index) => {
@@ -387,7 +298,7 @@
         }
         
         // Pulsanti numerici - Inserisci cifra
-        if (pinInput.value.length < 2 && /^[0-9]$/.test(text)) {
+        if (pinInput.value.length < 4 && /^[0-9]$/.test(text)) {
           pinInput.value += text;
         }
       });
