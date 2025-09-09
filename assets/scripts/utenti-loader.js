@@ -85,6 +85,8 @@ function renderUtenti(utenti) {
       <td>${utente.nome}</td>
       <td>${utente.cognome}</td>
       <td>
+        <button onclick="modificaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}', '${utente.email || ''}', '${utente.telefono || ''}', '${utente.descrizione_contratto || ''}', ${utente.ore_contrattuali || 8.0})" 
+                title="Modifica dipendente" style="color: #3b82f6;">✏️</button>
         <button onclick="archiviaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
                 title="Archivia dipendente" style="color: #f59e0b;">📦</button>
         <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
@@ -262,10 +264,16 @@ window.eliminaUtente = async function(pin, nome, cognome) {
 };
 
 
+window.modificaUtente = function(pin, nome, cognome, email, telefono, descrizioneContratto, oreContrattuali) {
+  console.log('✏️ Modifica dipendente:', { pin, nome, cognome });
+  alert(`🔧 Funzione modifica dipendente in sviluppo\n\nDipendente: ${nome} ${cognome} (PIN: ${pin})\nEmail: ${email || 'Non disponibile'}\nTelefono: ${telefono || 'Non disponibile'}\nOre contrattuali: ${oreContrattuali}`);
+};
+
 // Esposizione funzioni globali DOPO le definizioni
 window.apriStorico = apriStorico;
 console.log('[UTENTI] Funzioni globali registrate:', {
   archiviaUtente: typeof window.archiviaUtente, 
   eliminaUtente: typeof window.eliminaUtente,
+  modificaUtente: typeof window.modificaUtente,
   apriStorico: typeof window.apriStorico
 });
