@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover, shrink-to-fit=no" />
-
   <title>BADGEBOX - Sistema Timbrature</title>
 
   <!-- PWA Meta -->
@@ -12,82 +11,23 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="BADGEBOX" />
 
-  <!-- Icone PWA per dispositivi mobili -->
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/badgenode-192.png" />
+  <!-- Icone PWA ottimizzate -->
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/badgenode-192.png" />
-
-  <!-- Apple Touch Icons per iOS (iPhone, iPad, Apple Watch) -->
-  <link rel="apple-touch-icon" sizes="57x57" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="60x60" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="72x72" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="76x76" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="114x114" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/badgenode-192.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/badgenode-192.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/badgenode-192.png" />
-
-  <!-- Android Chrome Icons -->
-  <link rel="icon" type="image/png" sizes="36x36" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="48x48" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="72x72" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="144x144" href="assets/icons/badgenode-192.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/badgenode-192.png" />
-
-  <!-- Microsoft Windows/Edge -->
-  <meta name="msapplication-TileImage" content="assets/icons/badgenode-192.png" />
-  <meta name="msapplication-TileColor" content="#0d1b2b" />
-
-  <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json" />
 
   <!-- Performance optimizations -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://txmjqrnitfsiytbytxlc.supabase.co" crossorigin>
-  <link rel="dns-prefetch" href="https://txmjqrnitfsiytbytxlc.supabase.co">
-
-  <!-- Preload pagine critiche per navigazione rapida -->
-  <link rel="preload" href="utenti.html" as="document">
-  <link rel="preload" href="storico.html" as="document">
   <link rel="preload" href="style.css" as="style">
 
-  <!-- Performance patch script -->
-  <script defer src="/assets/scripts/perf.patch.js" type="module"></script>
-
-  <!-- Stili dal file CSS esterno -->
+  <!-- Stili -->
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Luxon + Supabase -->
+  <!-- Luxon per gestione date -->
   <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js" 
           integrity="sha384-DwavIJUME7NNaTw+CuxB85mS1L5A6XkHXHWnd1hmNIzSnX48mIjZ0Nc/tPQONPwe" 
           crossorigin="anonymous"></script>
-  <!-- Supabase Client Centralizzato -->
-        <script type="module">
-            import { supabaseClient } from './assets/scripts/supabase-client.js';
-            // Compatibilità retro: espone client come variabile globale
-            window.supabase = supabaseClient;
-</script>
-
-  <!-- PWA Service Worker Registration -->
-  <script>
-    // Service Worker registration per PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((registration) => {
-            console.log('[SW] Registered:', registration.scope);
-          })
-          .catch((error) => {
-            console.error('[SW] Registration failed:', error);
-          });
-      });
-    }
-  </script>
-  
 </head>
 <body>
   <div class="main-container">
@@ -118,27 +58,33 @@
     </div>
   </div>
 
+  <!-- Script principale ottimizzato -->
+  <script type="module">
+    import { supabaseClient } from './assets/scripts/supabase-client.js';
 
-  <script>
+    // Espone client come variabile globale per compatibilità
+    window.supabase = supabaseClient;
+
     const { DateTime } = luxon;
     const giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
     const mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+
     const pinInput = document.getElementById("pinInput");
     const status = document.getElementById("status");
 
+    // Aggiornamento data/ora ottimizzato
     function aggiornaDataOra() {
       const ora = DateTime.now().setZone("Europe/Rome");
       document.getElementById("dataGiorno").textContent = `${giorni[ora.weekday % 7]} ${ora.day} ${mesi[ora.month - 1]}`;
       document.getElementById("ora").textContent = ora.toFormat("HH:mm:ss");
     }
 
+    // Sistema status ottimizzato
     function mostraStatus(messaggio, tipo = "info", durata = 3000) {
       status.textContent = messaggio;
 
-      // Applica l'animazione lampeggiante per le timbrature (entrata e uscita)
       if (tipo === "success" && (messaggio.includes("ENTRATA") || messaggio.includes("USCITA"))) {
         status.className = `status-message ${tipo} visible timbratura-flash`;
-        // Per le timbrature, usa sempre 7 secondi
         setTimeout(() => status.className = "status-message", 7000);
       } else {
         status.className = `status-message ${tipo} visible`;
@@ -146,179 +92,93 @@
       }
     }
 
-    function pulisciPin() {
-      pinInput.value = "";
-    }
-
-    // Funzione globale per aprire impostazioni/admin
+    // Gestione PIN admin ottimizzata
     window.apriImpostazioni = function() {
-      const pinDisplay = document.getElementById('pinInput');
-      const pinValue = pinDisplay ? pinDisplay.value.trim() : '';
-
+      const pinValue = pinInput.value.trim();
       if (pinValue === '1909') {
         window.location.href = 'utenti.html';
       } else {
-        // Mostra modale per inserimento PIN admin
         mostraModalAdmin();
       }
     };
 
     function mostraModalAdmin() {
-      // Rimuovi eventuali modali esistenti
       const existingModal = document.getElementById('adminModal');
       if (existingModal) existingModal.remove();
 
       const modalHTML = `
-        <div id="adminModal" style="
-          position: fixed; 
-          top: 0; 
-          left: 0; 
-          width: 100%; 
-          height: 100%; 
-          background: rgba(0,0,0,0.8); 
-          z-index: 9999; 
-          display: flex; 
-          align-items: center; 
-          justify-content: center;
-        ">
-          <div style="
-            background: #1e293b; 
-            padding: 30px; 
-            border-radius: 15px; 
-            text-align: center; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            min-width: 300px;
-          ">
+        <div id="adminModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+          <div style="background: #1e293b; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); min-width: 300px;">
             <h3 style="color: white; margin-bottom: 20px;">Accesso Amministratore</h3>
-            <input 
-              type="password" 
-              id="adminPinInput" 
-              placeholder="Inserisci PIN admin" 
-              style="
-                width: 100%; 
-                padding: 12px; 
-                font-size: 18px; 
-                text-align: center; 
-                border: none; 
-                border-radius: 8px; 
-                margin-bottom: 20px;
-                letter-spacing: 2px;
-                box-sizing: border-box;
-              "
-              maxlength="4"
-            />
+            <input type="password" id="adminPinInput" placeholder="Inserisci PIN admin" 
+                   style="width: 100%; padding: 12px; font-size: 18px; text-align: center; border: none; border-radius: 8px; margin-bottom: 20px; letter-spacing: 2px; box-sizing: border-box;" maxlength="4" />
             <div>
-              <button onclick="verificaPinAdmin()" style="
-                background: #15803d; 
-                color: white; 
-                border: none; 
-                padding: 12px 20px; 
-                margin: 0 10px; 
-                border-radius: 8px; 
-                cursor: pointer; 
-                font-size: 16px;
-              ">Conferma</button>
-              <button onclick="chiudiModalAdmin()" style="
-                background: #dc2626; 
-                color: white; 
-                border: none; 
-                padding: 12px 20px; 
-                margin: 0 10px; 
-                border-radius: 8px; 
-                cursor: pointer; 
-                font-size: 16px;
-              ">Annulla</button>
+              <button onclick="verificaPinAdmin()" style="background: #15803d; color: white; border: none; padding: 12px 20px; margin: 0 10px; border-radius: 8px; cursor: pointer; font-size: 16px;">Conferma</button>
+              <button onclick="chiudiModalAdmin()" style="background: #dc2626; color: white; border: none; padding: 12px 20px; margin: 0 10px; border-radius: 8px; cursor: pointer; font-size: 16px;">Annulla</button>
             </div>
           </div>
         </div>
       `;
 
       document.body.insertAdjacentHTML('beforeend', modalHTML);
-      
-      // Focalizza il campo input e seleziona il testo
+
       setTimeout(() => {
         const adminInput = document.getElementById('adminPinInput');
         if (adminInput) {
           adminInput.focus();
-          adminInput.select();
+          adminInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              verificaPinAdmin();
+            }
+          });
         }
       }, 100);
 
-      // Gestisce Enter
-      document.getElementById('adminPinInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          verificaPinAdmin();
-        }
-      });
-
-      // Gestisce ESC per chiudere
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function handleEscape(e) {
         if (e.key === 'Escape') {
           chiudiModalAdmin();
+          document.removeEventListener('keydown', handleEscape);
         }
       });
     }
 
-    function verificaPinAdmin() {
-      const pinAdmin = document.getElementById('adminPinInput').value.trim();
+    window.verificaPinAdmin = function() {
+      const pinAdmin = document.getElementById('adminPinInput')?.value.trim();
       if (pinAdmin === "1909") {
         chiudiModalAdmin();
         window.location.href = "utenti.html";
       } else {
         alert("PIN non valido. Accesso negato.");
-        // Mantieni il modale aperto per un nuovo tentativo
-        document.getElementById('adminPinInput').value = '';
-        document.getElementById('adminPinInput').focus();
+        const input = document.getElementById('adminPinInput');
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
       }
-    }
+    };
 
-    function chiudiModalAdmin() {
+    window.chiudiModalAdmin = function() {
       const modal = document.getElementById('adminModal');
-      if (modal) {
-        modal.remove();
-      }
-    }
+      if (modal) modal.remove();
+    };
 
-    // Gestione click sui pulsanti numerici  
-    document.querySelectorAll(".keypad-button").forEach((key, index) => {
+    // Gestione keypad ottimizzata
+    document.querySelectorAll(".keypad-button").forEach((key) => {
       key.addEventListener("click", () => {
         const text = key.textContent;
-        
-        // Pulsante ingranaggio - Accesso admin
+
         if (key.id === 'settings-btn') {
           apriImpostazioni();
-          return;
-        }
-        
-        // Pulsante C - Cancella PIN
-        if (text === 'C') {
+        } else if (text === 'C') {
           pinInput.value = '';
-          return;
-        }
-        
-        // Pulsanti numerici - Inserisci cifra
-        if (pinInput.value.length < 4 && /^[0-9]$/.test(text)) {
+        } else if (pinInput.value.length < 4 && /^[0-9]$/.test(text)) {
           pinInput.value += text;
         }
       });
     });
 
-    async function verificaUtente(pin) {
-      const { data, error } = await window.supabase
-                    .from('utenti')
-                    .select('pin, nome, cognome')
-                    .eq('pin', pin);
-      if (error) throw new Error("PIN non valido");
-      return data;
-    }
-
-    async function verificaUltimaTimbratura(pin) {
-      const { data, error } = await window.supabase.from("timbrature").select("tipo").eq("pin", parseInt(pin)).order("data", { ascending: false }).order("ore", { ascending: false }).limit(1);
-      if (error) throw new Error("Errore verifica");
-      return data.length > 0 ? data[0].tipo : null;
-    }
-
+    // Sistema timbrature ottimizzato
     async function registraTimbratura(tipo) {
       const pin = pinInput.value.trim();
       if (!pin) {
@@ -329,7 +189,6 @@
       try {
         mostraStatus("Verifica in corso...", "loading");
 
-        // Verifica connessione Supabase
         if (!window.supabase) {
           mostraStatus("Errore: connessione database non disponibile", "error");
           return;
@@ -346,7 +205,7 @@
           return;
         }
 
-        // CONTROLLO ANTI-DUPLICAZIONE MIGLIORATO: Verifica ultima timbratura
+        // Controllo anti-duplicazione
         const { data: ultimaTimbratura, error: erroreUltima } = await window.supabase
           .from("timbrature")
           .select("tipo, created_at, data, ore")
@@ -360,7 +219,6 @@
           return;
         }
 
-        // Blocca timbrature consecutive dello stesso tipo (solo se ci sono timbrature precedenti)
         if (ultimaTimbratura && ultimaTimbratura.length > 0) {
           const ultimoTipo = ultimaTimbratura[0].tipo;
           if (ultimoTipo === tipo) {
@@ -376,14 +234,12 @@
 
         const ora = DateTime.now().setZone("Europe/Rome");
 
-        // CALCOLO GIORNO LOGICO ESTESO (8:00-5:00)
-        // Se è tra 00:00 e 04:59, appartiene al giorno lavorativo precedente
+        // Calcolo giorno logico
         let giornoLogico = ora.toISODate();
         if (ora.hour >= 0 && ora.hour < 5) {
           giornoLogico = ora.minus({ days: 1 }).toISODate();
         }
 
-        // Format the time to HH:MM:SS with zero padding
         const oraFormatted = ora.toFormat("HH:mm:ss");
 
         const nuovaTimbratura = {
@@ -406,27 +262,50 @@
         }
 
         mostraStatus(`${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${ora.toFormat("HH:mm")}`, "success", 7000);
-        pulisciPin();
+        pinInput.value = '';
+
       } catch (e) {
         console.error("Errore generale:", e);
         mostraStatus(e.message || "Errore di connessione", "error", 6000);
       }
     }
 
+    // Event listeners pulsanti azione
     document.querySelector(".entrata").addEventListener("click", () => {
-      const pin = pinInput.value.trim();
-      if (!pin) return mostraStatus("Inserisci il PIN", "warning");
+      if (!pinInput.value.trim()) {
+        mostraStatus("Inserisci il PIN", "warning");
+        return;
+      }
       registraTimbratura("entrata");
     });
 
     document.querySelector(".uscita").addEventListener("click", () => {
-      const pin = pinInput.value.trim();
-      if (!pin) return mostraStatus("Inserisci il PIN", "warning");
+      if (!pinInput.value.trim()) {
+        mostraStatus("Inserisci il PIN", "warning");
+        return;
+      }
       registraTimbratura("uscita");
     });
 
+    // Inizializzazione
     aggiornaDataOra();
     setInterval(aggiornaDataOra, 1000);
     pinInput.focus();
   </script>
+
+  <!-- PWA Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('[SW] Registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.error('[SW] Registration failed:', error);
+          });
+      });
+    }
+  </script>
 </body>
+</html>
