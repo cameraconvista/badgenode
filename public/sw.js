@@ -36,7 +36,7 @@ const STATIC_ASSETS = [
 // Install: precache degli asset statici
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing...');
-  
+
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
@@ -48,7 +48,7 @@ self.addEventListener('install', (event) => {
         // Non bloccare l'install per errori di cache
       })
   );
-  
+
   // Forza l'attivazione del nuovo SW
   self.skipWaiting();
 });
@@ -56,7 +56,7 @@ self.addEventListener('install', (event) => {
 // Activate: pulizia cache vecchie
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating...');
-  
+
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -70,7 +70,7 @@ self.addEventListener('activate', (event) => {
         );
       })
   );
-  
+
   // Prendi controllo di tutti i client immediatamente
   self.clients.claim();
 });
@@ -79,7 +79,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
-  
+
   // ESCLUDERE SEMPRE Supabase da qualsiasi cache
   if (url.hostname.includes('supabase.co') || 
       url.pathname.includes('/rest/v1/') ||
@@ -87,14 +87,14 @@ self.addEventListener('fetch', (event) => {
     console.log('[SW] Network-only for Supabase:', url.pathname);
     return; // Lascia che vada direttamente alla rete
   }
-  
+
   // Navigazioni HTML: Skip cache durante sviluppo su localhost
   if (request.mode === 'navigate') {
     // DEVELOPMENT MODE: Non cachare navigazioni su localhost
     if (url.hostname === 'localhost') {
       return; // Skip SW, use direct fetch
     }
-    
+
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -115,7 +115,7 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-  
+
   // Asset statici fingerprintati (/assets/): Cache-First
   if (url.pathname.startsWith('/assets/') && 
       (url.pathname.includes('.js') || url.pathname.includes('.css'))) {
@@ -142,7 +142,7 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-  
+
   // Icone (/assets/icons/): Stale-While-Revalidate
   if (url.pathname.startsWith('/assets/icons/')) {
     event.respondWith(
@@ -158,14 +158,14 @@ self.addEventListener('fetch', (event) => {
               return response;
             })
             .catch(() => null);
-          
+
           // Ritorna cache se disponibile, altrimenti aspetta network
           return cachedResponse || fetchPromise;
         })
     );
     return;
   }
-  
+
   // HTML statici: Cache-First con network fallback
   if (request.url.includes('.html') || request.url.includes('manifest.json')) {
     event.respondWith(

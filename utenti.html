@@ -995,7 +995,7 @@
           riga.style.cssText = "background-color: #1e293b; cursor: pointer; transition: background-color 0.2s;";
 
           riga.innerHTML = `
-            <td><a href="storico.html?pin=${encodeURIComponent(Number(utente.pin))}" title="Storico" onclick="event.stopPropagation()"><img src="assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" loading="lazy" /></a></td>
+            <td><a href="storico.html?pin=${encodeURIComponent(Number(utente.pin))}" title="Storico" onclick="event.stopPropagation()"><img src="/assets/icons/orologio.png" alt="Storico" style="width:24px;height:24px;" loading="lazy" /></a></td>
             <td>${utente.pin.toString().padStart(2, '0')}</td>
             <td>${utente.nome}</td>
             <td>${utente.cognome}</td>
