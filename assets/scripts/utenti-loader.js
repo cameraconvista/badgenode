@@ -85,7 +85,6 @@ function renderUtenti(utenti) {
       <td>${utente.nome}</td>
       <td>${utente.cognome}</td>
       <td>
-        <button onclick="modificaUtente('${utente.pin}')" title="Modifica">✏️</button>
         <button onclick="archiviaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
                 title="Archivia dipendente" style="color: #f59e0b;">📦</button>
         <button onclick="eliminaUtente('${utente.pin}', '${utente.nome}', '${utente.cognome}')" 
@@ -103,64 +102,6 @@ function apriStorico(pin, nome, cognome) {
   window.location.href = `storico.html?pin=${pin}&nome=${encodeURIComponent(nome)}&cognome=${encodeURIComponent(cognome)}`;
 }
 
-window.modificaUtente = async function(pin) {
-  try {
-    console.log('🔧 Modifica utente PIN:', pin);
-
-    // Recupera i dati attuali del dipendente
-    const { data: utente, error } = await window.supabase
-      .from('utenti')
-      .select('*')
-      .eq('pin', parseInt(pin))
-      .single();
-
-    if (error || !utente) {
-      alert('Errore: Dipendente non trovato');
-      return;
-    }
-
-    // Usa il modale esistente nell'HTML
-    const modal = document.getElementById('modalModificaDipendente');
-    const modalTitle = document.getElementById('modalTitleModifica');
-    const inputNome = document.getElementById('inputNomeModifica');
-    const inputCognome = document.getElementById('inputCognomeModifica'); 
-    const inputEmail = document.getElementById('inputEmailModifica');
-    const inputOre = document.getElementById('inputOreModifica');
-    const btnSalva = document.getElementById('btnSalvaModifica');
-    const btnAnnulla = document.getElementById('btnAnnullaModifica');
-
-    if (!modal) {
-      console.error('❌ Modale esistente non trovato');
-      alert('Errore: Modale di modifica non disponibile');
-      return;
-    }
-
-    // Precompila i campi con i dati attuali
-    if (modalTitle) modalTitle.textContent = `🔧 Modifica Dipendente (PIN: ${pin})`;
-    if (inputNome) inputNome.value = utente.nome || '';
-    if (inputCognome) inputCognome.value = utente.cognome || '';
-    if (inputEmail) inputEmail.value = utente.email || '';
-    if (inputOre) inputOre.value = utente.ore_contrattuali || 8;
-
-    // Configura i pulsanti
-    if (btnSalva) {
-      btnSalva.onclick = () => salvaModificheUtente(pin);
-    }
-    if (btnAnnulla) {
-      btnAnnulla.onclick = chiudiModaleModifica;
-    }
-
-    // Mostra il modale
-    modal.style.display = 'block';
-
-    // Focus sul primo campo
-    if (inputNome) inputNome.focus();
-
-  } catch (error) {
-    console.error('❌ Errore modifica utente:', error);
-    alert('Errore nel caricamento dei dati del dipendente');
-  }
-};
 
 window.archiviaUtente = async function(pin, nome, cognome) {
   if (!confirm(`⚠️ ATTENZIONE! Stai per archiviare il dipendente:\n\n${nome} ${cognome} (PIN: ${pin})\n\nQuesta azione:\n• Sposterà il dipendente nell'archivio\n• Genererà un file Excel con tutto lo storico\n• Libererà il PIN per nuovi dipendenti\n\nProcedere con l'archiviazione?`)) return;
@@ -294,74 +235,10 @@ window.eliminaUtente = async function(pin, nome, cognome) {
   }
 };
 
-// Funzioni per il modale di modifica
-window.chiudiModaleModifica = function() {
-  const modal = document.getElementById('modalModificaDipendente');
-  if (modal) {
-    modal.style.display = 'none';
-  }
-};
-
-window.salvaModificheUtente = async function(pin) {
-  try {
-    const nome = document.getElementById('inputNomeModifica').value.trim();
-    const cognome = document.getElementById('inputCognomeModifica').value.trim();
-    const email = document.getElementById('inputEmailModifica').value.trim();
-    const oreContrattuali = parseFloat(document.getElementById('inputOreModifica').value);
-
-    // Validazione
-    if (!nome || !cognome) {
-      alert('Nome e Cognome sono obbligatori');
-      return;
-    }
-
-    if (oreContrattuali < 1 || oreContrattuali > 12) {
-      alert('Le ore contrattuali devono essere tra 1 e 12');
-      return;
-    }
-
-    console.log('💾 Salvataggio modifiche per PIN:', pin);
-
-    // Aggiorna nel database
-    const { error } = await window.supabase
-      .from('utenti')
-      .update({
-        nome: nome,
-        cognome: cognome,
-        email: email || null,
-        ore_contrattuali: oreContrattuali
-      })
-      .eq('pin', parseInt(pin));
-
-    if (error) {
-      throw error;
-    }
-
-    // Aggiorna anche le timbrature esistenti con i nuovi nome/cognome
-    await window.supabase
-      .from('timbrature')
-      .update({
-        nome: nome,
-        cognome: cognome
-      })
-      .eq('pin', parseInt(pin));
-
-    alert(`✅ Dipendente ${nome} ${cognome} aggiornato con successo!`);
-
-    // Chiudi il modale e ricarica la lista
-    chiudiModaleModifica();
-    setTimeout(() => location.reload(), 500);
-
-  } catch (error) {
-    console.error('❌ Errore nel salvataggio:', error);
-    alert('Errore nel salvataggio: ' + (error.message || 'Errore sconosciuto'));
-  }
-};
 
 // Esposizione funzioni globali DOPO le definizioni
 window.apriStorico = apriStorico;
 console.log('[UTENTI] Funzioni globali registrate:', {
-  modificaUtente: typeof window.modificaUtente,
   archiviaUtente: typeof window.archiviaUtente, 
   eliminaUtente: typeof window.eliminaUtente,
   apriStorico: typeof window.apriStorico
