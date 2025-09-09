@@ -105,7 +105,7 @@
       <button class="keypad-button">9</button>
       <button class="keypad-button">C</button>
       <button class="keypad-button">0</button>
-      <button class="keypad-button" id="admin-btn">⚙️</button>
+      <button class="keypad-button">⚙️</button>
     </div>
     <div class="date-time-section">
       <div class="date-text" id="dataGiorno"></div>
@@ -238,39 +238,17 @@
       if (modal) modal.remove();
     }
 
-    // GESTIONE KEYPAD - APPROCCIO SEMPLIFICATO
-    document.addEventListener('DOMContentLoaded', function() {
-      const pulsanti = document.querySelectorAll(".keypad-button");
-      const pinInput = document.getElementById("pinInput");
-      
-      pulsanti.forEach((btn) => {
-        btn.addEventListener('click', function(e) {
-          const text = this.textContent.trim();
-          
-          // Pulsante C - Cancella PIN
-          if (text === "C") {
-            pinInput.value = "";
-            return;
-          }
-          
-          // Pulsante ingranaggio - Accesso admin
-          if (text.includes("⚙") || this.id === 'admin-btn') {
-            e.preventDefault();
-            e.stopPropagation();
-            const pin = prompt("PIN Amministratore:");
-            if (pin === "1909") {
-              window.location.href = "utenti.html";
-            } else if (pin) {
-              alert("PIN errato!");
-            }
-            return;
-          }
-          
-          // Pulsanti numerici (0-9)
-          if (text >= "0" && text <= "9" && pinInput.value.length < 2) {
-            pinInput.value += text;
-          }
-        });
+    // Gestione click sui pulsanti numerici  
+    document.querySelectorAll(".keypad-button").forEach((key, index) => {
+      key.addEventListener("click", () => {
+        const valore = key.textContent;
+        if (valore === "C") pulisciPin();
+        else if (index === 11) {
+          const adminPin = prompt("PIN Amministratore:");
+          if (adminPin === "1909") window.location.href = "utenti.html";
+          else if (adminPin) alert("PIN non valido. Accesso negato.");
+        }
+        else if (pinInput.value.length < 2) pinInput.value += valore;
       });
     });
 
