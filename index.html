@@ -238,38 +238,23 @@
       if (modal) modal.remove();
     }
 
-    // PULSANTE INGRANAGGIO - APPROCCIO BRUTALE E DIRETTO
+    // GESTIONE KEYPAD - APPROCCIO SEMPLIFICATO
     document.addEventListener('DOMContentLoaded', function() {
-      
-      // Metodo 1: Target diretto del pulsante ingranaggio
-      const adminBtn = document.getElementById('admin-btn');
-      if (adminBtn) {
-        adminBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          const pin = prompt("PIN Amministratore:");
-          if (pin === "1909") {
-            window.location.href = "utenti.html";
-          } else if (pin) {
-            alert("PIN errato!");
-          }
-        });
-      }
-      
-      // Metodo 2: Gestione di tutti i pulsanti
       const pulsanti = document.querySelectorAll(".keypad-button");
-      pulsanti.forEach((btn, index) => {
+      const pinInput = document.getElementById("pinInput");
+      
+      pulsanti.forEach((btn) => {
         btn.addEventListener('click', function(e) {
           const text = this.textContent.trim();
           
-          // Pulsante C
+          // Pulsante C - Cancella PIN
           if (text === "C") {
-            document.getElementById("pinInput").value = "";
+            pinInput.value = "";
             return;
           }
           
-          // Pulsante ingranaggio (ultima posizione O per testo)
-          if (index === 11 || text.includes("⚙") || this.id === 'admin-btn') {
+          // Pulsante ingranaggio - Accesso admin
+          if (text.includes("⚙") || this.id === 'admin-btn') {
             e.preventDefault();
             e.stopPropagation();
             const pin = prompt("PIN Amministratore:");
@@ -281,8 +266,7 @@
             return;
           }
           
-          // Pulsanti numerici
-          const pinInput = document.getElementById("pinInput");
+          // Pulsanti numerici (0-9)
           if (text >= "0" && text <= "9" && pinInput.value.length < 2) {
             pinInput.value += text;
           }
