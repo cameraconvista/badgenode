@@ -246,7 +246,7 @@ body {
 .tabella-container,
 .tabella-body-wrapper {
   background-color: transparent;
-  flex: 1;
+  max-height: 1300px;
   overflow: auto;
   display: flex;
   flex-direction: column;
