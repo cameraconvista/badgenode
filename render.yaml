@@ -1,11 +1,9 @@
 services:
-  - type: web
+  - type: static
     name: badgenode
-    env: node
-    plan: free
+    env: static
     buildCommand: npm ci && npm run build
-    startCommand: npx serve -s dist -l $PORT
-    autoDeploy: true
+    staticPublishPath: dist
     envVars:
       - key: VITE_SUPABASE_URL
         sync: false
