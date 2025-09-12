@@ -11,7 +11,9 @@ export default defineConfig({
     hmr: {
       clientPort: 443,
       host: undefined,
-      protocol: 'wss'
+      protocol: 'wss',
+      overlay: false,
+      timeout: 5000
     }
   },
   preview: {

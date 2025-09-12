@@ -30,7 +30,10 @@ self.addEventListener('install', (event) => {
         console.error('[SW] Precache failed:', err);
       })
   );
-  self.skipWaiting();
+  // skipWaiting disabilitato per evitare reload loop in DEV
+  if (self.location.hostname !== 'localhost' && !self.location.hostname.includes('replit.dev')) {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', (event) => {
@@ -46,7 +49,10 @@ self.addEventListener('activate', (event) => {
       )
     )
   );
-  self.clients.claim();
+  // clients.claim disabilitato per evitare reload loop in DEV
+  if (self.location.hostname !== 'localhost' && !self.location.hostname.includes('replit.dev')) {
+    self.clients.claim();
+  }
 });
 
 const ASSETS_REGEX = /^\/assets\/.+\.(?:js|css|png|webp|jpg|svg|ico)$/i;
