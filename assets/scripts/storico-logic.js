@@ -228,10 +228,11 @@ document.getElementById("torna-utenti")?.addEventListener("click", () => {
 
 // Funzioni per esportazione PDF ed Excel
 async function exportaPDF() {
-  filtroRange = validaRange(filtroRange);
+  // Assicurati che 'range' sia definito e contenga le date corrette
+  const range = assicuraRangeValido(); // Usiamo currentRange che è sempre valido
 
-  if (!filtroRange) {
-    mostraMessaggio('Seleziona un intervallo valido per esportare', 'error');
+  if (!range) {
+    mostraMessaggio('Errore nella selezione del periodo', 'error');
     return;
   }
 
@@ -295,8 +296,8 @@ async function exportaPDF() {
     doc.setFontSize(16);
     doc.text("RIEPILOGO MENSILE TIMBRATURE", 105, 40, { align: "center" });
 
-    const dataInizioFormatted = new Date(filtroRange.from).toLocaleDateString('it-IT');
-    const dataFineFormatted = new Date(filtroRange.to).toLocaleDateString('it-IT');
+    const dataInizioFormatted = new Date(range.inizio).toLocaleDateString('it-IT');
+    const dataFineFormatted = new Date(range.fine).toLocaleDateString('it-IT');
 
     doc.setFontSize(12);
     doc.text(`Dipendente: ${nomeCompleto} (PIN: ${pin})`, 20, 60);
@@ -336,7 +337,7 @@ async function exportaPDF() {
     doc.setFontSize(8);
     doc.text(`Generato il: ${new Date().toLocaleString('it-IT')}`, 20, 285);
 
-    const nomeFile = `${nomeCompleto.replace(/\s+/g, '_')}_timbrature_${filtroRange.from}_${filtroRange.to}.pdf`;
+    const nomeFile = `${nomeCompleto.replace(/\s+/g, '_')}_timbrature_${range.inizio}_${range.fine}.pdf`;
     doc.save(nomeFile);
 
     console.log('✅ PDF generato con successo:', nomeFile);
@@ -354,10 +355,11 @@ document.getElementById("btn-invia")?.addEventListener("click", exportaPDF);
 
 
 async function exportaExcel() {
-  filtroRange = validaRange(filtroRange);
+  // Assicurati che 'range' sia definito e contenga le date corrette
+  const range = assicuraRangeValido(); // Usiamo currentRange che è sempre valido
 
-  if (!filtroRange) {
-    mostraMessaggio('Seleziona un intervallo valido per esportare', 'error');
+  if (!range) {
+    mostraMessaggio('Errore nella selezione del periodo', 'error');
     return;
   }
 
@@ -382,8 +384,8 @@ async function exportaExcel() {
                         (intestazione.textContent.includes('PIN') ? intestazione.textContent.replace(/PIN \d+ - /, '') : 
                         intestazione.textContent);
 
-    const dataInizioFormatted = new Date(filtroRange.from).toLocaleDateString('it-IT');
-    const dataFineFormatted = new Date(filtroRange.to).toLocaleDateString('it-IT');
+    const dataInizioFormatted = new Date(range.inizio).toLocaleDateString('it-IT');
+    const dataFineFormatted = new Date(range.fine).toLocaleDateString('it-IT');
 
     const worksheetData = [];
 
@@ -439,7 +441,7 @@ async function exportaExcel() {
 
     utils.book_append_sheet(workbook, worksheet, 'Timbrature');
 
-    const nomeFile = `${nomeCompleto.replace(/\s+/g, '_')}_timbrature_${filtroRange.from}_${filtroRange.to}.xlsx`;
+    const nomeFile = `${nomeCompleto.replace(/\s+/g, '_')}_timbrature_${range.inizio}_${range.fine}.xlsx`;
     writeFile(workbook, nomeFile);
 
     console.log('✅ Excel generato con successo:', nomeFile);
@@ -518,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // 2. Aggiorna input date con valori default
   const dataInizioEl = document.getElementById('data-inizio');
   const dataFineEl = document.getElementById('data-fine');
-  
+
   if (dataInizioEl && dataFineEl) {
     dataInizioEl.value = currentRange.inizio;
     dataFineEl.value = currentRange.fine;
@@ -531,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // 4. Bind eventi DOPO primo caricamento
   dataInizioEl?.addEventListener('change', aggiornaRange);
   dataFineEl?.addEventListener('change', aggiornaRange);
-  
+
   console.log('✅ Storico inizializzato e caricamento avviato');
 });
 
