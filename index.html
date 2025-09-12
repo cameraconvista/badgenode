@@ -58,11 +58,9 @@
     </div>
   </div>
 
-  <!-- Script principale ottimizzato -->
+  <!-- Script principale semplificato -->
   <script type="module">
     import { supabaseClient } from './assets/scripts/supabase-client.js';
-
-    // Espone client come variabile globale per compatibilità
     window.supabase = supabaseClient;
 
     const { DateTime } = luxon;
@@ -92,9 +90,29 @@
       }
     }
 
-    // Gestione PIN admin ottimizzata
+    // GESTIONE PULSANTE INGRANAGGIO
     window.apriImpostazioni = function() {
-      mostraModalAdmin();
+      const modal = document.createElement('div');
+      modal.id = 'adminModal';
+      modal.innerHTML = '<div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center;"><div style="background: #1e293b; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); min-width: 300px;"><h3 style="color: white; margin-bottom: 20px;">Accesso Amministratore</h3><input type="password" id="adminPinInput" placeholder="PIN admin" style="width: 100%; padding: 12px; font-size: 18px; text-align: center; border: none; border-radius: 8px; margin-bottom: 20px;" maxlength="4" /><div><button onclick="checkAdminPin()" style="background: #15803d; color: white; border: none; padding: 12px 20px; margin: 10px; border-radius: 8px; cursor: pointer;">Conferma</button><button onclick="closeAdminModal()" style="background: #dc2626; color: white; border: none; padding: 12px 20px; margin: 10px; border-radius: 8px; cursor: pointer;">Annulla</button></div></div></div>';
+      document.body.appendChild(modal);
+      setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
+    };
+
+    window.checkAdminPin = function() {
+      const pin = document.getElementById('adminPinInput').value;
+      if (pin === "1909") {
+        document.getElementById('adminModal').remove();
+        window.location.href = "utenti.html";
+      } else {
+        alert("PIN non valido!");
+        document.getElementById('adminPinInput').value = '';
+      }
+    };
+
+    window.closeAdminModal = function() {
+      const modal = document.getElementById('adminModal');
+      if (modal) modal.remove();
     };
 
     function mostraModalAdmin() {
@@ -139,11 +157,15 @@
     }
 
     window.verificaPinAdmin = function() {
+      console.log("🔧 verificaPinAdmin chiamata");
       const pinAdmin = document.getElementById('adminPinInput')?.value.trim();
+      console.log("🔧 PIN inserito:", pinAdmin);
       if (pinAdmin === "1909") {
+        console.log("🔧 PIN corretto! Navigando...");
         chiudiModalAdmin();
         window.location.href = "utenti.html";
       } else {
+        console.log("🔧 PIN errato");
         alert("PIN non valido. Accesso negato.");
         const input = document.getElementById('adminPinInput');
         if (input) {
