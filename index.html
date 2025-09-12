@@ -24,10 +24,7 @@
   <!-- Stili -->
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Luxon per gestione date -->
-  <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js" 
-          integrity="sha384-DwavIJUME7NNaTw+CuxB85mS1L5A6XkHXHWnd1hmNIzSnX48mIjZ0Nc/tPQONPwe" 
-          crossorigin="anonymous"></script>
+  
 </head>
 <body>
   <div class="main-container">
@@ -64,12 +61,20 @@
   <script>
     // ⚠️ SCRIPT INLINE: Solo logica timbrature (non duplicabile in ES modules)
 
+    let timbraturaInCorso = false; // Flag per prevenire doppi invii
+    
     async function registraTimbratura(tipo) {
       const pin = pinInput.value.trim();
       if (!pin) {
         mostraStatus("Inserisci il PIN", "warning");
         return;
       }
+
+      // Debouncing per prevenire doppi click
+      if (timbraturaInCorso) {
+        return;
+      }
+      timbraturaInCorso = true;
 
       try {
         mostraStatus("Verifica in corso...", "loading");
@@ -86,7 +91,7 @@
           .single();
 
         if (erroreUtente || !utente) {
-          mostraStatus("PIN non trovato", "error");
+          mostraStatus("PIN non valido", "error");
           return;
         }
 
@@ -117,24 +122,28 @@
           }
         }
 
-        const ora = DateTime.now().setZone("Europe/Rome");
-
-        // Calcolo giorno logico
-        let giornoLogico = ora.toISODate();
-        if (ora.hour >= 0 && ora.hour < 5) {
-          giornoLogico = ora.minus({ days: 1 }).toISODate();
+        // Usa Date nativo JavaScript con timezone Europe/Rome
+        const ora = new Date();
+        const oraItalia = new Date(ora.toLocaleString("en-US", {timeZone: "Europe/Rome"}));
+        
+        // Calcolo giorno logico (timbrature 00:00-04:59 → giorno precedente)
+        let giornoLogico = new Date(oraItalia);
+        if (oraItalia.getHours() >= 0 && oraItalia.getHours() < 5) {
+          giornoLogico.setDate(giornoLogico.getDate() - 1);
         }
 
-        const oraFormatted = ora.toFormat("HH:mm:ss");
+        const dataFormatted = oraItalia.toISOString().split('T')[0]; // YYYY-MM-DD
+        const oraFormatted = oraItalia.toTimeString().slice(0, 8); // HH:mm:ss
+        const giornoLogicoFormatted = giornoLogico.toISOString().split('T')[0];
 
         const nuovaTimbratura = {
           tipo, 
           pin: parseInt(pin), 
           nome: utente.nome, 
           cognome: utente.cognome,
-          data: ora.toISODate(), 
+          data: dataFormatted, 
           ore: oraFormatted,
-          giornologico: giornoLogico
+          giornologico: giornoLogicoFormatted
         };
 
         const { error } = await window.supabase
@@ -146,12 +155,18 @@
           throw new Error("Errore durante la registrazione: " + error.message);
         }
 
-        mostraStatus(`${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${ora.toFormat("HH:mm")}`, "success", 7000);
+        const oraDisplay = oraFormatted.slice(0, 5); // HH:mm
+        mostraStatus(`${utente.nome} ${utente.cognome}\n${tipo.toUpperCase()} ${oraDisplay}`, "success", 7000);
         pinInput.value = '';
 
       } catch (e) {
         console.error("Errore generale:", e);
         mostraStatus(e.message || "Errore di connessione", "error", 6000);
+      } finally {
+        // Reset flag dopo 300ms per prevenire doppi invii
+        setTimeout(() => {
+          timbraturaInCorso = false;
+        }, 300);
       }
     }
 

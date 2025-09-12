@@ -23,7 +23,6 @@ import { initializeSupabaseClient } from './assets/scripts/supabase-client.js';
 })();
 
 function initializeInterface() {
-  const { DateTime } = luxon;
   const giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
   const mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
 
@@ -48,11 +47,21 @@ function initializeInterface() {
     }
   };
 
-  // Aggiornamento data/ora
+  // Aggiornamento data/ora usando Date nativo
   window.aggiornaDataOra = function() {
-    const ora = DateTime.now().setZone("Europe/Rome");
-    document.getElementById("dataGiorno").textContent = `${giorni[ora.weekday % 7]} ${ora.day} ${mesi[ora.month - 1]}`;
-    document.getElementById("ora").textContent = ora.toFormat("HH:mm:ss");
+    const ora = new Date();
+    const oraItalia = new Date(ora.toLocaleString("en-US", {timeZone: "Europe/Rome"}));
+    
+    const giorno = giorni[oraItalia.getDay()];
+    const numeroGiorno = oraItalia.getDate();
+    const mese = mesi[oraItalia.getMonth()];
+    
+    const ore = oraItalia.getHours().toString().padStart(2, '0');
+    const minuti = oraItalia.getMinutes().toString().padStart(2, '0');
+    const secondi = oraItalia.getSeconds().toString().padStart(2, '0');
+    
+    document.getElementById("dataGiorno").textContent = `${giorno} ${numeroGiorno} ${mese}`;
+    document.getElementById("ora").textContent = `${ore}:${minuti}:${secondi}`;
   };
 
   // 🔧 API GLOBALE: Gestione ingranaggio (richiesta da HTML)
