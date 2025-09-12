@@ -1,4 +1,3 @@
-
 // 🚀 BADGEBOX - Entry Point Unico Applicativo
 // Architettura: ES Modules + API globali controllate
 
@@ -9,14 +8,14 @@ import { initializeSupabaseClient } from './assets/scripts/supabase-client.js';
   try {
     // 1. Inizializza client Supabase con test connessione
     const supabaseClient = await initializeSupabaseClient();
-    
+
     // 2. Rendi disponibile globalmente (necessario per HTML inline)
     window.supabase = supabaseClient;
     console.log('✅ Supabase connesso e disponibile');
-    
+
     // 3. Inizializza interfaccia utente
     initializeInterface();
-    
+
   } catch (error) {
     console.error('❌ Errore critico inizializzazione:', error);
     mostraStatus('Errore connessione database - contattare amministratore', 'error', 10000);
@@ -73,14 +72,14 @@ function initializeInterface() {
       </div>
     `;
     document.body.appendChild(modal);
-    
+
     setTimeout(() => {
       const adminInput = document.getElementById('adminPinInput');
       const confirmBtn = document.getElementById('confirmBtn');
       const cancelBtn = document.getElementById('cancelBtn');
-      
+
       if (adminInput) adminInput.focus();
-      
+
       confirmBtn.onclick = function() {
         const pin = document.getElementById('adminPinInput').value;
         if (pin === "1909") {
@@ -92,11 +91,11 @@ function initializeInterface() {
           adminInput.focus();
         }
       };
-      
+
       cancelBtn.onclick = function() {
         document.getElementById('adminModal').remove();
       };
-      
+
       adminInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') confirmBtn.click();
       });
@@ -107,17 +106,17 @@ function initializeInterface() {
   document.querySelectorAll(".keypad-button").forEach((key) => {
     key.addEventListener("click", (event) => {
       const text = key.textContent.trim();
-      
+
       if (key.id === 'settings-btn') {
         apriImpostazioni();
         return;
       }
-      
+
       if (text === 'C') {
         pinInput.value = '';
         return;
       }
-      
+
       if (/^[0-9]$/.test(text) && pinInput.value.length < 4) {
         pinInput.value += text;
       }
@@ -128,4 +127,58 @@ function initializeInterface() {
   aggiornaDataOra();
   setInterval(aggiornaDataOra, 1000);
   pinInput.focus();
+}
+
+// Kill-switch per Service Worker (query ?no-sw=1)
+const urlParams = new URLSearchParams(window.location.search);
+const forceUnregisterSW = urlParams.get('no-sw') === '1';
+
+if (forceUnregisterSW && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach(registration => {
+      registration.unregister();
+      console.log('[SW] Force unregistered:', registration.scope);
+    });
+  });
+
+  if ('caches' in window) {
+    caches.keys().then(names => {
+      names.forEach(name => {
+        caches.delete(name);
+        console.log('[SW] Force cache deleted:', name);
+      });
+    });
+  }
+  console.log('🔧 Kill-switch attivato: SW rimosso. Ricarica senza ?no-sw=1');
+}
+
+// Registra il Service Worker solo in produzione
+else if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('[SW] Registered:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('[SW] Registration failed:', error);
+      });
+  });
+} else if ('serviceWorker' in navigator && import.meta.env.DEV) {
+  // Auto-cleanup in development: unregister tutti i SW esistenti
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach(registration => {
+      registration.unregister();
+      console.log('[SW] Auto-unregistered in DEV:', registration.scope);
+    });
+  });
+
+  // Pulisce Cache Storage
+  if ('caches' in window) {
+    caches.keys().then(names => {
+      names.forEach(name => {
+        caches.delete(name);
+        console.log('[SW] Auto-cache deleted:', name);
+      });
+    });
+  }
 }
