@@ -515,25 +515,24 @@ document.addEventListener('DOMContentLoaded', function() {
   currentRange = getDefaultRange();
   console.log('🔧 Range default impostato:', currentRange);
 
-  // 2. Verifica elementi DOM necessari
-  const elementiCalendario = ['dataDa', 'dataA'];
-  const elementiPresenti = elementiCalendario.every(id => document.getElementById(id));
-
-  if (elementiPresenti) {
-    // 3. Inizializza calendario solo se elementi presenti
-    if (typeof initCalendario === 'function') {
-      initCalendario();
-    }
-
-    // 4. Bind eventi DOPO inizializzazione
-    document.getElementById('dataDa')?.addEventListener('change', aggiornaRange);
-    document.getElementById('dataA')?.addEventListener('change', aggiornaRange);
-
-    // 5. Primo caricamento con range default
-    caricaDatiServer();
-  } else {
-    console.log('⚠️ Elementi calendario mancanti, skip inizializzazione');
+  // 2. Aggiorna input date con valori default
+  const dataInizioEl = document.getElementById('data-inizio');
+  const dataFineEl = document.getElementById('data-fine');
+  
+  if (dataInizioEl && dataFineEl) {
+    dataInizioEl.value = currentRange.inizio;
+    dataFineEl.value = currentRange.fine;
+    console.log('📅 Input date inizializzati con range default');
   }
+
+  // 3. Primo caricamento IMMEDIATO con range default
+  caricaDatiServer();
+
+  // 4. Bind eventi DOPO primo caricamento
+  dataInizioEl?.addEventListener('change', aggiornaRange);
+  dataFineEl?.addEventListener('change', aggiornaRange);
+  
+  console.log('✅ Storico inizializzato e caricamento avviato');
 });
 
 // Assicurati che luxon sia disponibile globalmente o importalo se necessario

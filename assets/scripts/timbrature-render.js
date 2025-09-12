@@ -23,6 +23,31 @@ export function renderizzaTabella(dipendente, timbrature, dataInizio, dataFine, 
   tbody.innerHTML = "";
   footerTbody.innerHTML = "";
 
+  if (!timbrature || timbrature.length === 0) {
+    const messaggioVuoto = dipendente
+      ? `Nessun record per ${dipendente.nome} ${dipendente.cognome} nel periodo ${dataInizio} ÷ ${dataFine}`
+      : `Nessun record per PIN ${pin} nel periodo selezionato`;
+
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #fbbf24; padding: 40px; background: rgba(251, 191, 36, 0.1); border-radius: 8px;">
+      <strong>📭 ${messaggioVuoto}</strong><br>
+      <small style="color: #94a3b8; margin-top: 10px; display: block;">
+        Verifica che esistano timbrature nel range selezionato o prova un periodo diverso
+      </small>
+    </td></tr>`;
+
+    // Reset totale footer
+    if (footerTbody) {
+      const footerRow = footerTbody.querySelector('tr');
+      if (footerRow) {
+        const cells = footerRow.querySelectorAll('td');
+        if (cells[4]) cells[4].textContent = '—';
+        if (cells[5]) cells[5].textContent = '';
+      }
+    }
+
+    return { totaleMensile: '—' };
+  }
+
   const start = new Date(dataInizio + 'T00:00:00');
   const end = new Date(dataFine + 'T00:00:00');
   const giorniSettimana = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
