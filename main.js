@@ -13,27 +13,42 @@ import { initializeSupabaseClient } from './assets/scripts/supabase-client.js';
     window.supabase = supabaseClient;
     console.log('✅ Supabase connesso e disponibile');
 
-    // 3. Inizializza interfaccia utente
-    initializeInterface();
+    // 3. Aspetta che il DOM sia pronto prima di inizializzare l'interfaccia
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeInterface);
+    } else {
+      initializeInterface();
+    }
 
   } catch (error) {
     console.error('❌ Errore critico inizializzazione:', error);
-    mostraStatus('Errore connessione database - contattare amministratore', 'error', 10000);
+    if (window.mostraStatus) {
+      mostraStatus('Errore connessione database - contattare amministratore', 'error', 10000);
+    }
   }
 })();
 
 function initializeInterface() {
+  console.log('🔧 Inizializzazione interfaccia...');
+  
   const giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
   const mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
 
   const pinInput = document.getElementById("pinInput");
   const status = document.getElementById("status");
 
-  // Verifica campo PIN
+  // Verifica elementi critici
   if (!pinInput) {
     console.error("❌ Campo PIN non trovato!");
     return;
   }
+
+  if (!status) {
+    console.error("❌ Elemento status non trovato!");
+    return;
+  }
+
+  console.log('✅ Elementi DOM trovati correttamente');
 
   // Sistema status unificato
   window.mostraStatus = function(messaggio, tipo = "info", durata = 3000) {
@@ -111,10 +126,20 @@ function initializeInterface() {
     }, 100);
   };
 
-  // Event listeners keypad unificati
-  document.querySelectorAll(".keypad-button").forEach((key) => {
+  // Event listeners keypad unificati con verifica elementi
+  const keypadButtons = document.querySelectorAll(".keypad-button");
+  console.log(`🔧 Trovati ${keypadButtons.length} bottoni tastierino`);
+  
+  if (keypadButtons.length === 0) {
+    console.error("❌ Nessun bottone tastierino trovato! Verifica selettori CSS.");
+    return;
+  }
+
+  keypadButtons.forEach((key) => {
     key.addEventListener("click", (event) => {
+      event.preventDefault();
       const text = key.textContent.trim();
+      console.log(`🔧 Click tastierino: "${text}"`);
 
       if (key.id === 'settings-btn') {
         apriImpostazioni();
@@ -123,13 +148,15 @@ function initializeInterface() {
 
       if (text === 'C') {
         pinInput.value = '';
+        console.log('🔧 PIN cancellato');
         return;
       }
 
       if (/^[0-9]$/.test(text) && pinInput.value.length < 4) {
         pinInput.value += text;
+        console.log(`🔧 PIN aggiornato: ${pinInput.value}`);
       }
-    }, { passive: true });
+    }, { passive: false });
   });
 
   // Avvio timer
