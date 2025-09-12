@@ -5,21 +5,19 @@ export default defineConfig({
   root: '.',
   server: {
     host: '0.0.0.0',
-    port: 5000,
-    strictPort: true,
-    allowedHosts: [
-      'localhost',
-      '127.0.0.1',
-      '0.0.0.0',
-      /\.replit\.dev$/,
-      /\.repl\.co$/,
-      /\.replit\.app$/,
-      'all'
-    ],
+    port: process.env.PORT || 5000,
+    strictPort: false,
+    allowedHosts: true,
     hmr: {
       clientPort: 443,
-      host: undefined
+      host: undefined,
+      protocol: 'wss'
     }
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 5000,
+    allowedHosts: true
   },
   build: {
     outDir: 'dist',
