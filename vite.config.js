@@ -8,13 +8,7 @@ export default defineConfig({
     port: process.env.PORT || 5000,
     strictPort: false,
     allowedHosts: true,
-    hmr: {
-      clientPort: 443,
-      protocol: 'wss',
-      path: '/vite-hmr',
-      overlay: false,
-      timeout: 10000
-    }
+    hmr: false
   },
   preview: {
     host: '0.0.0.0',
