@@ -8,13 +8,7 @@ export default defineConfig({
     port: process.env.PORT || 5000,
     strictPort: false,
     allowedHosts: true,
-    hmr: {
-      clientPort: 443,
-      host: undefined,
-      protocol: 'wss',
-      overlay: false,
-      timeout: 5000
-    }
+    hmr: false
   },
   preview: {
     host: '0.0.0.0',
