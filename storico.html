@@ -4,7 +4,7 @@
   <script>
   (function () {
     if (location.protocol !== 'https:') return;  // only on https
-    var HMR = /:\/\/(0\.0\.0\.0|127\.0\.0\.1|localhost):517\d/;
+    var HMR = /:\/\/(0\.0\.0\.0|127\.0\.0\.1|localhost):5173\d/;
 
     // Patch WebSocket (block only Vite HMR)
     var OldWS = window.WebSocket;
@@ -135,6 +135,10 @@
 
     <div class="tabella-wrapper">
       <div class="tabella-container">
+        <div class="filtri-sezione">
+      <h3>📅 Filtri per Data</h3>
+      <div id="messaggioRange" style="display: none; color: #ff6b6b; background: #ffe8e8; padding: 8px; border-radius: 4px; margin-bottom: 10px;"></div>
+</div>
         <div class="tabella-header">
           <table>
             <thead>
@@ -214,13 +218,13 @@
     // Kill-switch per DEV: ?no-sw=1 disabilita e rimuove SW
     const urlParams = new URLSearchParams(window.location.search);
     const noSW = urlParams.get('no-sw') === '1';
-    
+
     // Rileva ambiente DEV (Vite dev server)
     const isDev = window.location.hostname === 'localhost' || 
                   window.location.hostname.includes('replit.dev') ||
                   window.location.port === '5000' ||
                   window.location.port === '5173';
-    
+
     if (noSW || isDev) {
       // KILL-SWITCH: Unregister tutti i SW e pulisci cache
       if ('serviceWorker' in navigator) {
@@ -230,7 +234,7 @@
             console.log('[SW] Unregistered (DEV mode):', registration.scope);
           });
         });
-        
+
         // Pulisci Cache Storage
         if ('caches' in window) {
           caches.keys().then(names => {
@@ -260,4 +264,3 @@
   <script type="module" src="/assets/scripts/storico-logic.js"></script>
 </body>
 </html>
-
