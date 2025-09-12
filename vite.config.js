@@ -6,14 +6,15 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5000,
-    strictPort: false,
+    strictPort: true,
     allowedHosts: [
       'localhost',
       '127.0.0.1',
       '0.0.0.0',
       /\.replit\.dev$/,
       /\.repl\.co$/,
-      /\.replit\.app$/
+      /\.replit\.app$/,
+      'all'
     ],
     hmr: {
       clientPort: 443,
