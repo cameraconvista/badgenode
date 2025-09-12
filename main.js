@@ -27,9 +27,8 @@ function mostraStatus(messaggio, tipo = "info", durata = 3000) {
   }
 }
 
-// 🔧 GESTIONE INGRANAGGIO SEMPLIFICATA
+// 🔧 GESTIONE INGRANAGGIO - FUNZIONE GLOBALE UNICA
 window.apriImpostazioni = function() {
-  console.log("🔧 apriImpostazioni chiamata");
   const modal = document.createElement('div');
   modal.id = 'adminModal';
   modal.innerHTML = `
@@ -54,15 +53,11 @@ window.apriImpostazioni = function() {
     if (adminInput) adminInput.focus();
     
     confirmBtn.onclick = function() {
-      console.log("🔧 Conferma cliccato");
       const pin = document.getElementById('adminPinInput').value;
-      console.log("🔧 PIN inserito:", pin);
       if (pin === "1909") {
-        console.log("🔧 PIN corretto, navigando...");
         document.getElementById('adminModal').remove();
         window.location.href = "utenti.html";
       } else {
-        console.log("🔧 PIN errato");
         alert("PIN non valido!");
         adminInput.value = '';
         adminInput.focus();
