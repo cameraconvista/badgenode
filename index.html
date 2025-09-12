@@ -94,12 +94,7 @@
 
     // Gestione PIN admin ottimizzata
     window.apriImpostazioni = function() {
-      const pinValue = pinInput.value.trim();
-      if (pinValue === '1909') {
-        window.location.href = 'utenti.html';
-      } else {
-        mostraModalAdmin();
-      }
+      mostraModalAdmin();
     };
 
     function mostraModalAdmin() {
