@@ -1,4 +1,3 @@
-
 // calendario-popup.js - Gestione calendario visuale per date picker
 
 export class CalendarioPopup {
@@ -26,9 +25,9 @@ export class CalendarioPopup {
 
   mostraCalendario(campoId, iconaElemento) {
     console.log('📅 Mostro calendario per campo:', campoId);
-    
+
     this.nascondiCalendario();
-    
+
     const campo = document.getElementById(campoId);
     if (!campo) {
       console.error('❌ Campo non trovato:', campoId);
@@ -37,7 +36,7 @@ export class CalendarioPopup {
 
     this.campoAttivo = campo;
     this.calendarioAttivo = this.creaCalendario();
-    
+
     // Posiziona il calendario vicino all'icona
     const rect = iconaElemento.getBoundingClientRect();
     this.calendarioAttivo.style.position = 'fixed';
@@ -45,9 +44,9 @@ export class CalendarioPopup {
     this.calendarioAttivo.style.left = Math.max(10, rect.left - 100) + 'px';
     this.calendarioAttivo.style.zIndex = '10000';
     this.calendarioAttivo.style.display = 'block';
-    
+
     document.body.appendChild(this.calendarioAttivo);
-    
+
     // Imposta la data corrente se presente
     if (campo.value) {
       this.impostaData(new Date(campo.value + 'T12:00:00'));
@@ -67,14 +66,14 @@ export class CalendarioPopup {
   creaCalendario() {
     const calendario = document.createElement('div');
     calendario.className = 'calendario-popup';
-    
+
     calendario.innerHTML = `
       <div class="calendario-header">
         <button type="button" class="btn-nav-calendario" data-azione="prev-mese">‹</button>
         <div class="calendario-mese-anno" id="mese-anno-display"></div>
         <button type="button" class="btn-nav-calendario" data-azione="next-mese">›</button>
       </div>
-      
+
       <div class="calendario-giorni-settimana">
         <div class="giorno-settimana">Dom</div>
         <div class="giorno-settimana">Lun</div>
@@ -84,9 +83,9 @@ export class CalendarioPopup {
         <div class="giorno-settimana">Ven</div>
         <div class="giorno-settimana">Sab</div>
       </div>
-      
+
       <div class="calendario-griglia" id="calendario-griglia"></div>
-      
+
       <div class="calendario-footer">
         <button type="button" class="btn-oggi">Oggi</button>
         <button type="button" class="btn-chiudi-calendario">Chiudi</button>
@@ -96,7 +95,7 @@ export class CalendarioPopup {
     // Event listeners per i controlli
     calendario.addEventListener('click', (e) => {
       e.stopPropagation();
-      
+
       if (e.target.classList.contains('btn-nav-calendario')) {
         const azione = e.target.dataset.azione;
         if (azione === 'prev-mese') {
@@ -142,7 +141,7 @@ export class CalendarioPopup {
 
     const primoGiorno = new Date(this.dataCorrente.getFullYear(), this.dataCorrente.getMonth(), 1);
     const ultimoGiorno = new Date(this.dataCorrente.getFullYear(), this.dataCorrente.getMonth() + 1, 0);
-    
+
     // Giorni del mese precedente per riempire la prima settimana
     const giorniPrecedenti = primoGiorno.getDay();
     for (let i = giorniPrecedenti - 1; i >= 0; i--) {
@@ -194,12 +193,12 @@ export class CalendarioPopup {
   selezionaGiorno(giorno) {
     const dataSelezionata = new Date(this.dataCorrente.getFullYear(), this.dataCorrente.getMonth(), giorno);
     const dataISO = dataSelezionata.toISOString().split('T')[0];
-    
+
     if (this.campoAttivo) {
       this.campoAttivo.value = dataISO;
       this.campoAttivo.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    
+
     this.nascondiCalendario();
     console.log('📅 Data selezionata:', dataISO);
   }
@@ -207,12 +206,12 @@ export class CalendarioPopup {
   selezionaOggi() {
     const oggi = new Date();
     const dataISO = oggi.toISOString().split('T')[0];
-    
+
     if (this.campoAttivo) {
       this.campoAttivo.value = dataISO;
       this.campoAttivo.dispatchEvent(new Event('change', { bubbles: true }));
     }
-    
+
     this.nascondiCalendario();
     console.log('📅 Oggi selezionato:', dataISO);
   }
