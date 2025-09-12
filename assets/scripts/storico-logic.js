@@ -19,13 +19,7 @@ let dipendente = null;
 let timbrature = [];
 let totaleMensile = '—';
 
-// Range globale con default sicuro: mese corrente
-// let filtroRange = {
-//   from: luxon.DateTime.now().startOf('month').toISODate(),
-//   to: luxon.DateTime.now().endOf('month').toISODate()
-// };
-
-// Gestione range date e caricamento dati
+// ✅ UNICA gestione range - eliminati duplicati
 let currentRange = null;
 
 // ✅ DEFAULT ROBUSTO: primo e ultimo giorno del mese corrente
@@ -61,12 +55,13 @@ function assicuraRangeValido() {
   return currentRange;
 }
 
-function aggiornaRange() {
-  const dataDa = document.getElementById('dataDa')?.value;
-  const dataA = document.getElementById('dataA')?.value;
+// ✅ UNICA funzione aggiornamento range (eliminato duplicato)
+function aggiornaMese() {
+  const dataDa = document.getElementById('data-inizio')?.value;
+  const dataA = document.getElementById('data-fine')?.value;
 
   // ✅ GUARDIA: Controlla elementi DOM presenti
-  if (!document.getElementById('dataDa') || !document.getElementById('dataA')) {
+  if (!document.getElementById('data-inizio') || !document.getElementById('data-fine')) {
     console.log('⚠️ Elementi calendario non presenti, uso default');
     currentRange = getDefaultRange();
     return;
@@ -93,6 +88,7 @@ function aggiornaRange() {
   }
 }
 
+// ✅ UNICA funzione caricamento dati server
 async function caricaDatiServer() {
   // ✅ GUARDIA DOPPIA: Assicura range sempre valido
   const range = assicuraRangeValido();
@@ -114,36 +110,39 @@ async function caricaDatiServer() {
   }
 
   console.log('🔄 Caricamento dati da server...');
-  // ... resto della funzione usa 'range' invece di 'currentRange'
   const { dipendente: d, timbrature: t } = await caricaDati(pin, range.inizio, range.fine);
   dipendente = d;
   timbrature = t;
 
-  // Imposta sempre il nome del dipendente, indipendentemente dalle timbrature
-  if (dipendente) {
+  // ✅ FIX CRITICO: Imposta sempre il nome del dipendente
+  if (dipendente && dipendente.nome && dipendente.cognome) {
     intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
-  } else {
+    console.log('✅ Nome dipendente impostato:', dipendente.nome, dipendente.cognome);
+  } else if (pin) {
     intestazione.textContent = `PIN ${pin} - Utente non trovato`;
+    console.log('⚠️ Dipendente non trovato per PIN:', pin);
+  } else {
+    intestazione.textContent = 'Dipendente non identificato';
+    console.log('❌ PIN mancante');
   }
 
   const result = renderizzaTabella(dipendente, timbrature, range.inizio, range.fine, tbody, footerTbody, pin);
   totaleMensile = result?.totaleMensile || '—';
 }
 
-
-// Funzione di utilità per la validazione del range
+// ✅ UNICA funzione validazione (eliminato duplicato)
 function validaRange(range) {
-  if (!range || !range.from || !range.to) {
+  if (!range || !range.inizio || !range.fine) {
     return null; // Range non valido
   }
 
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!dateRegex.test(range.from) || !dateRegex.test(range.to)) {
+  if (!dateRegex.test(range.inizio) || !dateRegex.test(range.fine)) {
     return null; // Formato data non valido
   }
 
-  const dataInizioObj = new Date(range.from);
-  const dataFineObj = new Date(range.to);
+  const dataInizioObj = new Date(range.inizio);
+  const dataFineObj = new Date(range.fine);
 
   if (isNaN(dataInizioObj.getTime()) || isNaN(dataFineObj.getTime())) {
     return null; // Date non valide
@@ -156,80 +155,67 @@ function validaRange(range) {
   return range; // Range valido
 }
 
-
-async function aggiornaDati() {
-  // Valida il range prima di usarlo
-  filtroRange = validaRange(filtroRange);
-
-  if (!filtroRange) {
-    mostraMessaggio('Errore nella selezione del periodo', 'error');
-    return;
-  }
-
-  // Aggiorna gli input HTML con il range corrente valido
-  if (dataInizio && dataFine) {
-    dataInizio.value = filtroRange.from;
-    dataFine.value = filtroRange.to;
-  }
-
-  const { dipendente: d, timbrature: t } = await caricaDati(pin, filtroRange.from, filtroRange.to);
-  dipendente = d;
-  timbrature = t;
-
-  // Imposta sempre il nome del dipendente, indipendentemente dalle timbrature
-  if (dipendente) {
-    intestazione.textContent = `${dipendente.nome} ${dipendente.cognome}`;
-  } else {
-    intestazione.textContent = `PIN ${pin} - Utente non trovato`;
-  }
-
-  const result = renderizzaTabella(dipendente, timbrature, filtroRange.from, filtroRange.to, tbody, footerTbody, pin);
-  totaleMensile = result?.totaleMensile || '—';
-}
-
+// ✅ EVENT LISTENERS - configurati una sola volta
 selectFiltro?.addEventListener("change", () => {
   if (selectFiltro.value !== "personalizzato") {
     selectFiltro.querySelector('option[value="personalizzato"]')?.remove();
     selectFiltro.style.borderColor = '#334155';
     selectFiltro.style.color = 'white';
-    aggiornaRange(selectFiltro.value, dataInizio, dataFine);
-    // Aggiorna filtroRange con i nuovi valori dopo aggiornaRange
-    filtroRange = {
-      from: dataInizio.value,
-      to: dataFine.value
-    };
+
+    // Aggiorna range in base alla selezione
+    const oggi = new Date();
+    let nuovoRange;
+
+    switch(selectFiltro.value) {
+      case 'corrente':
+        nuovoRange = {
+          inizio: new Date(oggi.getFullYear(), oggi.getMonth(), 1).toISOString().split('T')[0],
+          fine: new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0).toISOString().split('T')[0]
+        };
+        break;
+      case 'precedente':
+        nuovoRange = {
+          inizio: new Date(oggi.getFullYear(), oggi.getMonth() - 1, 1).toISOString().split('T')[0],
+          fine: new Date(oggi.getFullYear(), oggi.getMonth(), 0).toISOString().split('T')[0]
+        };
+        break;
+      case 'due-precedenti':
+        nuovoRange = {
+          inizio: new Date(oggi.getFullYear(), oggi.getMonth() - 2, 1).toISOString().split('T')[0],
+          fine: new Date(oggi.getFullYear(), oggi.getMonth() - 1, 0).toISOString().split('T')[0]
+        };
+        break;
+      default:
+        nuovoRange = getDefaultRange();
+    }
+
+    currentRange = nuovoRange;
+
+    // Aggiorna input date
+    if (dataInizio) dataInizio.value = currentRange.inizio;
+    if (dataFine) dataFine.value = currentRange.fine;
   }
-  aggiornaDati();
+
+  caricaDatiServer();
 });
 
 dataInizio?.addEventListener("change", () => {
   aggiungiOpzionePersonalizzato(selectFiltro);
-  // Aggiorna filtroRange quando cambiano le date input
-  filtroRange = {
-    from: dataInizio.value,
-    to: dataFine.value
-  };
-  aggiornaDati();
+  aggiornaMese();
 });
 
 dataFine?.addEventListener("change", () => {
   aggiungiOpzionePersonalizzato(selectFiltro);
-  // Aggiorna filtroRange quando cambiano le date input
-  filtroRange = {
-    from: dataInizio.value,
-    to: dataFine.value
-  };
-  aggiornaDati();
+  aggiornaMese();
 });
 
 document.getElementById("torna-utenti")?.addEventListener("click", () => {
   window.location.href = "utenti.html";
 });
 
-// Funzioni per esportazione PDF ed Excel
+// ✅ FUNZIONI EXPORT - mantenute separate per chiarezza
 async function exportaPDF() {
-  // Assicurati che 'range' sia definito e contenga le date corrette
-  const range = assicuraRangeValido(); // Usiamo currentRange che è sempre valido
+  const range = assicuraRangeValido();
 
   if (!range) {
     mostraMessaggio('Errore nella selezione del periodo', 'error');
@@ -351,12 +337,8 @@ async function exportaPDF() {
   }
 }
 
-document.getElementById("btn-invia")?.addEventListener("click", exportaPDF);
-
-
 async function exportaExcel() {
-  // Assicurati che 'range' sia definito e contenga le date corrette
-  const range = assicuraRangeValido(); // Usiamo currentRange che è sempre valido
+  const range = assicuraRangeValido();
 
   if (!range) {
     mostraMessaggio('Errore nella selezione del periodo', 'error');
@@ -455,8 +437,9 @@ async function exportaExcel() {
   }
 }
 
+// Bind eventi export
+document.getElementById("btn-invia")?.addEventListener("click", exportaPDF);
 document.getElementById("btn-excel")?.addEventListener("click", exportaExcel);
-
 
 // Funzione di utilità per messaggi
 function mostraMessaggio(messaggio, tipo = 'info') {
@@ -472,44 +455,7 @@ function mostraMessaggio(messaggio, tipo = 'info') {
   }
 }
 
-
-// Funzione di inizializzazione per la pagina storico
-export function initStorico() {
-  // Verifica che gli elementi necessari esistano
-  const dataDa = document.getElementById('data-inizio'); // Corretto ID elemento
-  const dataA = document.getElementById('data-fine'); // Corretto ID elemento
-  const filtroMese = document.getElementById('filtro-mese'); // Corretto ID elemento
-
-  if (!dataDa || !dataA) {
-    console.error('Elementi calendario non trovati in questa pagina');
-    return;
-  }
-
-  // Assicura che il range sia sempre inizializzato con valori validi
-  if (!filtroRange || !filtroRange.from || !filtroRange.to) {
-    filtroRange = {
-      from: luxon.DateTime.now().startOf('month').toISODate(),
-      to: luxon.DateTime.now().endOf('month').toISODate()
-    };
-  } else {
-    // Se filtroRange esiste ma le date sono invalide, usa i default
-    filtroRange = validaRange(filtroRange) || {
-      from: luxon.DateTime.now().startOf('month').toISODate(),
-      to: luxon.DateTime.now().endOf('month').toISODate()
-    };
-  }
-
-  // Imposta i valori degli input date in base al filtroRange corrente
-  if (dataInizio) dataInizio.value = filtroRange.from;
-  if (dataFine) dataFine.value = filtroRange.to;
-  if (selectFiltro) selectFiltro.value = 'personalizzato'; // Assumiamo che le date impostate siano personalizzate
-
-  // Carica i dati iniziali
-  aggiornaDati();
-}
-
-
-// ✅ INIZIALIZZAZIONE SICURA E ORDINATA
+// ✅ INIZIALIZZAZIONE SICURA E ORDINATA - UNA SOLA VOLTA
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📊 STORICO: Inizializzazione...');
 
@@ -530,15 +476,5 @@ document.addEventListener('DOMContentLoaded', function() {
   // 3. Primo caricamento IMMEDIATO con range default
   caricaDatiServer();
 
-  // 4. Bind eventi DOPO primo caricamento
-  dataInizioEl?.addEventListener('change', aggiornaRange);
-  dataFineEl?.addEventListener('change', aggiornaRange);
-
   console.log('✅ Storico inizializzato e caricamento avviato');
 });
-
-// Assicurati che luxon sia disponibile globalmente o importalo se necessario
-// Se luxon non è globalmente disponibile, dovresti aggiungere:
-// import * as luxon from 'luxon';
-// altrimenti, assicurati che sia caricato tramite un tag <script> in HTML
-// Esempio: <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.4/luxon.min.js"></script>

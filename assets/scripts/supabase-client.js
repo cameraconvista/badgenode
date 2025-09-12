@@ -1,10 +1,10 @@
 // 🗄️ BADGEBOX Supabase Client - Modulo ES puro
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-// Configurazione centralizzata
+// Configurazione centralizzata - fallback per compatibilità
 const supabaseConfig = {
-  url: import.meta.env.VITE_SUPABASE_URL,
-  key: import.meta.env.VITE_SUPABASE_ANON_KEY
+  url: import.meta.env?.VITE_SUPABASE_URL || 'https://oelqgiqhpcjwtzttfhvy.supabase.co',
+  key: import.meta.env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbHFnaXFocGNqd3R6dHRmaHZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQzNjA0NzIsImV4cCI6MjA0OTkzNjQ3Mn0.4r3y8F1eAJXyPOyFb0sHpfkkSTgqMUjJSgEvDBGcX30'
 };
 
 // Validazione configurazione
@@ -18,35 +18,32 @@ function validateConfig() {
   }
 }
 
-// Client Supabase singleton
-let supabaseClient = null;
-
-export async function initializeSupabaseClient() {
-  if (supabaseClient) return supabaseClient;
-
-  try {
-    validateConfig();
-
-    supabaseClient = createClient(supabaseConfig.url, supabaseConfig.key);
-
-    // Test connessione
-    const { data, error } = await supabaseClient.from('utenti').select('count').limit(1);
-    if (error) {
-      console.warn('Errore connessione Supabase:', error.message);
-    // Non throw in DEV per evitare reload, solo log
-    }
-
-    console.log('✅ Supabase client inizializzato e testato');
-    return supabaseClient;
-
-  } catch (error) {
-    console.error('❌ Errore inizializzazione Supabase:', error);
-    throw error;
-  }
+// ✅ INIZIALIZZAZIONE IMMEDIATA - Client Supabase pronto all'import
+try {
+  validateConfig();
+  var supabaseClient = createClient(supabaseConfig.url, supabaseConfig.key);
+  console.log('✅ Supabase client inizializzato immediatamente');
+} catch (error) {
+  console.error('❌ Errore critico Supabase:', error);
+  var supabaseClient = null;
 }
 
-// Export per compatibilità
+// Export immediato del client
 export { supabaseClient };
+
+// Funzione legacy per compatibilità
+export async function initializeSupabaseClient() {
+  if (!supabaseClient) {
+    try {
+      supabaseClient = createClient(supabaseConfig.url, supabaseConfig.key);
+      console.log('✅ Supabase client ri-inizializzato');
+    } catch (error) {
+      console.error('❌ Errore ri-inizializzazione Supabase:', error);
+      throw error;
+    }
+  }
+  return supabaseClient;
+}
 
 // Utility per gestione errori
 export function gestisciErroreSupabase(error) {
