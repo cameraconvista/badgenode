@@ -79,29 +79,39 @@ window.apriImpostazioni = function() {
   }, 100);
 };
 
-// Gestione keypad
+// Gestione keypad centralizzata - UNICO PUNTO DI CONTROLLO
 document.addEventListener('DOMContentLoaded', function() {
-  console.log("🔧 DOM caricato, inizializzando...");
+  // Verifica esistenza campo PIN
+  if (!pinInput) {
+    console.error("❌ Campo PIN non trovato!");
+    return;
+  }
   
+  // UNICO set di listener per keypad
   document.querySelectorAll(".keypad-button").forEach((key) => {
-    key.addEventListener("click", () => {
-      const text = key.textContent;
-      console.log("🔧 Tasto premuto:", text, "ID:", key.id);
+    key.addEventListener("click", (event) => {
+      const text = key.textContent.trim();
       
+      // Gestione pulsante settings
       if (key.id === 'settings-btn') {
-        console.log("🔧 Settings button cliccato!");
         apriImpostazioni();
-      } else if (text === 'C') {
+        return;
+      }
+      
+      // Gestione clear
+      if (text === 'C') {
         pinInput.value = '';
-      } else if (pinInput.value.length < 4 && /^[0-9]$/.test(text)) {
+        return;
+      }
+      
+      // Gestione numeri (0-9)
+      if (/^[0-9]$/.test(text) && pinInput.value.length < 4) {
         pinInput.value += text;
       }
-    });
+    }, { passive: true });
   });
   
   // Avvia timer data/ora
   aggiornaDataOra();
   setInterval(aggiornaDataOra, 1000);
-  
-  console.log("🔧 Inizializzazione completata");
 });

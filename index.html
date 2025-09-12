@@ -128,20 +128,7 @@
       if (modal) modal.remove();
     };
 
-    // Gestione keypad ottimizzata
-    document.querySelectorAll(".keypad-button").forEach((key) => {
-      key.addEventListener("click", () => {
-        const text = key.textContent;
-
-        if (key.id === 'settings-btn') {
-          apriImpostazioni();
-        } else if (text === 'C') {
-          pinInput.value = '';
-        } else if (pinInput.value.length < 4 && /^[0-9]$/.test(text)) {
-          pinInput.value += text;
-        }
-      });
-    });
+    // Keypad gestito in main.js - nessun duplicato qui
 
     // Sistema timbrature ottimizzato
     async function registraTimbratura(tipo) {
