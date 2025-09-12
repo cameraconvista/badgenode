@@ -58,13 +58,12 @@
     </div>
   </div>
 
-  <!-- Script principale con cache busting -->
-  <script type="module" src="main.js?v=20250111"></script>
+  <!-- 🚀 Entry Point Unico - ES Module -->
+  <script type="module" src="main.js?v=20250112"></script>
 
-    <script>
-    // Funzioni admin gestite completamente in main.js - nessun duplicato
-
-    // Sistema timbrature ottimizzato
+  <script>
+    // ⚠️ SCRIPT INLINE: Solo logica timbrature (non duplicabile in ES modules)
+    
     async function registraTimbratura(tipo) {
       const pin = pinInput.value.trim();
       if (!pin) {
@@ -173,10 +172,7 @@
       registraTimbratura("uscita");
     });
 
-    // Inizializzazione
-    aggiornaDataOra();
-    setInterval(aggiornaDataOra, 1000);
-    pinInput.focus();
+    // Inizializzazione gestita da main.js
   </script>
 
   <!-- PWA Service Worker -->

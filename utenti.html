@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -505,15 +504,15 @@
 
   <!-- Script principale -->
   <script type="module">
-    import { supabaseClient } from './assets/scripts/supabase-client.js';
-    
+    import { initializeSupabaseClient } from './assets/scripts/supabase-client.js';
+
     let currentEditingPin = null;
 
     // Caricamento utenti
     async function caricaUtenti() {
       try {
         console.log('[UTENTI] Caricamento in corso...');
-        
+
         const { data, error } = await supabaseClient
           .from('utenti')
           .select('*')
@@ -523,10 +522,10 @@
           console.error('[UTENTI] Errore Supabase:', error);
           throw error;
         }
-        
+
         console.log('[UTENTI] Utenti caricati:', data?.length || 0);
         renderUtenti(data || []);
-        
+
       } catch (error) {
         console.error('[UTENTI] Errore caricamento:', error);
         document.getElementById('lista-dipendenti').innerHTML = `
@@ -539,7 +538,7 @@
 
     function renderUtenti(utenti) {
       const tbody = document.getElementById('lista-dipendenti');
-      
+
       if (!tbody) {
         console.error('[UTENTI] Elemento lista-dipendenti non trovato');
         return;
@@ -749,25 +748,25 @@
 
     window.eliminaUtente = async function(pin, nome, cognome) {
       if (!confirm(`ATTENZIONE: Eliminare definitivamente ${nome} ${cognome}?\n\nQuesta azione NON può essere annullata.`)) return;
-      
+
       try {
         const { error: timbratureError } = await supabaseClient
           .from('timbrature')
           .delete()
           .eq('pin', parseInt(pin));
-        
+
         if (timbratureError) console.error('Errore eliminazione timbrature:', timbratureError);
-        
+
         const { error: utenteError } = await supabaseClient
           .from('utenti')
           .delete()
           .eq('pin', parseInt(pin));
-        
+
         if (utenteError) throw utenteError;
-        
+
         alert(`✅ ${nome} ${cognome} eliminato definitivamente.\nPIN ${pin} ora disponibile.`);
         caricaUtenti();
-        
+
       } catch (error) {
         console.error('Errore eliminazione:', error);
         alert('Errore durante l\'eliminazione: ' + error.message);
@@ -775,7 +774,19 @@
     };
 
     // Inizializzazione
-    document.addEventListener('DOMContentLoaded', caricaUtenti);
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeSupabaseClient().then(client => {
+        window.supabaseClient = client; // Make it globally available for the script
+        caricaUtenti();
+      }).catch(error => {
+        console.error('Errore inizializzazione Supabase:', error);
+        document.getElementById('lista-dipendenti').innerHTML = `
+          <tr><td colspan="5" style="color: #ef4444; text-align: center; padding: 20px;">
+            Errore di connessione al database. Riprova più tardi.
+          </td></tr>
+        `;
+      });
+    });
   </script>
 
   <!-- PWA Service Worker -->

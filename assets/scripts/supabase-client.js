@@ -1,48 +1,57 @@
 
-// Normalizzazione lettura ENV per compatibilità mobile/desktop
-const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL || 
-                     (typeof window !== 'undefined' && window.__SUPABASE_URL__) ||
-                     'https://txmjqrnitfsiytbytxlc.supabase.co';
+// 🗄️ BADGEBOX Supabase Client - Modulo ES puro
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const SUPABASE_ANON_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY || 
-                          (typeof window !== 'undefined' && window.__SUPABASE_ANON_KEY__) ||
-                          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bWpxcm5pdGZzaXl0Ynl0eGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYxNjExMzcsImV4cCI6MjA0MTczNzEzN30.LGKP6sI7BQu8x7z2lAX7dWKjhYr4fYXVOcQf-DG4Gok';
+// Configurazione centralizzata
+const supabaseConfig = {
+  url: import.meta.env.VITE_SUPABASE_URL,
+  key: import.meta.env.VITE_SUPABASE_ANON_KEY
+};
 
-// Validazione chiavi prima dell'inizializzazione
-if (!SUPABASE_URL || SUPABASE_URL === 'undefined' || !SUPABASE_URL.includes('supabase.co')) {
-  console.error('❌ SUPABASE_URL non valida:', SUPABASE_URL);
-  throw new Error('Configurazione Supabase non valida - URL mancante');
+// Validazione configurazione
+function validateConfig() {
+  if (!supabaseConfig.url || !supabaseConfig.key) {
+    throw new Error(`❌ Configurazione Supabase mancante:
+    - VITE_SUPABASE_URL: ${supabaseConfig.url ? '✅' : '❌'}
+    - VITE_SUPABASE_ANON_KEY: ${supabaseConfig.key ? '✅' : '❌'}
+    
+    Verifica le variabili d'ambiente in Replit Secrets.`);
+  }
 }
 
-if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'undefined' || SUPABASE_ANON_KEY.length < 100) {
-  console.error('❌ SUPABASE_ANON_KEY non valida');
-  throw new Error('Configurazione Supabase non valida - ANON_KEY mancante');
-}
-
-// Inizializzazione client con retry logic
+// Client Supabase singleton
 let supabaseClient = null;
 
-try {
-  // Import dinamico di Supabase con fallback CDN
-  const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.0/+esm');
+export async function initializeSupabaseClient() {
+  if (supabaseClient) return supabaseClient;
   
-  supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false
-    },
-    realtime: {
-      params: {
-        eventsPerSecond: 2
-      }
+  try {
+    validateConfig();
+    
+    supabaseClient = createClient(supabaseConfig.url, supabaseConfig.key);
+    
+    // Test connessione
+    const { data, error } = await supabaseClient.from('utenti').select('count').limit(1);
+    if (error) {
+      console.error('❌ Test connessione Supabase fallito:', error);
+      throw error;
     }
-  });
-  
-  console.log('✅ Supabase client inizializzato correttamente');
-  
-} catch (error) {
-  console.error('❌ Errore inizializzazione Supabase:', error);
-  throw new Error(`Impossibile inizializzare Supabase: ${error.message}`);
+    
+    console.log('✅ Supabase client inizializzato e testato');
+    return supabaseClient;
+    
+  } catch (error) {
+    console.error('❌ Errore inizializzazione Supabase:', error);
+    throw error;
+  }
 }
 
+// Export per compatibilità
 export { supabaseClient };
+
+// Utility per gestione errori
+export function gestisciErroreSupabase(error) {
+  if (error?.code === 'PGRST116') return 'Nessun dato trovato';
+  if (error?.message?.includes('invalid key')) return 'Errore configurazione - contattare amministratore';
+  return error?.message || 'Errore di sistema';
+}
