@@ -1,28 +1,23 @@
+
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  root: '.',
   server: {
-    host: true,
-    port: Number(process.env.PORT) || 5173,
-    strictPort: true,
-    cors: true,
-    allowedHosts: true, // consente la preview replit.dev
+    host: '0.0.0.0',
+    port: 5000,
+    strictPort: false,
     hmr: {
-      protocol: 'wss',
-      clientPort: 443,
-      host: process.env.REPL_SLUG && process.env.REPL_OWNER
-        ? `${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
-        : undefined
+      port: 5001,
+      host: '0.0.0.0'
     }
-  },
-  preview: {
-    host: true,
-    port: Number(process.env.PORT) || 5000,
-    strictPort: true
   },
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
+    emptyOutDir: true,
     sourcemap: false
+  },
+  esbuild: {
+    target: 'es2020'
   }
 })
