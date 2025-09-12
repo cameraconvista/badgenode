@@ -1,5 +1,28 @@
-import { supabaseClient } from './assets/scripts/supabase-client.js';
-window.supabase = supabaseClient;
+// Inizializzazione asincrona con validazione
+(async function initializeApp() {
+  try {
+    const { supabaseClient } = await import('./assets/scripts/supabase-client.js');
+    
+    // Validazione connessione prima di renderla globale
+    const { data, error } = await supabaseClient.from('utenti').select('count').limit(1);
+    if (error) {
+      console.error('❌ Test connessione Supabase fallito:', error);
+      throw error;
+    }
+    
+    window.supabase = supabaseClient;
+    console.log('✅ Supabase pronto e connesso');
+    
+    // Inizializza interfaccia solo dopo conferma connessione
+    initializeInterface();
+    
+  } catch (error) {
+    console.error('❌ Errore critico inizializzazione:', error);
+    mostraStatus('Errore connessione database - contattare amministratore', 'error', 10000);
+  }
+})();
+
+function initializeInterface() {
 
 const { DateTime } = luxon;
 const giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
@@ -74,9 +97,7 @@ window.apriImpostazioni = function() {
   }, 100);
 };
 
-// Gestione keypad centralizzata - UNICO PUNTO DI CONTROLLO
-document.addEventListener('DOMContentLoaded', function() {
-  // Verifica esistenza campo PIN
+// Verifica esistenza campo PIN
   if (!pinInput) {
     console.error("❌ Campo PIN non trovato!");
     return;
@@ -99,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      // Gestione numeri (0-9)
+      // Gestioni numeri (0-9)
       if (/^[0-9]$/.test(text) && pinInput.value.length < 4) {
         pinInput.value += text;
       }
@@ -109,4 +130,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Avvia timer data/ora
   aggiornaDataOra();
   setInterval(aggiornaDataOra, 1000);
+}
+
+// Avvia inizializzazione al caricamento DOM
+document.addEventListener('DOMContentLoaded', function() {
+  // Interfaccia inizializzata solo dopo init Supabase asincrono
 });

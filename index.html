@@ -58,77 +58,11 @@
     </div>
   </div>
 
-  <!-- Script principale -->
-  <script type="module" src="main.js"></script>
+  <!-- Script principale con cache busting -->
+  <script type="module" src="main.js?v=20250111"></script>
 
     <script>
-
-    function mostraModalAdmin() {
-      const existingModal = document.getElementById('adminModal');
-      if (existingModal) existingModal.remove();
-
-      const modalHTML = `
-        <div id="adminModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-          <div style="background: #1e293b; padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); min-width: 300px;">
-            <h3 style="color: white; margin-bottom: 20px;">Accesso Amministratore</h3>
-            <input type="password" id="adminPinInput" placeholder="Inserisci PIN admin" 
-                   style="width: 100%; padding: 12px; font-size: 18px; text-align: center; border: none; border-radius: 8px; margin-bottom: 20px; letter-spacing: 2px; box-sizing: border-box;" maxlength="4" />
-            <div>
-              <button onclick="verificaPinAdmin()" style="background: #15803d; color: white; border: none; padding: 12px 20px; margin: 0 10px; border-radius: 8px; cursor: pointer; font-size: 16px;">Conferma</button>
-              <button onclick="chiudiModalAdmin()" style="background: #dc2626; color: white; border: none; padding: 12px 20px; margin: 0 10px; border-radius: 8px; cursor: pointer; font-size: 16px;">Annulla</button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-      setTimeout(() => {
-        const adminInput = document.getElementById('adminPinInput');
-        if (adminInput) {
-          adminInput.focus();
-          adminInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              verificaPinAdmin();
-            }
-          });
-        }
-      }, 100);
-
-      document.addEventListener('keydown', function handleEscape(e) {
-        if (e.key === 'Escape') {
-          chiudiModalAdmin();
-          document.removeEventListener('keydown', handleEscape);
-        }
-      });
-    }
-
-    window.verificaPinAdmin = function() {
-      console.log("🔧 verificaPinAdmin chiamata");
-      const pinAdmin = document.getElementById('adminPinInput')?.value.trim();
-      console.log("🔧 PIN inserito:", pinAdmin);
-      if (pinAdmin === "1909") {
-        console.log("🔧 PIN corretto! Navigando...");
-        chiudiModalAdmin();
-        window.location.href = "utenti.html";
-      } else {
-        console.log("🔧 PIN errato");
-        alert("PIN non valido. Accesso negato.");
-        const input = document.getElementById('adminPinInput');
-        if (input) {
-          input.value = '';
-          input.focus();
-        }
-      }
-    };
-
-    window.chiudiModalAdmin = function() {
-      const modal = document.getElementById('adminModal');
-      if (modal) modal.remove();
-    };
-
-    // Keypad gestito in main.js - nessun duplicato qui
+    // Funzioni admin gestite completamente in main.js - nessun duplicato
 
     // Sistema timbrature ottimizzato
     async function registraTimbratura(tipo) {
