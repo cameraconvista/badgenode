@@ -41,6 +41,7 @@ BadgeNode/
 │   └── schema.ts         # Schema DB Drizzle
 ├── DOCS/                 # Documentazione progetto
 ├── scripts/              # Script utility
+│   └── utils/            # Moduli core script
 ├── ARCHIVE/              # File archiviati
 ├── Backup_Automatico/    # Backup automatici
 └── public/               # Asset pubblici build

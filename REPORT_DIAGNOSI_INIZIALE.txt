@@ -1,48 +1,71 @@
 # 🔍 DIAGNOSI CODEBASE - BadgeNode
 
-**Data**: 2025-10-07T23:24:00.730Z
-**File analizzati**: 83
-**Righe totali**: 7,203
+**Data**: 2025-10-07T23:46:10.206Z
+**File analizzati**: 99
+**Righe totali**: 8,968
 
 ---
 
 ## 🚨 VIOLAZIONI LIMITE 200 RIGHE
 
-❌ **7 file superano il limite**:
+❌ **11 file superano il limite**:
 
-- `client/src/components/ui/sidebar.tsx`: **728 righe** (21KB)
-- `client/src/components/ui/chart.tsx`: **366 righe** (10KB)
-- `scripts/diagnose.ts`: **364 righe** (10KB)
-- `scripts/template-component.ts`: **331 righe** (8KB)
-- `client/src/components/ui/carousel.tsx`: **261 righe** (6KB)
-- `client/src/components/ui/menubar.tsx`: **257 righe** (8KB)
-- `scripts/consolidate-docs.ts`: **251 righe** (7KB)
+- `ARCHIVE/oversize_components_20251008_0138/sidebar_original.tsx`: **696 righe** (21KB)
+- `ARCHIVE/oversize_components_20251008_0138/diagnose_original.ts`: **364 righe** (10KB)
+- `ARCHIVE/oversize_components_20251008_0138/chart_original.tsx`: **330 righe** (10KB)
+- `ARCHIVE/oversize_components_20251008_0138/template-component_original.ts`: **330 righe** (8KB)
+- `client/src/components/ui/chart.tsx`: **330 righe** (10KB)
+- `scripts/utils/template-core.ts`: **254 righe** (5KB)
+- `ARCHIVE/oversize_components_20251008_0138/consolidate-docs_original.ts`: **248 righe** (7KB)
+- `client/src/components/ui/carousel.tsx`: **241 righe** (6KB)
+- `client/src/components/ui/menubar.tsx`: **232 righe** (8KB)
+- `scripts/utils/diagnose-core.ts`: **204 righe** (5KB)
+- `scripts/utils/docs-core.ts`: **202 righe** (6KB)
 
 ## ⚠️ FILE VICINI AL LIMITE (≥150 righe)
 
-⚠️ **7 file in warning**:
+⚠️ **9 file in warning**:
 
-- `client/src/components/ui/context-menu.tsx`: 199 righe
-- `client/src/components/ui/dropdown-menu.tsx`: 199 righe
-- `client/src/hooks/use-toast.ts`: 192 righe
-- `client/src/components/ui/form.tsx`: 179 righe
-- `scripts/backup-restore.ts`: 167 righe
-- `client/src/components/ui/select.tsx`: 161 righe
-- `client/src/components/ui/command.tsx`: 152 righe
+- `client/src/components/ui/sidebar/SidebarMenu.tsx`: 198 righe
+- `client/src/components/ui/context-menu.tsx`: 188 righe
+- `client/src/hooks/use-toast.ts`: 187 righe
+- `client/src/components/ui/dropdown-menu.tsx`: 186 righe
+- `client/src/components/ui/sidebar/SidebarMain.tsx`: 181 righe
+- `scripts/backup-restore.ts`: 171 righe
+- `client/src/components/ui/form.tsx`: 170 righe
+- `client/src/components/ui/sidebar/SidebarLayout.tsx`: 155 righe
+- `client/src/components/ui/select.tsx`: 154 righe
 
 ## 📋 FILE DUPLICATI
 
-✅ Nessun duplicato trovato
+⚠️ **3 gruppi di duplicati**:
+
+**Gruppo 1** (10KB):
+- `ARCHIVE/oversize_components_20251008_0138/chart_original.tsx`
+- `client/src/components/ui/chart.tsx`
+
+**Gruppo 2** (0KB):
+- `client/src/components/ui/sidebar.tsx`
+- `client/src/pages/examples/Home.tsx`
+
+**Gruppo 3** (0KB):
+- `client/src/main.tsx`
+- `public/sw.js`
 
 ## 📝 TODO/FIXME NEL CODICE
 
-📋 **1 file con TODO/FIXME**:
+📋 **4 file con TODO/FIXME**:
 
-- `scripts/diagnose.ts`: todo, Fixme, Todo, TODO, FIXME, BUG, HACK
+- `ARCHIVE/oversize_components_20251008_0138/diagnose_original.ts`: todo, Fixme, Todo, TODO, FIXME, BUG, HACK
+- `scripts/diagnose.ts`: Todo, Fixme, TODO, FIXME, todo
+- `scripts/utils/diagnose-core.ts`: todo, Fixme, Todo, TODO, FIXME, BUG, HACK
+- `scripts/utils/diagnose-report.ts`: TODO, FIXME, todo, Fixme
 
 ## 🗑️ FILE TEMPORANEI
 
-✅ Nessun file temporaneo trovato
+🧹 **1 file temporanei**:
+
+- `./.DS_Store`
 
 ## ⚙️ ERRORI CONFIGURAZIONE
 
@@ -50,5 +73,5 @@
 
 ---
 
-**Diagnosi completata**: 2025-10-07T23:24:00.730Z
+**Diagnosi completata**: 2025-10-07T23:46:10.206Z
 **Prossimo step**: Risolvere violazioni limite 200 righe

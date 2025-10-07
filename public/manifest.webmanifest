@@ -1,21 +1,21 @@
 {
-  "name": "BadgeNode",
-  "short_name": "BadgeNode",
-  "description": "Sistema di timbratura con PIN per la gestione delle presenze",
-  "start_url": "/",
+  "name": "BeigeNode2",
+  "short_name": "BeigeNode",
+  "description": "Sistema di timbratura con PIN per la gestione delle presenze - BeigeNode2",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#510357",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

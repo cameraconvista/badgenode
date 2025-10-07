@@ -13,7 +13,7 @@
 
 ## Panoramica
 
-Tutti gli script sono in `/scripts` e utilizzano TypeScript con `tsx`.
+Tutti gli script sono in `/scripts` e utilizzano TypeScript con `tsx`. I moduli core sono in `/scripts/utils/` per rispettare il limite di 200 righe per file.
 
 ---
 
