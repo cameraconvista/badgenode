@@ -1,0 +1,85 @@
+### ✅ Prompt ottimizzato per Replit Agent — **Bozza iniziale “BadgeNode”**
+
+> **Crea la bozza base dell’applicazione “BadgeNode”**  
+>
+> Obiettivo: generare una **struttura PWA minima e modulare**, con una sola pagina **Home (tastierino UI)** e predisposizioni per temi, governance, backup e documentazione.  
+> Non serve logica reale di timbratura in questa fase — solo UI, struttura e setup tecnici.
+>
+> ---
+>
+> **🧱 Stack richiesto**
+> - React + TypeScript + Vite  
+> - TailwindCSS *(preferibile)* oppure CSS Modules  
+> - vite-plugin-pwa (manifest + service worker configurato)  
+> - ESLint + Prettier + Husky (pre-commit)  
+> - Supabase client placeholder (`supabase.ts`, senza logica)
+>
+> ---
+>
+> **🎨 Palette colori ufficiale BadgeNode**
+> - **Primari:**  
+>   - Viola principale → `#510357`  
+>   - Rosa accento → `#e774f0`  
+>   - Bianco base → `#ffffff`
+> - **Stati:**  
+>   - Entrata → `#1f8f40` (verde)  
+>   - Uscita → `#c8332b` (rosso)  
+>   - Extra → `#fbbf24` (giallo)
+> - **Temi:** supporto **dark/light** (dark = viola scuro + accenti chiari; light = bianco + viola)
+>
+> ---
+>
+> **📂 Struttura da generare**
+> ```
+> /public
+>   manifest.webmanifest
+> /src
+>   /pages/Home.tsx                # unica pagina: tastierino base
+>   /components/
+>     Keypad.tsx                   # UI numerico 0–9, C, ingranaggio
+>     FeedbackBanner.tsx           # placeholder messaggi (verde/rosso)
+>     DateTimeLive.tsx             # orologio aggiornato 1s
+>   /styles/theme.css              # definizione palette dark/light
+>   /lib/supabase.ts               # placeholder client Supabase
+>   app.tsx / main.tsx
+> /scripts/
+>   backup-system.mjs              # stub: backup con rotazione 3 copie
+>   diagnose.mjs                   # stub: diagnosi file pesanti/duplicati
+> /DOCS/
+>   01_database_api.md (TODO)
+>   02_struttura_progetto.md (TODO)
+>   03_scripts_utilita.md (TODO)
+>   04_config_sviluppo.md (TODO)
+>   05_setup_sviluppo.md (TODO)
+> ```
+>
+> ---
+>
+> **⚙️ Requisiti tecnici**
+> - Imposta ESLint + Prettier + Husky:
+>   - Warning a 150 righe, blocco commit oltre **200 righe**
+> - Tailwind darkMode: `'class'`
+> - PWA manifest:
+>   - `name: "BadgeNode"`, `short_name: "BadgeNode"`
+>   - `theme_color: "#510357"`, `background_color: "#ffffff"`
+>   - `display: "standalone"`
+> - `.env.example` con placeholder Supabase
+> - Script NPM di base:
+>   - `dev`, `build`, `preview`
+>   - `lint`, `format`
+>   - `esegui backup`, `diagnose`
+>
+> ---
+>
+> **🧩 Pagina Home (solo UI)**
+> - Header con logo e scritta “BADGENODE”  
+> - Display PIN (disabilitato, placeholder “PIN”)  
+> - Tastierino numerico 3x4 (1–9, C, 0, ⚙️)  
+> - Data e ora live in fondo alla card  
+> - Colori coerenti con la palette (viola/bianco)  
+> - Nessuna logica di timbratura o autenticazione
+>
+> ---
+>
+> **✅ Consegna**
+> Quando hai generato la bozza, mostra l’anteprima della struttura e chiedi conferma prima di aggiungere qualsiasi logica di timbratura o autenticazione.
