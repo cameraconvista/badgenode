@@ -1,0 +1,52 @@
+import { useEffect, useState } from 'react';
+
+export default function DateTimeLive() {
+  const [dateTime, setDateTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setDateTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatDate = (date: Date) => {
+    const days = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+    const months = [
+      'Gennaio',
+      'Febbraio',
+      'Marzo',
+      'Aprile',
+      'Maggio',
+      'Giugno',
+      'Luglio',
+      'Agosto',
+      'Settembre',
+      'Ottobre',
+      'Novembre',
+      'Dicembre',
+    ];
+
+    const dayName = days[date.getDay()];
+    const day = date.getDate();
+    const monthName = months[date.getMonth()];
+
+    return `${dayName} ${day} ${monthName}`;
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('it-IT', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+  };
+
+  return (
+    <div className="text-center text-muted-foreground" data-testid="text-datetime">
+      <div className="text-lg font-medium">{formatDate(dateTime)}</div>
+      <div className="text-2xl font-bold tracking-wider">{formatTime(dateTime)}</div>
+    </div>
+  );
+}

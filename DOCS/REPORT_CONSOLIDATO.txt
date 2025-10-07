@@ -1,0 +1,171 @@
+# 📚 REPORT CONSOLIDATO DOCUMENTAZIONE - BadgeNode
+
+**Generato**: 2025-10-07T23:24:04.727Z
+**File processati**: 7
+**Dimensione totale**: 28KB
+**Righe totali**: 1,402
+
+---
+
+## 📊 SOMMARIO DOCUMENTI
+
+| File | Titolo | Righe | Dimensione | Modificato |
+|------|--------|-------|------------|------------|
+| `01_database_api.md` | 🗄️ Database & API - BadgeNode | 101 | 2KB | 08/10/2025 |
+| `02_struttura_progetto.md` | 📁 Struttura Progetto - BadgeNode | 110 | 3KB | 08/10/2025 |
+| `03_scripts_utilita.md` | 🛠️ Script Utility - BadgeNode | 164 | 3KB | 08/10/2025 |
+| `04_config_sviluppo.md` | ⚙️ Configurazione Sviluppo - BadgeNode | 236 | 4KB | 08/10/2025 |
+| `05_setup_sviluppo.md` | 🚀 Setup Sviluppo - BadgeNode | 301 | 5KB | 08/10/2025 |
+| `ICONS_GUIDE.md` | 🎨 Icons Guide - BadgeNode | 263 | 6KB | 08/10/2025 |
+| `LOGICA_GIORNO_LOGICO.md` | 📅 Logica Giorno Logico - BadgeNode | 227 | 5KB | 08/10/2025 |
+
+---
+
+## 📖 CONTENUTI DETTAGLIATI
+
+### 1. 01_database_api.md
+
+**Titolo**: 🗄️ Database & API - BadgeNode
+**Righe**: 101
+**Dimensione**: 2KB
+**Ultimo aggiornamento**: 08/10/2025, 01:15:38
+
+**Sezioni**:
+- Indice
+- Schema Database
+- API Endpoints
+- RLS Policies
+
+### 2. 02_struttura_progetto.md
+
+**Titolo**: 📁 Struttura Progetto - BadgeNode
+**Righe**: 110
+**Dimensione**: 3KB
+**Ultimo aggiornamento**: 08/10/2025, 01:15:58
+
+**Sezioni**:
+- Indice
+- Panoramica
+- Cartelle Principali
+- Responsabilità
+- Convenzioni
+
+### 3. 03_scripts_utilita.md
+
+**Titolo**: 🛠️ Script Utility - BadgeNode
+**Righe**: 164
+**Dimensione**: 3KB
+**Ultimo aggiornamento**: 08/10/2025, 01:16:25
+
+**Sezioni**:
+- Indice
+- Panoramica
+- Script Backup
+- Script Diagnosi
+- Script Documentazione
+- Script Template
+- File Length Guard
+- NPM Scripts Correlati
+- Troubleshooting
+
+### 4. 04_config_sviluppo.md
+
+**Titolo**: ⚙️ Configurazione Sviluppo - BadgeNode
+**Righe**: 236
+**Dimensione**: 4KB
+**Ultimo aggiornamento**: 08/10/2025, 01:16:50
+
+**Sezioni**:
+- Indice
+- Setup Locale
+- Variabili Ambiente
+- Comandi Base
+- Lint & Format
+- Logging
+- Error Reporting
+- Troubleshooting
+- IDE Setup
+
+### 5. 05_setup_sviluppo.md
+
+**Titolo**: 🚀 Setup Sviluppo - BadgeNode
+**Righe**: 301
+**Dimensione**: 5KB
+**Ultimo aggiornamento**: 08/10/2025, 01:17:22
+
+**Sezioni**:
+- Indice
+- Onboarding
+- Flusso Commit
+- Naming Conventions
+- Policy Backup
+- Best Practices
+- Troubleshooting
+- Supporto
+
+### 6. ICONS_GUIDE.md
+
+**Titolo**: 🎨 Icons Guide - BadgeNode
+**Righe**: 263
+**Dimensione**: 6KB
+**Ultimo aggiornamento**: 08/10/2025, 01:17:56
+
+**Sezioni**:
+- Indice
+- Panoramica
+- Setup unplugin-icons
+- Collezioni Disponibili
+- Esempi Uso
+- Best Practices
+- Migrazione da react-icons
+- Troubleshooting
+
+### 7. LOGICA_GIORNO_LOGICO.md
+
+**Titolo**: 📅 Logica Giorno Logico - BadgeNode
+**Righe**: 227
+**Dimensione**: 5KB
+**Ultimo aggiornamento**: 08/10/2025, 01:18:29
+
+**Sezioni**:
+- Indice
+- Concetto Base
+- Regole Calcolo
+- Scenari Tipici
+- Gestione Ore Extra
+- Implementazione
+- Stati Sessione
+
+---
+
+## 🔍 ANALISI QUALITÀ
+
+⚠️ **File che superano 200 righe**:
+- `04_config_sviluppo.md`: 236 righe
+- `05_setup_sviluppo.md`: 301 righe
+- `ICONS_GUIDE.md`: 263 righe
+- `LOGICA_GIORNO_LOGICO.md`: 227 righe
+
+✅ Tutti i documenti essenziali sono presenti
+
+## 📈 COPERTURA DOCUMENTAZIONE
+
+**Copertura**: 100% (7/7 documenti essenziali)
+
+🎉 Documentazione completa!
+
+## 🆕 MODIFICHE RECENTI (ultimi 7 giorni)
+
+- `LOGICA_GIORNO_LOGICO.md`: modificato oggi
+- `ICONS_GUIDE.md`: modificato oggi
+- `05_setup_sviluppo.md`: modificato oggi
+- `04_config_sviluppo.md`: modificato oggi
+- `03_scripts_utilita.md`: modificato oggi
+- `02_struttura_progetto.md`: modificato oggi
+- `01_database_api.md`: modificato oggi
+
+---
+
+**Consolidamento completato**: 2025-10-07T23:24:04.727Z
+**File di output**: `DOCS/REPORT_CONSOLIDATO.txt`
+**Prossimo aggiornamento**: Eseguire `npm run docs:consolidate`
