@@ -110,8 +110,8 @@ export class TimbratureService {
     }
   }
 
-  // RPC: Inserisci timbratura via Supabase
-  static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<void> {
+  // RPC: Inserisci timbratura via Supabase (RETURNS bigint)
+  static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<number> {
     try {
       // Normalizza tipo
       const p_tipo = tipo?.toLowerCase() === 'uscita' ? 'uscita' : 'entrata';
@@ -124,7 +124,7 @@ export class TimbratureService {
       });
 
       if (error) {
-        console.error('[Supabase RPC ERROR insert_timbro]', error);
+        console.error('[Supabase RPC ERROR insert_timbro_rpc]', error);
         
         // Gestione errori user-friendly
         if (error.message.includes('PIN') && error.message.includes('inesistente')) {
@@ -144,9 +144,39 @@ export class TimbratureService {
         throw new Error('Errore di sistema');
       }
 
-      console.debug('🟢 Timbratura OK', data);
+      // RPC ora ritorna bigint direttamente
+      if (typeof data !== 'number') {
+        throw new Error('RPC insert_timbro_rpc: ritorno inatteso');
+      }
+
+      console.debug('🟢 Timbratura OK | id:', data, '| pin:', pin, '| tipo:', tipo);
+      return data; // id inserito
     } catch (error) {
       console.error('❌ Errore timbratura:', error);
+      throw error;
+    }
+  }
+
+  // Funzione per refresh storico dopo timbratura
+  static async getTimbratureByPin(pin: number): Promise<any[]> {
+    try {
+      console.log('📊 [Supabase] Caricamento timbrature per PIN:', pin);
+      
+      const { data, error } = await supabase
+        .from('timbrature')
+        .select('id,pin,tipo,data,ore,giornologico,created_at')
+        .eq('pin', pin)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('[Supabase] Error loading timbrature by PIN:', error);
+        throw error;
+      }
+
+      console.log('✅ [Supabase] Timbrature PIN caricate:', data?.length || 0);
+      return data || [];
+    } catch (error) {
+      console.error('❌ Error in getTimbratureByPin:', error);
       throw error;
     }
   }

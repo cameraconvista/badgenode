@@ -21,6 +21,16 @@ export function invalidateTotaliForPin(pin: number) {
   console.debug('🔄 Invalidated totali for PIN:', pin);
 }
 
+// Invalidazione completa dopo timbratura
+export function invalidateAfterTimbratura(pin: number) {
+  invalidateStoricoForPin(pin);
+  invalidateTotaliForPin(pin);
+  // Invalida anche le cache globali per admin
+  invalidateStoricoGlobale();
+  invalidateTotaliGlobali();
+  console.debug('🔄 Invalidated all caches after timbratura for PIN:', pin);
+}
+
 // Invalidazioni per admin (globali)
 export function invalidateStoricoGlobale() {
   queryClient.invalidateQueries({ queryKey: qk.storicoAdmin });

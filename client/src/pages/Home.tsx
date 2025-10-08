@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { TimbratureService } from '@/services/timbrature.service';
 import { useToast } from '@/hooks/use-toast';
 import { subscribeTimbrature } from '@/lib/realtime';
-import { invalidateStoricoForPin, invalidateTotaliForPin, debounce } from '@/state/timbrature.cache';
+import { invalidateAfterTimbratura, debounce } from '@/state/timbrature.cache';
 
 export default function Home() {
   const [pin, setPin] = useState('');
@@ -28,8 +28,7 @@ export default function Home() {
     if (!user?.pin) return;
 
     const debouncedInvalidate = debounce(() => {
-      invalidateStoricoForPin(user.pin!);
-      invalidateTotaliForPin(user.pin!);
+      invalidateAfterTimbratura(user.pin!);
     }, 250);
 
     const unsubscribe = subscribeTimbrature({
@@ -74,7 +73,12 @@ export default function Home() {
     try {
       const pinNumber = Number(pin);
       console.log('[HOME] Chiamata timbra con PIN:', pinNumber, 'tipo: entrata');
-      await TimbratureService.timbra(pinNumber, 'entrata');
+      const id = await TimbratureService.timbra(pinNumber, 'entrata');
+      console.debug('🟢 ID timbratura:', id);
+      
+      // Invalida cache per refresh automatico
+      invalidateAfterTimbratura(pinNumber);
+      
       setFeedback({ type: 'success', message: 'Entrata registrata' });
       setPin('');
     } catch (error) {
@@ -97,7 +101,12 @@ export default function Home() {
     try {
       const pinNumber = Number(pin);
       console.log('[HOME] Chiamata timbra con PIN:', pinNumber, 'tipo: uscita');
-      await TimbratureService.timbra(pinNumber, 'uscita');
+      const id = await TimbratureService.timbra(pinNumber, 'uscita');
+      console.debug('🟢 ID timbratura:', id);
+      
+      // Invalida cache per refresh automatico
+      invalidateAfterTimbratura(pinNumber);
+      
       setFeedback({ type: 'success', message: 'Uscita registrata' });
       setPin('');
     } catch (error) {
