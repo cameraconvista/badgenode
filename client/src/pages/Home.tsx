@@ -66,7 +66,7 @@ export default function Home() {
   const handleEntrata = async () => {
     if (pin.length === 0) {
       setFeedback({ type: 'error', message: 'Inserire il PIN' });
-      setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
+      setTimeout(() => setFeedback({ type: null, message: '' }), 5000);
       return;
     }
 
@@ -77,30 +77,19 @@ export default function Home() {
       await TimbratureService.timbra(pinNumber, 'entrata');
       setFeedback({ type: 'success', message: 'Entrata registrata' });
       setPin('');
-      
-      toast({
-        title: "Entrata registrata",
-        description: `PIN ${pinNumber} - ${new Date().toLocaleTimeString()}`,
-      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Errore durante la registrazione';
       setFeedback({ type: 'error', message });
-      
-      toast({
-        title: "Errore timbratura",
-        description: message,
-        variant: "destructive",
-      });
     } finally {
       setLoading(false);
-      setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
+      setTimeout(() => setFeedback({ type: null, message: '' }), 5000);
     }
   };
 
   const handleUscita = async () => {
     if (pin.length === 0) {
       setFeedback({ type: 'error', message: 'Inserire il PIN' });
-      setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
+      setTimeout(() => setFeedback({ type: null, message: '' }), 5000);
       return;
     }
 
@@ -111,23 +100,12 @@ export default function Home() {
       await TimbratureService.timbra(pinNumber, 'uscita');
       setFeedback({ type: 'success', message: 'Uscita registrata' });
       setPin('');
-      
-      toast({
-        title: "Uscita registrata",
-        description: `PIN ${pinNumber} - ${new Date().toLocaleTimeString()}`,
-      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Errore durante la registrazione';
       setFeedback({ type: 'error', message });
-      
-      toast({
-        title: "Errore timbratura",
-        description: message,
-        variant: "destructive",
-      });
     } finally {
       setLoading(false);
-      setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
+      setTimeout(() => setFeedback({ type: null, message: '' }), 5000);
     }
   };
 

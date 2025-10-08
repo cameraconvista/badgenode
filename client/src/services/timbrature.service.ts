@@ -155,10 +155,23 @@ export class TimbratureService {
 
       if (error) {
         console.error('[Supabase RPC ERROR insert_timbro]', error);
-        if (error.message.includes('permission denied') || error.message.includes('RLS')) {
-          throw new Error('Non autorizzato: controlla PIN/ruolo');
+        
+        // Gestione errori user-friendly
+        if (error.message.includes('PIN') && error.message.includes('inesistente')) {
+          throw new Error('PIN non riconosciuto');
         }
-        throw error;
+        if (error.message.includes('due entrata consecutive')) {
+          throw new Error('Hai già fatto entrata oggi');
+        }
+        if (error.message.includes('due uscita consecutive')) {
+          throw new Error('Hai già fatto uscita');
+        }
+        if (error.message.includes('permission denied') || error.message.includes('RLS')) {
+          throw new Error('Non autorizzato');
+        }
+        
+        // Errore generico
+        throw new Error('Errore di sistema');
       }
 
       console.log('[Supabase RPC OK insert_timbro]', data);
