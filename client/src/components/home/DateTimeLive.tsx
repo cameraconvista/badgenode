@@ -39,12 +39,12 @@ export default function DateTimeLive({ className = "" }: DateTimeLiveProps) {
 
   return (
     <div className={`text-center mb-4 ${className}`} data-testid="text-datetime">
-      <div className="text-white text-base font-semibold mb-1 drop-shadow-sm">
+      <div className="text-white text-base font-semibold mb-1 drop-shadow-sm" style={{ filter: 'brightness(1.2)' }}>
         {formatDate(dateTime)}
       </div>
       <div 
         className="text-2xl md:text-3xl font-bold tracking-wide"
-        style={{ color: '#c084fc' }}
+        style={{ color: '#d8b4fe' }}
       >
         {formatTime(dateTime)}
       </div>

@@ -70,29 +70,16 @@ export default function Home() {
       />
 
       <div className="w-full max-w-sm md:max-w-md flex items-center justify-center">
-        <div className="relative">
-          {/* Riflesso che gira sulla cornice */}
-          <div 
-            className="absolute inset-0 rounded-3xl pointer-events-none"
-            style={{
-              background: 'conic-gradient(from 0deg, transparent 70%, rgba(231, 116, 240, 0.8) 85%, rgba(231, 116, 240, 0.4) 90%, transparent 95%)',
-              padding: '2px',
-              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-              maskComposite: 'xor',
-              WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-              WebkitMaskComposite: 'xor',
-              animation: 'spin 7s linear infinite'
-            }}
-          />
-          <div 
-            className="rounded-3xl p-6 shadow-2xl border-2 w-full max-h-[90vh] overflow-hidden relative"
-            style={{
-              backgroundColor: '#2b0048',
-              borderColor: 'rgba(231, 116, 240, 0.3)',
-              minWidth: '320px',
-              maxWidth: '420px'
-            }}
-          >
+        <div 
+          className="rounded-3xl p-6 shadow-2xl border-2 w-full max-h-[90vh] overflow-hidden relative"
+          style={{
+            backgroundColor: '#2b0048',
+            borderColor: 'rgba(231, 116, 240, 0.6)',
+            minWidth: '320px',
+            maxWidth: '420px',
+            boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)'
+          }}
+        >
           <LogoHeader />
           <PinDisplay pin={pin} />
           <Keypad 
@@ -106,7 +93,6 @@ export default function Home() {
             onUscita={handleUscita} 
             disabled={false} 
           />
-          </div>
         </div>
       </div>
 
