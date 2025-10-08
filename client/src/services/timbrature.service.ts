@@ -149,11 +149,19 @@ export class TimbratureService {
     try {
       // Normalizza tipo
       const p_tipo = tipo?.toLowerCase() === 'uscita' ? 'uscita' : 'entrata';
-      const p_ts = when || null;
       
-      const args = { p_pin: pin, p_tipo, ...(p_ts && { p_ts }) };
+      // Costruisci args esplicitamente
+      const args: any = {
+        p_pin: pin,
+        p_tipo: p_tipo
+      };
       
-      console.log('[Supabase RPC] insert_timbro args:', { ...args, p_ts: p_ts ?? '(default NOW on DB)' });
+      // Aggiungi p_ts solo se specificato
+      if (when) {
+        args.p_ts = when;
+      }
+      
+      console.log('[Supabase RPC] insert_timbro args:', args);
       
       const { data, error } = await supabase.rpc('insert_timbro', args);
 

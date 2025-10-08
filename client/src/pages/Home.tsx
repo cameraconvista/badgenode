@@ -72,6 +72,7 @@ export default function Home() {
     setLoading(true);
     try {
       const pinNumber = Number(pin);
+      console.log('[HOME] Chiamata timbra con PIN:', pinNumber, 'tipo: entrata');
       await TimbratureService.timbra(pinNumber, 'entrata');
       setFeedback({ type: 'success', message: 'Entrata registrata' });
       setPin('');
@@ -105,6 +106,7 @@ export default function Home() {
     setLoading(true);
     try {
       const pinNumber = Number(pin);
+      console.log('[HOME] Chiamata timbra con PIN:', pinNumber, 'tipo: uscita');
       await TimbratureService.timbra(pinNumber, 'uscita');
       setFeedback({ type: 'success', message: 'Uscita registrata' });
       setPin('');
