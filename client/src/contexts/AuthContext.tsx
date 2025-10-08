@@ -15,42 +15,55 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  // TODO: re-enable Auth when backend ready
+  // Mock session for development without Supabase
+  const mockSession = {
+    access_token: 'mock-token',
+    refresh_token: 'mock-refresh',
+    expires_in: 3600,
+    token_type: 'bearer',
+    user: {
+      id: 'mock-user-id',
+      email: 'mock@local.dev',
+      app_metadata: {},
+      user_metadata: { pin: 7 },
+      aud: 'authenticated',
+      created_at: new Date().toISOString()
+    }
+  } as Session;
 
-  useEffect(() => {
-    // Get initial session
-    AuthService.getSession().then(setSession);
+  const [session] = useState<Session | null>(mockSession);
+  const [loading] = useState(false); // Always loaded in mock mode
 
-    // Listen for auth changes
-    const { data: { subscription } } = AuthService.onAuthStateChange((session) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  // TODO: re-enable Auth when backend ready
+  // useEffect(() => {
+  //   // Get initial session
+  //   AuthService.getSession().then(setSession);
+  //
+  //   // Listen for auth changes
+  //   const { data: { subscription } } = AuthService.onAuthStateChange((session) => {
+  //     setSession(session);
+  //     setLoading(false);
+  //   });
+  //
+  //   return () => subscription.unsubscribe();
+  // }, []);
 
   const user = AuthService.getUserInfo(session);
   const isAdmin = AuthService.isAdmin(session);
   const pin = AuthService.getPin(session);
 
   const login = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      await AuthService.login(email, password);
-    } finally {
-      setLoading(false);
-    }
+    // TODO: re-enable Auth when backend ready
+    console.log('Mock login:', email, password);
+    // Mock login always succeeds and redirects to home
+    window.location.href = '/';
   };
 
   const logout = async () => {
-    setLoading(true);
-    try {
-      await AuthService.logout();
-    } finally {
-      setLoading(false);
-    }
+    // TODO: re-enable Auth when backend ready
+    console.log('Mock logout');
+    // Mock logout always succeeds
   };
 
   const value = {

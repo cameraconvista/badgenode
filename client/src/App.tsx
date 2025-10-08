@@ -5,7 +5,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
-import { AdminRoute, UserRoute } from '@/components/auth/RouteGuard';
+// TODO: re-enable Auth when backend ready
+// import { AdminRoute, UserRoute } from '@/components/auth/RouteGuard';
 import Home from '@/pages/Home';
 import ArchivioDipendenti from '@/pages/ArchivioDipendenti';
 import StoricoTimbrature from '@/pages/StoricoTimbrature';
@@ -16,26 +17,15 @@ import NotFound from '@/pages/not-found';
 function Router() {
   return (
     <Switch>
+      {/* TODO: re-enable Auth when backend ready */}
       <Route path="/login" component={LoginPage} />
-      <Route path="/">
-        <UserRoute>
-          <Home />
-        </UserRoute>
-      </Route>
-      <Route path="/archivio-dipendenti">
-        <AdminRoute>
-          <ArchivioDipendenti />
-        </AdminRoute>
-      </Route>
+      <Route path="/" component={Home} />
+      <Route path="/archivio-dipendenti" component={ArchivioDipendenti} />
       <Route path="/storico-timbrature">
-        <AdminRoute>
-          <StoricoTimbrature />
-        </AdminRoute>
+        <StoricoTimbrature />
       </Route>
       <Route path="/storico-timbrature/:pin">
-        <AdminRoute>
-          <StoricoWrapper />
-        </AdminRoute>
+        <StoricoWrapper />
       </Route>
       <Route component={NotFound} />
     </Switch>

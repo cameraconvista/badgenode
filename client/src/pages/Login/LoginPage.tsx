@@ -16,32 +16,9 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) return;
-
-    setLoading(true);
-    try {
-      await login(email, password);
-      
-      // Redirect based on role
-      if (isAdmin) {
-        setLocation('/admin/archivio-dipendenti');
-      } else {
-        setLocation('/');
-      }
-
-      toast({
-        title: "Login effettuato",
-        description: `Benvenuto ${user?.email}`,
-      });
-    } catch (error) {
-      toast({
-        title: "Errore di login",
-        description: error instanceof Error ? error.message : 'Credenziali non valide',
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+    // TODO: re-enable Auth when backend ready
+    // Mock login - always redirect to home
+    setLocation('/');
   };
 
   return (
