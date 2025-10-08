@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => {
   ],
   resolve: {
     alias: {
-      '@': path.resolve(import.meta.dirname, 'client', 'src'),
+      '@': './src',
       '@shared': path.resolve(import.meta.dirname, 'shared'),
       '@assets': path.resolve(
         import.meta.dirname,
@@ -70,5 +70,5 @@ export default defineConfig(({ mode }) => {
     'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
     'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
   },
-  };
+  }
 });
