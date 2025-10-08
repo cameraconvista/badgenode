@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { User } from 'lucide-react';
 import { formatDateLocal } from '@/lib/time';
@@ -10,12 +10,16 @@ import StoricoHeader from '@/components/storico/StoricoHeader';
 import StoricoFilters from '@/components/storico/StoricoFilters';
 import StoricoTable from '@/components/storico/StoricoTable';
 import ModaleTimbrature from '@/components/storico/ModaleTimbrature';
+import { useAuth } from '@/contexts/AuthContext';
+import { subscribeTimbrature } from '@/lib/realtime';
+import { invalidateStoricoGlobale, invalidateTotaliGlobali, debounce } from '@/state/timbrature.cache';
 
 interface StoricoTimbratureProps {
   pin?: number; // PIN del dipendente da visualizzare
 }
 
 export default function StoricoTimbrature({ pin = 71 }: StoricoTimbratureProps) {
+  const { isAdmin } = useAuth();
   
   // State per filtri
   const [filters, setFilters] = useState(() => {
@@ -29,6 +33,25 @@ export default function StoricoTimbrature({ pin = 71 }: StoricoTimbratureProps) 
 
   // State per modale modifica
   const [selectedGiorno, setSelectedGiorno] = useState<string | null>(null);
+
+  // Realtime subscription per admin (tutti i PIN)
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const debouncedInvalidate = debounce(() => {
+      invalidateStoricoGlobale();
+      invalidateTotaliGlobali();
+    }, 250);
+
+    const unsubscribe = subscribeTimbrature({
+      onChange: (payload) => {
+        console.debug('📡 Storico Admin received realtime event:', payload);
+        debouncedInvalidate();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [isAdmin]);
 
   // Query per dati dipendente
   const { data: dipendente } = useQuery({

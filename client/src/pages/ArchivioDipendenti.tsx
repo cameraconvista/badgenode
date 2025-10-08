@@ -9,6 +9,9 @@ import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
 import ModaleModificaDipendente from '@/components/admin/ModaleModificaDipendente';
 import ModaleEliminaDipendente from '@/components/admin/ModaleEliminaDipendente';
 import { UtentiService, Utente, UtenteInput } from '@/services/utenti.service';
+import { useAuth } from '@/contexts/AuthContext';
+import { subscribeTimbrature } from '@/lib/realtime';
+import { invalidateUtenti, debounce } from '@/state/timbrature.cache';
 
 export default function ArchivioDipendenti() {
   const [, setLocation] = useLocation();
@@ -19,6 +22,26 @@ export default function ArchivioDipendenti() {
   const [showModaleElimina, setShowModaleElimina] = useState(false);
   const [utenteSelezionato, setUtenteSelezionato] = useState<Utente | null>(null);
   const [isEliminaLoading, setIsEliminaLoading] = useState(false);
+  const { isAdmin } = useAuth();
+
+  // Realtime subscription per admin (invalidazioni utenti)
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const debouncedInvalidate = debounce(() => {
+      invalidateUtenti();
+      loadUtenti(); // Ricarica la lista utenti
+    }, 250);
+
+    const unsubscribe = subscribeTimbrature({
+      onChange: (payload) => {
+        console.debug('📡 Archivio received realtime event:', payload);
+        debouncedInvalidate();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [isAdmin]);
 
   useEffect(() => { loadUtenti(); }, []);
   const loadUtenti = async () => {

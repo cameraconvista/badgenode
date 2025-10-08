@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LogoHeader from '@/components/home/LogoHeader';
 import PinDisplay from '@/components/home/PinDisplay';
 import Keypad from '@/components/home/Keypad';
@@ -9,6 +9,8 @@ import FeedbackBanner from '@/components/FeedbackBanner';
 import { useAuth } from '@/contexts/AuthContext';
 import { TimbratureService } from '@/services/timbrature.service';
 import { useToast } from '@/hooks/use-toast';
+import { subscribeTimbrature } from '@/lib/realtime';
+import { invalidateStoricoForPin, invalidateTotaliForPin, debounce } from '@/state/timbrature.cache';
 
 export default function Home() {
   const [pin, setPin] = useState('');
@@ -20,6 +22,26 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const { user, logout } = useAuth();
   const { toast } = useToast();
+
+  // Realtime subscription per dipendente
+  useEffect(() => {
+    if (!user?.pin) return;
+
+    const debouncedInvalidate = debounce(() => {
+      invalidateStoricoForPin(user.pin!);
+      invalidateTotaliForPin(user.pin!);
+    }, 250);
+
+    const unsubscribe = subscribeTimbrature({
+      pin: user.pin,
+      onChange: (payload) => {
+        console.debug('📡 Home received realtime event:', payload);
+        debouncedInvalidate();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [user?.pin]);
 
   const handleKeyPress = (key: string) => {
     if (pin.length < 4) {
