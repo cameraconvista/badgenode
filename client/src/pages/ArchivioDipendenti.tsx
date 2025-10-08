@@ -7,6 +7,7 @@ import ThemeToggle from '@/components/admin/ThemeToggle';
 import ArchivioTable from '@/components/admin/ArchivioTable';
 import ModaleDipendente from '@/components/admin/ModaleDipendente';
 import { UtentiService, Utente, UtenteInput } from '@/services/utenti.service';
+import { MOCK_DIPENDENTI } from '@/data/mockDipendenti';
 
 export default function ArchivioDipendenti() {
   const [, setLocation] = useLocation();
@@ -17,28 +18,30 @@ export default function ArchivioDipendenti() {
   const [utenteSelezionato, setUtenteSelezionato] = useState<Utente | null>(null);
 
   // Carica utenti all'avvio
-  useEffect(() => {
-    loadUtenti();
-  }, []);
-
+  useEffect(() => { loadUtenti(); }, []);
   const loadUtenti = async () => {
     setIsLoading(true);
     try {
-      const data = await UtentiService.getUtenti();
-      setUtenti(data);
+      // TODO: Usare dati mock per demo - ripristinare UtentiService.getUtenti() in produzione
+      if (import.meta.env.DEV) {
+        // Simula delay API
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setUtenti(MOCK_DIPENDENTI);
+      } else {
+        const data = await UtentiService.getUtenti();
+        setUtenti(data);
+      }
     } catch (error) {
       console.error('Errore caricamento utenti:', error);
     } finally {
       setIsLoading(false);
     }
   };
-
   const handleStorico = (pin: number) => {
     // TODO: Navigazione a pagina storico con parametro PIN
     console.log('📊 Navigazione storico per PIN:', pin);
     // setLocation(`/storico/${pin}`);
   };
-
   const handleModifica = (utente: Utente) => {
     setUtenteSelezionato(utente);
     setShowModaleModifica(true);
@@ -50,7 +53,6 @@ export default function ArchivioDipendenti() {
       await loadUtenti(); // Ricarica lista
     } catch (error) {
       console.error('Errore archiviazione:', error);
-      throw error;
     }
   };
 
@@ -63,13 +65,12 @@ export default function ArchivioDipendenti() {
       throw error;
     }
   };
-
-  const handleSalvaModifica = async (data: UtenteInput) => {
+  const handleSalvaModifica = async (datiUtente: UtenteInput) => {
     if (!utenteSelezionato) return;
     
     try {
-      await UtentiService.updateUtente(utenteSelezionato.id, data);
-      await loadUtenti(); // Ricarica lista
+      await UtentiService.updateUtente(utenteSelezionato.id, datiUtente);
+      await loadUtenti(); //Ricarica lista
       setShowModaleModifica(false);
       setUtenteSelezionato(null);
     } catch (error) {
@@ -92,7 +93,6 @@ export default function ArchivioDipendenti() {
   const handleBackToLogin = () => {
     setLocation('/');
   };
-
   const handleExDipendenti = () => {
     // TODO: Navigazione a pagina ex-dipendenti
     console.log('📋 Navigazione ex-dipendenti');
@@ -101,39 +101,41 @@ export default function ArchivioDipendenti() {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
+      className="h-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
       style={{ 
         background: 'radial-gradient(ellipse at center, #2d1b3d 0%, #1a0f2e 50%, #0f0a1a 100%)',
         backgroundAttachment: 'fixed'
       }}
     >
       {/* Container principale stile Home */}
-      <div className="w-full max-w-[1120px] flex items-center justify-center">
+      <div className="w-full max-w-[1120px] flex items-center justify-center h-full">
         <div 
-          className="rounded-3xl p-6 shadow-2xl border-2 w-full max-h-[90vh] overflow-hidden"
+          className="rounded-3xl p-4 shadow-2xl border-2 w-full h-[90vh] overflow-hidden relative flex flex-col"
           style={{
             backgroundColor: '#2b0048',
-            borderColor: 'rgba(231, 116, 240, 0.3)'
+            borderColor: 'rgba(231, 116, 240, 0.6)',
+            boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)'
           }}
         >
-          {/* Header con logo e theme toggle */}
-          <div className="flex items-center justify-between mb-6">
-            <LogoHeader className="mb-0" />
+          {/* Header con theme toggle */}
+          <div className="flex justify-end mb-4">
             <ThemeToggle />
           </div>
 
-          {/* Titolo */}
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-white mb-2">
-              Archivio Dipendenti
-            </h1>
-            <p className="text-gray-300 text-sm">
-              Gestione dipendenti attivi
-            </p>
+          {/* Logo centrato */}
+          <div className="text-center mb-4">
+            <LogoHeader className="mb-0" />
           </div>
 
-          {/* Contenuto scrollabile */}
-          <div className="overflow-y-auto max-h-[50vh] mb-6">
+          {/* Titolo */}
+          <div className="text-center mb-4">
+            <h1 className="text-xl font-bold text-white">
+              Archivio Dipendenti
+            </h1>
+          </div>
+
+          {/* Contenuto scrollabile - occupa spazio rimanente */}
+          <div className="flex-1 overflow-hidden mb-4">
             <ArchivioTable
               utenti={utenti}
               isLoading={isLoading}
@@ -145,11 +147,11 @@ export default function ArchivioDipendenti() {
           </div>
 
           {/* Footer azioni */}
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-4 border-t border-gray-600">
+          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t border-gray-600">
             <Button
               variant="outline"
               onClick={handleBackToLogin}
-              className="flex items-center gap-2 bg-transparent border-gray-500 text-gray-300 hover:bg-gray-700"
+              className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               Login Utenti
@@ -159,7 +161,7 @@ export default function ArchivioDipendenti() {
               <Button
                 variant="outline"
                 onClick={handleExDipendenti}
-                className="flex items-center gap-2 bg-transparent border-gray-500 text-gray-300 hover:bg-gray-700"
+                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
               >
                 <Archive className="w-4 h-4" />
                 Ex-Dipendenti
@@ -187,7 +189,6 @@ export default function ArchivioDipendenti() {
         utente={utenteSelezionato}
         onSave={handleSalvaModifica}
       />
-
       <ModaleDipendente
         isOpen={showModaleNuovo}
         onClose={() => setShowModaleNuovo(false)}

@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { BarChart3, Edit, Archive, Trash2 } from 'lucide-react';
+import { Edit, Archive, Trash2 } from 'lucide-react';
 import { Utente } from '@/services/utenti.service';
 import { ArchiviaDialog, EliminaDialog } from './ConfirmDialogs';
 
 interface ArchivioActionsProps {
   utente: Utente;
-  onStorico: (pin: number) => void;
   onModifica: (utente: Utente) => void;
   onArchivia: (id: string) => Promise<void>;
   onElimina: (id: string) => Promise<void>;
@@ -14,7 +13,6 @@ interface ArchivioActionsProps {
 
 export default function ArchivioActions({
   utente,
-  onStorico,
   onModifica,
   onArchivia,
   onElimina,
@@ -23,10 +21,6 @@ export default function ArchivioActions({
   const [showEliminaDialog, setShowEliminaDialog] = useState(false);
   const [showConfermaElimina, setShowConfermaElimina] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleStorico = () => {
-    onStorico(utente.pin);
-  };
 
   const handleModifica = () => {
     onModifica(utente);
@@ -68,17 +62,6 @@ export default function ArchivioActions({
 
   return (
     <div className="flex items-center gap-2">
-      {/* Storico */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleStorico}
-        className="p-2 hover:bg-violet-600/20 text-gray-300 hover:text-white"
-        title="Visualizza storico"
-      >
-        <BarChart3 className="w-4 h-4" />
-      </Button>
-
       {/* Modifica */}
       <Button
         variant="ghost"

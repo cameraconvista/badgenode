@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
+import { BarChart3, ChevronUp } from 'lucide-react';
 import { Utente } from '@/services/utenti.service';
 import ArchivioActions from './ArchivioActions';
-import TableToolbar from './TableToolbar';
 import EmptyState from './EmptyState';
 
 interface ArchivioTableProps {
@@ -14,8 +14,6 @@ interface ArchivioTableProps {
   onElimina: (id: string) => Promise<void>;
 }
 
-type SortOrder = 'asc' | 'desc';
-
 export default function ArchivioTable({
   utenti,
   isLoading,
@@ -24,30 +22,18 @@ export default function ArchivioTable({
   onArchivia,
   onElimina,
 }: ArchivioTableProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  // Filtra e ordina utenti
-  const filteredAndSortedUtenti = useMemo(() => {
-    let filtered = utenti;
-
-    // Filtro per ricerca (nome/cognome)
-    if (searchTerm.trim()) {
-      const search = searchTerm.toLowerCase().trim();
-      filtered = utenti.filter(
-        (utente) =>
-          utente.nome.toLowerCase().includes(search) ||
-          utente.cognome.toLowerCase().includes(search)
-      );
-    }
-
-    // Ordinamento per PIN
-    filtered.sort((a, b) => {
-      return sortOrder === 'asc' ? a.pin - b.pin : b.pin - a.pin;
+  // Ordina utenti per PIN
+  const sortedUtenti = useMemo(() => {
+    return [...utenti].sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.pin - b.pin;
+      } else {
+        return b.pin - a.pin;
+      }
     });
-
-    return filtered;
-  }, [utenti, searchTerm, sortOrder]);
+  }, [utenti, sortOrder]);
 
   const toggleSortOrder = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -65,62 +51,73 @@ export default function ArchivioTable({
   }
 
   return (
-    <div className="space-y-4">
-      {/* Toolbar */}
-      <TableToolbar
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        sortOrder={sortOrder}
-        onSortToggle={toggleSortOrder}
-      />
-
-      {/* Tabella */}
-      <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50">
-        <div className="overflow-x-auto">
+    <div className="h-full flex flex-col">
+      {/* Tabella con header fisso */}
+      <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50 flex-1 flex flex-col">
+        {/* Header fisso */}
+        <div className="bg-gray-700/80">
           <table className="w-full">
-            {/* Header sticky */}
-            <thead className="bg-gray-700/80 sticky top-0 z-10">
+            <thead>
               <tr>
-                <th className="text-left p-3 font-medium text-sm text-gray-200">📊 Storico</th>
-                <th className="text-left p-3 font-medium text-sm text-gray-200">PIN</th>
-                <th className="text-left p-3 font-medium text-sm text-gray-200">Nome</th>
-                <th className="text-left p-3 font-medium text-sm text-gray-200">Cognome</th>
-                <th className="text-center p-3 font-medium text-sm text-gray-200">Azioni</th>
+                <th className="text-left p-4 font-medium text-base text-gray-200 w-24">
+                  Storico
+                </th>
+                <th className="text-left p-4 font-medium text-base text-gray-200 w-20">
+                  <button 
+                    onClick={toggleSortOrder}
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    PIN
+                    <ChevronUp className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} />
+                  </button>
+                </th>
+                <th className="text-left p-4 font-medium text-base text-gray-200">Nome</th>
+                <th className="text-left p-4 font-medium text-base text-gray-200">Cognome</th>
+                <th className="text-center p-4 font-medium text-base text-gray-200 w-32">Azioni</th>
               </tr>
             </thead>
+          </table>
+        </div>
+        
+        {/* Body scrollabile */}
+        <div className="flex-1 overflow-y-auto">
+          <table className="w-full">
             <tbody>
-              {filteredAndSortedUtenti.length === 0 ? (
-                <EmptyState hasSearch={!!searchTerm} searchTerm={searchTerm} />
+              {sortedUtenti.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8">
+                    <EmptyState hasSearch={false} searchTerm="" />
+                  </td>
+                </tr>
               ) : (
-                filteredAndSortedUtenti.map((utente) => (
+                sortedUtenti.map((utente) => (
                   <tr key={utente.id} className="border-t border-gray-600 hover:bg-gray-700/50 transition-colors">
-                    <td className="p-3">
+                    <td className="p-4 w-24">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => onStorico(utente.pin)}
-                        className="p-2 hover:bg-violet-600/20 text-gray-300"
+                        className="p-2 hover:bg-violet-600/20 text-gray-300 hover:text-white"
                         title={`Storico di ${utente.nome} ${utente.cognome}`}
                       >
-                        📊
+                        <BarChart3 className="w-5 h-5" />
                       </Button>
                     </td>
-                    <td className="p-3">
-                      <span className="font-mono font-medium text-violet-400">
+                    <td className="p-4 w-20">
+                      <span className="font-mono font-medium text-base text-violet-400">
                         {utente.pin.toString().padStart(2, '0')}
                       </span>
                     </td>
-                    <td className="p-3">
-                      <span className="font-medium text-white">{utente.nome}</span>
+                    <td className="p-4">
+                      <span className="font-medium text-base text-white">{utente.nome}</span>
                     </td>
-                    <td className="p-3">
-                      <span className="font-medium text-white">{utente.cognome}</span>
+                    <td className="p-4">
+                      <span className="font-medium text-base text-white">{utente.cognome}</span>
                     </td>
-                    <td className="p-3">
+                    <td className="p-4 w-32">
                       <div className="flex justify-center">
                         <ArchivioActions
                           utente={utente}
-                          onStorico={onStorico}
                           onModifica={onModifica}
                           onArchivia={onArchivia}
                           onElimina={onElimina}
@@ -136,18 +133,9 @@ export default function ArchivioTable({
       </div>
 
       {/* Info risultati */}
-      {filteredAndSortedUtenti.length > 0 && (
-        <div className="text-sm text-gray-400 text-center">
-          {searchTerm ? (
-            <>
-              Trovati <strong className="text-violet-400">{filteredAndSortedUtenti.length}</strong> dipendenti su{' '}
-              <strong className="text-violet-400">{utenti.length}</strong> totali
-            </>
-          ) : (
-            <>
-              <strong className="text-violet-400">{utenti.length}</strong> dipendenti attivi
-            </>
-          )}
+      {sortedUtenti.length > 0 && (
+        <div className="text-sm text-gray-400 text-center mt-3">
+          <strong className="text-violet-400">{utenti.length}</strong> dipendenti attivi
         </div>
       )}
     </div>

@@ -61,17 +61,21 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       root.style.setProperty('--muted', '#2d1b3d');
       root.style.setProperty('--muted-foreground', '#a1a1aa');
       root.style.setProperty('--border', 'rgba(231, 116, 240, 0.3)');
+      // Applica background per pagina admin
+      document.body.style.background = 'radial-gradient(ellipse at center, #2d1b3d 0%, #1a0f2e 50%, #0f0a1a 100%)';
     } else {
       root.style.setProperty('--background', '#ffffff');
       root.style.setProperty('--foreground', '#510357');
-      root.style.setProperty('--card', '#ffffff');
+      root.style.setProperty('--card', '#f8fafc');
       root.style.setProperty('--card-foreground', '#510357');
       root.style.setProperty('--primary', '#510357');
       root.style.setProperty('--primary-foreground', '#ffffff');
       root.style.setProperty('--accent', '#e774f0');
-      root.style.setProperty('--muted', '#f8fafc');
+      root.style.setProperty('--muted', '#f1f5f9');
       root.style.setProperty('--muted-foreground', '#64748b');
       root.style.setProperty('--border', '#e2e8f0');
+      // Applica background light per pagina admin
+      document.body.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)';
     }
   };
 
