@@ -33,33 +33,17 @@ export class TimbratureService {
 
       if (error) {
         console.error('[Supabase] Error loading timbrature:', error);
-        // Fallback to mock data if Supabase fails
-        console.warn('📊 Fallback to mock data');
-        return mockTimbrature.filter(t => {
-          return t.pin === filters.pin &&
-                 t.giornologico >= filters.dal &&
-                 t.giornologico <= filters.al;
-        }).sort((a, b) => {
-          const dateCompare = a.giornologico.localeCompare(b.giornologico);
-          if (dateCompare !== 0) return dateCompare;
-          return a.ore.localeCompare(b.ore);
-        });
+        throw error;
       }
 
       console.log('✅ [Supabase] Timbrature caricate:', data?.length || 0);
       return data || [];
     } catch (error) {
       console.error('❌ Error in getTimbraturePeriodo:', error);
-      // Fallback to mock data
-      return mockTimbrature.filter(t => {
-        return t.pin === filters.pin &&
-               t.giornologico >= filters.dal &&
-               t.giornologico <= filters.al;
-      });
+      throw error;
     }
   }
 
-  // Ottieni timbrature per singolo giorno logico
   static async getTimbratureGiorno(pin: number, giornologico: string): Promise<Timbratura[]> {
     try {
       console.log('📊 [Supabase] Caricamento timbrature giorno:', { pin, giornologico });
@@ -73,20 +57,14 @@ export class TimbratureService {
 
       if (error) {
         console.error('[Supabase] Error loading timbrature giorno:', error);
-        // Fallback to mock data
-        return mockTimbrature.filter(t => 
-          t.pin === pin && t.giornologico === giornologico
-        ).sort((a, b) => a.ore.localeCompare(b.ore));
+        throw error;
       }
 
       console.log('✅ [Supabase] Timbrature giorno caricate:', data?.length || 0);
       return data || [];
     } catch (error) {
       console.error('❌ Error in getTimbratureGiorno:', error);
-      // Fallback to mock data
-      return mockTimbrature.filter(t => 
-        t.pin === pin && t.giornologico === giornologico
-      ).sort((a, b) => a.ore.localeCompare(b.ore));
+      throw error;
     }
   }
 
@@ -133,25 +111,17 @@ export class TimbratureService {
   }
 
   // RPC: Inserisci timbratura via Supabase
-  static async timbra(pin: number, tipo: 'entrata' | 'uscita', when?: string): Promise<void> {
+  static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<void> {
     try {
       // Normalizza tipo
       const p_tipo = tipo?.toLowerCase() === 'uscita' ? 'uscita' : 'entrata';
       
-      // Costruisci args esplicitamente
-      const args: any = {
-        p_pin: pin,
-        p_tipo: p_tipo
-      };
+      console.log('[Supabase RPC] insert_timbro_rpc args:', { p_pin: pin, p_tipo });
       
-      // Aggiungi p_ts solo se specificato
-      if (when) {
-        args.p_ts = when;
-      }
-      
-      console.log('[Supabase RPC] insert_timbro args:', args);
-      
-      const { data, error } = await supabase.rpc('insert_timbro', args);
+      const { data, error } = await supabase.rpc('insert_timbro_rpc', { 
+        p_pin: pin, 
+        p_tipo: p_tipo 
+      });
 
       if (error) {
         console.error('[Supabase RPC ERROR insert_timbro]', error);
@@ -174,7 +144,7 @@ export class TimbratureService {
         throw new Error('Errore di sistema');
       }
 
-      console.log('[Supabase RPC OK insert_timbro]', data);
+      console.debug('🟢 Timbratura OK', data);
     } catch (error) {
       console.error('❌ Errore timbratura:', error);
       throw error;

@@ -1,7 +1,7 @@
 // Servizio per gestione utenti/dipendenti
-// TODO: Integrare con Supabase quando disponibile
+// Integrato con Supabase
 
-import { mockUtenti, mockExDipendenti, delay } from './mockData';
+import { supabase } from '@/lib/supabaseClient';
 
 export interface Utente {
   id: string;
@@ -34,110 +34,157 @@ export interface UtenteInput {
 export class UtentiService {
   // Ottieni lista utenti attivi
   static async getUtenti(): Promise<Utente[]> {
-    await delay(300);
-    console.log('📋 Caricamento utenti attivi...');
-    return [...mockUtenti].sort((a, b) => a.pin - b.pin);
+    try {
+      console.log('📋 [Supabase] Caricamento utenti attivi...');
+      
+      const { data, error } = await supabase
+        .from('utenti')
+        .select('*')
+        .order('pin');
+
+      if (error) {
+        console.error('[Supabase] Error loading utenti:', error);
+        throw error;
+      }
+
+      console.log('✅ [Supabase] Utenti caricati:', data?.length || 0);
+      return data || [];
+    } catch (error) {
+      console.error('❌ Error in getUtenti:', error);
+      throw error;
+    }
   }
 
   // Ottieni lista ex-dipendenti
   static async getExDipendenti(): Promise<ExDipendente[]> {
-    await delay(300);
-    console.log('📋 Caricamento ex-dipendenti...');
-    return [...mockExDipendenti];
+    try {
+      console.log('📋 [Supabase] Caricamento ex-dipendenti...');
+      
+      const { data, error } = await supabase
+        .from('ex_dipendenti')
+        .select('*')
+        .order('archiviato_at', { ascending: false });
+
+      if (error) {
+        console.error('[Supabase] Error loading ex-dipendenti:', error);
+        throw error;
+      }
+
+      console.log('✅ [Supabase] Ex-dipendenti caricati:', data?.length || 0);
+      return data || [];
+    } catch (error) {
+      console.error('❌ Error in getExDipendenti:', error);
+      throw error;
+    }
   }
 
   // Ottieni utente per ID
   static async getUtenteById(id: string): Promise<Utente | null> {
-    await delay(200);
-    const utente = mockUtenti.find(u => u.id === id);
-    return utente || null;
+    try {
+      const { data, error } = await supabase
+        .from('utenti')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') return null; // Not found
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('❌ Error in getUtenteById:', error);
+      return null;
+    }
   }
 
-  // Crea nuovo utente
+  // Crea/Aggiorna utente via RPC
+  static async upsertUtente(pin: number, nome: string, cognome: string): Promise<void> {
+    try {
+      console.log('[Supabase RPC] upsert_utente_rpc args:', { p_pin: pin, p_nome: nome, p_cognome: cognome });
+      
+      const { data, error } = await supabase.rpc('upsert_utente_rpc', { 
+        p_pin: pin, 
+        p_nome: nome || null, 
+        p_cognome: cognome || null 
+      });
+
+      if (error) {
+        console.error('[Supabase RPC ERROR upsert_utente_rpc]', error);
+        throw error;
+      }
+
+      console.debug('🟢 Utente upsert OK', data);
+    } catch (error) {
+      console.error('❌ Errore upsert utente:', error);
+      throw error;
+    }
+  }
+
+  // Crea nuovo utente (wrapper per compatibilità)
   static async createUtente(input: UtenteInput): Promise<Utente> {
-    await delay(500);
+    await this.upsertUtente(input.pin, input.nome, input.cognome);
     
-    // Verifica che il PIN sia disponibile
-    if (!await this.isPinAvailable(input.pin)) {
-      throw new Error(`PIN ${input.pin} già in uso`);
+    // Ricarica utenti dal DB per ottenere l'utente creato
+    const utenti = await this.getUtenti();
+    const nuovoUtente = utenti.find(u => u.pin === input.pin);
+    
+    if (!nuovoUtente) {
+      throw new Error('Errore durante la creazione utente');
     }
-
-    const newUtente: Utente = {
-      id: Date.now().toString(),
-      ...input,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    mockUtenti.push(newUtente);
-    console.log('✅ Utente creato:', newUtente);
-    return newUtente;
+    
+    return nuovoUtente;
   }
 
-  // Aggiorna utente esistente
+  // Aggiorna utente esistente (usa upsert RPC)
   static async updateUtente(id: string, input: Partial<UtenteInput>): Promise<Utente> {
-    await delay(400);
-    
-    const index = mockUtenti.findIndex(u => u.id === id);
-    if (index === -1) {
-      throw new Error('Utente non trovato');
+    if (input.pin && input.nome && input.cognome) {
+      await this.upsertUtente(input.pin, input.nome, input.cognome);
     }
-
-    mockUtenti[index] = {
-      ...mockUtenti[index],
-      ...input,
-      updated_at: new Date().toISOString(),
-    };
-
-    console.log('✅ Utente aggiornato:', mockUtenti[index]);
-    return mockUtenti[index];
+    
+    // Ricarica utenti dal DB
+    const utenti = await this.getUtenti();
+    const utenteAggiornato = utenti.find(u => u.id === id);
+    
+    if (!utenteAggiornato) {
+      throw new Error('Utente non trovato dopo aggiornamento');
+    }
+    
+    return utenteAggiornato;
   }
 
-  // Archivia utente (sposta in ex-dipendenti e libera PIN)
+  // Archivia utente (TODO: implementare RPC se necessario)
   static async archiviaUtente(id: string, motivo?: string): Promise<void> {
-    await delay(600);
-    
-    const index = mockUtenti.findIndex(u => u.id === id);
-    if (index === -1) {
-      throw new Error('Utente non trovato');
-    }
-
-    const utente = mockUtenti[index];
-    const exDipendente: ExDipendente = {
-      ...utente,
-      archiviato_at: new Date().toISOString(),
-      motivo_archiviazione: motivo,
-    };
-
-    // Sposta in ex-dipendenti
-    mockExDipendenti.push(exDipendente);
-    
-    // Rimuovi da utenti attivi (libera PIN)
-    mockUtenti.splice(index, 1);
-    
-    console.log('📦 Utente archiviato:', exDipendente);
-    console.log(`🔓 PIN ${utente.pin} liberato`);
+    throw new Error('archiviaUtente not implemented - use Supabase RPC functions if needed');
   }
 
-  // Elimina utente definitivamente
+  // Elimina utente definitivamente (TODO: implementare RPC se necessario)
   static async deleteUtente(id: string): Promise<void> {
-    await delay(500);
-    
-    const index = mockUtenti.findIndex(u => u.id === id);
-    if (index === -1) {
-      throw new Error('Utente non trovato');
-    }
-
-    const utente = mockUtenti[index];
-    mockUtenti.splice(index, 1);
-    
-    console.log('❌ Utente eliminato definitivamente:', utente);
-    console.log(`🔓 PIN ${utente.pin} liberato`);
+    throw new Error('deleteUtente not implemented - use Supabase RPC functions if needed');
   }
 
   // Verifica disponibilità PIN
   static async isPinAvailable(pin: number): Promise<boolean> {
-    await delay(100);
-    return !mockUtenti.some(u => u.pin === pin);
+    try {
+      const { data, error } = await supabase
+        .from('utenti')
+        .select('pin')
+        .eq('pin', pin)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        return true; // PIN non trovato = disponibile
+      }
+      
+      if (error) {
+        throw error;
+      }
+
+      return false; // PIN trovato = non disponibile
+    } catch (error) {
+      console.error('❌ Error in isPinAvailable:', error);
+      return false; // In caso di errore, assumiamo non disponibile per sicurezza
+    }
   }
 }
