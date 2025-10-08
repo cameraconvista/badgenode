@@ -72,18 +72,20 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
   // const ranges = getDateRanges(); // Commentato per evitare warning unused
 
   return (
-    <div className="bg-gray-800/50 rounded-lg p-4 space-y-4">
+    <div className="bg-gray-800/50 rounded-lg p-6 space-y-4">
       <div className="flex items-center gap-2 mb-4">
         <Filter className="w-5 h-5 text-violet-400" />
-        <h3 className="text-lg font-semibold text-white">Filtri Periodo</h3>
+        <h3 className="text-xl font-semibold text-white">Filtri Periodo</h3>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Periodo Rapido */}
         <div className="space-y-2">
-          <Label className="text-gray-200">Periodo</Label>
+          <Label className="text-gray-200 text-base">Periodo</Label>
           <Select value={selectedPeriod} onValueChange={handlePeriodChange} disabled={isLoading}>
-            <SelectTrigger className="bg-gray-700/50 border-gray-600 text-white">
+            <SelectTrigger className={`bg-gray-700/50 border-gray-600 text-base ${
+              selectedPeriod === 'personalizzato' ? 'text-yellow-400' : 'text-white'
+            }`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -97,14 +99,14 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
 
         {/* Data Dal */}
         <div className="space-y-2">
-          <Label htmlFor="dal" className="text-gray-200">Dal</Label>
+          <Label htmlFor="dal" className="text-gray-200 text-base">Dal</Label>
           <div className="relative">
             <Input
               id="dal"
               type="date"
               value={filters.dal}
               onChange={(e) => handleDateChange('dal', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 pl-10"
+              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 pl-10 text-base"
               disabled={isLoading}
             />
             <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -113,14 +115,14 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
 
         {/* Data Al */}
         <div className="space-y-2">
-          <Label htmlFor="al" className="text-gray-200">Al</Label>
+          <Label htmlFor="al" className="text-gray-200 text-base">Al</Label>
           <div className="relative">
             <Input
               id="al"
               type="date"
               value={filters.al}
               onChange={(e) => handleDateChange('al', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 pl-10"
+              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 pl-10 text-base"
               disabled={isLoading}
             />
             <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -129,7 +131,7 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
       </div>
 
       {/* Anteprima periodo selezionato */}
-      <div className="text-sm text-gray-400 flex items-center gap-2">
+      <div className="text-base text-gray-400 flex items-center gap-2">
         <Calendar className="w-4 h-4" />
         <span>
           Periodo selezionato: <strong className="text-white">{filters.dal}</strong> → <strong className="text-white">{filters.al}</strong>

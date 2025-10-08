@@ -1,23 +1,15 @@
 import { Edit, Clock, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
   Timbratura, 
   expandDaysRange, 
   computeOreLavoratePerGiorno, 
   computeOreExtra,
   formatOre,
-  formatDataItaliana,
+  formatDataBreve,
   getMeseItaliano
 } from '@/lib/time';
-import StoricoStats from './StoricoStats';
+import StoricoTotalsBar from './StoricoTotalsBar';
 
 interface StoricoTableProps {
   timbrature: Timbratura[];
@@ -97,13 +89,13 @@ export default function StoricoTable({
     <div className="bg-gray-800/50 rounded-lg flex flex-col h-full overflow-hidden">
       {/* Header fisso */}
       <div className="bg-gray-700/50 border-b border-gray-600 flex-shrink-0">
-        <div className="grid grid-cols-7 gap-4 p-4 text-gray-200 font-semibold">
+        <div className="grid grid-cols-7 gap-4 p-4 text-gray-100 font-semibold text-base">
           <div>Data</div>
           <div>Mese</div>
           <div className="text-center">Entrata</div>
           <div className="text-center">Uscita</div>
-          <div className="text-right">Ore</div>
-          <div className="text-right">Extra</div>
+          <div className="text-right tabular-nums">Ore</div>
+          <div className="text-right tabular-nums">Extra</div>
           <div className="text-center">Modifica</div>
         </div>
       </div>
@@ -114,20 +106,20 @@ export default function StoricoTable({
           <div 
             key={giorno.giornologico}
             className={`
-              grid grid-cols-7 gap-4 p-4 border-b border-gray-600/50
+              grid grid-cols-7 gap-4 p-4 border-b border-gray-600/50 text-base
               ${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'}
               ${!giorno.hasTimbrature ? 'opacity-60' : ''}
               hover:bg-gray-600/30 transition-colors
             `}
           >
             {/* Data */}
-            <div className="font-medium text-white flex items-center gap-2">
+            <div className="font-medium text-gray-100 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-gray-400" />
-              {formatDataItaliana(giorno.giornologico)}
+              {formatDataBreve(giorno.giornologico)}
             </div>
             
             {/* Mese */}
-            <div className="text-gray-300">
+            <div className="text-gray-200">
               {getMeseItaliano(giorno.giornologico)}
             </div>
             
@@ -150,16 +142,16 @@ export default function StoricoTable({
             </div>
             
             {/* Ore Lavorate */}
-            <div className="text-right">
+            <div className="text-right tabular-nums">
               {giorno.oreLavorate > 0 ? (
-                <span className="text-white font-medium">{formatOre(giorno.oreLavorate)}</span>
+                <span className="text-gray-100 font-medium">{formatOre(giorno.oreLavorate)}</span>
               ) : (
                 <span className="text-gray-500">0.00</span>
               )}
             </div>
             
             {/* Ore Extra */}
-            <div className="text-right">
+            <div className="text-right tabular-nums">
               {giorno.oreExtra > 0 ? (
                 <span className="text-yellow-400 font-bold">{formatOre(giorno.oreExtra)}</span>
               ) : (
@@ -186,29 +178,8 @@ export default function StoricoTable({
         ))}
       </div>
       
-      {/* Footer fisso - Totale Mensile */}
-      <div className="bg-violet-900/30 border-t-2 border-violet-400 flex-shrink-0">
-        <div className="grid grid-cols-7 gap-4 p-4">
-          <div className="font-bold text-violet-300">TOTALE MENSILE</div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div className="text-right font-bold text-yellow-300">
-            {formatOre(totaleMensileOre)}
-          </div>
-          <div className="text-right font-bold">
-            {totaleMensileExtra > 0 ? (
-              <span className="text-yellow-400">{formatOre(totaleMensileExtra)}</span>
-            ) : (
-              <span className="text-gray-500">—</span>
-            )}
-          </div>
-          <div></div>
-        </div>
-      </div>
-      
-      {/* Statistiche aggiuntive - FISSE */}
-      <StoricoStats
+      {/* Footer fisso - Totali Mensili */}
+      <StoricoTotalsBar
         totaleMensileOre={totaleMensileOre}
         totaleMensileExtra={totaleMensileExtra}
         giorniLavorati={giorni.filter(g => g.hasTimbrature).length}
