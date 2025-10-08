@@ -90,13 +90,13 @@ export default function StoricoTable({
       {/* Header fisso */}
       <div className="bg-gray-700/50 border-b border-gray-600 flex-shrink-0">
         <div className="grid grid-cols-7 gap-4 p-4 text-white font-semibold text-base">
-          <div>Data</div>
-          <div>Mese</div>
-          <div className="text-center">Entrata</div>
-          <div className="text-center">Uscita</div>
-          <div className="text-right tabular-nums">Ore</div>
-          <div className="text-right tabular-nums">Extra</div>
-          <div className="text-center">Modifica</div>
+          <div className="px-0">Data</div>
+          <div className="px-0">Mese</div>
+          <div className="text-center px-0">Entrata</div>
+          <div className="text-center px-0">Uscita</div>
+          <div className="text-right tabular-nums px-0">Ore</div>
+          <div className="text-right tabular-nums px-0">Extra</div>
+          <div className="text-center px-0">Modifica</div>
         </div>
       </div>
       
@@ -113,18 +113,18 @@ export default function StoricoTable({
             `}
           >
             {/* Data */}
-            <div className="font-medium text-white flex items-center gap-2">
+            <div className="font-medium text-white flex items-center gap-2 px-0">
               <Calendar className="w-4 h-4 text-gray-400" />
               {formatDataBreve(giorno.giornologico)}
             </div>
             
             {/* Mese */}
-            <div className="text-white">
+            <div className="text-white font-medium px-0">
               {getMeseItaliano(giorno.giornologico)}
             </div>
             
             {/* Entrata */}
-            <div className="text-center">
+            <div className="text-center px-0">
               {giorno.entrata ? (
                 <span className="text-white font-medium">{giorno.entrata}</span>
               ) : (
@@ -133,7 +133,7 @@ export default function StoricoTable({
             </div>
             
             {/* Uscita */}
-            <div className="text-center">
+            <div className="text-center px-0">
               {giorno.uscita ? (
                 <span className="text-white font-medium">{giorno.uscita}</span>
               ) : (
@@ -142,7 +142,7 @@ export default function StoricoTable({
             </div>
             
             {/* Ore Lavorate */}
-            <div className="text-right tabular-nums">
+            <div className="text-right tabular-nums px-0">
               {giorno.oreLavorate > 0 ? (
                 <span className="text-white font-medium">{formatOre(giorno.oreLavorate)}</span>
               ) : (
@@ -151,7 +151,7 @@ export default function StoricoTable({
             </div>
             
             {/* Ore Extra */}
-            <div className="text-right tabular-nums">
+            <div className="text-right tabular-nums px-0">
               {giorno.oreExtra > 0 ? (
                 <span className="text-yellow-400 font-bold">{formatOre(giorno.oreExtra)}</span>
               ) : (
@@ -160,7 +160,7 @@ export default function StoricoTable({
             </div>
             
             {/* Modifica */}
-            <div className="text-center">
+            <div className="text-center px-0">
               {giorno.hasTimbrature ? (
                 <Button
                   variant="ghost"

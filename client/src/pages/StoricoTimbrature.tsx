@@ -92,8 +92,21 @@ export default function StoricoTimbrature({ pin = 71 }: StoricoTimbratureProps) 
   }
 
   return (
-    <div className="h-screen bg-gray-900 flex flex-col overflow-hidden">
-      <div className="max-w-7xl mx-auto w-full flex flex-col h-full p-6 gap-4">
+    <div 
+      className="h-screen flex items-center justify-center p-4"
+      style={{
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+      }}
+    >
+      <div className="w-full max-w-[1200px] flex items-center justify-center h-full">
+        <div 
+          className="rounded-3xl p-6 shadow-2xl border-2 w-full h-[95vh] overflow-hidden relative flex flex-col gap-4"
+          style={{
+            backgroundColor: '#2b0048',
+            borderColor: 'rgba(231, 116, 240, 0.6)',
+            boxShadow: '0 0 50px rgba(231, 116, 240, 0.3)'
+          }}
+        >
         {/* Header - FISSO */}
         <StoricoHeader
           dipendente={dipendente}
@@ -131,6 +144,7 @@ export default function StoricoTimbrature({ pin = 71 }: StoricoTimbratureProps) 
           onDelete={() => deleteMutation.mutateAsync()}
           isLoading={updateMutation.isPending || deleteMutation.isPending}
         />
+        </div>
       </div>
     </div>
   );
