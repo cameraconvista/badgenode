@@ -71,9 +71,9 @@ export default function ArchivioTable({
                     <ChevronUp className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} />
                   </button>
                 </th>
-                <th className="text-left p-4 font-medium text-base text-gray-200">Nome</th>
-                <th className="text-center p-4 font-medium text-base text-gray-200">Cognome</th>
-                <th className="text-center p-4 font-medium text-base text-gray-200 w-32">Azioni</th>
+                <th className="text-left p-4 font-medium text-base text-gray-200 w-40">Nome</th>
+                <th className="text-center p-4 font-medium text-base text-gray-200 w-40">Cognome</th>
+                <th className="text-center p-4 font-medium text-base text-gray-200 w-28">Azioni</th>
               </tr>
             </thead>
           </table>
@@ -108,15 +108,15 @@ export default function ArchivioTable({
                         {utente.pin.toString().padStart(2, '0')}
                       </span>
                     </td>
-                    <td className="p-4">
+                    <td className="p-4 w-40">
                       <span className="font-medium text-base text-white">{utente.nome}</span>
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="p-4 w-40 text-center">
                       <div className="flex justify-center">
                         <span className="font-medium text-base text-white">{utente.cognome}</span>
                       </div>
                     </td>
-                    <td className="p-4 w-32">
+                    <td className="p-4 w-28">
                       <div className="flex justify-center">
                         <ArchivioActions
                           utente={utente}
