@@ -40,6 +40,7 @@ export default function ModaleModificaDipendente({
         telefono: utente.telefono || '',
         pin: utente.pin,
         ore_contrattuali: utente.ore_contrattuali,
+        descrizione_contratto: utente.descrizione_contratto || '',
       });
       setErrors({});
       setTimeout(() => firstInputRef.current?.focus(), 100);

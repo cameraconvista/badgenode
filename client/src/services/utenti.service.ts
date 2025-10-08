@@ -11,6 +11,7 @@ export interface Utente {
   email?: string;
   telefono?: string;
   ore_contrattuali: number;
+  descrizione_contratto?: string;
   created_at: string;
   updated_at: string;
 }
@@ -27,6 +28,7 @@ export interface UtenteInput {
   telefono?: string;
   pin: number;
   ore_contrattuali: number;
+  descrizione_contratto?: string;
 }
 
 export class UtentiService {

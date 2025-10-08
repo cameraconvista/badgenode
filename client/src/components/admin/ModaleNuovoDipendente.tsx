@@ -22,6 +22,7 @@ export default function ModaleNuovoDipendente({
     telefono: '',
     pin: 0, // Inizia vuoto, sarà validato come errore
     ore_contrattuali: 8.0,
+    descrizione_contratto: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +39,7 @@ export default function ModaleNuovoDipendente({
         telefono: '',
         pin: 0, // Reset a vuoto
         ore_contrattuali: 8.0,
+        descrizione_contratto: '',
       });
       setErrors({});
       // Focus sul primo campo

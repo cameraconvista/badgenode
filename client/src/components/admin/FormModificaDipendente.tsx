@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { User, FileText } from 'lucide-react';
 import { UtenteInput } from '@/services/utenti.service';
 
@@ -109,6 +110,18 @@ export default function FormModificaDipendente({
         </div>
 
         <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="descrizione_contratto" className="text-gray-200">Descrizione Contratto in Corso</Label>
+            <Textarea
+              id="descrizione_contratto"
+              value={formData.descrizione_contratto || ''}
+              onChange={(e) => onInputChange('descrizione_contratto', e.target.value)}
+              placeholder="Inserisci la descrizione del contratto attuale..."
+              className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-violet-400 min-h-[80px]"
+              disabled={isLoading}
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="ore_contrattuali" className="text-gray-200">Ore max giornaliere da contratto *</Label>
             <Input

@@ -20,7 +20,6 @@ export default function FormNuovoDipendente({
   onInputChange,
   firstInputRef,
 }: FormNuovoDipendenteProps) {
-  const [descrizioneContratto, setDescrizioneContratto] = useState('');
 
   return (
     <div className="space-y-6">
@@ -122,9 +121,9 @@ export default function FormNuovoDipendente({
           <div className="space-y-2">
             <Label htmlFor="descrizione" className="text-gray-200">Descrizione Contratto in Corso</Label>
             <Textarea
-              id="descrizione"
-              value={descrizioneContratto}
-              onChange={(e) => setDescrizioneContratto(e.target.value)}
+              id="descrizione_contratto"
+              value={formData.descrizione_contratto || ''}
+              onChange={(e) => onInputChange('descrizione_contratto', e.target.value)}
               placeholder="Inserisci la descrizione del contratto attuale..."
               className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-violet-400 min-h-[80px]"
               disabled={isLoading}
