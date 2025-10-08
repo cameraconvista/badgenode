@@ -70,28 +70,28 @@ export default function Home() {
       />
 
       <div className="w-full max-w-sm md:max-w-md flex items-center justify-center">
-        <div 
-          className="rounded-3xl p-6 shadow-2xl border-2 w-full max-h-[90vh] overflow-hidden relative"
-          style={{
-            backgroundColor: '#2b0048',
-            borderColor: 'rgba(231, 116, 240, 0.3)',
-            minWidth: '320px',
-            maxWidth: '420px'
-          }}
-        >
-          {/* Effetto luce/riflesso dinamico sul bordo */}
+        {/* Wrapper per effetto riflesso bordo esterno */}
+        <div className="relative">
+          {/* Riflesso sottile sul bordo esterno */}
           <div 
             className="absolute inset-0 rounded-3xl pointer-events-none border-glow-animated"
             style={{
-              background: 'conic-gradient(from 0deg, transparent 0%, rgba(231, 116, 240, 0.35) 15%, rgba(196, 132, 252, 0.25) 30%, transparent 45%, transparent 55%, rgba(231, 116, 240, 0.35) 70%, rgba(196, 132, 252, 0.25) 85%, transparent 100%)',
-              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-              maskComposite: 'xor',
-              WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-              WebkitMaskComposite: 'xor',
-              padding: '2px',
-              animation: 'spin 8s linear infinite'
+              background: 'linear-gradient(90deg, transparent 0%, rgba(231, 116, 240, 0.15) 50%, transparent 100%)',
+              transform: 'translateX(-100%)',
+              animation: 'slideRight 6s ease-in-out infinite',
+              zIndex: 1
             }}
           />
+          <div 
+            className="rounded-3xl p-6 shadow-2xl border-2 w-full max-h-[90vh] overflow-hidden relative"
+            style={{
+              backgroundColor: '#2b0048',
+              borderColor: 'rgba(231, 116, 240, 0.3)',
+              minWidth: '320px',
+              maxWidth: '420px',
+              zIndex: 2
+            }}
+          >
           <LogoHeader />
           <PinDisplay pin={pin} />
           <Keypad 
@@ -105,6 +105,7 @@ export default function Home() {
             onUscita={handleUscita} 
             disabled={false} 
           />
+          </div>
         </div>
       </div>
 
