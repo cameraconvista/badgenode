@@ -112,7 +112,9 @@ export default function ArchivioTable({
                       <span className="font-medium text-base text-white">{utente.nome}</span>
                     </td>
                     <td className="p-4 text-center">
-                      <span className="font-medium text-base text-white">{utente.cognome}</span>
+                      <div className="flex justify-center">
+                        <span className="font-medium text-base text-white">{utente.cognome}</span>
+                      </div>
                     </td>
                     <td className="p-4 w-32">
                       <div className="flex justify-center">
