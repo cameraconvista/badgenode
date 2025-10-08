@@ -1,12 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 /* LIGHT MODE */
 :root {
   /* BeigeNode2 Palette */
   --bn-primary: #510357;
   --bn-accent: #e774f0;
+}
+
+/* Effetto bordo animato - rispetta prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .border-glow-animated {
+    animation: none !important;
+  }
+}
+
+:root {
   --bn-white: #ffffff;
 
   --button-outline: rgba(0, 0, 0, 0.1);
