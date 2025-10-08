@@ -126,12 +126,6 @@ export default function Home() {
         backgroundAttachment: 'fixed'
       }}
     >
-      <FeedbackBanner
-        type={feedback.type}
-        message={feedback.message}
-        onClose={() => setFeedback({ type: null, message: '' })}
-      />
-
       <div className="w-full max-w-sm md:max-w-md flex items-center justify-center">
         <div 
           className="rounded-3xl p-6 shadow-2xl border-2 w-full max-h-[90vh] overflow-hidden relative"
@@ -158,6 +152,14 @@ export default function Home() {
             </div>
           )}
           <PinDisplay pin={pin} />
+          
+          {/* Messaggio feedback sotto il PIN */}
+          <FeedbackBanner
+            type={feedback.type}
+            message={feedback.message}
+            onClose={() => setFeedback({ type: null, message: '' })}
+          />
+          
           <Keypad 
             onKeyPress={handleKeyPress} 
             onClear={handleClear} 
