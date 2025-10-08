@@ -4,6 +4,7 @@
 import { Timbratura, computeGiornoLogico } from '@/lib/time';
 import { delay } from './mockData';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
+import { supabase } from '@/lib/supabaseClient';
 
 // Mock data per timbrature
 const mockTimbrature: Timbratura[] = [
@@ -201,5 +202,27 @@ export class TimbratureService {
   static async getStatsPeriodo(filters: TimbratureFilters, oreContrattuali: number): Promise<TimbratureStats> {
     const timbrature = await this.getTimbraturePeriodo(filters);
     return TimbratureStatsService.calculateStats(timbrature, oreContrattuali);
+  }
+
+  // RPC: Inserisci timbratura via Supabase
+  static async timbra(tipo: 'entrata' | 'uscita', when?: string): Promise<void> {
+    try {
+      const { data, error } = await supabase.rpc('insert_timbro', {
+        p_tipo: tipo,
+        p_ts: when || null
+      });
+
+      if (error) {
+        if (error.message.includes('permission denied') || error.message.includes('RLS')) {
+          throw new Error('Non autorizzato: controlla PIN/ruolo');
+        }
+        throw error;
+      }
+
+      console.log('✅ Timbratura registrata:', { tipo, when: when || 'now', data });
+    } catch (error) {
+      console.error('❌ Errore timbratura:', error);
+      throw error;
+    }
   }
 }

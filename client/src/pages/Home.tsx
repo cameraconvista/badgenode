@@ -6,6 +6,9 @@ import DateTimeLive from '@/components/home/DateTimeLive';
 import ActionButtons from '@/components/home/ActionButtons';
 import SettingsModal from '@/components/home/SettingsModal';
 import FeedbackBanner from '@/components/FeedbackBanner';
+import { useAuth } from '@/contexts/AuthContext';
+import { TimbratureService } from '@/services/timbrature.service';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Home() {
   const [pin, setPin] = useState('');
@@ -14,6 +17,9 @@ export default function Home() {
     type: null,
     message: '',
   });
+  const [loading, setLoading] = useState(false);
+  const { user, logout } = useAuth();
+  const { toast } = useToast();
 
   const handleKeyPress = (key: string) => {
     if (pin.length < 4) {
@@ -34,25 +40,68 @@ export default function Home() {
     window.location.href = '/archivio-dipendenti';
   };
 
-  const handleEntrata = () => {
+  const handleEntrata = async () => {
     if (pin.length === 0) {
       setFeedback({ type: 'error', message: 'Inserire il PIN' });
-    } else {
-      console.log('Entrata:', pin);
+      setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await TimbratureService.timbra('entrata');
       setFeedback({ type: 'success', message: 'Entrata registrata' });
       setPin('');
+      
+      toast({
+        title: "Entrata registrata",
+        description: `PIN ${user?.pin || pin} - ${new Date().toLocaleTimeString()}`,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Errore durante la registrazione';
+      setFeedback({ type: 'error', message });
+      
+      toast({
+        title: "Errore timbratura",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+      setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
     }
-    setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
   };
 
-  const handleUscita = () => {
+  const handleUscita = async () => {
     if (pin.length === 0) {
       setFeedback({ type: 'error', message: 'Inserire il PIN' });
-    } else {
-      console.log('Uscita:', pin);
-      setFeedback({ type: 'success', message: 'Uscita registrata' });
+      setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
+      return;
     }
-    setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
+
+    setLoading(true);
+    try {
+      await TimbratureService.timbra('uscita');
+      setFeedback({ type: 'success', message: 'Uscita registrata' });
+      setPin('');
+      
+      toast({
+        title: "Uscita registrata",
+        description: `PIN ${user?.pin || pin} - ${new Date().toLocaleTimeString()}`,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Errore durante la registrazione';
+      setFeedback({ type: 'error', message });
+      
+      toast({
+        title: "Errore timbratura",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+      setTimeout(() => setFeedback({ type: null, message: '' }), 3000);
+    }
   };
 
   return (
@@ -81,6 +130,19 @@ export default function Home() {
           }}
         >
           <LogoHeader />
+          
+          {/* Debug info in development */}
+          {import.meta.env.DEV && user && (
+            <div className="mb-4 p-2 bg-gray-800/50 rounded text-xs text-gray-300 text-center">
+              {user.isAdmin ? 'Admin' : `PIN ${user.pin}`} | {user.email}
+              <button 
+                onClick={logout}
+                className="ml-2 text-red-400 hover:text-red-300"
+              >
+                Logout
+              </button>
+            </div>
+          )}
           <PinDisplay pin={pin} />
           <Keypad 
             onKeyPress={handleKeyPress} 
@@ -91,7 +153,7 @@ export default function Home() {
           <ActionButtons 
             onEntrata={handleEntrata} 
             onUscita={handleUscita} 
-            disabled={false} 
+            disabled={loading} 
           />
         </div>
       </div>
