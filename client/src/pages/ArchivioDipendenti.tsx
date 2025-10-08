@@ -107,12 +107,17 @@ export default function ArchivioDipendenti() {
             boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)'
           }}
         >
+          {/* Header con logo centrato e toggle tema */}
           <div className="flex items-center justify-between mb-4">
+            <div className="w-8"></div> {/* Spacer per bilanciare */}
             <LogoHeader />
             <ThemeToggle />
           </div>
-          <div className="text-center mb-6">
+          <div className="text-center mb-4">
             <h1 className="text-2xl font-bold text-white mb-2">Archivio Dipendenti</h1>
+            <div className="text-sm text-gray-400">
+              <strong className="text-violet-400">{utenti.length}</strong> dipendenti attivi
+            </div>
           </div>
           <div className="flex-1 overflow-hidden mb-4">
             <ArchivioTable

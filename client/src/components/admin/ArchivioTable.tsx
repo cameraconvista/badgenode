@@ -132,12 +132,6 @@ export default function ArchivioTable({
         </div>
       </div>
 
-      {/* Info risultati */}
-      {sortedUtenti.length > 0 && (
-        <div className="text-sm text-gray-400 text-center mt-3">
-          <strong className="text-violet-400">{utenti.length}</strong> dipendenti attivi
-        </div>
-      )}
     </div>
   );
 }

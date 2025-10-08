@@ -89,13 +89,13 @@ export default function FormModificaDipendente({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="pin" className="text-gray-200">PIN</Label>
+            <Label htmlFor="pin" className="text-yellow-400 font-bold">PIN</Label>
             <Input
               id="pin"
               type="number"
               value={formData.pin}
               disabled={true}
-              className="bg-gray-600/50 border-gray-500 text-gray-300 cursor-not-allowed"
+              className="bg-gray-600/50 border-gray-500 text-gray-300 cursor-not-allowed [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
             />
             <p className="text-sm text-gray-400">Il PIN non può essere modificato</p>
           </div>
