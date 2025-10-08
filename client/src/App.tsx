@@ -6,6 +6,8 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import Home from '@/pages/Home';
 import ArchivioDipendenti from '@/pages/ArchivioDipendenti';
+import StoricoTimbrature from '@/pages/StoricoTimbrature';
+import StoricoWrapper from '@/components/storico/StoricoWrapper';
 import NotFound from '@/pages/not-found';
 
 function Router() {
@@ -13,6 +15,10 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/archivio-dipendenti" component={ArchivioDipendenti} />
+      <Route path="/storico-timbrature">
+        {() => <StoricoTimbrature />}
+      </Route>
+      <Route path="/storico-timbrature/:pin" component={StoricoWrapper} />
       <Route component={NotFound} />
     </Switch>
   );

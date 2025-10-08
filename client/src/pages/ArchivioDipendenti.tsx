@@ -34,6 +34,7 @@ export default function ArchivioDipendenti() {
   };
   const handleStorico = (pin: number) => {
     console.log('📊 Navigazione storico per PIN:', pin);
+    setLocation(`/storico-timbrature/${pin}`);
   };
   const handleModifica = (utente: Utente) => {
     setUtenteSelezionato(utente);
