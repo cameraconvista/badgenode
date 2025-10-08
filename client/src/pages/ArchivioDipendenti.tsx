@@ -8,7 +8,6 @@ import ArchivioTable from '@/components/admin/ArchivioTable';
 import ModaleDipendente from '@/components/admin/ModaleDipendente';
 import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
 import { UtentiService, Utente, UtenteInput } from '@/services/utenti.service';
-import { MOCK_DIPENDENTI } from '@/data/mockDipendenti';
 
 export default function ArchivioDipendenti() {
   const [, setLocation] = useLocation();
@@ -23,15 +22,10 @@ export default function ArchivioDipendenti() {
   const loadUtenti = async () => {
     setIsLoading(true);
     try {
-      // TODO: Usare dati mock per demo - ripristinare UtentiService.getUtenti() in produzione
-      if (import.meta.env.DEV) {
-        // Simula delay API
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setUtenti(MOCK_DIPENDENTI);
-      } else {
-        const data = await UtentiService.getUtenti();
-        setUtenti(data);
-      }
+      // TODO: Ripristinare connessione Supabase quando disponibile
+      // Per ora usa sempre il servizio mock che gestisce i dati in memoria
+      const data = await UtentiService.getUtenti();
+      setUtenti(data);
     } catch (error) {
       console.error('Errore caricamento utenti:', error);
     } finally {
