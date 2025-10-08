@@ -94,7 +94,7 @@ export default function StoricoTable({
           <div className="px-0">Mese</div>
           <div className="text-center px-0">Entrata</div>
           <div className="text-center px-0">Uscita</div>
-          <div className="text-right tabular-nums px-0">Ore</div>
+          <div className="text-center tabular-nums px-0">Ore</div>
           <div className="text-right tabular-nums px-0">Extra</div>
           <div className="text-center px-0">Modifica</div>
         </div>
@@ -142,7 +142,7 @@ export default function StoricoTable({
             </div>
             
             {/* Ore Lavorate */}
-            <div className="text-right tabular-nums px-0">
+            <div className="text-center tabular-nums px-0">
               {giorno.oreLavorate > 0 ? (
                 <span className="text-white font-medium">{formatOre(giorno.oreLavorate)}</span>
               ) : (

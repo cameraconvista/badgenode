@@ -73,9 +73,17 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
 
   return (
     <div className="bg-gray-800/50 rounded-lg p-6 space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <Filter className="w-5 h-5 text-violet-400" />
-        <h3 className="text-xl font-semibold text-white">Filtri Periodo</h3>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Filter className="w-5 h-5 text-violet-400" />
+          <h3 className="text-xl font-semibold text-white">Filtri Periodo</h3>
+        </div>
+        <div className="text-sm text-gray-400 flex items-center gap-2">
+          <Calendar className="w-4 h-4" />
+          <span>
+            Periodo selezionato: <strong className="text-white">{filters.dal}</strong> → <strong className="text-white">{filters.al}</strong>
+          </span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -128,14 +136,6 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
             <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           </div>
         </div>
-      </div>
-
-      {/* Anteprima periodo selezionato */}
-      <div className="text-base text-gray-400 flex items-center gap-2">
-        <Calendar className="w-4 h-4" />
-        <span>
-          Periodo selezionato: <strong className="text-white">{filters.dal}</strong> → <strong className="text-white">{filters.al}</strong>
-        </span>
       </div>
     </div>
   );
