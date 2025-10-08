@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "build:clean": "rimraf dist && vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
+    "env:write": "node scripts/write-env.mjs",
     "check": "tsc -p tsconfig.json --noEmit",
     "check:dev": "tsx scripts/check-dev.ts",
     "db:push": "drizzle-kit push",
@@ -118,6 +120,7 @@
     "lint-staged": "^16.2.3",
     "postcss": "^8.4.47",
     "prettier": "^3.6.2",
+    "rimraf": "^5.0.5",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.20.6",
     "typescript": "5.6.3",

@@ -4,6 +4,10 @@ build
 .DS_Store
 .env
 .env.local
+.env.production
+.env.production.local
+.env.development
+.env.*.local
 .cache
 /.local
 /Backup_Automatico
