@@ -24,7 +24,8 @@
     "diagnose": "tsx scripts/diagnose.ts",
     "diagnose:force": "rm -f .diagnose_done && tsx scripts/diagnose.ts",
     "docs:consolidate": "tsx scripts/consolidate-docs.ts",
-    "gen:component": "tsx scripts/template-component.ts"
+    "gen:component": "tsx scripts/template-component.ts",
+    "seed:auth": "node scripts/seed-auth.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
