@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
-import KeyButton from './KeyButton';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -9,44 +8,34 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsModalProps) {
-  const [code, setCode] = useState('');
+  const [pin, setPin] = useState('');
+  const [error, setError] = useState(false);
   const ADMIN_CODE = '1909';
 
-  const handleKeyPress = (key: string) => {
-    if (code.length < 4) {
-      setCode(code + key);
-    }
-  };
-
-  const handleClear = () => {
-    setCode('');
-  };
-
   const handleSubmit = () => {
-    if (code === ADMIN_CODE) {
+    if (pin === ADMIN_CODE) {
       onSuccess();
-      setCode('');
+      setPin('');
+      setError(false);
       onClose();
     } else {
-      setCode('');
-      // Could add error feedback here
+      setError(true);
+      setPin('');
+      setTimeout(() => setError(false), 2000);
     }
   };
 
-  const keys = [
-    ['1', '2', '3'],
-    ['4', '5', '6'],
-    ['7', '8', '9'],
-    ['C', '0', '✓'],
-  ];
+  const handleCancel = () => {
+    setPin('');
+    setError(false);
+    onClose();
+  };
 
-  const handlePress = (key: string) => {
-    if (key === 'C') {
-      handleClear();
-    } else if (key === '✓') {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
       handleSubmit();
-    } else {
-      handleKeyPress(key);
+    } else if (e.key === 'Escape') {
+      handleCancel();
     }
   };
 
@@ -59,33 +48,56 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
         style={{
           backgroundColor: '#2b0048',
           borderColor: 'rgba(231, 116, 240, 0.5)',
+          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3)'
         }}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-white">Codice Admin</h2>
           <button
-            onClick={onClose}
+            onClick={handleCancel}
             className="text-white hover:text-gray-300 p-1"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="bg-white/90 rounded-xl px-4 py-3 text-center mb-6">
-          <div className="text-2xl font-mono tracking-[0.4em] min-h-[2rem] flex items-center justify-center text-gray-600">
-            {code.length > 0 ? '•'.repeat(code.length) : 'CODICE'}
-          </div>
+        <div className="mb-6">
+          <label className="block text-white text-sm font-medium mb-3 text-center">
+            Inserisci PIN
+          </label>
+          <input
+            type="password"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="••••"
+            maxLength={4}
+            className={`w-full px-4 py-3 text-center text-2xl font-mono tracking-[0.4em] rounded-xl border-2 bg-white/95 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 ${
+              error ? 'border-red-400 bg-red-50' : 'border-gray-200'
+            }`}
+            autoFocus
+          />
+          {error && (
+            <p className="text-red-300 text-sm text-center mt-2">
+              PIN non valido
+            </p>
+          )}
         </div>
 
-        <div className="grid grid-cols-3 gap-3 max-w-[240px] mx-auto">
-          {keys.flat().map((key) => (
-            <KeyButton
-              key={key}
-              value={key}
-              onClick={handlePress}
-              className="w-12 h-12 text-base"
-            />
-          ))}
+        <div className="flex gap-3">
+          <button
+            onClick={handleCancel}
+            className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors"
+          >
+            Annulla
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={pin.length === 0}
+            className="flex-1 px-4 py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
+          >
+            Conferma
+          </button>
         </div>
       </div>
     </div>
