@@ -12,6 +12,8 @@
     "lint": "eslint . --ext ts,tsx",
     "format": "prettier --write .",
     "esegui:backup": "tsx scripts/backup.ts",
+    "auto:start": "tsx scripts/auto-start-dev.ts",
+    "ensure:dev": "tsx scripts/auto-start-dev.ts",
     "backup:list": "ls -lah Backup_Automatico",
     "backup:restore": "tsx scripts/backup-restore.ts",
     "diagnose": "tsx scripts/diagnose.ts",

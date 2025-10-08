@@ -24,7 +24,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .border-glow-animated {
+  .border-glow-animated,
+  [style*="animation: spin"] {
     animation: none !important;
   }
 }

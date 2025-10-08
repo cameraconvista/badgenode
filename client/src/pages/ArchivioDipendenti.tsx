@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
+import { ArrowLeft, Archive, Plus } from 'lucide-react';
 import LogoHeader from '@/components/home/LogoHeader';
 import ThemeToggle from '@/components/admin/ThemeToggle';
 import ArchivioTable from '@/components/admin/ArchivioTable';
@@ -99,82 +100,82 @@ export default function ArchivioDipendenti() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header fisso */}
-      <header className="sticky top-0 z-15 bg-card border-b border-border shadow-sm">
-        <div className="max-w-[1120px] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
+      style={{ 
+        background: 'radial-gradient(ellipse at center, #2d1b3d 0%, #1a0f2e 50%, #0f0a1a 100%)',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Container principale stile Home */}
+      <div className="w-full max-w-[1120px] flex items-center justify-center">
+        <div 
+          className="rounded-3xl p-6 shadow-2xl border-2 w-full max-h-[90vh] overflow-hidden"
+          style={{
+            backgroundColor: '#2b0048',
+            borderColor: 'rgba(231, 116, 240, 0.3)'
+          }}
+        >
+          {/* Header con logo e theme toggle */}
+          <div className="flex items-center justify-between mb-6">
             <LogoHeader className="mb-0" />
             <ThemeToggle />
           </div>
-        </div>
-      </header>
 
-      {/* Contenuto principale */}
-      <main className="max-w-[1120px] mx-auto px-6 py-8">
-        <div className="space-y-6">
           {/* Titolo */}
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-white mb-2">
               Archivio Dipendenti
             </h1>
-            <p className="text-muted-foreground">
-              Gestione dipendenti attivi - Accesso amministratore
+            <p className="text-gray-300 text-sm">
+              Gestione dipendenti attivi
             </p>
           </div>
 
-          {/* Tabella con scroll interno */}
-          <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
-            <div className="p-6">
-              <ArchivioTable
-                utenti={utenti}
-                isLoading={isLoading}
-                onStorico={handleStorico}
-                onModifica={handleModifica}
-                onArchivia={handleArchivia}
-                onElimina={handleElimina}
-              />
-            </div>
+          {/* Contenuto scrollabile */}
+          <div className="overflow-y-auto max-h-[50vh] mb-6">
+            <ArchivioTable
+              utenti={utenti}
+              isLoading={isLoading}
+              onStorico={handleStorico}
+              onModifica={handleModifica}
+              onArchivia={handleArchivia}
+              onElimina={handleElimina}
+            />
           </div>
 
           {/* Footer azioni */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-6 border-t border-border">
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-4 border-t border-gray-600">
             <Button
               variant="outline"
               onClick={handleBackToLogin}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-transparent border-gray-500 text-gray-300 hover:bg-gray-700"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
+              <ArrowLeft className="w-4 h-4" />
               Login Utenti
             </Button>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <Button
                 variant="outline"
                 onClick={handleExDipendenti}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 bg-transparent border-gray-500 text-gray-300 hover:bg-gray-700"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                </svg>
+                <Archive className="w-4 h-4" />
                 Ex-Dipendenti
               </Button>
               
               <Button
                 onClick={() => setShowModaleNuovo(true)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
+                <Plus className="w-4 h-4" />
                 Aggiungi
               </Button>
             </div>
           </div>
         </div>
-      </main>
+      </div>
 
       {/* Modali */}
       <ModaleDipendente

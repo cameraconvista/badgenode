@@ -57,8 +57,8 @@ export default function ArchivioTable({
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Caricamento dipendenti...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-400 mx-auto mb-4"></div>
+          <p className="text-gray-300">Caricamento dipendenti...</p>
         </div>
       </div>
     );
@@ -75,17 +75,17 @@ export default function ArchivioTable({
       />
 
       {/* Tabella */}
-      <div className="border rounded-lg overflow-hidden">
+      <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50">
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* Header sticky */}
-            <thead className="bg-muted/50 sticky top-0 z-10">
+            <thead className="bg-gray-700/80 sticky top-0 z-10">
               <tr>
-                <th className="text-left p-4 font-medium text-sm">📊 Storico</th>
-                <th className="text-left p-4 font-medium text-sm">PIN</th>
-                <th className="text-left p-4 font-medium text-sm">Nome</th>
-                <th className="text-left p-4 font-medium text-sm">Cognome</th>
-                <th className="text-center p-4 font-medium text-sm">Azioni</th>
+                <th className="text-left p-3 font-medium text-sm text-gray-200">📊 Storico</th>
+                <th className="text-left p-3 font-medium text-sm text-gray-200">PIN</th>
+                <th className="text-left p-3 font-medium text-sm text-gray-200">Nome</th>
+                <th className="text-left p-3 font-medium text-sm text-gray-200">Cognome</th>
+                <th className="text-center p-3 font-medium text-sm text-gray-200">Azioni</th>
               </tr>
             </thead>
             <tbody>
@@ -93,30 +93,30 @@ export default function ArchivioTable({
                 <EmptyState hasSearch={!!searchTerm} searchTerm={searchTerm} />
               ) : (
                 filteredAndSortedUtenti.map((utente) => (
-                  <tr key={utente.id} className="border-t hover:bg-muted/30 transition-colors">
-                    <td className="p-4">
+                  <tr key={utente.id} className="border-t border-gray-600 hover:bg-gray-700/50 transition-colors">
+                    <td className="p-3">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => onStorico(utente.pin)}
-                        className="p-2 hover:bg-accent/10"
+                        className="p-2 hover:bg-violet-600/20 text-gray-300"
                         title={`Storico di ${utente.nome} ${utente.cognome}`}
                       >
                         📊
                       </Button>
                     </td>
-                    <td className="p-4">
-                      <span className="font-mono font-medium text-primary">
+                    <td className="p-3">
+                      <span className="font-mono font-medium text-violet-400">
                         {utente.pin.toString().padStart(2, '0')}
                       </span>
                     </td>
-                    <td className="p-4">
-                      <span className="font-medium">{utente.nome}</span>
+                    <td className="p-3">
+                      <span className="font-medium text-white">{utente.nome}</span>
                     </td>
-                    <td className="p-4">
-                      <span className="font-medium">{utente.cognome}</span>
+                    <td className="p-3">
+                      <span className="font-medium text-white">{utente.cognome}</span>
                     </td>
-                    <td className="p-4">
+                    <td className="p-3">
                       <div className="flex justify-center">
                         <ArchivioActions
                           utente={utente}
@@ -137,15 +137,15 @@ export default function ArchivioTable({
 
       {/* Info risultati */}
       {filteredAndSortedUtenti.length > 0 && (
-        <div className="text-sm text-muted-foreground text-center">
+        <div className="text-sm text-gray-400 text-center">
           {searchTerm ? (
             <>
-              Trovati <strong>{filteredAndSortedUtenti.length}</strong> dipendenti su{' '}
-              <strong>{utenti.length}</strong> totali
+              Trovati <strong className="text-violet-400">{filteredAndSortedUtenti.length}</strong> dipendenti su{' '}
+              <strong className="text-violet-400">{utenti.length}</strong> totali
             </>
           ) : (
             <>
-              <strong>{utenti.length}</strong> dipendenti attivi
+              <strong className="text-violet-400">{utenti.length}</strong> dipendenti attivi
             </>
           )}
         </div>

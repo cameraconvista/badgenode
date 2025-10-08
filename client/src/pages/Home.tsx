@@ -70,16 +70,18 @@ export default function Home() {
       />
 
       <div className="w-full max-w-sm md:max-w-md flex items-center justify-center">
-        {/* Wrapper per effetto riflesso bordo esterno */}
         <div className="relative">
-          {/* Riflesso sottile sul bordo esterno */}
+          {/* Riflesso che gira sulla cornice */}
           <div 
-            className="absolute inset-0 rounded-3xl pointer-events-none border-glow-animated"
+            className="absolute inset-0 rounded-3xl pointer-events-none"
             style={{
-              background: 'linear-gradient(90deg, transparent 0%, rgba(231, 116, 240, 0.15) 50%, transparent 100%)',
-              transform: 'translateX(-100%)',
-              animation: 'slideRight 6s ease-in-out infinite',
-              zIndex: 1
+              background: 'conic-gradient(from 0deg, transparent 70%, rgba(231, 116, 240, 0.8) 85%, rgba(231, 116, 240, 0.4) 90%, transparent 95%)',
+              padding: '2px',
+              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+              maskComposite: 'xor',
+              WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+              WebkitMaskComposite: 'xor',
+              animation: 'spin 7s linear infinite'
             }}
           />
           <div 
@@ -88,8 +90,7 @@ export default function Home() {
               backgroundColor: '#2b0048',
               borderColor: 'rgba(231, 116, 240, 0.3)',
               minWidth: '320px',
-              maxWidth: '420px',
-              zIndex: 2
+              maxWidth: '420px'
             }}
           >
           <LogoHeader />
