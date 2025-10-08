@@ -19,9 +19,9 @@ export default function ThemeToggle({ className = '' }: ThemeToggleProps) {
       aria-pressed={theme === 'light'}
     >
       {theme === 'dark' ? (
-        <Sun className="w-5 h-5 text-white" />
+        <Sun className="w-5 h-5 text-white !text-white" style={{ color: '#ffffff' }} />
       ) : (
-        <Moon className="w-5 h-5 text-white" />
+        <Moon className="w-5 h-5 text-white !text-white" style={{ color: '#ffffff' }} />
       )}
     </Button>
   );

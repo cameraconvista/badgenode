@@ -23,21 +23,26 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>('dark');
-
-  // Inizializza tema da localStorage o preferenze sistema
-  useEffect(() => {
+  // Pre-apply tema per evitare flash
+  const getInitialTheme = (): Theme => {
+    if (typeof window === 'undefined') return 'dark';
+    
     const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme) {
-      setThemeState(savedTheme);
-      applyTheme(savedTheme);
-    } else {
-      // Fallback a prefers-color-scheme
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const defaultTheme = prefersDark ? 'dark' : 'light';
-      setThemeState(defaultTheme);
-      applyTheme(defaultTheme);
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      return savedTheme;
     }
+    
+    // Fallback a prefers-color-scheme
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  };
+
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+
+  // Applica tema immediatamente all'avvio
+  useEffect(() => {
+    const initialTheme = getInitialTheme();
+    setThemeState(initialTheme);
+    applyTheme(initialTheme);
   }, []);
 
   const applyTheme = (newTheme: Theme) => {
@@ -46,8 +51,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     // Rimuovi classe precedente
     root.classList.remove('light', 'dark');
     
-    // Aggiungi nuova classe
+    // Aggiungi nuova classe e dataset
     root.classList.add(newTheme);
+    root.dataset.theme = newTheme;
     
     // Applica CSS custom properties per compatibilità
     if (newTheme === 'dark') {

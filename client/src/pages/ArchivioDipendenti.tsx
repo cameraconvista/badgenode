@@ -6,6 +6,7 @@ import LogoHeader from '@/components/home/LogoHeader';
 import ThemeToggle from '@/components/admin/ThemeToggle';
 import ArchivioTable from '@/components/admin/ArchivioTable';
 import ModaleDipendente from '@/components/admin/ModaleDipendente';
+import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
 import { UtentiService, Utente, UtenteInput } from '@/services/utenti.service';
 import { MOCK_DIPENDENTI } from '@/data/mockDipendenti';
 
@@ -89,7 +90,6 @@ export default function ArchivioDipendenti() {
       throw error;
     }
   };
-
   const handleBackToLogin = () => {
     setLocation('/');
   };
@@ -189,10 +189,9 @@ export default function ArchivioDipendenti() {
         utente={utenteSelezionato}
         onSave={handleSalvaModifica}
       />
-      <ModaleDipendente
+      <ModaleNuovoDipendente
         isOpen={showModaleNuovo}
         onClose={() => setShowModaleNuovo(false)}
-        utente={null}
         onSave={handleSalvaNuovo}
       />
     </div>
