@@ -19,13 +19,13 @@ export default defineConfig(({ mode }) => {
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        name: 'BeigeNode2',
-        short_name: 'BeigeNode',
-        description: 'Sistema di timbratura con PIN - BeigeNode2',
+        name: 'BadgeNode',
+        short_name: 'BadgeNode',
+        description: 'Sistema di timbratura con PIN per la gestione delle presenze',
         theme_color: '#510357',
-        background_color: '#ffffff',
+        background_color: '#0b0b10',
         display: 'standalone',
-        start_url: '.',
+        start_url: '/',
         icons: [
           {
             src: 'icons/icon-192.png',
@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => {
   ],
   resolve: {
     alias: {
-      '@': './src',
+      '@': path.resolve(import.meta.dirname, 'client', 'src'),
       '@shared': path.resolve(import.meta.dirname, 'shared'),
       '@assets': path.resolve(
         import.meta.dirname,
