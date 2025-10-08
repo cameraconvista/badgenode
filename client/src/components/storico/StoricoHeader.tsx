@@ -43,18 +43,18 @@ export default function StoricoHeader({
           <Button
             variant="outline"
             onClick={onExportPDF}
-            className="border-gray-600 text-gray-200 hover:bg-gray-700 text-base"
+            className="border-gray-600 hover:bg-gray-700 p-3"
+            size="sm"
           >
-            <FileText className="w-4 h-4 mr-2" />
-            PDF
+            <FileText className="w-6 h-6 text-red-500" />
           </Button>
           <Button
             variant="outline"
             onClick={onExportXLS}
-            className="border-gray-600 text-gray-200 hover:bg-gray-700 text-base"
+            className="border-gray-600 hover:bg-gray-700 p-3"
+            size="sm"
           >
-            <Download className="w-4 h-4 mr-2" />
-            Excel
+            <Download className="w-6 h-6 text-green-500" />
           </Button>
         </div>
       </div>

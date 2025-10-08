@@ -89,7 +89,7 @@ export default function StoricoTable({
     <div className="bg-gray-800/50 rounded-lg flex flex-col h-full overflow-hidden">
       {/* Header fisso */}
       <div className="bg-gray-700/50 border-b border-gray-600 flex-shrink-0">
-        <div className="grid grid-cols-7 gap-4 p-4 text-gray-100 font-semibold text-base">
+        <div className="grid grid-cols-7 gap-4 p-4 text-white font-semibold text-base">
           <div>Data</div>
           <div>Mese</div>
           <div className="text-center">Entrata</div>
@@ -113,13 +113,13 @@ export default function StoricoTable({
             `}
           >
             {/* Data */}
-            <div className="font-medium text-gray-100 flex items-center gap-2">
+            <div className="font-medium text-white flex items-center gap-2">
               <Calendar className="w-4 h-4 text-gray-400" />
               {formatDataBreve(giorno.giornologico)}
             </div>
             
             {/* Mese */}
-            <div className="text-gray-200">
+            <div className="text-white">
               {getMeseItaliano(giorno.giornologico)}
             </div>
             
@@ -144,7 +144,7 @@ export default function StoricoTable({
             {/* Ore Lavorate */}
             <div className="text-right tabular-nums">
               {giorno.oreLavorate > 0 ? (
-                <span className="text-gray-100 font-medium">{formatOre(giorno.oreLavorate)}</span>
+                <span className="text-white font-medium">{formatOre(giorno.oreLavorate)}</span>
               ) : (
                 <span className="text-gray-500">0.00</span>
               )}
