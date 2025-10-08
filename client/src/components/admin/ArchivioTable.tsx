@@ -11,7 +11,7 @@ interface ArchivioTableProps {
   onStorico: (pin: number) => void;
   onModifica: (utente: Utente) => void;
   onArchivia: (id: string) => Promise<void>;
-  onElimina: (id: string) => Promise<void>;
+  onElimina: (utente: Utente) => void;
 }
 
 export default function ArchivioTable({
