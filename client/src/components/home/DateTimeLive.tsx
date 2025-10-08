@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
-export default function DateTimeLive() {
+interface DateTimeLiveProps {
+  className?: string;
+}
+
+export default function DateTimeLive({ className = "" }: DateTimeLiveProps) {
   const [dateTime, setDateTime] = useState(new Date());
 
   useEffect(() => {
@@ -14,18 +18,8 @@ export default function DateTimeLive() {
   const formatDate = (date: Date) => {
     const days = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
     const months = [
-      'Gennaio',
-      'Febbraio',
-      'Marzo',
-      'Aprile',
-      'Maggio',
-      'Giugno',
-      'Luglio',
-      'Agosto',
-      'Settembre',
-      'Ottobre',
-      'Novembre',
-      'Dicembre',
+      'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
+      'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre',
     ];
 
     const dayName = days[date.getDay()];
@@ -44,9 +38,16 @@ export default function DateTimeLive() {
   };
 
   return (
-    <div className="text-center text-muted-foreground" data-testid="text-datetime">
-      <div className="text-lg font-medium">{formatDate(dateTime)}</div>
-      <div className="text-2xl font-bold tracking-wider">{formatTime(dateTime)}</div>
+    <div className={`text-center mb-4 ${className}`} data-testid="text-datetime">
+      <div className="text-white text-base font-semibold mb-1 drop-shadow-sm">
+        {formatDate(dateTime)}
+      </div>
+      <div 
+        className="text-2xl md:text-3xl font-bold tracking-wide"
+        style={{ color: '#c084fc' }}
+      >
+        {formatTime(dateTime)}
+      </div>
     </div>
   );
 }

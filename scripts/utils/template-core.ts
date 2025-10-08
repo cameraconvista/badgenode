@@ -12,11 +12,11 @@ export interface ComponentOptions {
 export function parseArgs(): ComponentOptions | null {
   const args = process.argv.slice(2);
   const options: Partial<ComponentOptions> = {};
-  
+
   for (let i = 0; i < args.length; i += 2) {
     const flag = args[i];
     const value = args[i + 1];
-    
+
     switch (flag) {
       case '--name':
         options.name = value;
@@ -29,11 +29,11 @@ export function parseArgs(): ComponentOptions | null {
         break;
     }
   }
-  
+
   if (!options.name || !options.type) {
     return null;
   }
-  
+
   return options as ComponentOptions;
 }
 
@@ -60,7 +60,7 @@ export default ${name};
 
 export function generateHookTemplate(name: string): string {
   const hookName = name.startsWith('use') ? name : `use${name}`;
-  
+
   return `import { useState, useEffect } from 'react';
 
 interface ${hookName}Options {
@@ -178,55 +178,55 @@ export default {
 
 export function getTargetPath(options: ComponentOptions): string {
   const { name, type, directory } = options;
-  
+
   let basePath: string;
   let fileName: string;
-  
+
   switch (type) {
     case 'component':
       basePath = directory ? `client/src/components/${directory}` : 'client/src/components';
       fileName = `${name}.tsx`;
       break;
-      
+
     case 'hook':
       basePath = 'client/src/hooks';
       const hookName = name.startsWith('use') ? name : `use${name}`;
       fileName = `${hookName}.ts`;
       break;
-      
+
     case 'page':
       basePath = directory ? `client/src/pages/${directory}` : 'client/src/pages';
       fileName = `${name}.tsx`;
       break;
-      
+
     case 'util':
       basePath = 'client/src/lib';
       fileName = `${name}.ts`;
       break;
-      
+
     default:
       throw new Error(`Unknown type: ${type}`);
   }
-  
+
   return join(basePath, fileName);
 }
 
 export function generateTemplate(options: ComponentOptions): string {
   const { name, type } = options;
-  
+
   switch (type) {
     case 'component':
       return generateComponentTemplate(name);
-      
+
     case 'hook':
       return generateHookTemplate(name);
-      
+
     case 'page':
       return generatePageTemplate(name);
-      
+
     case 'util':
       return generateUtilTemplate(name);
-      
+
     default:
       throw new Error(`Unknown type: ${type}`);
   }
@@ -242,12 +242,12 @@ export function createFile(filePath: string, content: string): void {
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true });
   }
-  
+
   // Check if file already exists
   if (existsSync(filePath)) {
     throw new Error(`File already exists: ${filePath}`);
   }
-  
+
   // Write file
   writeFileSync(filePath, content);
 }

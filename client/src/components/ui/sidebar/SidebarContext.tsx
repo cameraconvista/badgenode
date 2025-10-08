@@ -122,11 +122,11 @@ function SidebarProvider({
   );
 }
 
-export { 
-  SidebarProvider, 
-  useSidebar, 
-  SIDEBAR_WIDTH, 
-  SIDEBAR_WIDTH_MOBILE, 
+export {
+  SidebarProvider,
+  useSidebar,
+  SIDEBAR_WIDTH,
+  SIDEBAR_WIDTH_MOBILE,
   SIDEBAR_WIDTH_ICON,
-  SIDEBAR_KEYBOARD_SHORTCUT 
+  SIDEBAR_KEYBOARD_SHORTCUT,
 };

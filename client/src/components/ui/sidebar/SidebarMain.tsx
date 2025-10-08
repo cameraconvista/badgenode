@@ -57,10 +57,7 @@ function Sidebar({
 
   if (collapsible === 'none') {
     return (
-      <div
-        className={cn(sidebarVariants({ side, variant }), className)}
-        {...props}
-      >
+      <div className={cn(sidebarVariants({ side, variant }), className)} {...props}>
         {children}
       </div>
     );

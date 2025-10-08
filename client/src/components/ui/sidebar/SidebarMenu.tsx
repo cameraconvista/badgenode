@@ -42,11 +42,7 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<'ul'>) {
 
 function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
   return (
-    <li
-      data-sidebar="menu-item"
-      className={cn('group/menu-item relative', className)}
-      {...props}
-    />
+    <li data-sidebar="menu-item" className={cn('group/menu-item relative', className)} {...props} />
   );
 }
 
@@ -168,12 +164,7 @@ function SidebarMenuSkeleton({
       className={cn('rounded-md h-8 flex gap-2 px-2 items-center', className)}
       {...props}
     >
-      {showIcon && (
-        <Skeleton
-          className="size-4 rounded-md"
-          data-sidebar="menu-skeleton-icon"
-        />
-      )}
+      {showIcon && <Skeleton className="size-4 rounded-md" data-sidebar="menu-skeleton-icon" />}
       <Skeleton
         className="h-4 max-w-[var(--skeleton-width)] flex-1"
         data-sidebar="menu-skeleton-text"

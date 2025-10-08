@@ -26,20 +26,19 @@ function countLines(filePath) {
     if (!fs.existsSync(filePath)) return 0;
     const content = fs.readFileSync(filePath, 'utf8');
     return content.split('\n').length;
-  } catch (error) {
-  }
+  } catch (error) {}
 }
 
 function isCodeFile(filePath) {
   const codeExtensions = ['.ts', '.tsx', '.js', '.jsx'];
-  const excludeDirs = ['/ARCHIVE/', '/DOCS/', '/Backup_Automatico/', 'node_modules/', '.git/'];
-  
+  const excludeDirs = ['ARCHIVE/', 'DOCS/', 'Backup_Automatico/', 'node_modules/', '.git/'];
+
   // Escludi directory specifiche
-  if (excludeDirs.some(dir => filePath.includes(dir))) {
+  if (excludeDirs.some((dir) => filePath.includes(dir))) {
     return false;
   }
-  
-  return codeExtensions.some(ext => filePath.endsWith(ext));
+
+  return codeExtensions.some((ext) => filePath.endsWith(ext));
 }
 
 function main() {

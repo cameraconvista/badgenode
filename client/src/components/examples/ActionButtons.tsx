@@ -1,4 +1,4 @@
-import ActionButtons from '../ActionButtons';
+import ActionButtons from '../home/ActionButtons';
 
 export default function ActionButtonsExample() {
   return (

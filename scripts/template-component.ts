@@ -6,7 +6,7 @@ import {
   getTargetPath,
   countLines,
   createFile,
-  ComponentOptions
+  ComponentOptions,
 } from './utils/template-core';
 
 function showUsage(): void {
@@ -30,22 +30,22 @@ Examples:
 
 function main(): void {
   const options = parseArgs();
-  
+
   if (!options) {
     console.error('❌ Invalid arguments');
     showUsage();
     process.exit(1);
   }
-  
+
   const { name, type } = options;
-  
+
   console.log(`🚀 Generating ${type}: ${name}`);
-  
+
   try {
     const template = generateTemplate(options);
     const targetPath = getTargetPath(options);
     const lines = countLines(template);
-    
+
     // Check line count and warn if approaching limits
     if (lines > 200) {
       console.error(`❌ Generated template exceeds 200 lines (${lines})`);
@@ -55,12 +55,12 @@ function main(): void {
       console.warn(`⚠️  Generated template is ${lines} lines (warning ≥150)`);
       console.warn('   Consider keeping it concise or plan for future splits');
     }
-    
+
     createFile(targetPath, template);
-    
+
     console.log(`✅ Created: ${targetPath}`);
     console.log(`📊 Lines: ${lines}`);
-    
+
     // Provide usage suggestions
     console.log('');
     console.log('📝 Next steps:');
@@ -68,7 +68,7 @@ function main(): void {
     console.log(`   2. Add proper TypeScript types`);
     console.log(`   3. Add tests if needed`);
     console.log(`   4. Import and use in your app`);
-    
+
     if (lines >= 120) {
       console.log('');
       console.log('💡 Tips for keeping files small:');
@@ -76,7 +76,6 @@ function main(): void {
       console.log('   - Split large components into smaller ones');
       console.log('   - Use composition over large monolithic components');
     }
-    
   } catch (error) {
     console.error('❌ Error generating template:', error);
     process.exit(1);

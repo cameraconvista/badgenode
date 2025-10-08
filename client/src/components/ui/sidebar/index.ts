@@ -20,8 +20,4 @@ export {
   SidebarMenuBadge,
   SidebarMenuSkeleton,
 } from './SidebarMenu';
-export {
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
-} from './SidebarSubMenu';
+export { SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from './SidebarSubMenu';

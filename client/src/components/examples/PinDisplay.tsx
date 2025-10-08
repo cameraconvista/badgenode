@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import PinDisplay from '../PinDisplay';
+import PinDisplay from '../home/PinDisplay';
 import { Button } from '@/components/ui/button';
 
 export default function PinDisplayExample() {

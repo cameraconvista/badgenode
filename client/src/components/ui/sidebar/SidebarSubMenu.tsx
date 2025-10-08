@@ -62,8 +62,4 @@ function SidebarMenuSubButton({
   );
 }
 
-export {
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
-};
+export { SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton };

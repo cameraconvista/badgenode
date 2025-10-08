@@ -8,7 +8,7 @@ import {
   findTodoFixme,
   findTempFiles,
   checkConfigErrors,
-  DiagnosisResult
+  DiagnosisResult,
 } from './utils/diagnose-core';
 import { generateReport } from './utils/diagnose-report';
 
@@ -22,28 +22,28 @@ function main(): void {
     console.log(`📄 Report disponibile: ${REPORT_FILE}`);
     return;
   }
-  
+
   console.log('🔍 Avvio diagnosi codebase...');
-  
+
   // Find all code files
   const allFiles = findAllFiles();
   console.log(`📊 Trovati ${allFiles.length} file di codice`);
-  
+
   // Analyze file lengths
   const { over200, over150, totalLines } = analyzeFileLengths(allFiles);
-  
+
   // Find duplicates
   const duplicateFiles = findDuplicateFiles(allFiles);
-  
+
   // Find TODO/FIXME
   const todoFixmeFiles = findTodoFixme(allFiles);
-  
+
   // Find temp files
   const tempFiles = findTempFiles();
-  
+
   // Check config errors
   const configErrors = checkConfigErrors();
-  
+
   const result: DiagnosisResult = {
     filesOver200: over200,
     filesOver150: over150,
@@ -52,16 +52,16 @@ function main(): void {
     tempFiles,
     configErrors,
     totalFiles: allFiles.length,
-    totalLines
+    totalLines,
   };
-  
+
   // Generate and save report
   const report = generateReport(result);
   writeFileSync(REPORT_FILE, report);
-  
+
   // Create sentinel file
   writeFileSync(SENTINEL_FILE, new Date().toISOString());
-  
+
   // Console summary
   console.log('📋 RISULTATI DIAGNOSI:');
   console.log(`   File >200 righe: ${over200.length} ❌`);
