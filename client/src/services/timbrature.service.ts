@@ -117,25 +117,55 @@ export class TimbratureService {
     return TimbratureStatsService.calculateStats(timbrature, oreContrattuali);
   }
 
-  // RPC: Inserisci timbratura via Supabase
-  static async timbra(tipo: 'entrata' | 'uscita', when?: string): Promise<void> {
+  // DEBUG: Lettura diretta da tabella timbrature (per verificare inserimenti)
+  static async loadStoricoRaw(pin?: number): Promise<any[]> {
     try {
-      console.log('[Supabase] RPC insert_timbro chiamata:', { tipo, when: when || 'now' });
+      let query = supabase
+        .from('timbrature')
+        .select('id,pin,tipo,data,ore,giornologico,created_at')
+        .order('created_at', { ascending: false });
       
-      const { data, error } = await supabase.rpc('insert_timbro', {
-        p_tipo: tipo,
-        p_ts: when || null
-      });
+      if (pin) {
+        query = query.eq('pin', pin);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        console.error('[Storico] loadStoricoRaw error:', error);
+        throw error;
+      }
+      
+      console.log('[Storico] loadStoricoRaw loaded:', data?.length || 0, 'records');
+      return data ?? [];
+    } catch (error) {
+      console.error('❌ Error in loadStoricoRaw:', error);
+      return [];
+    }
+  }
+
+  // RPC: Inserisci timbratura via Supabase
+  static async timbra(pin: number, tipo: 'entrata' | 'uscita', when?: string): Promise<void> {
+    try {
+      // Normalizza tipo
+      const p_tipo = tipo?.toLowerCase() === 'uscita' ? 'uscita' : 'entrata';
+      const p_ts = when || null;
+      
+      const args = { p_pin: pin, p_tipo, ...(p_ts && { p_ts }) };
+      
+      console.log('[Supabase RPC] insert_timbro args:', { ...args, p_ts: p_ts ?? '(default NOW on DB)' });
+      
+      const { data, error } = await supabase.rpc('insert_timbro', args);
 
       if (error) {
-        console.error('[Supabase] RPC error:', error);
+        console.error('[Supabase RPC ERROR insert_timbro]', error);
         if (error.message.includes('permission denied') || error.message.includes('RLS')) {
           throw new Error('Non autorizzato: controlla PIN/ruolo');
         }
         throw error;
       }
 
-      console.log('✅ [Supabase] RPC insert_timbro → OK id:', data);
+      console.log('[Supabase RPC OK insert_timbro]', data);
     } catch (error) {
       console.error('❌ Errore timbratura:', error);
       throw error;

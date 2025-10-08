@@ -71,13 +71,14 @@ export default function Home() {
 
     setLoading(true);
     try {
-      await TimbratureService.timbra('entrata');
+      const pinNumber = Number(pin);
+      await TimbratureService.timbra(pinNumber, 'entrata');
       setFeedback({ type: 'success', message: 'Entrata registrata' });
       setPin('');
       
       toast({
         title: "Entrata registrata",
-        description: `PIN ${user?.pin || pin} - ${new Date().toLocaleTimeString()}`,
+        description: `PIN ${pinNumber} - ${new Date().toLocaleTimeString()}`,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Errore durante la registrazione';
@@ -103,13 +104,14 @@ export default function Home() {
 
     setLoading(true);
     try {
-      await TimbratureService.timbra('uscita');
+      const pinNumber = Number(pin);
+      await TimbratureService.timbra(pinNumber, 'uscita');
       setFeedback({ type: 'success', message: 'Uscita registrata' });
       setPin('');
       
       toast({
         title: "Uscita registrata",
-        description: `PIN ${user?.pin || pin} - ${new Date().toLocaleTimeString()}`,
+        description: `PIN ${pinNumber} - ${new Date().toLocaleTimeString()}`,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Errore durante la registrazione';
