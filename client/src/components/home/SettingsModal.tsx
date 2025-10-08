@@ -12,7 +12,8 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
   const [error, setError] = useState(false);
   const ADMIN_CODE = '1909';
 
-  const handleSubmit = () => {
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (pin === ADMIN_CODE) {
       onSuccess();
       setPin('');
@@ -61,7 +62,7 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
           </button>
         </div>
 
-        <div className="mb-6">
+        <form onSubmit={handleSubmit} className="mb-6">
           <label className="block text-white text-sm font-medium mb-3 text-center">
             Inserisci PIN
           </label>
@@ -82,7 +83,7 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
               PIN non valido
             </p>
           )}
-        </div>
+        </form>
 
         <div className="flex gap-3">
           <button
