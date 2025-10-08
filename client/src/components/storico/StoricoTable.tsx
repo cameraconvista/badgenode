@@ -126,7 +126,7 @@ export default function StoricoTable({
             {/* Entrata */}
             <div className="text-center">
               {giorno.entrata ? (
-                <span className="text-green-400 font-medium">{giorno.entrata}</span>
+                <span className="text-white font-medium">{giorno.entrata}</span>
               ) : (
                 <span className="text-gray-500">—</span>
               )}
@@ -135,7 +135,7 @@ export default function StoricoTable({
             {/* Uscita */}
             <div className="text-center">
               {giorno.uscita ? (
-                <span className="text-red-400 font-medium">{giorno.uscita}</span>
+                <span className="text-white font-medium">{giorno.uscita}</span>
               ) : (
                 <span className="text-gray-500">—</span>
               )}
