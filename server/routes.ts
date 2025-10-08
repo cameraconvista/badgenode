@@ -12,6 +12,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Debug endpoint for env vars (DEV only)
+  app.get('/api/debug/env', (_req, res) => {
+    if (process.env.NODE_ENV !== 'development') {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    
+    res.json({
+      NODE_ENV: process.env.NODE_ENV,
+      hasViteSupabaseUrl: !!process.env.VITE_SUPABASE_URL,
+      hasViteSupabaseKey: !!process.env.VITE_SUPABASE_ANON_KEY,
+      viteUrl: process.env.VITE_SUPABASE_URL?.substring(0, 30) + '...',
+      timestamp: new Date().toISOString()
+    });
+  });
+
   // Deep health check con ping DB (opzionale)
   app.get('/api/health/deep', async (_req, res) => {
     try {
