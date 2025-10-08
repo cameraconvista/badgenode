@@ -28,6 +28,7 @@ export default function ModaleDipendente({
     cognome: '',
     email: '',
     telefono: '',
+    pin: 1,
     ore_contrattuali: 8.0,
   });
 
@@ -41,6 +42,7 @@ export default function ModaleDipendente({
           cognome: utente.cognome,
           email: utente.email || '',
           telefono: utente.telefono || '',
+          pin: utente.pin,
           ore_contrattuali: utente.ore_contrattuali,
         });
       } else {
@@ -50,6 +52,7 @@ export default function ModaleDipendente({
           cognome: '',
           email: '',
           telefono: '',
+          pin: 1,
           ore_contrattuali: 8.0,
         });
       }

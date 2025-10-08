@@ -25,6 +25,7 @@ export interface UtenteInput {
   cognome: string;
   email?: string;
   telefono?: string;
+  pin: number;
   ore_contrattuali: number;
 }
 
@@ -54,20 +55,13 @@ export class UtentiService {
   static async createUtente(input: UtenteInput): Promise<Utente> {
     await delay(500);
     
-    // Trova primo PIN libero (1-99)
-    const usedPins = mockUtenti.map(u => u.pin);
-    let newPin = 1;
-    while (usedPins.includes(newPin) && newPin <= 99) {
-      newPin++;
-    }
-    
-    if (newPin > 99) {
-      throw new Error('Nessun PIN disponibile (1-99)');
+    // Verifica che il PIN sia disponibile
+    if (!await this.isPinAvailable(input.pin)) {
+      throw new Error(`PIN ${input.pin} già in uso`);
     }
 
     const newUtente: Utente = {
       id: Date.now().toString(),
-      pin: newPin,
       ...input,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
-import { UtenteInput } from '@/services/utenti.service';
+import { UtenteInput, UtentiService } from '@/services/utenti.service';
 import FormNuovoDipendente from './FormNuovoDipendente';
 
 interface ModaleNuovoDipendenteProps {
@@ -20,6 +20,7 @@ export default function ModaleNuovoDipendente({
     cognome: '',
     email: '',
     telefono: '',
+    pin: 1,
     ore_contrattuali: 8.0,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -35,6 +36,7 @@ export default function ModaleNuovoDipendente({
         cognome: '',
         email: '',
         telefono: '',
+        pin: 1,
         ore_contrattuali: 8.0,
       });
       setErrors({});
@@ -78,32 +80,18 @@ export default function ModaleNuovoDipendente({
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-
-    if (!formData.nome.trim()) {
-      newErrors.nome = 'Nome obbligatorio';
-    }
-
-    if (!formData.cognome.trim()) {
-      newErrors.cognome = 'Cognome obbligatorio';
-    }
-
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Email non valida';
-    }
-
-    if (formData.ore_contrattuali <= 0 || formData.ore_contrattuali > 24) {
-      newErrors.ore_contrattuali = 'Ore devono essere tra 0.25 e 24';
-    }
-
+    if (!formData.nome.trim()) newErrors.nome = 'Nome obbligatorio';
+    if (!formData.cognome.trim()) newErrors.cognome = 'Cognome obbligatorio';
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Email non valida';
+    if (!formData.pin || formData.pin < 1 || formData.pin > 99) newErrors.pin = 'PIN deve essere tra 1 e 99';
+    if (formData.ore_contrattuali <= 0 || formData.ore_contrattuali > 24) newErrors.ore_contrattuali = 'Ore devono essere tra 0.25 e 24';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-
     setIsLoading(true);
     try {
       await onSave(formData);
@@ -115,11 +103,26 @@ export default function ModaleNuovoDipendente({
       setIsLoading(false);
     }
   };
-
   const handleInputChange = (field: keyof UtenteInput, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+    // Verifica disponibilità PIN in tempo reale
+    if (field === 'pin' && typeof value === 'number') {
+      checkPinAvailability(value);
+    }
+  };
+  const checkPinAvailability = async (pin: number) => {
+    if (pin < 1 || pin > 99) return;
+    
+    try {
+      const isAvailable = await UtentiService.isPinAvailable(pin);
+      if (!isAvailable) {
+        setErrors(prev => ({ ...prev, pin: `PIN ${pin} già in uso` }));
+      }
+    } catch (error) {
+      console.error('Errore verifica PIN:', error);
     }
   };
 

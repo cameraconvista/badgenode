@@ -90,6 +90,23 @@ export default function FormNuovoDipendente({
               disabled={isLoading}
             />
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="pin" className="text-gray-200">PIN (1-99) *</Label>
+            <Input
+              id="pin"
+              type="number"
+              min="1"
+              max="99"
+              value={formData.pin}
+              onChange={(e) => onInputChange('pin', parseInt(e.target.value) || 1)}
+              className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
+                errors.pin ? 'border-red-500' : 'focus:border-violet-400'
+              }`}
+              disabled={isLoading}
+            />
+            {errors.pin && <p className="text-sm text-red-400">{errors.pin}</p>}
+          </div>
         </div>
       </div>
 

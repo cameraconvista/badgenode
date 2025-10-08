@@ -122,6 +122,19 @@ export default function FormDipendente({
         />
       </div>
 
+      {/* PIN (read-only in modifica) */}
+      <div className="space-y-2">
+        <Label htmlFor="pin">PIN</Label>
+        <Input
+          id="pin"
+          type="number"
+          value={formData.pin}
+          disabled={true}
+          className="bg-gray-100 cursor-not-allowed"
+        />
+        <p className="text-sm text-gray-500">Il PIN non può essere modificato</p>
+      </div>
+
       {/* Ore contrattuali */}
       <div className="space-y-2">
         <Label htmlFor="ore_contrattuali">Ore contrattuali *</Label>
