@@ -5,20 +5,8 @@ import { Timbratura } from '@/lib/time';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
 import { supabase } from '@/lib/supabaseClient';
 
-// Minimal mock data for fallback (only PIN 7 for current user)
-const mockTimbrature: Timbratura[] = [
-  {
-    id: 'mock-1',
-    pin: 7,
-    tipo: 'entrata',
-    data: '2024-10-08',
-    ore: '08:00:00',
-    giornologico: '2024-10-08',
-    nome: 'Mock',
-    cognome: 'User',
-    created_at: '2024-10-08T08:00:00Z'
-  }
-];
+// Empty mock data - database cleaned
+const mockTimbrature: Timbratura[] = [];
 
 export interface TimbratureFilters {
   pin: number;

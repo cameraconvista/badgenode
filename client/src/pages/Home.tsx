@@ -62,6 +62,7 @@ export default function Home() {
     window.location.href = '/archivio-dipendenti';
   };
 
+
   const handleEntrata = async () => {
     if (pin.length === 0) {
       setFeedback({ type: 'error', message: 'Inserire il PIN' });
