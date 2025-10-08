@@ -28,7 +28,7 @@ export default function ModaleDipendente({
     cognome: '',
     email: '',
     telefono: '',
-    pin: 1,
+    pin: 0,
     ore_contrattuali: 8.0,
   });
 
@@ -52,7 +52,7 @@ export default function ModaleDipendente({
           cognome: '',
           email: '',
           telefono: '',
-          pin: 1,
+          pin: 0,
           ore_contrattuali: 8.0,
         });
       }

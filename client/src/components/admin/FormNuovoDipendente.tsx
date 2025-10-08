@@ -98,8 +98,9 @@ export default function FormNuovoDipendente({
               type="number"
               min="1"
               max="99"
-              value={formData.pin}
-              onChange={(e) => onInputChange('pin', parseInt(e.target.value) || 1)}
+              value={formData.pin || ''}
+              placeholder="Inserisci PIN (1-99)"
+              onChange={(e) => onInputChange('pin', parseInt(e.target.value) || 0)}
               className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
                 errors.pin ? 'border-red-500' : 'focus:border-violet-400'
               }`}
