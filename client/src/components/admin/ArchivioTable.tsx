@@ -72,7 +72,7 @@ export default function ArchivioTable({
                   </button>
                 </th>
                 <th className="text-left p-4 font-medium text-base text-gray-200">Nome</th>
-                <th className="text-left p-4 font-medium text-base text-gray-200">Cognome</th>
+                <th className="text-center p-4 font-medium text-base text-gray-200">Cognome</th>
                 <th className="text-center p-4 font-medium text-base text-gray-200 w-32">Azioni</th>
               </tr>
             </thead>
@@ -111,7 +111,7 @@ export default function ArchivioTable({
                     <td className="p-4">
                       <span className="font-medium text-base text-white">{utente.nome}</span>
                     </td>
-                    <td className="p-4">
+                    <td className="p-4 text-center">
                       <span className="font-medium text-base text-white">{utente.cognome}</span>
                     </td>
                     <td className="p-4 w-32">
