@@ -1,79 +1,22 @@
 // Servizio per gestione timbrature e storico
 // TODO: Integrare con Supabase quando disponibile
 
-import { Timbratura, computeGiornoLogico } from '@/lib/time';
-import { delay } from './mockData';
+import { Timbratura } from '@/lib/time';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
 import { supabase } from '@/lib/supabaseClient';
 
-// Mock data per timbrature
+// Minimal mock data for fallback (only PIN 7 for current user)
 const mockTimbrature: Timbratura[] = [
   {
-    id: '1',
-    pin: 71,
-    tipo: 'entrata',
-    data: '2024-10-07',
-    ore: '08:30:00',
-    giornologico: '2024-10-07',
-    nome: 'Francisco',
-    cognome: 'Candussi Baez',
-    created_at: '2024-10-07T08:30:00Z'
-  },
-  {
-    id: '2',
-    pin: 71,
-    tipo: 'uscita',
-    data: '2024-10-07',
-    ore: '17:30:00',
-    giornologico: '2024-10-07',
-    nome: 'Francisco',
-    cognome: 'Candussi Baez',
-    created_at: '2024-10-07T17:30:00Z'
-  },
-  {
-    id: '3',
-    pin: 71,
+    id: 'mock-1',
+    pin: 7,
     tipo: 'entrata',
     data: '2024-10-08',
     ore: '08:00:00',
     giornologico: '2024-10-08',
-    nome: 'Francisco',
-    cognome: 'Candussi Baez',
+    nome: 'Mock',
+    cognome: 'User',
     created_at: '2024-10-08T08:00:00Z'
-  },
-  {
-    id: '4',
-    pin: 71,
-    tipo: 'uscita',
-    data: '2024-10-08',
-    ore: '18:30:00',
-    giornologico: '2024-10-08',
-    nome: 'Francisco',
-    cognome: 'Candussi Baez',
-    created_at: '2024-10-08T18:30:00Z'
-  },
-  // Turno notturno
-  {
-    id: '5',
-    pin: 71,
-    tipo: 'entrata',
-    data: '2024-10-09',
-    ore: '22:00:00',
-    giornologico: '2024-10-09',
-    nome: 'Francisco',
-    cognome: 'Candussi Baez',
-    created_at: '2024-10-09T22:00:00Z'
-  },
-  {
-    id: '6',
-    pin: 71,
-    tipo: 'uscita',
-    data: '2024-10-10',
-    ore: '06:00:00',
-    giornologico: '2024-10-09',
-    nome: 'Francisco',
-    cognome: 'Candussi Baez',
-    created_at: '2024-10-10T06:00:00Z'
   }
 ];
 
@@ -88,114 +31,84 @@ export interface TimbratureFilters {
 export class TimbratureService {
   // Ottieni timbrature per periodo (filtrate per giorno logico)
   static async getTimbraturePeriodo(filters: TimbratureFilters): Promise<Timbratura[]> {
-    await delay(400);
-    console.log('📊 Caricamento timbrature per periodo:', filters);
-    
-    return mockTimbrature.filter(t => {
-      return t.pin === filters.pin &&
-             t.giornologico >= filters.dal &&
-             t.giornologico <= filters.al;
-    }).sort((a, b) => {
-      // Ordina per giorno logico, poi per orario
-      const dateCompare = a.giornologico.localeCompare(b.giornologico);
-      if (dateCompare !== 0) return dateCompare;
-      return a.ore.localeCompare(b.ore);
-    });
+    try {
+      console.log('📊 [Supabase] Caricamento timbrature per periodo:', filters);
+      
+      const { data, error } = await supabase
+        .from('v_turni_giornalieri')
+        .select('*')
+        .eq('pin', filters.pin)
+        .gte('giornologico', filters.dal)
+        .lte('giornologico', filters.al)
+        .order('giornologico', { ascending: true })
+        .order('ore', { ascending: true });
+
+      if (error) {
+        console.error('[Supabase] Error loading timbrature:', error);
+        // Fallback to mock data if Supabase fails
+        console.warn('📊 Fallback to mock data');
+        return mockTimbrature.filter(t => {
+          return t.pin === filters.pin &&
+                 t.giornologico >= filters.dal &&
+                 t.giornologico <= filters.al;
+        }).sort((a, b) => {
+          const dateCompare = a.giornologico.localeCompare(b.giornologico);
+          if (dateCompare !== 0) return dateCompare;
+          return a.ore.localeCompare(b.ore);
+        });
+      }
+
+      console.log('✅ [Supabase] Timbrature caricate:', data?.length || 0);
+      return data || [];
+    } catch (error) {
+      console.error('❌ Error in getTimbraturePeriodo:', error);
+      // Fallback to mock data
+      return mockTimbrature.filter(t => {
+        return t.pin === filters.pin &&
+               t.giornologico >= filters.dal &&
+               t.giornologico <= filters.al;
+      });
+    }
   }
 
   // Ottieni timbrature per singolo giorno logico
   static async getTimbratureGiorno(pin: number, giornologico: string): Promise<Timbratura[]> {
-    await delay(200);
-    
-    return mockTimbrature.filter(t => 
-      t.pin === pin && t.giornologico === giornologico
-    ).sort((a, b) => a.ore.localeCompare(b.ore));
-  }
+    try {
+      console.log('📊 [Supabase] Caricamento timbrature giorno:', { pin, giornologico });
+      
+      const { data, error } = await supabase
+        .from('v_turni_giornalieri')
+        .select('*')
+        .eq('pin', pin)
+        .eq('giornologico', giornologico)
+        .order('ore', { ascending: true });
 
-  // Crea nuova timbratura
-  static async createTimbratura(input: {
-    pin: number;
-    tipo: 'entrata' | 'uscita';
-    data: string;
-    ore: string;
-    nome: string;
-    cognome: string;
-    dataEntrata?: string; // Per calcolo giorno logico uscite
-  }): Promise<Timbratura> {
-    await delay(300);
-    
-    // Calcola giorno logico
-    const { giornologico, dataReale } = computeGiornoLogico({
-      data: input.data,
-      ora: input.ore,
-      tipo: input.tipo,
-      dataEntrata: input.dataEntrata
-    });
+      if (error) {
+        console.error('[Supabase] Error loading timbrature giorno:', error);
+        // Fallback to mock data
+        return mockTimbrature.filter(t => 
+          t.pin === pin && t.giornologico === giornologico
+        ).sort((a, b) => a.ore.localeCompare(b.ore));
+      }
 
-    const newTimbratura: Timbratura = {
-      id: Date.now().toString(),
-      pin: input.pin,
-      tipo: input.tipo,
-      data: dataReale,
-      ore: input.ore,
-      giornologico,
-      nome: input.nome,
-      cognome: input.cognome,
-      created_at: new Date().toISOString()
-    };
-
-    mockTimbrature.push(newTimbratura);
-    console.log('✅ Timbratura creata:', newTimbratura);
-    return newTimbratura;
-  }
-
-  // Aggiorna timbratura esistente
-  static async updateTimbratura(id: string, input: {
-    data: string;
-    ore: string;
-    dataEntrata?: string;
-  }): Promise<Timbratura> {
-    await delay(400);
-    
-    const index = mockTimbrature.findIndex(t => t.id === id);
-    if (index === -1) {
-      throw new Error('Timbratura non trovata');
+      console.log('✅ [Supabase] Timbrature giorno caricate:', data?.length || 0);
+      return data || [];
+    } catch (error) {
+      console.error('❌ Error in getTimbratureGiorno:', error);
+      // Fallback to mock data
+      return mockTimbrature.filter(t => 
+        t.pin === pin && t.giornologico === giornologico
+      ).sort((a, b) => a.ore.localeCompare(b.ore));
     }
-
-    const timbratura = mockTimbrature[index];
-    
-    // Ricalcola giorno logico
-    const { giornologico, dataReale } = computeGiornoLogico({
-      data: input.data,
-      ora: input.ore,
-      tipo: timbratura.tipo,
-      dataEntrata: input.dataEntrata
-    });
-
-    mockTimbrature[index] = {
-      ...timbratura,
-      data: dataReale,
-      ore: input.ore,
-      giornologico
-    };
-
-    console.log('✅ Timbratura aggiornata:', mockTimbrature[index]);
-    return mockTimbrature[index];
   }
 
-  // Elimina timbratura
+  // TODO: Implement Supabase CRUD operations for timbrature management
+  static async updateTimbratura(id: string, input: { data: string; ore: string; dataEntrata?: string }): Promise<Timbratura> {
+    throw new Error('updateTimbratura not implemented - use Supabase RPC functions');
+  }
+
   static async deleteTimbratura(id: string): Promise<void> {
-    await delay(300);
-    
-    const index = mockTimbrature.findIndex(t => t.id === id);
-    if (index === -1) {
-      throw new Error('Timbratura non trovata');
-    }
-
-    const timbratura = mockTimbrature[index];
-    mockTimbrature.splice(index, 1);
-    
-    console.log('❌ Timbratura eliminata:', timbratura);
+    throw new Error('deleteTimbratura not implemented - use Supabase RPC functions');
   }
 
   // Calcola statistiche periodo
@@ -207,19 +120,22 @@ export class TimbratureService {
   // RPC: Inserisci timbratura via Supabase
   static async timbra(tipo: 'entrata' | 'uscita', when?: string): Promise<void> {
     try {
+      console.log('[Supabase] RPC insert_timbro chiamata:', { tipo, when: when || 'now' });
+      
       const { data, error } = await supabase.rpc('insert_timbro', {
         p_tipo: tipo,
         p_ts: when || null
       });
 
       if (error) {
+        console.error('[Supabase] RPC error:', error);
         if (error.message.includes('permission denied') || error.message.includes('RLS')) {
           throw new Error('Non autorizzato: controlla PIN/ruolo');
         }
         throw error;
       }
 
-      console.log('✅ Timbratura registrata:', { tipo, when: when || 'now', data });
+      console.log('✅ [Supabase] RPC insert_timbro → OK id:', data);
     } catch (error) {
       console.error('❌ Errore timbratura:', error);
       throw error;

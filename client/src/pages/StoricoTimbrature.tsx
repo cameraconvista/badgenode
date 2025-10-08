@@ -18,7 +18,7 @@ interface StoricoTimbratureProps {
   pin?: number; // PIN del dipendente da visualizzare
 }
 
-export default function StoricoTimbrature({ pin = 71 }: StoricoTimbratureProps) {
+export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
   const { isAdmin } = useAuth();
   
   // State per filtri
