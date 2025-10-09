@@ -116,18 +116,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('🗑️ [API] Eliminazione utente PIN:', pin);
       
-      const { error } = await supabaseAdmin
+      const { data, error } = await supabaseAdmin
         .from('utenti')
         .delete()
-        .eq('pin', pin);
+        .eq('pin', pin)
+        .select();
       
       if (error) {
         console.error('❌ [API] Error deleting utente:', error);
-        return res.status(500).json({ error: error.message });
+        return res.status(400).json({ 
+          error: error.message,
+          code: error.code,
+          details: error.details 
+        });
       }
       
-      console.log('✅ [API] Utente eliminato con successo');
-      res.json({ success: true, message: 'Utente eliminato con successo' });
+      console.log(`✅ [API] DELETE utenti OK id=${pin}`);
+      res.json({ 
+        success: true, 
+        message: 'Utente eliminato con successo',
+        deletedCount: data?.length || 0
+      });
       
     } catch (error) {
       console.error('❌ [API] Errore eliminazione utente:', error);
