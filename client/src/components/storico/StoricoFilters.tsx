@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar } from 'lucide-react';
+// Calendar import rimosso - non più necessario
 import { formatDateLocal } from '@/lib/time';
 
 interface StoricoFiltersProps {
@@ -73,14 +73,6 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
 
   return (
     <div className="bg-gray-800/50 rounded-lg p-6 space-y-4">
-      <div className="flex items-center justify-start mb-4">
-        <div className="text-sm text-gray-400 flex items-center gap-2">
-          <Calendar className="w-4 h-4" />
-          <span>
-            Periodo selezionato: <strong className="text-white">{filters.dal}</strong> → <strong className="text-white">{filters.al}</strong>
-          </span>
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Periodo Rapido */}
@@ -104,33 +96,27 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
         {/* Data Dal */}
         <div className="space-y-2">
           <Label htmlFor="dal" className="text-gray-200 text-base">Dal</Label>
-          <div className="relative">
-            <Input
-              id="dal"
-              type="date"
-              value={filters.dal}
-              onChange={(e) => handleDateChange('dal', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 pl-10 text-base"
-              disabled={isLoading}
-            />
-            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          </div>
+          <Input
+            id="dal"
+            type="date"
+            value={filters.dal}
+            onChange={(e) => handleDateChange('dal', e.target.value)}
+            className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer"
+            disabled={isLoading}
+          />
         </div>
 
         {/* Data Al */}
         <div className="space-y-2">
           <Label htmlFor="al" className="text-gray-200 text-base">Al</Label>
-          <div className="relative">
-            <Input
-              id="al"
-              type="date"
-              value={filters.al}
-              onChange={(e) => handleDateChange('al', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 pl-10 text-base"
-              disabled={isLoading}
-            />
-            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          </div>
+          <Input
+            id="al"
+            type="date"
+            value={filters.al}
+            onChange={(e) => handleDateChange('al', e.target.value)}
+            className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer"
+            disabled={isLoading}
+          />
         </div>
       </div>
     </div>
