@@ -154,17 +154,24 @@ export class UtentiService {
     return utenteAggiornato;
   }
 
-  // Archivia utente (TODO: implementare RPC se necessario)
   static async archiviaUtente(id: string, motivo?: string): Promise<void> {
-    throw new Error('archiviaUtente not implemented - use Supabase RPC functions if needed');
+    throw new Error('archiviaUtente not implemented');
   }
 
-  // Elimina utente definitivamente (TODO: implementare RPC se necessario)
   static async deleteUtente(id: string): Promise<void> {
-    throw new Error('deleteUtente not implemented - use Supabase RPC functions if needed');
+    try {
+      console.log('🗑️ [Supabase] Eliminazione utente ID:', id);
+      const { error } = await supabase.from('utenti').delete().eq('id', id);
+      if (error) {
+        console.error('❌ [Supabase] Error deleting utente:', error);
+        throw error;
+      }
+      console.log('✅ [Supabase] Utente eliminato con successo');
+    } catch (error) {
+      console.error('❌ Error in deleteUtente:', error);
+      throw error;
+    }
   }
-
-  // Verifica disponibilità PIN
   static async isPinAvailable(pin: number): Promise<boolean> {
     try {
       const { data, error } = await supabase
