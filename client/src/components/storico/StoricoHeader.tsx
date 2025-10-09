@@ -20,7 +20,7 @@ export default function StoricoHeader({
   const [, setLocation] = useLocation();
 
   const handleTorna = () => {
-    setLocation('/');
+    setLocation('/archivio');
   };
 
   return (
