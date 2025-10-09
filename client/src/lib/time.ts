@@ -164,10 +164,12 @@ export function formatDataItaliana(data: string): string {
  */
 export function formatDataBreve(data: string): string {
   const d = new Date(data + 'T00:00:00');
-  return d.toLocaleDateString('it-IT', {
+  const formatted = d.toLocaleDateString('it-IT', {
     weekday: 'short',
     day: '2-digit'
   });
+  // Capitalizza prima lettera del giorno della settimana
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
 /**
@@ -175,8 +177,10 @@ export function formatDataBreve(data: string): string {
  */
 export function getMeseItaliano(data: string): string {
   const d = new Date(data + 'T00:00:00');
-  return d.toLocaleDateString('it-IT', {
+  const formatted = d.toLocaleDateString('it-IT', {
     month: 'long',
     year: 'numeric'
   });
+  // Capitalizza prima lettera del mese
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }

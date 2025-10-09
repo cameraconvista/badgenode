@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
+import { expandDaysRange, getMeseItaliano } from '@/lib/time';
 
 export type TurnoGiornaliero = {
   pin: number;
@@ -81,17 +82,32 @@ export async function loadTurniFull(
     }
 
     // Mappa i dati dalla vista al tipo TurnoFull
-    const result: TurnoFull[] = (data ?? []).map(row => ({
+    const dbResult = (data ?? []).map((row: any) => ({
       pin: row.pin,
       giorno: row.giornologico,
-      mese_label: row.mese_label || `${new Date(row.giornologico).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}`,
+      mese_label: row.mese_label || getMeseItaliano(row.giornologico),
       entrata: row.entrata,
       uscita: row.uscita,
       ore: Number(row.ore) || 0,
       extra: Number(row.extra) || 0,
     }));
 
-    console.log('✅ [storico.service] v_turni_giornalieri loaded:', result.length, 'records');
+    // Genera tutti i giorni del periodo (anche senza timbrature)
+    const allDays = expandDaysRange(dal, al);
+    const result: TurnoFull[] = allDays.map(day => {
+      const existing = dbResult.find(r => r.giorno === day);
+      return existing || {
+        pin,
+        giorno: day,
+        mese_label: getMeseItaliano(day),
+        entrata: null,
+        uscita: null,
+        ore: 0,
+        extra: 0,
+      };
+    });
+
+    console.log('✅ [storico.service] v_turni_giornalieri loaded:', result.length, 'records (including empty days)');
     console.debug('📋 [storico.service] Sample data:', result.slice(0, 3));
     
     return result;

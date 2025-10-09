@@ -1,4 +1,4 @@
-import { Edit, Clock, Calendar } from 'lucide-react';
+import { Edit, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   formatOre,
@@ -69,33 +69,32 @@ export default function StoricoTable({
             `}
           >
             {/* Data */}
-            <div className="font-medium text-white flex items-center gap-2 px-0">
-              <Calendar className="w-4 h-4 text-gray-400" />
+            <div className="font-medium text-white flex items-center px-0 text-sm">
               {formatDataBreve(giorno.giorno)}
             </div>
             
             {/* Mese */}
-            <div className="text-white font-medium px-0">
-              {giorno.mese_label}
+            <div className="text-white font-medium px-0 text-sm">
+              {getMeseItaliano(giorno.giorno)}
             </div>
             
             {/* Entrata */}
-            <div className="text-center px-0">
+            <div className="text-center px-0 text-sm">
               <span className="text-white font-medium">{formatTimeOrDash(giorno.entrata)}</span>
             </div>
             
             {/* Uscita */}
-            <div className="text-center px-0">
+            <div className="text-center px-0 text-sm">
               <span className="text-white font-medium">{formatTimeOrDash(giorno.uscita)}</span>
             </div>
             
             {/* Ore Lavorate */}
-            <div className="text-center tabular-nums px-0">
+            <div className="text-center tabular-nums px-0 text-sm">
               <span className="text-white font-medium">{formatOre(giorno.ore)}</span>
             </div>
             
             {/* Ore Extra */}
-            <div className="text-right tabular-nums px-0">
+            <div className="text-right tabular-nums px-0 text-sm">
               {giorno.extra > 0 ? (
                 <span className="text-yellow-400 font-bold">{formatOre(giorno.extra)}</span>
               ) : (
@@ -104,7 +103,7 @@ export default function StoricoTable({
             </div>
             
             {/* Modifica */}
-            <div className="text-center px-0">
+            <div className="text-center px-0 text-sm">
               {giorno.ore > 0 ? (
                 <Button
                   variant="ghost"
