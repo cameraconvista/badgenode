@@ -14,6 +14,8 @@ import StoricoTimbratureSimple from '@/pages/StoricoTimbratureSimple';
 import StoricoWrapper from '@/components/storico/StoricoWrapper';
 import LoginPage from '@/pages/Login/LoginPage';
 import NotFound from '@/pages/not-found';
+// [ROUTE-DIAG-STEP7] import
+import RoutesInspector from '@/components/debug/RoutesInspector';
 
 function Router() {
   return (
@@ -28,6 +30,10 @@ function Router() {
       <Route path="/_debug/storico-timbrature" component={StoricoTimbratureSimple} />
       <Route path="/storico-timbrature/:pin">
         <StoricoWrapper />
+      </Route>
+      {/* [ROUTE-DIAG-STEP7] route di diagnostica (mettila SOPRA la NotFound) */}
+      <Route path="/_diag/routes">
+        <RoutesInspector />
       </Route>
       <Route component={NotFound} />
     </Switch>
