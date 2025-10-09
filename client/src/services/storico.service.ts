@@ -21,35 +21,6 @@ export type TurnoFull = {
   extra: number;          // ore decimali
 };
 
-/**
- * Carica turni giornalieri tramite RPC turni_giornalieri
- * che usa la view v_turni_giornalieri_v2
- */
-export async function loadTurniGiornalieri(pin: number, dal: string, al: string): Promise<TurnoGiornaliero[]> {
-  try {
-    console.log('📊 [RPC] turni_giornalieri args:', { p_pin: pin, p_dal: dal, p_al: al });
-    
-    const { data, error } = await supabase.rpc('turni_giornalieri', {
-      p_pin: pin,
-      p_dal: dal, // 'YYYY-MM-DD'
-      p_al: al,   // 'YYYY-MM-DD'
-    });
-
-    if (error) {
-      console.error('❌ [RPC] turni_giornalieri error:', error);
-      throw error;
-    }
-
-    const result = (data ?? []) as TurnoGiornaliero[];
-    console.log('✅ [RPC] turni_giornalieri loaded:', result.length, 'records');
-    console.debug('📋 [RPC] Sample data:', result.slice(0, 3));
-    
-    return result;
-  } catch (error) {
-    console.error('❌ Error in loadTurniGiornalieri:', error);
-    throw error;
-  }
-}
 
 /**
  * Carica lo storico giornaliero completo per il periodo selezionato,
@@ -62,11 +33,9 @@ export async function loadTurniFull(
 ): Promise<TurnoFull[]> {
   try {
     if (!pin) {
-      console.log('📊 [storico.service] loadTurniFull: PIN vuoto, ritorno array vuoto');
       return [];
     }
 
-    console.log('📊 [storico.service] v_turni_giornalieri query:', { pin, dal, al });
     
     const { data, error } = await supabase
       .from('v_turni_giornalieri')
@@ -107,8 +76,6 @@ export async function loadTurniFull(
       };
     });
 
-    console.log('✅ [storico.service] v_turni_giornalieri loaded:', result.length, 'records (including empty days)');
-    console.debug('📋 [storico.service] Sample data:', result.slice(0, 3));
     
     return result;
   } catch (error) {

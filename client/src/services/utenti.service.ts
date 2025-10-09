@@ -125,15 +125,11 @@ export class UtentiService {
   // Crea nuovo utente (wrapper per compatibilità)
   static async createUtente(input: UtenteInput): Promise<Utente> {
     await this.upsertUtente(input.pin, input.nome, input.cognome);
-    
-    // Ricarica utenti dal DB per ottenere l'utente creato
     const utenti = await this.getUtenti();
     const nuovoUtente = utenti.find(u => u.pin === input.pin);
-    
     if (!nuovoUtente) {
       throw new Error('Errore durante la creazione utente');
     }
-    
     return nuovoUtente;
   }
 
@@ -142,15 +138,11 @@ export class UtentiService {
     if (input.pin && input.nome && input.cognome) {
       await this.upsertUtente(input.pin, input.nome, input.cognome);
     }
-    
-    // Ricarica utenti dal DB
     const utenti = await this.getUtenti();
     const utenteAggiornato = utenti.find(u => u.id === id);
-    
     if (!utenteAggiornato) {
       throw new Error('Utente non trovato dopo aggiornamento');
     }
-    
     return utenteAggiornato;
   }
 
@@ -161,25 +153,21 @@ export class UtentiService {
   static async deleteUtente(pin: number): Promise<void> {
     try {
       console.log('🗑️ [API] Eliminazione utente PIN:', pin);
-      
       const response = await fetch(`/api/utenti/${pin}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Errore sconosciuto' }));
         console.error('❌ [API] Error deleting utente:', errorData);
-        
         if (response.status === 503) {
           throw new Error('⚠️ Servizio eliminazione non disponibile. Contattare l\'amministratore per configurare le credenziali Supabase.');
         }
-        
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
-      
       const result = await response.json();
       console.log('✅ [API] Utente eliminato con successo:', result.message);
     } catch (error) {
@@ -194,15 +182,12 @@ export class UtentiService {
         .select('pin')
         .eq('pin', pin)
         .single();
-
       if (error && error.code === 'PGRST116') {
         return true; // PIN non trovato = disponibile
       }
-      
       if (error) {
         throw error;
       }
-
       return false; // PIN trovato = non disponibile
     } catch (error) {
       console.error('❌ Error in isPinAvailable:', error);

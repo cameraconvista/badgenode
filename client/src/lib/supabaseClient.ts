@@ -4,7 +4,6 @@ const url = import.meta.env.VITE_SUPABASE_URL;
 const anon = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Supabase client initialization
-console.log('✅ [Supabase] Connected to:', url?.replace(/https:\/\//, ''), 'Mode:', import.meta.env.MODE);
 
 if (!url || !anon) {
   // eslint-disable-next-line no-console

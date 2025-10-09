@@ -27,7 +27,7 @@ function getCurrentTimestamp(): string {
   const hour = String(now.getHours()).padStart(2, '0');
   const minute = String(now.getMinutes()).padStart(2, '0');
 
-  return `${year}${month}${day}_${hour}${minute}`;
+  return `${year}.${month}.${day}_${hour}.${minute}`;
 }
 
 function createExcludeArgs(): string {
@@ -38,7 +38,7 @@ function getExistingBackups(): Array<{ name: string; path: string; mtime: Date }
   try {
     const files = readdirSync(BACKUP_DIR);
     return files
-      .filter((file) => file.startsWith('backup_') && file.endsWith('.tar.gz'))
+      .filter((file) => file.startsWith('backup_') && (file.endsWith('.tar.gz') || file.endsWith('.tar')))
       .map((file) => {
         const path = join(BACKUP_DIR, file);
         const stats = statSync(path);
@@ -68,7 +68,7 @@ function cleanupOldBackups(): void {
 
 function createBackup(): void {
   const timestamp = getCurrentTimestamp();
-  const backupName = `backup_${timestamp}.tar.gz`;
+  const backupName = `backup_${timestamp}.tar`;
   const backupPath = join(BACKUP_DIR, backupName);
   const excludeArgs = createExcludeArgs();
 
@@ -78,7 +78,7 @@ function createBackup(): void {
     // Create backup directory if it doesn't exist
     execSync(`mkdir -p ${BACKUP_DIR}`, { stdio: 'pipe' });
 
-    // Create tar.gz archive
+    // Create tar archive
     const command = `tar -czf ${backupPath} ${excludeArgs} --exclude='${BACKUP_DIR}' .`;
     execSync(command, { stdio: 'pipe' });
 
