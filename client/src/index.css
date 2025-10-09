@@ -283,6 +283,27 @@
     @apply hidden;
   }
 
+  /* Hide calendar icons in date inputs - keep only native browser calendar */
+  input[type='date']::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  /* Hide calendar icon in Firefox */
+  input[type='date'] {
+    -moz-appearance: textfield;
+  }
+  
+  /* Make entire date input clickable */
+  input[type='date'] {
+    position: relative;
+    cursor: pointer;
+  }
+
   /* Gradient animation for background */
   @keyframes gradient {
     0% {
