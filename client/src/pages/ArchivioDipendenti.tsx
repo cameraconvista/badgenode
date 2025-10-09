@@ -50,7 +50,7 @@ export default function ArchivioDipendenti() {
     }
   };
   const handleStorico = (pin: number) => {
-    setLocation(`/storico/${pin}`);
+    setLocation(`/storico-timbrature/${pin}`);
   };
   const handleModifica = (utente: Utente) => {
     setUtenteSelezionato(utente);

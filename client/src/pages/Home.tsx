@@ -11,6 +11,7 @@ import { TimbratureService } from '@/services/timbrature.service';
 import { useToast } from '@/hooks/use-toast';
 import { subscribeTimbrature } from '@/lib/realtime';
 import { invalidateAfterTimbratura, debounce } from '@/state/timbrature.cache';
+import { Link } from 'wouter';
 
 export default function Home() {
   const [pin, setPin] = useState('');
@@ -171,6 +172,15 @@ export default function Home() {
             onUscita={handleUscita} 
             disabled={loading} 
           />
+          
+          {/* LINK TEMPORANEO PER TEST STORICO */}
+          <div className="mt-4">
+            <Link href="/storico-timbrature">
+              <button className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg text-sm">
+                🔗 TEST: Vai a Storico Timbrature
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
 
