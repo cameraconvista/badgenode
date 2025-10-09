@@ -37,6 +37,8 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
 
   // Realtime subscription per admin (tutti i PIN)
   useEffect(() => {
+    // [STEP2-DEBUG] console.debug('[STEP2-DEBUG] StoricoTimbrature mounted');
+    console.debug('[STEP2-DEBUG] StoricoTimbrature mounted', { pin, isAdmin });
     if (!isAdmin) return;
 
     const debouncedInvalidate = debounce(() => {
