@@ -10,6 +10,7 @@ import { TimbratureService } from '@/services/timbrature.service';
 import { useStoricoExport } from '@/hooks/useStoricoExport';
 import { useStoricoMutations } from '@/hooks/useStoricoMutations';
 import StoricoHeader from '@/components/storico/StoricoHeader';
+import StoricoFilters from '@/components/storico/StoricoFilters';
 import StoricoTable from '@/components/storico/StoricoTable';
 import ModaleTimbrature from '@/components/storico/ModaleTimbrature';
 import { useAuth } from '@/contexts/AuthContext';
@@ -149,7 +150,11 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
 
         {/* Filtri - FISSO */}
         <div className="flex-shrink-0">
-          {/* TODO: StoricoFilters component missing */}
+          <StoricoFilters
+            filters={{ dal: filters.dal, al: filters.al }}
+            onFiltersChange={handleFiltersChange}
+            isLoading={isLoadingTimbrature}
+          />
         </div>
 
         {/* Tabella - SCROLLABILE */}
