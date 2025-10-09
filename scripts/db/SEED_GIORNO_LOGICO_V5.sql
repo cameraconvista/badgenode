@@ -7,72 +7,66 @@
 
 -- Creazione viste v5 per giorno logico con cutoff 05:00 Europe/Rome
 
--- Vista per sessioni accoppiate (dettaglio)
-CREATE OR REPLACE VIEW public.v_turni_giornalieri_v5 AS
-WITH sessioni_accoppiate AS (
-  SELECT 
-    t1.pin,
-    u.nome,
-    u.cognome,
-    t1.giornologico as giorno_logico,
-    t1.id as entrata_id,
-    t1.ore as entrata_ore,
-    t2.id as uscita_id,
-    t2.ore as uscita_ore,
-    CASE 
-      WHEN t1.ore IS NOT NULL AND t2.ore IS NOT NULL THEN
-        EXTRACT(EPOCH FROM (t2.ore - t1.ore)) / 3600.0
-      ELSE 0
-    END as ore_sessione,
-    ROW_NUMBER() OVER (
-      PARTITION BY t1.pin, t1.giornologico 
-      ORDER BY t1.ore, t1.created_at
-    ) as sessione_num
-  FROM timbrature t1
-  JOIN utenti u ON t1.pin = u.pin
-  LEFT JOIN timbrature t2 ON (
-    t2.pin = t1.pin 
-    AND t2.giornologico = t1.giornologico
-    AND t2.tipo = 'uscita'
-    AND t2.ore > t1.ore
-    AND t2.id = (
-      SELECT MIN(t3.id)
-      FROM timbrature t3
-      WHERE t3.pin = t1.pin
-        AND t3.giornologico = t1.giornologico
-        AND t3.tipo = 'uscita'
-        AND t3.ore > t1.ore
-    )
-  )
-  WHERE t1.tipo = 'entrata'
+-- Vista DETTAGLIO sessioni accoppiate con alias coerenti
+create or replace view public.v_turni_giornalieri_v5 as
+with base as (
+  select
+    t.id,
+    t.pin,
+    t.tipo::text            as tipo,
+    t.giornologico          as giorno_logico,
+    t.ore                   as ore_local,
+    t.created_at,
+    -- Ordine robusto: applica offset al mattino <05:00
+    (t.giornologico::timestamp
+      + t.ore
+      + case when t.ore < time '05:00' then interval '1 day' else interval '0' end
+    ) as ts_order
+  from public.timbrature t
+),
+seq as (
+  select
+    b.*,
+    lead(b.tipo)     over (partition by b.pin, b.giorno_logico order by b.ts_order, b.id) as next_tipo,
+    lead(b.id)       over (partition by b.pin, b.giorno_logico order by b.ts_order, b.id) as next_id,
+    lead(b.ore_local)over (partition by b.pin, b.giorno_logico order by b.ts_order, b.id) as next_ore_local,
+    lead(b.ts_order) over (partition by b.pin, b.giorno_logico order by b.ts_order, b.id) as next_ts_order
+  from base b
+),
+pairs as (
+  select
+    s.pin,
+    s.giorno_logico,
+    s.id           as entrata_id,
+    s.ore_local    as entrata_ore,
+    s.ts_order     as entrata_ts_order,
+    s.next_id      as uscita_id,
+    s.next_ore_local as uscita_ore,
+    s.next_ts_order  as uscita_ts_order
+  from seq s
+  where s.tipo = 'entrata'
+    and s.next_tipo = 'uscita'
 )
-SELECT 
-  pin,
-  nome,
-  cognome,
-  giorno_logico,
-  entrata_id,
-  entrata_ore,
-  uscita_id,
-  uscita_ore,
-  ore_sessione,
-  sessione_num
-FROM sessioni_accoppiate
-ORDER BY giorno_logico, entrata_ore;
+select
+  p.pin,
+  p.giorno_logico,
+  p.entrata_id,
+  p.entrata_ore,
+  p.uscita_id,
+  p.uscita_ore,
+  (extract(epoch from (p.uscita_ts_order - p.entrata_ts_order))/3600.0)::numeric(6,2) as ore_sessione
+from pairs p
+order by p.giorno_logico, p.entrata_ore, p.entrata_id;
 
--- Vista per totali per giorno logico
-CREATE OR REPLACE VIEW public.v_turni_giornalieri_totali_v5 AS
-SELECT 
+-- Vista TOTALI per giorno logico (somma solo sessioni chiuse)
+create or replace view public.v_turni_giornalieri_totali_v5 as
+select
   pin,
-  nome,
-  cognome,
   giorno_logico,
-  SUM(CASE WHEN uscita_id IS NOT NULL THEN ore_sessione ELSE 0 END) as ore_totali_chiuse,
-  COUNT(CASE WHEN uscita_id IS NOT NULL THEN 1 END) as sessioni_chiuse,
-  COUNT(*) as sessioni_totali
-FROM public.v_turni_giornalieri_v5
-GROUP BY pin, nome, cognome, giorno_logico
-ORDER BY giorno_logico, pin;
+  sum(ore_sessione)::numeric(6,2) as ore_totali_chiuse
+from public.v_turni_giornalieri_v5
+group by pin, giorno_logico
+order by giorno_logico, pin;
 
 -- =====================================================
 -- DATI DI TEST (solo per sviluppo)
