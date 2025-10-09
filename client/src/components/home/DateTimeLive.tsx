@@ -30,6 +30,7 @@ export default function DateTimeLive({ className = "" }: DateTimeLiveProps) {
   };
 
   const formatTime = (date: Date) => {
+    // Formato HH:MM:SS (equivalente a timeStyle: 'medium')
     return date.toLocaleTimeString('it-IT', {
       hour: '2-digit',
       minute: '2-digit',

@@ -1,19 +1,22 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { User } from 'lucide-react';
-import { formatDateLocal } from '@/lib/time';
-import { TimbratureService } from '@/services/timbrature.service';
+import { Calendar, Download, FileText, Users, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { loadTurniFull, TurnoFull, formatTimeOrDash } from '@/services/storico.service';
+import { GiornoLogicoDettagliato } from '@/lib/storico/types';
+import { buildStoricoDataset } from '@/lib/storico/dataset';
 import { UtentiService } from '@/services/utenti.service';
-import { loadTurniFull, TurnoFull } from '@/services/storico.service';
+import { TimbratureService } from '@/services/timbrature.service';
 import { useStoricoExport } from '@/hooks/useStoricoExport';
 import { useStoricoMutations } from '@/hooks/useStoricoMutations';
 import StoricoHeader from '@/components/storico/StoricoHeader';
-import StoricoFilters from '@/components/storico/StoricoFilters';
 import StoricoTable from '@/components/storico/StoricoTable';
 import ModaleTimbrature from '@/components/storico/ModaleTimbrature';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeTimbrature } from '@/lib/realtime';
 import { invalidateStoricoGlobale, invalidateTotaliGlobali, debounce } from '@/state/timbrature.cache';
+import { formatDateLocal } from '@/lib/time';
+import type { Utente } from '@/services/utenti.service';
 
 interface StoricoTimbratureProps {
   pin?: number; // PIN del dipendente da visualizzare
@@ -71,7 +74,13 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
     queryKey: ['turni-completi', filters],
     queryFn: () => loadTurniFull(filters.pin, filters.dal, filters.al, dipendente?.ore_contrattuali || 8),
     enabled: !!dipendente
-  });
+  }) as { data: GiornoLogicoDettagliato[], isLoading: boolean };
+
+  // Trasforma in dataset con sotto-righe
+  const storicoDataset = useMemo(() => 
+    buildStoricoDataset(turniGiornalieri), 
+    [turniGiornalieri]
+  );
 
   // Query per timbrature del giorno selezionato (per modale)
   const { data: timbratureGiorno = [] } = useQuery({
@@ -140,17 +149,14 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
 
         {/* Filtri - FISSO */}
         <div className="flex-shrink-0">
-          <StoricoFilters
-            filters={{ dal: filters.dal, al: filters.al }}
-            onFiltersChange={handleFiltersChange}
-            isLoading={isLoadingTimbrature}
-          />
+          {/* TODO: StoricoFilters component missing */}
         </div>
 
         {/* Tabella - SCROLLABILE */}
         <div className="flex-1 min-h-0">
           <StoricoTable
             timbrature={turniGiornalieri}
+            storicoDataset={storicoDataset}
             filters={{ dal: filters.dal, al: filters.al }}
             oreContrattuali={dipendente.ore_contrattuali}
             onEditTimbrature={handleEditTimbrature}
