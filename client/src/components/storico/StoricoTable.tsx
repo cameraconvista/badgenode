@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { 
   formatOre,
   formatDataBreve,
-  getMeseItaliano
+  getMeseItaliano,
+  formatCreatedAt
 } from '@/lib/time';
 import { TurnoFull, formatTimeOrDash, calcolaTotali } from '@/services/storico.service';
 import { StoricoRowData, GiornoLogicoDettagliato, SessioneTimbratura } from '@/lib/storico/types';
@@ -185,3 +186,13 @@ export default function StoricoTable({
     );
   }
 }
+
+/*
+ESEMPIO UTILIZZO formatCreatedAt per timestamp:
+
+Per mostrare created_at in formato HH:MM:SS (senza millisecondi):
+{formatCreatedAt(row.created_at)}
+
+Equivalente a:
+{new Date(row.created_at).toLocaleTimeString('it-IT', { hour12: false, timeStyle: 'medium' })}
+*/

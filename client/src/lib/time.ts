@@ -184,3 +184,13 @@ export function getMeseItaliano(data: string): string {
   // Capitalizza prima lettera del mese
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
+
+/**
+ * Formatta timestamp created_at per visualizzazione (solo secondi, no millisecondi)
+ */
+export function formatCreatedAt(created_at: string): string {
+  return new Date(created_at).toLocaleTimeString('it-IT', { 
+    hour12: false, 
+    timeStyle: 'medium' 
+  });
+}
