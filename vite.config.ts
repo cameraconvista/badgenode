@@ -58,6 +58,28 @@ export default defineConfig(({ mode }) => {
   build: {
     outDir: path.resolve(import.meta.dirname, 'dist/public'),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          recharts: ['recharts'],
+          radix: [
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-alert-dialog',
+            '@radix-ui/react-avatar',
+            '@radix-ui/react-checkbox',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-toast',
+            '@radix-ui/react-tooltip'
+          ],
+          supabase: ['@supabase/supabase-js'],
+          query: ['@tanstack/react-query']
+        }
+      }
+    }
   },
   server: {
     fs: {
