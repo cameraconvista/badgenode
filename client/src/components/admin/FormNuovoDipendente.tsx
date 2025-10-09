@@ -37,7 +37,7 @@ export default function FormNuovoDipendente({
               id="nome"
               type="text"
               value={formData.nome}
-              onChange={(e) => onInputChange('nome', e.target.value)}
+              onChange={(e) => onInputChange('nome', e.target.value.toUpperCase())}
               className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
                 errors.nome ? 'border-red-500' : 'focus:border-violet-400'
               }`}
@@ -52,7 +52,7 @@ export default function FormNuovoDipendente({
               id="cognome"
               type="text"
               value={formData.cognome}
-              onChange={(e) => onInputChange('cognome', e.target.value)}
+              onChange={(e) => onInputChange('cognome', e.target.value.toUpperCase())}
               className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
                 errors.cognome ? 'border-red-500' : 'focus:border-violet-400'
               }`}
@@ -93,16 +93,25 @@ export default function FormNuovoDipendente({
             <Label htmlFor="pin" className="text-yellow-400 font-bold">PIN (1-99) *</Label>
             <Input
               id="pin"
-              type="number"
-              min="1"
-              max="99"
-              value={formData.pin || ''}
-              placeholder="Inserisci PIN (1-99)"
-              onChange={(e) => onInputChange('pin', parseInt(e.target.value) || 0)}
+              type="text"
+              value={formData.pin ? String(formData.pin).padStart(2, '0') : ''}
+              placeholder="Inserisci PIN (01-99)"
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, ''); // Solo numeri
+                if (value === '' || value === '0') {
+                  onInputChange('pin', 0);
+                } else {
+                  const numValue = parseInt(value);
+                  if (numValue >= 1 && numValue <= 99) {
+                    onInputChange('pin', numValue);
+                  }
+                }
+              }}
               className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
                 errors.pin ? 'border-red-500' : 'focus:border-violet-400'
-              } [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]`}
+              }`}
               disabled={isLoading}
+              maxLength={2}
             />
             {errors.pin && <p className="text-sm text-red-400">{errors.pin}</p>}
           </div>
