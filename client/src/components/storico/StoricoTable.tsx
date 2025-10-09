@@ -69,28 +69,28 @@ export default function StoricoTable({
             `}
           >
             {/* Data */}
-            <div className="font-medium text-white flex items-center px-0 text-sm">
+            <div className="font-medium text-white/90 flex items-center px-0 text-sm">
               {formatDataBreve(giorno.giorno)}
             </div>
             
             {/* Mese */}
-            <div className="text-white font-medium px-0 text-sm">
+            <div className="text-white/90 font-medium px-0 text-sm">
               {getMeseItaliano(giorno.giorno)}
             </div>
             
             {/* Entrata */}
             <div className="text-center px-0 text-sm">
-              <span className="text-white font-medium">{formatTimeOrDash(giorno.entrata)}</span>
+              <span className="text-white/90 font-medium">{formatTimeOrDash(giorno.entrata)}</span>
             </div>
             
             {/* Uscita */}
             <div className="text-center px-0 text-sm">
-              <span className="text-white font-medium">{formatTimeOrDash(giorno.uscita)}</span>
+              <span className="text-white/90 font-medium">{formatTimeOrDash(giorno.uscita)}</span>
             </div>
             
             {/* Ore Lavorate */}
             <div className="text-center tabular-nums px-0 text-sm">
-              <span className="text-white font-medium">{formatOre(giorno.ore)}</span>
+              <span className="text-white/90 font-medium">{formatOre(giorno.ore)}</span>
             </div>
             
             {/* Ore Extra */}

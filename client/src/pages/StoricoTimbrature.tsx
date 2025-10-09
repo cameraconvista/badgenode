@@ -69,7 +69,7 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
     isLoading: isLoadingTimbrature
   } = useQuery({
     queryKey: ['turni-completi', filters],
-    queryFn: () => loadTurniFull(filters.pin, filters.dal, filters.al),
+    queryFn: () => loadTurniFull(filters.pin, filters.dal, filters.al, dipendente?.ore_contrattuali || 8),
     enabled: !!dipendente
   });
 
