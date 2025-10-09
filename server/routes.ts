@@ -116,6 +116,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('🗑️ [API] Eliminazione utente PIN:', pin);
       
+      // STEP 1: Elimina tutte le timbrature dell'utente (CASCADE)
+      console.log('🗑️ [API] Eliminazione timbrature per PIN:', pin);
+      const { error: timbratureError } = await supabaseAdmin
+        .from('timbrature')
+        .delete()
+        .eq('pin', pin);
+      
+      if (timbratureError) {
+        console.error('❌ [API] Error deleting timbrature:', timbratureError);
+        return res.status(400).json({ 
+          error: `Errore eliminazione timbrature: ${timbratureError.message}`,
+          code: timbratureError.code,
+          details: timbratureError.details 
+        });
+      }
+      
+      console.log('✅ [API] Timbrature eliminate per PIN:', pin);
+      
+      // STEP 2: Elimina l'utente
       const { data, error } = await supabaseAdmin
         .from('utenti')
         .delete()
@@ -131,10 +150,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.log(`✅ [API] DELETE utenti OK id=${pin}`);
+      console.log(`✅ [API] DELETE utenti OK id=${pin} (CASCADE: timbrature + utente)`);
       res.json({ 
         success: true, 
-        message: 'Utente eliminato con successo',
+        message: 'Utente e tutte le sue timbrature eliminati con successo',
         deletedCount: data?.length || 0
       });
       
