@@ -154,9 +154,9 @@ export default function StoricoTable({
         {/* Data - vuota */}
         <div></div>
         
-        {/* Mese - indicatore sessione */}
+        {/* Mese - indicatore sessione (solo dalla #2 in poi) */}
         <div className="text-gray-400 text-xs">
-          #{sessione.numeroSessione}
+          {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
         </div>
         
         {/* Entrata sessione */}

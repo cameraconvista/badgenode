@@ -4,21 +4,22 @@ import { GiornoLogicoDettagliato, StoricoRowData } from './types';
 
 /**
  * Trasforma array giorni in dataset per tabella con sotto-righe
- * Intercala: riga giorno → righe sessioni → riga giorno → ...
+ * Intercala: riga giorno → righe sessioni (dalla 2ª) → riga giorno → ...
  */
 export function buildStoricoDataset(giorni: GiornoLogicoDettagliato[]): StoricoRowData[] {
   const dataset: StoricoRowData[] = [];
   
   for (const giorno of giorni) {
-    // Riga principale giorno
+    // Riga principale giorno (sempre presente)
     dataset.push({
       type: 'giorno',
       giorno
     });
     
-    // Sotto-righe sessioni (solo se ci sono sessioni)
-    if (giorno.sessioni.length > 0) {
-      for (const sessione of giorno.sessioni) {
+    // Sotto-righe sessioni: SOLO dalla seconda sessione in poi
+    if (giorno.sessioni.length > 1) {
+      for (let i = 1; i < giorno.sessioni.length; i++) {
+        const sessione = giorno.sessioni[i];
         dataset.push({
           type: 'sessione',
           sessione,
