@@ -14,8 +14,6 @@ import StoricoTimbratureSimple from '@/pages/StoricoTimbratureSimple';
 import StoricoWrapper from '@/components/storico/StoricoWrapper';
 import LoginPage from '@/pages/Login/LoginPage';
 import NotFound from '@/pages/not-found';
-// [STEP2-DEBUG] import
-import ErrorBoundary from '@/components/debug/ErrorBoundary';
 
 function Router() {
   return (
@@ -24,20 +22,7 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/" component={Home} />
       <Route path="/archivio-dipendenti" component={ArchivioDipendenti} />
-      {/* [SANITY-TEST STEP1] Inizio */}
       <Route path="/storico-timbrature">
-        <div id="sanity-storico" data-test="storico-ok" style={{padding:'16px'}}>
-          STORICO OK
-        </div>
-      </Route>
-      {/* [SANITY-TEST STEP1] Fine */}
-      {/* [STEP2-DEBUG] route di diagnostica isolata */}
-      <Route path="/_debug/storico-timbrature-real">
-        <ErrorBoundary name="StoricoTimbrature">
-          <StoricoTimbrature />
-        </ErrorBoundary>
-      </Route>
-      <Route path="/storico-timbrature-original">
         <StoricoTimbrature />
       </Route>
       <Route path="/_debug/storico-timbrature" component={StoricoTimbratureSimple} />
