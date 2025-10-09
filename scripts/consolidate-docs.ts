@@ -11,7 +11,7 @@ import {
 } from './utils/docs-core';
 
 const DOCS_DIR = 'DOCS';
-const OUTPUT_FILE = join(DOCS_DIR, 'REPORT_CONSOLIDATO.txt');
+const OUTPUT_FILE = join(DOCS_DIR, '00_REPORT_CONSOLIDATO.txt');
 
 function generateConsolidatedReport(docFiles: any[]): string {
   const timestamp = new Date().toISOString();
