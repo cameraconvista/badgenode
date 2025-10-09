@@ -22,9 +22,6 @@ function Router() {
       <Route path="/storico-timbrature/:pin">
         <StoricoWrapper />
       </Route>
-      <Route path="/storico-timbrature">
-        <StoricoTimbrature />
-      </Route>
       <Route path="/" component={Home} />
       <Route component={NotFound} />
     </Switch>
