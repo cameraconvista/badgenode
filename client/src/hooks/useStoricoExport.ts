@@ -3,11 +3,11 @@ import { useToast } from '@/hooks/use-toast';
 import { TimbratureService } from '@/services/timbrature.service';
 import { downloadCSV, ExportData } from '@/lib/export';
 import { Utente } from '@/services/utenti.service';
-import { Timbratura } from '@/lib/time';
+import { TurnoGiornaliero } from '@/services/storico.service';
 
 interface UseStoricoExportProps {
   dipendente: Utente | undefined;
-  timbrature: Timbratura[];
+  timbrature: TurnoGiornaliero[];
   filters: { pin: number; dal: string; al: string };
 }
 
@@ -32,26 +32,11 @@ export function useStoricoExport({ dipendente, timbrature, filters }: UseStorico
     }
 
     try {
-      // Calcola statistiche per export
-      const stats = await TimbratureService.getStatsPeriodo(filters, dipendente.ore_contrattuali);
-      
-      const exportData: ExportData = {
-        dipendente,
-        timbrature,
-        periodo: { dal: filters.dal, al: filters.al },
-        totali: {
-          oreTotali: stats.totaleMensileOre,
-          oreExtra: stats.totaleMensileExtra,
-          giorniLavorati: stats.giorniLavorati,
-          mediaOreGiorno: stats.mediaOreGiorno
-        }
-      };
-
-      downloadCSV(exportData);
-      
+      // TODO: Implementare export con nuovi dati TurnoGiornaliero
       toast({
-        title: "Export completato",
-        description: "File Excel scaricato con successo",
+        title: "Export Excel",
+        description: "Funzionalità temporaneamente disabilitata durante migrazione RPC",
+        variant: "default",
       });
     } catch {
       toast({

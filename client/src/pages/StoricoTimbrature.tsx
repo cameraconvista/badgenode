@@ -4,6 +4,7 @@ import { User } from 'lucide-react';
 import { formatDateLocal } from '@/lib/time';
 import { TimbratureService } from '@/services/timbrature.service';
 import { UtentiService } from '@/services/utenti.service';
+import { loadTurniGiornalieri, TurnoGiornaliero } from '@/services/storico.service';
 import { useStoricoExport } from '@/hooks/useStoricoExport';
 import { useStoricoMutations } from '@/hooks/useStoricoMutations';
 import StoricoHeader from '@/components/storico/StoricoHeader';
@@ -62,13 +63,13 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
     }
   });
 
-  // Query per timbrature
+  // Query per turni giornalieri via RPC
   const { 
-    data: timbrature = [], 
+    data: turniGiornalieri = [], 
     isLoading: isLoadingTimbrature
   } = useQuery({
-    queryKey: ['timbrature', filters],
-    queryFn: () => TimbratureService.getTimbraturePeriodo(filters),
+    queryKey: ['turni-giornalieri', filters],
+    queryFn: () => loadTurniGiornalieri(filters.pin, filters.dal, filters.al),
     enabled: !!dipendente
   });
 
@@ -82,7 +83,7 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
   // Hook per export
   const { handleExportPDF, handleExportXLS } = useStoricoExport({
     dipendente,
-    timbrature,
+    timbrature: turniGiornalieri,
     filters
   });
 
@@ -149,7 +150,7 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
         {/* Tabella - SCROLLABILE */}
         <div className="flex-1 min-h-0">
           <StoricoTable
-            timbrature={timbrature}
+            timbrature={turniGiornalieri}
             filters={{ dal: filters.dal, al: filters.al }}
             oreContrattuali={dipendente.ore_contrattuali}
             onEditTimbrature={handleEditTimbrature}
