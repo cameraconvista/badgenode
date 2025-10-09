@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-// Calendar import rimosso - non più necessario
+import { Calendar } from 'lucide-react';
 import { formatDateLocal } from '@/lib/time';
 
 interface StoricoFiltersProps {
@@ -16,6 +16,8 @@ interface StoricoFiltersProps {
 
 export default function StoricoFilters({ filters, onFiltersChange, isLoading }: StoricoFiltersProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('corrente');
+  const dalInputRef = useRef<HTMLInputElement>(null);
+  const alInputRef = useRef<HTMLInputElement>(null);
 
   // Calcola date per periodi predefiniti
   const getDateRanges = () => {
@@ -69,6 +71,13 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
     }
   };
 
+  const handleCalendarClick = (field: 'dal' | 'al') => {
+    const inputRef = field === 'dal' ? dalInputRef : alInputRef;
+    if (inputRef.current) {
+      inputRef.current.showPicker();
+    }
+  };
+
   // const ranges = getDateRanges(); // Commentato per evitare warning unused
 
   return (
@@ -96,27 +105,43 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
         {/* Data Dal */}
         <div className="space-y-2">
           <Label htmlFor="dal" className="text-gray-200 text-base">Dal</Label>
-          <Input
-            id="dal"
-            type="date"
-            value={filters.dal}
-            onChange={(e) => handleDateChange('dal', e.target.value)}
-            className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer"
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <Calendar 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white cursor-pointer z-10" 
+              onClick={() => handleCalendarClick('dal')}
+            />
+            <Input
+              ref={dalInputRef}
+              id="dal"
+              type="date"
+              value={filters.dal}
+              onChange={(e) => handleDateChange('dal', e.target.value)}
+              onClick={() => handleCalendarClick('dal')}
+              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer pl-10"
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
         {/* Data Al */}
         <div className="space-y-2">
           <Label htmlFor="al" className="text-gray-200 text-base">Al</Label>
-          <Input
-            id="al"
-            type="date"
-            value={filters.al}
-            onChange={(e) => handleDateChange('al', e.target.value)}
-            className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer"
-            disabled={isLoading}
-          />
+          <div className="relative">
+            <Calendar 
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white cursor-pointer z-10" 
+              onClick={() => handleCalendarClick('al')}
+            />
+            <Input
+              ref={alInputRef}
+              id="al"
+              type="date"
+              value={filters.al}
+              onChange={(e) => handleDateChange('al', e.target.value)}
+              onClick={() => handleCalendarClick('al')}
+              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer pl-10"
+              disabled={isLoading}
+            />
+          </div>
         </div>
       </div>
     </div>
