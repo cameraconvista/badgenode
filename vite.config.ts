@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
+import path from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import Icons from 'unplugin-icons/vite';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -47,11 +47,13 @@ export default defineConfig(({ mode }) => {
   ],
   resolve: {
     alias: [
-      { find: '@', replacement: '/src' },
-      { find: '@shared', replacement: '/shared' },
+      // alias assoluti su filesystem
+      { find: '@', replacement: path.resolve(__dirname, 'client/src') },
+      { find: '@shared', replacement: path.resolve(__dirname, 'shared') },
     ],
   },
   root: path.resolve(__dirname, 'client'),
+  base: '/',
   build: {
     outDir: path.resolve(__dirname, 'dist', 'public'),
     emptyOutDir: true,

@@ -160,13 +160,28 @@ export class UtentiService {
 
   static async deleteUtente(pin: number): Promise<void> {
     try {
-      console.log('🗑️ [Supabase] Eliminazione utente PIN:', pin);
-      const { error } = await supabase.from('utenti').delete().eq('pin', pin);
-      if (error) {
-        console.error('❌ [Supabase] Error deleting utente:', error);
-        throw error;
+      console.log('🗑️ [API] Eliminazione utente PIN:', pin);
+      
+      const response = await fetch(`/api/utenti/${pin}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Errore sconosciuto' }));
+        console.error('❌ [API] Error deleting utente:', errorData);
+        
+        if (response.status === 503) {
+          throw new Error('⚠️ Servizio eliminazione non disponibile. Contattare l\'amministratore per configurare le credenziali Supabase.');
+        }
+        
+        throw new Error(errorData.error || `HTTP ${response.status}`);
       }
-      console.log('✅ [Supabase] Utente eliminato con successo');
+      
+      const result = await response.json();
+      console.log('✅ [API] Utente eliminato con successo:', result.message);
     } catch (error) {
       console.error('❌ Error in deleteUtente:', error);
       throw error;

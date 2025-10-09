@@ -22,7 +22,14 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/" component={Home} />
       <Route path="/archivio-dipendenti" component={ArchivioDipendenti} />
+      {/* [SANITY-TEST STEP1] Inizio */}
       <Route path="/storico-timbrature">
+        <div id="sanity-storico" data-test="storico-ok" style={{padding:'16px'}}>
+          STORICO OK
+        </div>
+      </Route>
+      {/* [SANITY-TEST STEP1] Fine */}
+      <Route path="/storico-timbrature-original">
         <StoricoTimbrature />
       </Route>
       <Route path="/_debug/storico-timbrature" component={StoricoTimbratureSimple} />
