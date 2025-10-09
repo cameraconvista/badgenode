@@ -20,7 +20,7 @@ export default function Home() {
     message: '',
   });
   const [loading, setLoading] = useState(false);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
 
   // Realtime subscription per dipendente
@@ -139,18 +139,6 @@ export default function Home() {
         >
           <LogoHeader />
           
-          {/* Debug info in development */}
-          {import.meta.env.DEV && user && (
-            <div className="mb-4 p-2 bg-gray-800/50 rounded text-xs text-gray-300 text-center">
-              {user.isAdmin ? 'Admin' : `PIN ${user.pin}`} | {user.email}
-              <button 
-                onClick={logout}
-                className="ml-2 text-red-400 hover:text-red-300"
-              >
-                Logout
-              </button>
-            </div>
-          )}
           <PinDisplay pin={pin} />
           
           {/* Messaggio feedback sotto il PIN */}
