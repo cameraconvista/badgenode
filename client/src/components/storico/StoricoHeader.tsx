@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { FileSpreadsheet, FileText } from 'lucide-react';
+import { FileSpreadsheet, FileText, ArrowLeft } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 interface StoricoHeaderProps {
   dipendente: {
@@ -16,8 +17,26 @@ export default function StoricoHeader({
   onExportPDF, 
   onExportXLS 
 }: StoricoHeaderProps) {
+  const [, setLocation] = useLocation();
+
+  const handleTorna = () => {
+    setLocation('/');
+  };
+
   return (
     <div className="bg-gray-800/50 rounded-lg p-6 flex-shrink-0 relative">
+      {/* Pulsante TORNA in alto a sinistra */}
+      <div className="absolute top-4 left-4">
+        <Button
+          variant="ghost"
+          onClick={handleTorna}
+          className="text-white/80 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          TORNA
+        </Button>
+      </div>
+
       {/* Pulsanti in alto a destra */}
       <div className="absolute top-4 right-4 flex gap-3">
         <Button

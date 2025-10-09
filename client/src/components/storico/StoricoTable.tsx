@@ -5,11 +5,11 @@ import {
   formatDataBreve,
   getMeseItaliano
 } from '@/lib/time';
-import { TurnoGiornaliero, formatTimeOrDash, calcolaTotali } from '@/services/storico.service';
+import { TurnoFull, formatTimeOrDash, calcolaTotali } from '@/services/storico.service';
 import StoricoTotalsBar from './StoricoTotalsBar';
 
 interface StoricoTableProps {
-  timbrature: TurnoGiornaliero[];
+  timbrature: TurnoFull[];
   filters: { dal: string; al: string };
   oreContrattuali: number;
   onEditTimbrature: (giornologico: string) => void;

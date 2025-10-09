@@ -3,11 +3,11 @@ import { useToast } from '@/hooks/use-toast';
 import { TimbratureService } from '@/services/timbrature.service';
 import { downloadCSV, ExportData } from '@/lib/export';
 import { Utente } from '@/services/utenti.service';
-import { TurnoGiornaliero } from '@/services/storico.service';
+import { TurnoFull } from '@/services/storico.service';
 
 interface UseStoricoExportProps {
   dipendente: Utente | undefined;
-  timbrature: TurnoGiornaliero[];
+  timbrature: TurnoFull[];
   filters: { pin: number; dal: string; al: string };
 }
 

@@ -4,7 +4,7 @@ import { User } from 'lucide-react';
 import { formatDateLocal } from '@/lib/time';
 import { TimbratureService } from '@/services/timbrature.service';
 import { UtentiService } from '@/services/utenti.service';
-import { loadTurniGiornalieri, TurnoGiornaliero } from '@/services/storico.service';
+import { loadTurniFull, TurnoFull } from '@/services/storico.service';
 import { useStoricoExport } from '@/hooks/useStoricoExport';
 import { useStoricoMutations } from '@/hooks/useStoricoMutations';
 import StoricoHeader from '@/components/storico/StoricoHeader';
@@ -63,13 +63,13 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
     }
   });
 
-  // Query per turni giornalieri via RPC
+  // Query per turni completi via RPC (include tutti i giorni)
   const { 
     data: turniGiornalieri = [], 
     isLoading: isLoadingTimbrature
   } = useQuery({
-    queryKey: ['turni-giornalieri', filters],
-    queryFn: () => loadTurniGiornalieri(filters.pin, filters.dal, filters.al),
+    queryKey: ['turni-completi', filters],
+    queryFn: () => loadTurniFull(filters.pin, filters.dal, filters.al),
     enabled: !!dipendente
   });
 
