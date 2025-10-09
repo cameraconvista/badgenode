@@ -23,26 +23,20 @@ export default function ArchivioDipendenti() {
   const [utenteSelezionato, setUtenteSelezionato] = useState<Utente | null>(null);
   const [isEliminaLoading, setIsEliminaLoading] = useState(false);
   const { isAdmin } = useAuth();
-
-  // Realtime subscription per admin (invalidazioni utenti)
   useEffect(() => {
     if (!isAdmin) return;
-
     const debouncedInvalidate = debounce(() => {
       invalidateUtenti();
-      loadUtenti(); // Ricarica la lista utenti
+      loadUtenti();
     }, 250);
-
     const unsubscribe = subscribeTimbrature({
       onChange: (payload) => {
         console.debug('📡 Archivio received realtime event:', payload);
         debouncedInvalidate();
       }
     });
-
     return () => unsubscribe();
   }, [isAdmin]);
-
   useEffect(() => { loadUtenti(); }, []);
   const loadUtenti = async () => {
     setIsLoading(true);
@@ -56,20 +50,14 @@ export default function ArchivioDipendenti() {
     }
   };
   const handleStorico = (pin: number) => {
-    console.log('📊 Navigazione storico per PIN:', pin);
-    setLocation(`/storico-timbrature/${pin}`);
+    setLocation(`/storico/${pin}`);
   };
   const handleModifica = (utente: Utente) => {
     setUtenteSelezionato(utente);
     setShowModaleModifica(true);
   };
   const handleArchivia = async (id: string) => {
-    try {
-      await UtentiService.archiviaUtente(id, 'Archiviato da admin');
-      await loadUtenti();
-    } catch (error) {
-      console.error('Errore archiviazione:', error);
-    }
+    console.log('Archivia utente ID:', id);
   };
   const handleEliminaClick = (utente: Utente) => {
     setUtenteSelezionato(utente);
@@ -79,7 +67,7 @@ export default function ArchivioDipendenti() {
     if (!utenteSelezionato) return;
     setIsEliminaLoading(true);
     try {
-      await UtentiService.deleteUtente(utenteSelezionato.id);
+      await UtentiService.deleteUtente(utenteSelezionato.pin);
       await loadUtenti();
       setShowModaleElimina(false);
       setUtenteSelezionato(null);

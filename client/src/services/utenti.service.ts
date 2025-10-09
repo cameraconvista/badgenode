@@ -158,10 +158,10 @@ export class UtentiService {
     throw new Error('archiviaUtente not implemented');
   }
 
-  static async deleteUtente(id: string): Promise<void> {
+  static async deleteUtente(pin: number): Promise<void> {
     try {
-      console.log('🗑️ [Supabase] Eliminazione utente ID:', id);
-      const { error } = await supabase.from('utenti').delete().eq('id', id);
+      console.log('🗑️ [Supabase] Eliminazione utente PIN:', pin);
+      const { error } = await supabase.from('utenti').delete().eq('pin', pin);
       if (error) {
         console.error('❌ [Supabase] Error deleting utente:', error);
         throw error;
