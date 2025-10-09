@@ -112,10 +112,22 @@ export class TimbratureService {
       const p_tipo = tipo?.toLowerCase() === 'uscita' ? 'uscita' : 'entrata';
       
       
-      const { data, error } = await supabase.rpc('insert_timbro_rpc', { 
+      // TENTATIVO 1: Nuova RPC v2 con alternanza corretta
+      let { data, error } = await supabase.rpc('insert_timbro_v2', { 
         p_pin: pin, 
         p_tipo: p_tipo 
       });
+
+      // FALLBACK: Se RPC v2 non esiste, usa quella legacy
+      if (error && (error.code === '42883' || error.message.includes('function') || error.message.includes('does not exist'))) {
+        console.warn('[RPC v2] Funzione non disponibile, fallback a legacy');
+        const legacyResult = await supabase.rpc('insert_timbro_rpc', { 
+          p_pin: pin, 
+          p_tipo: p_tipo 
+        });
+        data = legacyResult.data;
+        error = legacyResult.error;
+      }
 
       if (error) {
         console.error('[Supabase RPC ERROR insert_timbro_rpc]', error);
@@ -137,12 +149,14 @@ export class TimbratureService {
         // Errore generico
         throw new Error('Errore di sistema');
       }
-      // RPC ora ritorna bigint direttamente
-      if (typeof data !== 'number') {
-        throw new Error('RPC insert_timbro_rpc: ritorno inatteso');
+      // RPC v2 ritorna table, v1 ritorna bigint
+      if (Array.isArray(data) && data.length > 0) {
+        return data[0].id; // RPC v2
+      } else if (typeof data === 'number') {
+        return data; // RPC v1 legacy
       }
 
-      return data; // id inserito
+      throw new Error('RPC: ritorno inatteso');
     } catch (error) {
       console.error('❌ Errore timbratura:', error);
       throw error;
