@@ -1,8 +1,12 @@
-# 🚨 REPORT BLOCCO DEPLOY RPC V2
+# 🚨 REPORT BLOCCO RPC V2 DEPLOY
 
-**Data**: 2025-10-09  
-**Obiettivo**: Deploy migration `insert_timbro_v2` in Supabase  
-**Stato**: BLOCCATO - Accesso database richiesto ❌
+**Data**: 2025-10-09 | **Data revisione**: 2025-10-10  
+**Problema**: Deploy RPC insert_timbro_v2 bloccato  
+**Stato**: MIGRATION PRONTA - Deploy manuale richiesto
+
+**Riferimenti incrociati**:
+- [README RPC Timbrature](../RPC/README_RPC_TIMBRATURE.md)
+- [Snapshot Supabase/Windsurf](STATO_SUPABASE_WINDSURF_2025-10-10.md) ❌
 
 ---
 

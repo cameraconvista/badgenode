@@ -1,8 +1,12 @@
-# 🔧 REPORT HOTFIX VISUALIZZAZIONE SESSIONI
+# 🎯 REPORT HOTFIX SESSIONI VISUAL
 
-**Data**: 2025-10-09  
-**Hotfix**: Sotto-righe solo dalla seconda sessione in poi  
-**Stato**: HOTFIX COMPLETATO ✅
+**Data**: 2025-10-09 | **Data revisione**: 2025-10-10  
+**Hotfix**: Sotto-righe solo dalla seconda sessione  
+**Stato**: IMPLEMENTAZIONE COMPLETATA ✅
+
+**Riferimenti incrociati**:
+- [Logica Giorno Logico v2.1](../07_logica_giorno_logico.md)
+- [Fix Multi-sessione](REPORT_FIX_SESSIONI_GIORNOLOGICO_20251009.md)
 
 ---
 

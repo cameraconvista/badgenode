@@ -1,8 +1,8 @@
 # 📅 LOGICA GIORNO LOGICO — BadgeNode
 
-**Data aggiornamento**: 2025-10-09
-**Versione documento**: v2.0 (aggiornato con gestione multi‑sessione)
-**Autore**: BadgeNode • Revisione tecnica ChatGPT/Cascade
+**Data aggiornamento**: 2025-10-10
+**Versione documento**: v2.1 (hotfix sotto-righe + chiarimenti pairing)
+**Autore**: BadgeNode • Revisione tecnica Cascade
 
 ---
 
@@ -70,21 +70,21 @@ Un dipendente può **entrare/uscire più volte** nello stesso giorno logico. Ogn
 | 1 | 09:00 | 11:00 | 2.00 |
 | 2 | 13:00 | 17:00 | 4.00 |
 | 3 | 22:00 | 01:00 (+1) | 3.00 |
-**Totale giorno**: **9.00 h** — **Extra**: in base a configurazione.
 
 ---
 
 ## 🖥️ Regole di visualizzazione — pagina **Storico Timbrature**
 - **Riga principale del giorno** (già esistente, **layout invariato**): mostra *prima entrata*, *ultima uscita*, **ore totali** e **extra** del giorno logico.
-- **Sotto‑righe di dettaglio** (nuovo contenuto dati, **niente cambio layout**): per ciascuna sessione, mostra  
-  - “**Nª sessione** — Entrata hh:mm · Uscita hh:mm · Ore x,xx”  
-  - Ordinamento: per orario di entrata.
+- **Sotto‑righe di dettaglio** (**hotfix v2.1**): mostrate **solo dalla 2ª sessione in poi**
+  - Se giorno ha 1 sola sessione → **nessuna sotto-riga**
+  - Se giorno ha ≥2 sessioni → sotto-righe per sessioni #2, #3, etc.
+  - Formato: "**#N** — Entrata hh:mm · Uscita hh:mm · Ore x,xx"
+  - Ordinamento: per orario di entrata crescente
 - **Giorni senza timbri**: riga vuota con ore **0.00**.
 - **Footer**:  
   - **Giorni lavorati** = count dei giorni con `ore_giornaliere > 0`  
   - **Ore totali** = somma `ore_giornaliere` su tutto il periodo  
   - **Ore totali extra** = somma `extra` su tutto il periodo
-- **Accessibilità/leggibilità**: migliorare **solo** luminosità/contrasto dei testi dati (no modifiche a layout/HTML).
 
 ---
 
@@ -131,5 +131,6 @@ Percorso consigliato nel repo: `DOCS/07_logica_giorno_logico.md`
 ---
 
 ## 🧾 Cronologia versioni
+- **v2.1 — 2025-10-10**: Hotfix sotto-righe solo dalla #2 sessione; chiarimenti algoritmo pairing e test performance.
 - **v2.0 — 2025-10-09**: Aggiunta **gestione multi‑sessione** e regole di visualizzazione delle sotto‑righe; chiariti edge cases e test obbligatori.
 - **v1.x — storico**: Definizione base del giorno logico con riepilogo per giorno (prima entrata/ultima uscita) e calcolo ore.
