@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Filter } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { formatDateLocal } from '@/lib/time';
 
 interface StoricoFiltersProps {
@@ -73,11 +73,7 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
 
   return (
     <div className="bg-gray-800/50 rounded-lg p-6 space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-violet-400" />
-          <h3 className="text-xl font-semibold text-white">Filtri Periodo</h3>
-        </div>
+      <div className="flex items-center justify-start mb-4">
         <div className="text-sm text-gray-400 flex items-center gap-2">
           <Calendar className="w-4 h-4" />
           <span>
