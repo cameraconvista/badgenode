@@ -46,11 +46,10 @@ export default defineConfig(({ mode }) => {
     }),
   ],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './client/src'),
-      '@shared': path.resolve(__dirname, './shared'),
-      '@assets': path.resolve(__dirname, './ARCHIVE/REPLIT_OLD_20251008_0114/attached_assets'),
-    },
+    alias: [
+      { find: '@', replacement: '/src' },
+      { find: '@shared', replacement: '/shared' },
+    ],
   },
   root: path.resolve(__dirname, 'client'),
   build: {

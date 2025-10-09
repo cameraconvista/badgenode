@@ -22,10 +22,10 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/" component={Home} />
       <Route path="/archivio-dipendenti" component={ArchivioDipendenti} />
-      <Route path="/storico-timbrature" component={StoricoTimbratureSimple} />
-      <Route path="/storico-timbrature-full">
+      <Route path="/storico-timbrature">
         <StoricoTimbrature />
       </Route>
+      <Route path="/_debug/storico-timbrature" component={StoricoTimbratureSimple} />
       <Route path="/storico-timbrature/:pin">
         <StoricoWrapper />
       </Route>
