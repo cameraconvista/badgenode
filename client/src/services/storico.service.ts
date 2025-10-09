@@ -52,7 +52,7 @@ export async function loadTurniGiornalieri(pin: number, dal: string, al: string)
 
 /**
  * Carica lo storico giornaliero completo per il periodo selezionato,
- * includendo i giorni senza timbrature (ore/extra = 0, entrata/uscita = null).
+ * usando query diretta su vista v_turni_giornalieri (sostituisce RPC mancante).
  */
 export async function loadTurniFull(
   pin: number,
@@ -60,27 +60,44 @@ export async function loadTurniFull(
   al: string    // 'YYYY-MM-DD'
 ): Promise<TurnoFull[]> {
   try {
-    console.log('📊 [RPC] turni_giornalieri_full args:', { p_pin: pin, p_dal: dal, p_al: al });
-    
-    const { data, error } = await supabase.rpc('turni_giornalieri_full', {
-      p_pin: pin,
-      p_dal: dal,
-      p_al: al,
-    });
-
-    if (error) {
-      console.error('❌ [RPC] turni_giornalieri_full error:', error);
-      throw error;
+    if (!pin) {
+      console.log('📊 [storico.service] loadTurniFull: PIN vuoto, ritorno array vuoto');
+      return [];
     }
 
-    const result = (data ?? []) as TurnoFull[];
-    console.log('✅ [RPC] turni_giornalieri_full loaded:', result.length, 'records (including empty days)');
-    console.debug('📋 [RPC] Sample data:', result.slice(0, 3));
+    console.log('📊 [storico.service] v_turni_giornalieri query:', { pin, dal, al });
+    
+    const { data, error } = await supabase
+      .from('v_turni_giornalieri')
+      .select('*')
+      .eq('pin', pin)
+      .gte('giornologico', dal)
+      .lte('giornologico', al)
+      .order('giornologico', { ascending: true });
+
+    if (error) {
+      console.error('❌ [storico.service] v_turni_giornalieri error:', { pin, dal, al, error });
+      return [];
+    }
+
+    // Mappa i dati dalla vista al tipo TurnoFull
+    const result: TurnoFull[] = (data ?? []).map(row => ({
+      pin: row.pin,
+      giorno: row.giornologico,
+      mese_label: row.mese_label || `${new Date(row.giornologico).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}`,
+      entrata: row.entrata,
+      uscita: row.uscita,
+      ore: Number(row.ore) || 0,
+      extra: Number(row.extra) || 0,
+    }));
+
+    console.log('✅ [storico.service] v_turni_giornalieri loaded:', result.length, 'records');
+    console.debug('📋 [storico.service] Sample data:', result.slice(0, 3));
     
     return result;
   } catch (error) {
     console.error('❌ Error in loadTurniFull:', error);
-    throw error;
+    return [];
   }
 }
 
