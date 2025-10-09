@@ -91,7 +91,7 @@ export default function ArchivioTable({
                 </tr>
               ) : (
                 sortedUtenti.map((utente) => (
-                  <tr key={utente.id} className="border-t border-gray-600 hover:bg-gray-700/50 transition-colors">
+                  <tr key={utente.id || `pin-${utente.pin}`} className="border-t border-gray-600 hover:bg-gray-700/50 transition-colors">
                     <td className="p-4 w-24">
                       <Button
                         variant="ghost"

@@ -10,6 +10,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import Home from '@/pages/Home';
 import ArchivioDipendenti from '@/pages/ArchivioDipendenti';
 import StoricoTimbrature from '@/pages/StoricoTimbrature';
+import StoricoTimbratureSimple from '@/pages/StoricoTimbratureSimple';
 import StoricoWrapper from '@/components/storico/StoricoWrapper';
 import LoginPage from '@/pages/Login/LoginPage';
 import NotFound from '@/pages/not-found';
@@ -21,7 +22,8 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/" component={Home} />
       <Route path="/archivio-dipendenti" component={ArchivioDipendenti} />
-      <Route path="/storico-timbrature">
+      <Route path="/storico-timbrature" component={StoricoTimbratureSimple} />
+      <Route path="/storico-timbrature-full">
         <StoricoTimbrature />
       </Route>
       <Route path="/storico-timbrature/:pin">
