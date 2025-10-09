@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabaseClient';
 import { expandDaysRange, getMeseItaliano } from '@/lib/time';
 import { normalizeDate, aggregateTimbratureByGiornoLogico } from '@/lib/storico/aggregate';
+import { GiornoLogicoDettagliato } from '@/lib/storico/types';
 
 export type TurnoGiornaliero = {
   pin: number;
@@ -32,7 +33,7 @@ export async function loadTurniFull(
   dal: string,  // 'YYYY-MM-DD'
   al: string,   // 'YYYY-MM-DD'
   oreContrattuali: number = 8
-): Promise<TurnoFull[]> {
+): Promise<GiornoLogicoDettagliato[]> {
   try {
     if (!pin) {
       return [];
@@ -68,8 +69,8 @@ export async function loadTurniFull(
 
     // Genera tutti i giorni del periodo (anche senza timbrature)
     const allDays = expandDaysRange(dal, al);
-    const result: TurnoFull[] = allDays.map(day => {
-      const existing = dbResult.find((r: TurnoFull) => r.giorno === day);
+    const result: GiornoLogicoDettagliato[] = allDays.map(day => {
+      const existing = dbResult.find((r: GiornoLogicoDettagliato) => r.giorno === day);
       return existing || {
         pin,
         giorno: day,
@@ -78,6 +79,7 @@ export async function loadTurniFull(
         uscita: null,
         ore: 0,
         extra: 0,
+        sessioni: []  // NUOVO: Array vuoto per giorni senza timbrature
       };
     });
 
@@ -107,9 +109,9 @@ export function formatOre(ore: number): string {
 }
 
 /**
- * Calcola totali da array di turni (compatibile con TurnoGiornaliero e TurnoFull)
+ * Calcola totali da array di turni (compatibile con TurnoGiornaliero, TurnoFull e GiornoLogicoDettagliato)
  */
-export function calcolaTotali(turni: TurnoGiornaliero[] | TurnoFull[]) {
+export function calcolaTotali(turni: (TurnoGiornaliero | TurnoFull | GiornoLogicoDettagliato)[]) {
   const totOre = turni.reduce((acc, r) => acc + (Number(r.ore) || 0), 0);
   const totExtra = turni.reduce((acc, r) => acc + (Number(r.extra) || 0), 0);
   const giorniLavorati = turni.filter(r => (Number(r.ore) || 0) > 0).length;

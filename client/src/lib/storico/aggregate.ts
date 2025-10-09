@@ -2,6 +2,8 @@
 
 import { formatDateLocal, getMeseItaliano } from '@/lib/time';
 import { TurnoFull } from '@/services/storico.service';
+import { GiornoLogicoDettagliato } from './types';
+import { pairSessionsForGiorno } from './pairing';
 
 interface TimbratureRaw {
   pin: number;
@@ -30,7 +32,7 @@ export function aggregateTimbratureByGiornoLogico(
   timbrature: TimbratureRaw[], 
   pin: number, 
   oreContrattuali: number = 8
-): TurnoFull[] {
+): GiornoLogicoDettagliato[] {
   // Group by giornologico
   const grouped = timbrature.reduce((acc, t) => {
     const key = t.giornologico;
@@ -47,32 +49,23 @@ export function aggregateTimbratureByGiornoLogico(
     return acc;
   }, {} as Record<string, { entrate: TimbratureRaw[]; uscite: TimbratureRaw[] }>);
 
-  // Calcola aggregati per ogni giorno
+  // Calcola aggregati per ogni giorno con multi-sessione
   return Object.entries(grouped).map(([giorno, data]) => {
-    // Ordina per orario
-    const entrate = data.entrate.sort((a, b) => a.ore.localeCompare(b.ore));
-    const uscite = data.uscite.sort((a, b) => b.ore.localeCompare(a.ore)); // Desc per ultima uscita
+    // Combina entrate e uscite per pairing
+    const allTimbrature = [...data.entrate, ...data.uscite];
     
-    const primaEntrata = entrate[0]?.ore || null;
-    const ultimaUscita = uscite[0]?.ore || null;
+    // Calcola sessioni con pairing
+    const sessioni = pairSessionsForGiorno(allTimbrature);
     
-    // Calcola ore lavorate
-    let ore = 0;
-    if (primaEntrata && ultimaUscita) {
-      const entrata = new Date(`${giorno}T${primaEntrata}`);
-      const uscita = new Date(`${giorno}T${ultimaUscita}`);
-      
-      // Se uscita < entrata, turno notturno (aggiungi 24h)
-      if (uscita < entrata) {
-        uscita.setDate(uscita.getDate() + 1);
-      }
-      
-      const diffMs = uscita.getTime() - entrata.getTime();
-      ore = Math.round((diffMs / (1000 * 60 * 60)) * 100) / 100; // 2 decimali
-    }
+    // Calcola totali giorno (solo sessioni chiuse)
+    const sessioniChiuse = sessioni.filter(s => !s.isAperta);
+    const oreTotali = sessioniChiuse.reduce((acc, s) => acc + s.ore, 0);
+    const extra = Math.max(0, oreTotali - oreContrattuali);
     
-    // Calcola ore extra
-    const extra = Math.max(0, ore - oreContrattuali);
+    // Prima entrata e ultima uscita (per compatibilità)
+    const primaEntrata = sessioni[0]?.entrata || null;
+    const ultimaUscita = sessioniChiuse
+      .slice(-1)[0]?.uscita || null;
     
     return {
       pin,
@@ -80,8 +73,9 @@ export function aggregateTimbratureByGiornoLogico(
       mese_label: getMeseItaliano(giorno),
       entrata: primaEntrata,
       uscita: ultimaUscita,
-      ore,
-      extra
+      ore: oreTotali,
+      extra,
+      sessioni  // NUOVO: Array sessioni
     };
   });
 }
