@@ -4,14 +4,16 @@ import { useEffect } from 'react';
 type RouteInfo = { path: string; order: number; note?: string };
 
 const routes: RouteInfo[] = [
-  // Inserisci qui le route dichiarate in App.tsx nello stesso ordine
+  // Ordine aggiornato dopo QUICKWIN
   { path: '/login', order: 1 },
-  { path: '/', order: 2 },
-  { path: '/archivio-dipendenti', order: 3 },
-  { path: '/storico-timbrature', order: 4, note: 'TARGET' },
-  { path: '/_debug/storico-timbrature', order: 5 },
-  { path: '/storico-timbrature/:pin', order: 6 },
-  { path: '*', order: 7, note: 'NotFound' },
+  { path: '/archivio-dipendenti', order: 2 },
+  { path: '/storico-timbrature', order: 3, note: 'TARGET' },
+  { path: '/storico-timbrature/:pin', order: 4 },
+  { path: '/storico', order: 5, note: 'ALIAS' },
+  { path: '/_debug/storico-timbrature', order: 6 },
+  { path: '/_diag/routes', order: 7, note: 'DIAG' },
+  { path: '/', order: 8, note: 'HOME (moved down)' },
+  { path: '*', order: 9, note: 'NotFound' },
 ];
 
 export default function RoutesInspector() {
