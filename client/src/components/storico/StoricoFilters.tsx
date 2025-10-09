@@ -74,7 +74,28 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
   const handleCalendarClick = (field: 'dal' | 'al') => {
     const inputRef = field === 'dal' ? dalInputRef : alInputRef;
     if (inputRef.current) {
-      inputRef.current.showPicker();
+      // Prova prima showPicker() se supportato
+      if (typeof inputRef.current.showPicker === 'function') {
+        try {
+          inputRef.current.showPicker();
+        } catch (error) {
+          // Fallback: focus e click
+          inputRef.current.focus();
+          inputRef.current.click();
+        }
+      } else {
+        // Fallback per browser che non supportano showPicker
+        inputRef.current.focus();
+        inputRef.current.click();
+        
+        // Trigger manuale dell'evento per aprire il picker
+        const event = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true,
+        });
+        inputRef.current.dispatchEvent(event);
+      }
     }
   };
 
@@ -116,7 +137,6 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
               type="date"
               value={filters.dal}
               onChange={(e) => handleDateChange('dal', e.target.value)}
-              onClick={() => handleCalendarClick('dal')}
               className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer pl-10"
               disabled={isLoading}
             />
@@ -137,7 +157,6 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
               type="date"
               value={filters.al}
               onChange={(e) => handleDateChange('al', e.target.value)}
-              onClick={() => handleCalendarClick('al')}
               className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer pl-10"
               disabled={isLoading}
             />
