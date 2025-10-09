@@ -5,12 +5,20 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Credenziali Supabase (da .env o hardcoded per script)
-const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://hjbungtedtgffmnficmp.supabase.co';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqYnVuZ3RlZHRnZmZtbmZpY21wIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTg2ODc2NCwiZXhwIjoyMDc1NDQ0NzY0fQ.iSdAS_ufJv8bE-HUEaMV38ika_Hqb6KCJwrdfgjLCY4';
+// Credenziali Supabase (SOLO da variabili ambiente)
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('❌ Mancano le variabili d\'ambiente VITE_SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY');
+if (!supabaseUrl) {
+  console.error('❌ Variabile ambiente VITE_SUPABASE_URL mancante');
+  console.error('   Aggiungi VITE_SUPABASE_URL=https://your-project.supabase.co nel file .env');
+  process.exit(1);
+}
+
+if (!supabaseServiceKey) {
+  console.error('❌ Variabile ambiente SUPABASE_SERVICE_ROLE_KEY mancante');
+  console.error('   Aggiungi SUPABASE_SERVICE_ROLE_KEY=your-service-role-key nel file .env');
+  console.error('   ⚠️  ATTENZIONE: NON committare mai questa chiave nel repository!');
   process.exit(1);
 }
 
