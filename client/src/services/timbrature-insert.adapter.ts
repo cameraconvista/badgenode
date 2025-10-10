@@ -40,6 +40,8 @@ export class TimbratureInsertAdapter {
     created_at?: string; 
     client_event_id?: string 
   }): Promise<SyncResult> {
+    console.log('🚀 [TimbratureSync] insertNowOrEnqueue chiamato:', params);
+    
     const client_event_id = params.client_event_id ?? uuidv4();
     const created_at = params.created_at ?? new Date().toISOString();
     
@@ -51,6 +53,8 @@ export class TimbratureInsertAdapter {
       attempts: 0,
       created_local_ts: Date.now(),
     };
+    
+    console.log('📋 [TimbratureSync] Evento preparato:', pending);
 
     // Tenta invio immediato se online
     if (navigator.onLine) {
@@ -71,6 +75,13 @@ export class TimbratureInsertAdapter {
 
   private async trySend(ev: PendingEvent): Promise<{ success: boolean; error?: string }> {
     try {
+      console.log('🔄 [TimbratureSync] Tentativo INSERT:', {
+        pin: ev.pin,
+        tipo: ev.tipo,
+        created_at: ev.created_at,
+        client_event_id: ev.client_event_id
+      });
+      
       // INSERT DIRETTO su tabella timbrature (no RPC)
       const { data, error } = await supabase
         .from('timbrature')
@@ -82,6 +93,8 @@ export class TimbratureInsertAdapter {
         }])
         .select()
         .single();
+      
+      console.log('📊 [TimbratureSync] Risposta Supabase:', { data, error });
 
       if (error) {
         // Errori idempotenza: duplicate key su client_event_id = successo
