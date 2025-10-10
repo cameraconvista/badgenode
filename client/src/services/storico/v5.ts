@@ -41,12 +41,12 @@ export async function loadTotaliGiornoLogico({
 }): Promise<TotaleGiornoV5[]> {
   try {
     const { data, error } = await supabase
-      .from('v_turni_giornalieri_totali_v5')
-      .select('pin, giorno_logico, ore_totali_chiuse')
+      .from('v_turni_giornalieri_totali_v4')
+      .select('pin, giornologico, ore_totali_chiuse')
       .eq('pin', pin)
-      .gte('giorno_logico', from)
-      .lte('giorno_logico', to)
-      .order('giorno_logico', { ascending: true });
+      .gte('giornologico', from)
+      .lte('giornologico', to)
+      .order('giornologico', { ascending: true });
 
     if (error) {
       console.error('❌ [storico.service] loadTotaliGiornoLogico error:', {
@@ -67,10 +67,10 @@ export async function loadTotaliGiornoLogico({
     }
 
     return (data || []).map(row => ({
-      giorno_logico: row.giorno_logico,
+      giorno_logico: row.giornologico,
       ore_totali_chiuse: Number(row.ore_totali_chiuse) || 0,
-      sessioni_chiuse: 0, // Non più presente in vista v5
-      sessioni_totali: 0  // Non più presente in vista v5
+      sessioni_chiuse: 0, // Non più presente in vista v4
+      sessioni_totali: 0  // Non più presente in vista v4
     }));
   } catch (error) {
     console.error('❌ Error in loadTotaliGiornoLogico:', error);
@@ -92,12 +92,12 @@ export async function loadSessioniGiornoLogico({
 }): Promise<(SessioneV5 & { giorno_logico: string })[]> {
   try {
     const { data, error } = await supabase
-      .from('v_turni_giornalieri_v5')
-      .select('pin, giorno_logico, entrata_id, entrata_ore, uscita_id, uscita_ore, ore_sessione')
+      .from('v_turni_giornalieri_v4')
+      .select('pin, giornologico, entrata_id, entrata_ore, uscita_id, uscita_ore, ore_sessione')
       .eq('pin', pin)
-      .gte('giorno_logico', from)
-      .lte('giorno_logico', to)
-      .order('giorno_logico', { ascending: true })
+      .gte('giornologico', from)
+      .lte('giornologico', to)
+      .order('giornologico', { ascending: true })
       .order('entrata_ore', { ascending: true });
 
     if (error) {
@@ -119,7 +119,7 @@ export async function loadSessioniGiornoLogico({
     }
 
     return (data || []).map(row => ({
-      giorno_logico: row.giorno_logico,
+      giorno_logico: row.giornologico,
       entrata_id: Number(row.entrata_id),
       entrata_ore: row.entrata_ore,
       uscita_id: row.uscita_id ? Number(row.uscita_id) : null,
