@@ -112,6 +112,13 @@ export class TimbratureService {
   }
 
   // CRUD operations: TODO - use Supabase RPC functions
+  static async updateTimbratura(id: string, input: { data: string; ore: string; dataEntrata?: string }): Promise<Timbratura> {
+    throw new Error('updateTimbratura not implemented - use Supabase RPC functions');
+  }
+
+  static async deleteTimbratura(id: string): Promise<void> {
+    throw new Error('deleteTimbratura not implemented - use Supabase RPC functions');
+  }
 
   // Calcola statistiche periodo
   static async getStatsPeriodo(filters: TimbratureFilters, oreContrattuali: number): Promise<TimbratureStats> {
