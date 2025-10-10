@@ -34,6 +34,14 @@ export async function testOfflineSync() {
   }
 }
 
+// Test verifica configurazione Supabase
+export async function testSupabaseConfig() {
+  console.log('🔧 [Debug] Verifica configurazione Supabase...');
+  console.log('🔧 [Debug] URL:', import.meta.env.VITE_SUPABASE_URL);
+  console.log('🔧 [Debug] ANON_KEY presente:', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
+  console.log('🔧 [Debug] MODE:', import.meta.env.MODE);
+}
+
 // Test verifica utenti
 export async function testCheckUsers() {
   console.log('👥 [Debug] Verifica utenti...');
@@ -183,6 +191,7 @@ if (typeof window !== 'undefined') {
   (window as any).testOfflineSync = testOfflineSync;
   (window as any).testSimpleInsert = testSimpleInsert;
   (window as any).testCheckUsers = testCheckUsers;
+  (window as any).testSupabaseConfig = testSupabaseConfig;
   (window as any).seedTestData = seedTestData;
-  console.log('🧪 [Test] Funzioni disponibili: testOfflineSync(), testSimpleInsert(), testCheckUsers(), seedTestData()');
+  console.log('🧪 [Test] Funzioni disponibili: testOfflineSync(), testSimpleInsert(), testCheckUsers(), testSupabaseConfig(), seedTestData()');
 }
