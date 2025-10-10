@@ -14,6 +14,9 @@ import { formatDateLocal, getMeseItaliano } from '@/lib/time';
 export function useStoricoTimbrature(pin: number) {
   const { isAdmin } = useAuth();
   
+  // Debug logging per PIN
+  console.log('🔍 [useStoricoTimbrature] PIN utilizzato:', pin);
+  
   // State per filtri
   const [filters, setFilters] = useState(() => {
     const today = new Date();

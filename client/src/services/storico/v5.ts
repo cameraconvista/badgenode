@@ -40,6 +40,7 @@ export async function loadTotaliGiornoLogico({
   to: string;
 }): Promise<TotaleGiornoV5[]> {
   try {
+    console.log('🔍 [loadTotaliGiornoLogico] Query params:', { pin, from, to });
     const { data, error } = await supabase
       .from('v_turni_giornalieri_totali_v5')
       .select('pin, giorno_logico, ore_totali_chiuse')
@@ -89,6 +90,7 @@ export async function loadSessioniGiornoLogico({
   to: string;
 }): Promise<(SessioneV5 & { giorno_logico: string })[]> {
   try {
+    console.log('🔍 [loadSessioniGiornoLogico] Query params:', { pin, from, to });
     const { data, error } = await supabase
       .from('v_turni_giornalieri_v5')
       .select('pin, giorno_logico, entrata_id, entrata_ore, uscita_id, uscita_ore, ore_sessione')

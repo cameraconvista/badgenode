@@ -23,7 +23,7 @@ function Router() {
         <StoricoWrapper />
       </Route>
       <Route path="/storico-timbrature">
-        <StoricoTimbrature />
+        <StoricoWrapper />
       </Route>
       <Route path="/" component={Home} />
       <Route component={NotFound} />

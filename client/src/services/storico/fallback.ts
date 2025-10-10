@@ -50,6 +50,7 @@ export async function loadSessioniLegacy({
   to: string;
 }): Promise<(SessioneV5 & { giorno_logico: string })[]> {
   try {
+    console.log('🔄 [loadSessioniLegacy] FALLBACK attivo per PIN:', pin, 'range:', from, 'to', to);
     // Query diretta su tabella timbrature per creare sessioni
     const { data, error } = await supabase
       .from('timbrature')
