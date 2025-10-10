@@ -1,5 +1,5 @@
 // Adapter offline-first per timbrature BadgeNode
-// RPC idempotente + coda locale con retry automatico
+// INSERT DIRETTO su tabella + coda locale con retry automatico
 
 import { supabase } from '@/lib/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,8 +9,7 @@ import {
   SYNC_DB_NAME, 
   SYNC_DB_STORE, 
   SYNC_MAX_ATTEMPTS, 
-  SYNC_RETRY_BACKOFF_MS,
-  SYNC_RPC_NAME
+  SYNC_RETRY_BACKOFF_MS
 } from '../../../shared/constants/sync';
 
 export class TimbratureInsertAdapter {
@@ -72,12 +71,17 @@ export class TimbratureInsertAdapter {
 
   private async trySend(ev: PendingEvent): Promise<{ success: boolean; error?: string }> {
     try {
-      const { data, error } = await supabase.rpc(SYNC_RPC_NAME, {
-        _pin: ev.pin,
-        _tipo: ev.tipo,
-        _created_at: ev.created_at,
-        _client_event_id: ev.client_event_id,
-      });
+      // INSERT DIRETTO su tabella timbrature (no RPC)
+      const { data, error } = await supabase
+        .from('timbrature')
+        .insert([{
+          pin: ev.pin,
+          tipo: ev.tipo,                 // 'entrata' | 'uscita'
+          created_at: ev.created_at,     // ISO tz
+          client_event_id: ev.client_event_id,
+        }])
+        .select()
+        .single();
 
       if (error) {
         // Errori idempotenza: duplicate key su client_event_id = successo
@@ -101,8 +105,13 @@ export class TimbratureInsertAdapter {
       }
 
       // Successo: rimuovi dalla coda
-      await this.db.delete(ev.client_event_id);
-      return { success: true };
+      if (data) {
+        console.log('✅ [TimbratureSync] Insert diretto riuscito:', data.id);
+        await this.db.delete(ev.client_event_id);
+        return { success: true };
+      }
+
+      return { success: false, error: 'No data returned' };
       
     } catch (error) {
       // Errori di rete/connessione

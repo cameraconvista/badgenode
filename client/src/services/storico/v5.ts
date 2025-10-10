@@ -1,4 +1,4 @@
-// Funzioni per storico - MIGRATO a v_timbrature_canon
+// Funzioni per storico - SEMPLIFICATO: lettura diretta da public.timbrature
 import { TimbratureService } from '../timbrature.service';
 import { pairTimbrature, buildDailyTotals } from '../../utils/timbrature-pairing';
 import { TotaleGiornoV5, SessioneV5, StoricoDatasetV5 } from './types';
@@ -29,7 +29,7 @@ export function generateDateRange(from: string, to: string): string[] {
 }
 
 /**
- * Carica totali giornalieri - MIGRATO a v_timbrature_canon + pairing client.
+ * Carica totali giornalieri - SEMPLIFICATO: tabella diretta + pairing client.
  */
 export async function loadTotaliGiornoLogico({
   pin,
@@ -64,7 +64,7 @@ export async function loadTotaliGiornoLogico({
 }
 
 /**
- * Carica sessioni dettagliate - MIGRATO a v_timbrature_canon + pairing client.
+ * Carica sessioni dettagliate - SEMPLIFICATO: tabella diretta + pairing client.
  */
 export async function loadSessioniGiornoLogico({
   pin,

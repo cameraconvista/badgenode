@@ -1,5 +1,5 @@
-// Servizio per gestione timbrature - Data source unica: public.v_timbrature_canon
-// Migrazione completata: pairing e totali lato client
+// Servizio per gestione timbrature - SEMPLIFICATO: lettura diretta da public.timbrature
+// Pairing e totali lato client, scrittura offline-first con insert diretto
 
 import { Timbratura } from '@/lib/time';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
@@ -18,12 +18,12 @@ export interface TimbratureFilters {
 // Interface moved to timbrature-stats.service.ts
 
 export class TimbratureService {
-  // NUOVA FUNZIONE PRINCIPALE - Data source unica: public.v_timbrature_canon
+  // SEMPLIFICATO - Lettura diretta da tabella public.timbrature
   static async getTimbratureByRange(params: TimbratureRangeParams): Promise<TimbraturaCanon[]> {
     try {
       let query = supabase
-        .from('v_timbrature_canon')
-        .select('id, pin, tipo, created_at, data_locale, ora_locale, giorno_logico, ts_order');
+        .from('timbrature')
+        .select('id, pin, tipo, created_at, data_locale, ora_locale, giorno_logico, ts_order, client_event_id');
 
       // Filtri
       if (params.pin) {
@@ -42,7 +42,7 @@ export class TimbratureService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('❌ [timbrature.service] getTimbratureByRange error:', {
+        console.error('❌ [timbrature.service] getTimbratureByRange error (table direct):', {
           code: error.code,
           message: error.message,
           details: error.details
@@ -56,7 +56,7 @@ export class TimbratureService {
       throw error;
     }
   }
-  // LEGACY: Reindirizzato a v_timbrature_canon
+  // LEGACY: Reindirizzato a tabella diretta
   static async getTimbraturePeriodo(filters: TimbratureFilters): Promise<Timbratura[]> {
     try {
       // Reindirizza al nuovo sistema
@@ -84,7 +84,7 @@ export class TimbratureService {
     }
   }
 
-  // LEGACY: Reindirizzato a v_timbrature_canon
+  // LEGACY: Reindirizzato a tabella diretta
   static async getTimbratureGiorno(pin: number, giornologico: string): Promise<Timbratura[]> {
     try {
       // Reindirizza al nuovo sistema
@@ -126,7 +126,7 @@ export class TimbratureService {
     return TimbratureStatsService.calculateStats(timbrature, oreContrattuali);
   }
 
-  // DEBUG: Lettura da v_timbrature_canon (fonte unica)
+  // DEBUG: Lettura da tabella diretta (fonte unica)
   static async loadStoricoRaw(pin?: number): Promise<any[]> {
     try {
       const params: TimbratureRangeParams = {};
@@ -154,14 +154,15 @@ export class TimbratureService {
     }
   }
 
-  // RPC: Inserisci timbratura via Supabase - vedi timbrature-rpc.service.ts
+  // MIGRATO: Usa offline-first adapter con insert diretto
   static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<number> {
     // Importazione lazy per evitare dipendenze circolari
-    const { TimbratureRpcService } = await import('./timbrature-rpc.service');
-    return TimbratureRpcService.timbra(pin, tipo);
+    const { timbratureSync } = await import('./timbrature-sync');
+    const result = await timbratureSync.insertNowOrEnqueue({ pin, tipo });
+    return result.ok ? 1 : 0; // 1 = sync immediato, 0 = accodato
   }
 
-  // Funzione per refresh storico dopo timbratura - MIGRATO a v_timbrature_canon
+  // Funzione per refresh storico dopo timbratura - SEMPLIFICATO: tabella diretta
   static async getTimbratureByPin(pin: number): Promise<any[]> {
     try {
       const timbrature = await this.getTimbratureByRange({ pin });
