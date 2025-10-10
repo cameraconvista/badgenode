@@ -1,6 +1,7 @@
 // Funzioni per viste v5 giorno logico
 import { supabase } from '@/lib/supabaseClient';
 import { TotaleGiornoV5, SessioneV5, StoricoDatasetV5 } from './types';
+import { loadTotaliLegacy, loadSessioniLegacy } from './fallback';
 
 /**
  * Genera range di date complete (YYYY-MM-DD) per periodo specificato.
@@ -53,6 +54,13 @@ export async function loadTotaliGiornoLogico({
         message: error.message,
         details: error.details
       });
+      
+      // Fallback: se viste v5 non esistono, usa query legacy
+      if (error.code === '42P01' || error.message?.includes('does not exist')) {
+        console.warn('🔄 [storico.service] Viste v5 non disponibili, fallback a query legacy per totali');
+        return await loadTotaliLegacy({ pin, from, to });
+      }
+      
       return [];
     }
 
@@ -96,6 +104,13 @@ export async function loadSessioniGiornoLogico({
         message: error.message,
         details: error.details
       });
+      
+      // Fallback: se viste v5 non esistono, usa query legacy su tabella timbrature
+      if (error.code === '42P01' || error.message?.includes('does not exist')) {
+        console.warn('🔄 [storico.service] Viste v5 non disponibili, fallback a query legacy');
+        return await loadSessioniLegacy({ pin, from, to });
+      }
+      
       return [];
     }
 
@@ -172,3 +187,5 @@ export async function buildStoricoDataset({
     return [];
   }
 }
+
+

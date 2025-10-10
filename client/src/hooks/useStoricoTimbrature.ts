@@ -158,6 +158,7 @@ export function useStoricoTimbrature(pin: number) {
     selectedGiorno,
     turniGiornalieri,
     storicoDataset,
+    storicoDatasetV5,
     timbratureGiorno,
     isLoading: isLoadingTimbrature || isLoadingLegacy,
     handleFiltersChange,

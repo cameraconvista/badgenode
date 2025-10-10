@@ -17,6 +17,7 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
     selectedGiorno,
     turniGiornalieri,
     storicoDataset,
+    storicoDatasetV5,
     timbratureGiorno,
     isLoading,
     handleFiltersChange,
@@ -79,6 +80,7 @@ export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
           <StoricoTable
             timbrature={turniGiornalieri}
             storicoDataset={storicoDataset}
+            storicoDatasetV5={storicoDatasetV5}
             filters={{ dal: filters.dal, al: filters.al }}
             oreContrattuali={dipendente.ore_contrattuali}
             onEditTimbrature={handleEditTimbrature}

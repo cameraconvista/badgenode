@@ -6,13 +6,14 @@ import {
   getMeseItaliano,
   formatCreatedAt
 } from '@/lib/time';
-import { TurnoFull, formatTimeOrDash, calcolaTotali } from '@/services/storico.service';
+import { TurnoFull, formatTimeOrDash, calcolaTotaliV5, StoricoDatasetV5 } from '@/services/storico.service';
 import { StoricoRowData, GiornoLogicoDettagliato, SessioneTimbratura } from '@/lib/storico/types';
 import StoricoTotalsBar from './StoricoTotalsBar';
 
 interface StoricoTableProps {
-  timbrature: GiornoLogicoDettagliato[];     // Per totali (aggiornato)
-  storicoDataset: StoricoRowData[];          // NUOVO: Dataset con sotto-righe
+  timbrature: GiornoLogicoDettagliato[];     // Legacy (per compatibilità)
+  storicoDataset: StoricoRowData[];          // Dataset con sotto-righe
+  storicoDatasetV5: StoricoDatasetV5[];      // NUOVO: Dataset v5 per totali
   filters: { dal: string; al: string };
   oreContrattuali: number;
   onEditTimbrature: (giornologico: string) => void;
@@ -20,25 +21,22 @@ interface StoricoTableProps {
 }
 
 export default function StoricoTable({ 
-  timbrature,           // Per totali
-  storicoDataset,       // NUOVO: Per rendering righe
+  timbrature,           // Legacy (per compatibilità)
+  storicoDataset,       // Dataset con sotto-righe
+  storicoDatasetV5,     // NUOVO: Dataset v5 per totali
   filters, 
   oreContrattuali, 
   onEditTimbrature, 
   isLoading 
 }: StoricoTableProps) {
   
-  // I dati arrivano già elaborati dalla RPC turni_giornalieri
-  const giorni = timbrature;
-  
-  // Calcola totali usando la funzione del servizio
-  const { totOre: totaleMensileOre, totExtra: totaleMensileExtra, giorniLavorati } = calcolaTotali(giorni);
+  // Calcola totali dal dataset v5 (fonte unica di verità)
+  const { totOre: totaleMensileOre, totExtra: totaleMensileExtra, giorniLavorati } = calcolaTotaliV5(storicoDatasetV5, oreContrattuali);
 
   if (isLoading) {
     return (
       <div className="bg-gray-800/50 rounded-lg p-8">
         <div className="flex items-center justify-center">
-          <Clock className="w-6 h-6 text-violet-400 animate-spin mr-2" />
           <span className="text-gray-300">Caricamento storico...</span>
         </div>
       </div>
@@ -149,7 +147,7 @@ export default function StoricoTable({
   function renderRigaSessione(sessione: SessioneTimbratura, giornoParent: string, index: number) {
     return (
       <div 
-        key={`sessione-${giornoParent}-${sessione.numeroSessione}`} 
+        key={`${giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`} 
         className="grid grid-cols-7 gap-4 p-2 border-b border-gray-600/30 text-sm bg-gray-800/20"
       >
         {/* Data - vuota */}
