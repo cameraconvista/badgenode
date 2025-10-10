@@ -1,6 +1,8 @@
-// Funzioni per viste v5 giorno logico
-import { supabase } from '@/lib/supabaseClient';
+// Funzioni per storico - MIGRATO a v_timbrature_canon
+import { TimbratureService } from '../timbrature.service';
+import { pairTimbrature, buildDailyTotals } from '../../utils/timbrature-pairing';
 import { TotaleGiornoV5, SessioneV5, StoricoDatasetV5 } from './types';
+import type { TimbraturaCanon, TimbraturaPair } from '../../../../shared/types/timbrature';
 
 /**
  * Genera range di date complete (YYYY-MM-DD) per periodo specificato.
@@ -27,7 +29,7 @@ export function generateDateRange(from: string, to: string): string[] {
 }
 
 /**
- * Carica totali giornalieri da vista v4 (esistente).
+ * Carica totali giornalieri - MIGRATO a v_timbrature_canon + pairing client.
  */
 export async function loadTotaliGiornoLogico({
   pin,
@@ -39,28 +41,21 @@ export async function loadTotaliGiornoLogico({
   to: string;
 }): Promise<TotaleGiornoV5[]> {
   try {
-    const { data, error } = await supabase
-      .from('v_turni_giornalieri_totali_v4')
-      .select('pin, giornologico, ore_totali_chiuse')
-      .eq('pin', pin)
-      .gte('giornologico', from)
-      .lte('giornologico', to)
-      .order('giornologico', { ascending: true });
-
-    if (error) {
-      console.error('❌ [storico.service] loadTotaliGiornoLogico error:', {
-        code: error.code,
-        message: error.message,
-        details: error.details
-      });
-      return [];
-    }
-
-    return (data || []).map(row => ({
-      giorno_logico: row.giornologico,
-      ore_totali_chiuse: Number(row.ore_totali_chiuse) || 0,
-      sessioni_chiuse: 0, // Non più presente in vista v4
-      sessioni_totali: 0  // Non più presente in vista v4
+    // 1. Carica timbrature da fonte unica
+    const timbrature = await TimbratureService.getTimbratureByRange({ pin, from, to });
+    
+    // 2. Pairing lato client
+    const pairs = pairTimbrature(timbrature);
+    
+    // 3. Calcola totali giornalieri
+    const dailyTotals = buildDailyTotals(pairs);
+    
+    // 4. Converti al formato legacy per compatibilità
+    return dailyTotals.map(total => ({
+      giorno_logico: total.giorno_logico,
+      ore_totali_chiuse: total.ore_totali_sec / 3600, // sec → ore
+      sessioni_chiuse: 0, // TODO: calcolare se necessario
+      sessioni_totali: 0  // TODO: calcolare se necessario
     }));
   } catch (error) {
     console.error('❌ Error in loadTotaliGiornoLogico:', error);
@@ -69,7 +64,7 @@ export async function loadTotaliGiornoLogico({
 }
 
 /**
- * Carica sessioni dettagliate da vista v5_open (include sessioni aperte).
+ * Carica sessioni dettagliate - MIGRATO a v_timbrature_canon + pairing client.
  */
 export async function loadSessioniGiornoLogico({
   pin,
@@ -81,33 +76,28 @@ export async function loadSessioniGiornoLogico({
   to: string;
 }): Promise<(SessioneV5 & { giorno_logico: string })[]> {
   try {
-    const { data, error } = await supabase
-      .from('v_turni_giornalieri_v5_open')
-      .select('pin, giorno_logico, entrata_id, entrata_ore, uscita_id, uscita_ore, ore_sessione')
-      .eq('pin', pin)
-      .gte('giorno_logico', from)
-      .lte('giorno_logico', to)
-      .order('giorno_logico', { ascending: true })
-      .order('entrata_ore', { ascending: true });
-
-    if (error) {
-      console.error('❌ [storico.service] loadSessioniGiornoLogico error:', {
-        code: error.code,
-        message: error.message,
-        details: error.details
+    // 1. Carica timbrature da fonte unica
+    const timbrature = await TimbratureService.getTimbratureByRange({ pin, from, to });
+    
+    // 2. Pairing lato client
+    const pairs = pairTimbrature(timbrature);
+    
+    // 3. Converti pairs al formato legacy per compatibilità
+    const sessioni: (SessioneV5 & { giorno_logico: string })[] = [];
+    
+    pairs.forEach((pair, index) => {
+      sessioni.push({
+        giorno_logico: pair.giorno_logico,
+        entrata_id: pair.entrata?.id || 0,
+        entrata_ore: pair.entrata?.ora_locale || '',
+        uscita_id: pair.uscita?.id || null,
+        uscita_ore: pair.uscita?.ora_locale || null,
+        ore_sessione: pair.durata_sec ? pair.durata_sec / 3600 : 0, // sec → ore
+        sessione_num: index + 1
       });
-      return [];
-    }
+    });
 
-    return (data || []).map(row => ({
-      giorno_logico: row.giorno_logico,
-      entrata_id: Number(row.entrata_id),
-      entrata_ore: row.entrata_ore,
-      uscita_id: row.uscita_id ? Number(row.uscita_id) : null,
-      uscita_ore: row.uscita_ore,
-      ore_sessione: Number(row.ore_sessione) || 0,
-      sessione_num: 1 // Calcolato lato client se necessario
-    }));
+    return sessioni;
   } catch (error) {
     console.error('❌ Error in loadSessioniGiornoLogico:', error);
     return [];

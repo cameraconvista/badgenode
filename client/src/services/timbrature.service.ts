@@ -1,12 +1,13 @@
-// Servizio per gestione timbrature e storico
-// TODO: Integrare con Supabase quando disponibile
+// Servizio per gestione timbrature - Data source unica: public.v_timbrature_canon
+// Migrazione completata: pairing e totali lato client
 
 import { Timbratura } from '@/lib/time';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
 import { supabase } from '@/lib/supabaseClient';
-
-// Empty mock data - database cleaned
-const mockTimbrature: Timbratura[] = [];
+import type { 
+  TimbraturaCanon, 
+  TimbratureRangeParams 
+} from '../../../shared/types/timbrature';
 
 export interface TimbratureFilters {
   pin: number;
@@ -17,61 +18,100 @@ export interface TimbratureFilters {
 // Interface moved to timbrature-stats.service.ts
 
 export class TimbratureService {
-  // Ottieni timbrature per periodo (filtrate per giorno logico)
-  static async getTimbraturePeriodo(filters: TimbratureFilters): Promise<Timbratura[]> {
+  // NUOVA FUNZIONE PRINCIPALE - Data source unica: public.v_timbrature_canon
+  static async getTimbratureByRange(params: TimbratureRangeParams): Promise<TimbraturaCanon[]> {
     try {
+      let query = supabase
+        .from('v_timbrature_canon')
+        .select('id, pin, tipo, created_at, data_locale, ora_locale, giorno_logico, ts_order');
+
+      // Filtri
+      if (params.pin) {
+        query = query.eq('pin', params.pin);
+      }
       
-      const { data, error } = await supabase
-        .from('v_turni_giornalieri')
-        .select('*')
-        .eq('pin', filters.pin)
-        .gte('giornologico', filters.dal)
-        .lte('giornologico', filters.al)
-        .order('giornologico', { ascending: true })
-        .order('ore', { ascending: true });
+      if (params.from && params.to) {
+        query = query.gte('giorno_logico', params.from).lte('giorno_logico', params.to);
+      } else if (params.from) {
+        query = query.eq('giorno_logico', params.from);
+      }
+
+      // Ordinamento per ts_order
+      query = query.order('ts_order', { ascending: true });
+
+      const { data, error } = await query;
 
       if (error) {
-        console.error('[Supabase] Error loading timbrature:', error);
+        console.error('❌ [timbrature.service] getTimbratureByRange error:', {
+          code: error.code,
+          message: error.message,
+          details: error.details
+        });
         throw error;
       }
 
       return data || [];
+    } catch (error) {
+      console.error('❌ Error in getTimbratureByRange:', error);
+      throw error;
+    }
+  }
+  // LEGACY: Reindirizzato a v_timbrature_canon
+  static async getTimbraturePeriodo(filters: TimbratureFilters): Promise<Timbratura[]> {
+    try {
+      // Reindirizza al nuovo sistema
+      const timbrature = await this.getTimbratureByRange({
+        pin: filters.pin,
+        from: filters.dal,
+        to: filters.al
+      });
+      
+      // Converti al formato legacy per compatibilità
+      return timbrature.map(t => ({
+        id: t.id.toString(),
+        pin: t.pin,
+        tipo: t.tipo,
+        data: t.data_locale,
+        ore: t.ora_locale,
+        giornologico: t.giorno_logico,
+        nome: '', // TODO: join con tabella utenti se necessario
+        cognome: '', // TODO: join con tabella utenti se necessario
+        created_at: t.created_at
+      }));
     } catch (error) {
       console.error('❌ Error in getTimbraturePeriodo:', error);
       throw error;
     }
   }
 
+  // LEGACY: Reindirizzato a v_timbrature_canon
   static async getTimbratureGiorno(pin: number, giornologico: string): Promise<Timbratura[]> {
     try {
+      // Reindirizza al nuovo sistema
+      const timbrature = await this.getTimbratureByRange({
+        pin,
+        from: giornologico
+      });
       
-      const { data, error } = await supabase
-        .from('v_turni_giornalieri')
-        .select('*')
-        .eq('pin', pin)
-        .eq('giornologico', giornologico)
-        .order('ore', { ascending: true });
-
-      if (error) {
-        console.error('[Supabase] Error loading timbrature giorno:', error);
-        throw error;
-      }
-
-      return data || [];
+      // Converti al formato legacy per compatibilità
+      return timbrature.map(t => ({
+        id: t.id.toString(),
+        pin: t.pin,
+        tipo: t.tipo,
+        data: t.data_locale,
+        ore: t.ora_locale,
+        giornologico: t.giorno_logico,
+        nome: '', // TODO: join con tabella utenti se necessario
+        cognome: '', // TODO: join con tabella utenti se necessario
+        created_at: t.created_at
+      }));
     } catch (error) {
       console.error('❌ Error in getTimbratureGiorno:', error);
       throw error;
     }
   }
 
-  // TODO: Implement Supabase CRUD operations for timbrature management
-  static async updateTimbratura(id: string, input: { data: string; ore: string; dataEntrata?: string }): Promise<Timbratura> {
-    throw new Error('updateTimbratura not implemented - use Supabase RPC functions');
-  }
-
-  static async deleteTimbratura(id: string): Promise<void> {
-    throw new Error('deleteTimbratura not implemented - use Supabase RPC functions');
-  }
+  // CRUD operations: TODO - use Supabase RPC functions
 
   // Calcola statistiche periodo
   static async getStatsPeriodo(filters: TimbratureFilters, oreContrattuali: number): Promise<TimbratureStats> {
@@ -79,106 +119,58 @@ export class TimbratureService {
     return TimbratureStatsService.calculateStats(timbrature, oreContrattuali);
   }
 
-  // DEBUG: Lettura diretta da tabella timbrature (per verificare inserimenti)
+  // DEBUG: Lettura da v_timbrature_canon (fonte unica)
   static async loadStoricoRaw(pin?: number): Promise<any[]> {
     try {
-      let query = supabase
-        .from('timbrature')
-        .select('id,pin,tipo,data,ore,giornologico,created_at')
-        .order('created_at', { ascending: false });
-      
+      const params: TimbratureRangeParams = {};
       if (pin) {
-        query = query.eq('pin', pin);
+        params.pin = pin;
       }
       
-      const { data, error } = await query;
+      const timbrature = await this.getTimbratureByRange(params);
       
-      if (error) {
-        console.error('[Storico] loadStoricoRaw error:', error);
-        throw error;
-      }
-      
-      return data ?? [];
+      // Ordina per created_at desc per compatibilità
+      return timbrature
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .map(t => ({
+          id: t.id,
+          pin: t.pin,
+          tipo: t.tipo,
+          data: t.data_locale,
+          ore: t.ora_locale,
+          giornologico: t.giorno_logico,
+          created_at: t.created_at
+        }));
     } catch (error) {
       console.error('❌ Error in loadStoricoRaw:', error);
       return [];
     }
   }
 
-  // RPC: Inserisci timbratura via Supabase (RETURNS bigint)
+  // RPC: Inserisci timbratura via Supabase - vedi timbrature-rpc.service.ts
   static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<number> {
-    try {
-      // Normalizza tipo
-      const p_tipo = tipo?.toLowerCase() === 'uscita' ? 'uscita' : 'entrata';
-      
-      
-      // TENTATIVO 1: Nuova RPC v2 con alternanza corretta
-      let { data, error } = await supabase.rpc('insert_timbro_v2', { 
-        p_pin: pin, 
-        p_tipo: p_tipo 
-      });
-
-      // FALLBACK: Se RPC v2 non esiste, usa quella legacy
-      if (error && (error.code === '42883' || error.message.includes('function') || error.message.includes('does not exist'))) {
-        console.warn('[RPC v2] Funzione non disponibile, fallback a legacy');
-        const legacyResult = await supabase.rpc('insert_timbro_rpc', { 
-          p_pin: pin, 
-          p_tipo: p_tipo 
-        });
-        data = legacyResult.data;
-        error = legacyResult.error;
-      }
-
-      if (error) {
-        console.error('[Supabase RPC ERROR insert_timbro_rpc]', error);
-        
-        // Gestione errori user-friendly
-        if (error.message.includes('PIN') && error.message.includes('inesistente')) {
-          throw new Error('PIN non riconosciuto');
-        }
-        if (error.message.includes('due entrata consecutive')) {
-          throw new Error('Hai già fatto entrata oggi');
-        }
-        if (error.message.includes('due uscita consecutive')) {
-          throw new Error('Hai già fatto uscita');
-        }
-        if (error.message.includes('permission denied') || error.message.includes('RLS')) {
-          throw new Error('Non autorizzato');
-        }
-        
-        // Errore generico
-        throw new Error('Errore di sistema');
-      }
-      // RPC v2 ritorna table, v1 ritorna bigint
-      if (Array.isArray(data) && data.length > 0) {
-        return data[0].id; // RPC v2
-      } else if (typeof data === 'number') {
-        return data; // RPC v1 legacy
-      }
-
-      throw new Error('RPC: ritorno inatteso');
-    } catch (error) {
-      console.error('❌ Errore timbratura:', error);
-      throw error;
-    }
+    // Importazione lazy per evitare dipendenze circolari
+    const { TimbratureRpcService } = await import('./timbrature-rpc.service');
+    return TimbratureRpcService.timbra(pin, tipo);
   }
 
-  // Funzione per refresh storico dopo timbratura
+  // Funzione per refresh storico dopo timbratura - MIGRATO a v_timbrature_canon
   static async getTimbratureByPin(pin: number): Promise<any[]> {
     try {
+      const timbrature = await this.getTimbratureByRange({ pin });
       
-      const { data, error } = await supabase
-        .from('timbrature')
-        .select('id,pin,tipo,data,ore,giornologico,created_at')
-        .eq('pin', pin)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('[Supabase] Error loading timbrature by PIN:', error);
-        throw error;
-      }
-
-      return data || [];
+      // Ordina per created_at desc per compatibilità
+      return timbrature
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .map(t => ({
+          id: t.id,
+          pin: t.pin,
+          tipo: t.tipo,
+          data: t.data_locale,
+          ore: t.ora_locale,
+          giornologico: t.giorno_logico,
+          created_at: t.created_at
+        }));
     } catch (error) {
       console.error('❌ Error in getTimbratureByPin:', error);
       throw error;
