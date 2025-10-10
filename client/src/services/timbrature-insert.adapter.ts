@@ -54,47 +54,57 @@ export class TimbratureInsertAdapter {
       created_local_ts: Date.now(),
     };
     
-    console.log('📋 [TimbratureSync] Evento preparato:', pending);
 
     // Tenta invio immediato se online
     if (navigator.onLine) {
       const result = await this.trySend(pending);
       if (result.success) {
-        console.log('✅ [TimbratureSync] Invio immediato riuscito:', client_event_id);
         return { ok: true, client_event_id };
-      } else {
-        console.warn('⚠️ [TimbratureSync] Invio immediato fallito, accodo:', result.error);
       }
     }
 
     // Accoda per retry successivo
     await this.db.put(pending);
-    console.log('📥 [TimbratureSync] Evento accodato:', client_event_id);
     return { ok: false, client_event_id };
   }
 
   private async trySend(ev: PendingEvent): Promise<{ success: boolean; error?: string }> {
     try {
-      console.log('🔄 [TimbratureSync] Tentativo INSERT:', {
-        pin: ev.pin,
-        tipo: ev.tipo,
-        created_at: ev.created_at,
-        client_event_id: ev.client_event_id
-      });
       
-      // INSERT DIRETTO su tabella timbrature (no RPC)
+      // Calcola campi temporali (simula trigger server)
+      const dt = new Date(ev.created_at);
+      const rome = new Intl.DateTimeFormat('sv-SE', {
+        timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      }).format(dt);
+      
+      const [dataLocale, oraLocale] = rome.split(' ');
+      const oraNum = parseInt(oraLocale.split(':')[0]);
+      
+      // Giorno logico: se ora < 06:00 → giorno precedente
+      let giornoLogico = dataLocale;
+      if (oraNum < 6) {
+        const prev = new Date(dataLocale + 'T00:00:00');
+        prev.setDate(prev.getDate() - 1);
+        giornoLogico = prev.toISOString().split('T')[0];
+      }
+      
+      // INSERT DIRETTO su tabella timbrature con campi calcolati
       const { data, error } = await supabase
         .from('timbrature')
         .insert([{
           pin: ev.pin,
-          tipo: ev.tipo,                 // 'entrata' | 'uscita'
-          created_at: ev.created_at,     // ISO tz
+          tipo: ev.tipo,
+          created_at: ev.created_at,
           client_event_id: ev.client_event_id,
+          data_locale: dataLocale,
+          ora_locale: oraLocale,
+          giorno_logico: giornoLogico,
+          ts_order: ev.created_at
         }])
         .select()
         .single();
       
-      console.log('📊 [TimbratureSync] Risposta Supabase:', { data, error });
 
       if (error) {
         // Errori idempotenza: duplicate key su client_event_id = successo
@@ -105,7 +115,6 @@ export class TimbratureInsertAdapter {
                           msg.includes('already exists');
         
         if (isConflict) {
-          console.log('🔄 [TimbratureSync] Evento già presente (idempotenza):', ev.client_event_id);
           await this.db.delete(ev.client_event_id);
           return { success: true };
         }
@@ -119,7 +128,6 @@ export class TimbratureInsertAdapter {
 
       // Successo: rimuovi dalla coda
       if (data) {
-        console.log('✅ [TimbratureSync] Insert diretto riuscito:', data.id);
         await this.db.delete(ev.client_event_id);
         return { success: true };
       }
