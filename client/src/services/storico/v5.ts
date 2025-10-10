@@ -1,7 +1,6 @@
 // Funzioni per viste v5 giorno logico
 import { supabase } from '@/lib/supabaseClient';
 import { TotaleGiornoV5, SessioneV5, StoricoDatasetV5 } from './types';
-import { loadTotaliLegacy, loadSessioniLegacy } from './fallback';
 
 /**
  * Genera range di date complete (YYYY-MM-DD) per periodo specificato.
@@ -28,7 +27,7 @@ export function generateDateRange(from: string, to: string): string[] {
 }
 
 /**
- * Carica totali per giorno logico da vista v5.
+ * Carica totali giornalieri da vista v4 (esistente).
  */
 export async function loadTotaliGiornoLogico({
   pin,
@@ -54,15 +53,6 @@ export async function loadTotaliGiornoLogico({
         message: error.message,
         details: error.details
       });
-      
-      // Fallback: se viste v5 non esistono, usa query legacy
-      if (error.code === '42P01' || error.message?.includes('does not exist')) {
-        console.warn('🔄 [storico.service] Viste v5 non disponibili, fallback a query legacy per totali PIN:', pin);
-        const fallbackTotali = await loadTotaliLegacy({ pin, from, to });
-        console.log('🔄 [storico.service] Fallback totali result:', fallbackTotali.length, 'giorni trovati');
-        return fallbackTotali;
-      }
-      
       return [];
     }
 
@@ -79,7 +69,7 @@ export async function loadTotaliGiornoLogico({
 }
 
 /**
- * Carica sessioni dettagliate da vista v5.
+ * Carica sessioni dettagliate da vista v5_open (include sessioni aperte).
  */
 export async function loadSessioniGiornoLogico({
   pin,
@@ -92,12 +82,12 @@ export async function loadSessioniGiornoLogico({
 }): Promise<(SessioneV5 & { giorno_logico: string })[]> {
   try {
     const { data, error } = await supabase
-      .from('v_turni_giornalieri_v4')
-      .select('pin, giornologico, entrata_id, entrata_ore, uscita_id, uscita_ore, ore_sessione')
+      .from('v_turni_giornalieri_v5_open')
+      .select('pin, giorno_logico, entrata_id, entrata_ore, uscita_id, uscita_ore, ore_sessione')
       .eq('pin', pin)
-      .gte('giornologico', from)
-      .lte('giornologico', to)
-      .order('giornologico', { ascending: true })
+      .gte('giorno_logico', from)
+      .lte('giorno_logico', to)
+      .order('giorno_logico', { ascending: true })
       .order('entrata_ore', { ascending: true });
 
     if (error) {
@@ -106,20 +96,11 @@ export async function loadSessioniGiornoLogico({
         message: error.message,
         details: error.details
       });
-      
-      // Fallback: se viste v5 non esistono, usa query legacy su tabella timbrature
-      if (error.code === '42P01' || error.message?.includes('does not exist')) {
-        console.warn('🔄 [storico.service] Viste v5 non disponibili, fallback a query legacy per PIN:', pin);
-        const fallbackResult = await loadSessioniLegacy({ pin, from, to });
-        console.log('🔄 [storico.service] Fallback sessioni result:', fallbackResult.length, 'sessioni trovate');
-        return fallbackResult;
-      }
-      
       return [];
     }
 
     return (data || []).map(row => ({
-      giorno_logico: row.giornologico,
+      giorno_logico: row.giorno_logico,
       entrata_id: Number(row.entrata_id),
       entrata_ore: row.entrata_ore,
       uscita_id: row.uscita_id ? Number(row.uscita_id) : null,
