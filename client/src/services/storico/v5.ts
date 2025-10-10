@@ -57,8 +57,10 @@ export async function loadTotaliGiornoLogico({
       
       // Fallback: se viste v5 non esistono, usa query legacy
       if (error.code === '42P01' || error.message?.includes('does not exist')) {
-        console.warn('🔄 [storico.service] Viste v5 non disponibili, fallback a query legacy per totali');
-        return await loadTotaliLegacy({ pin, from, to });
+        console.warn('🔄 [storico.service] Viste v5 non disponibili, fallback a query legacy per totali PIN:', pin);
+        const fallbackTotali = await loadTotaliLegacy({ pin, from, to });
+        console.log('🔄 [storico.service] Fallback totali result:', fallbackTotali.length, 'giorni trovati');
+        return fallbackTotali;
       }
       
       return [];
@@ -107,8 +109,10 @@ export async function loadSessioniGiornoLogico({
       
       // Fallback: se viste v5 non esistono, usa query legacy su tabella timbrature
       if (error.code === '42P01' || error.message?.includes('does not exist')) {
-        console.warn('🔄 [storico.service] Viste v5 non disponibili, fallback a query legacy');
-        return await loadSessioniLegacy({ pin, from, to });
+        console.warn('🔄 [storico.service] Viste v5 non disponibili, fallback a query legacy per PIN:', pin);
+        const fallbackResult = await loadSessioniLegacy({ pin, from, to });
+        console.log('🔄 [storico.service] Fallback sessioni result:', fallbackResult.length, 'sessioni trovate');
+        return fallbackResult;
       }
       
       return [];

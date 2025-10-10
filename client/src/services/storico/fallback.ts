@@ -50,6 +50,8 @@ export async function loadSessioniLegacy({
   to: string;
 }): Promise<(SessioneV5 & { giorno_logico: string })[]> {
   try {
+    console.log('🔄 [loadSessioniLegacy] Query params:', { pin, from, to });
+    
     // Query diretta su tabella timbrature per creare sessioni
     const { data, error } = await supabase
       .from('timbrature')
@@ -64,6 +66,8 @@ export async function loadSessioniLegacy({
       console.error('❌ [storico.service] loadSessioniLegacy error:', error);
       return [];
     }
+
+    console.log('🔄 [loadSessioniLegacy] Raw data from timbrature:', (data || []).length, 'records for PIN', pin);
 
     // Raggruppa per giorno logico e crea sessioni
     const sessioniMap = new Map<string, any[]>();
@@ -87,6 +91,7 @@ export async function loadSessioniLegacy({
         const ore_sessione = uscita ? 
           (new Date(`1970-01-01T${uscita.ore}`).getTime() - new Date(`1970-01-01T${entrata.ore}`).getTime()) / (1000 * 60 * 60) : 0;
         
+        // IMPORTANTE: Includi TUTTE le sessioni, anche quelle aperte (ore_sessione = 0)
         sessioni.push({
           giorno_logico: giorno,
           entrata_id: entrata.id,
