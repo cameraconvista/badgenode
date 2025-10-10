@@ -94,11 +94,11 @@ export default function FormNuovoDipendente({
             <Input
               id="pin"
               type="text"
-              value={formData.pin ? String(formData.pin).padStart(2, '0') : ''}
-              placeholder="Inserisci PIN (01-99)"
+              value={formData.pin ? String(formData.pin) : ''}
+              placeholder="Inserisci PIN (1-99)"
               onChange={(e) => {
                 const value = e.target.value.replace(/\D/g, ''); // Solo numeri
-                if (value === '' || value === '0') {
+                if (value === '') {
                   onInputChange('pin', 0);
                 } else {
                   const numValue = parseInt(value);
