@@ -41,14 +41,14 @@ async function upsertUser({ email, password, user_metadata = {}, app_metadata = 
 
 (async () => {
   try {
-    // 1) Dipendente PIN 7
+    // 1) Dipendente di test
     await upsertUser({
       email: 'dipendente7@example.com',
       password: 'Passw0rd!7',
       user_metadata: { pin: 7 }
     });
 
-    // 2) Admin (opzionale PIN 1 per prove timbrature)
+    // 2) Admin (per gestione sistema)
     await upsertUser({
       email: 'admin@example.com',
       password: 'Passw0rd!Admin',

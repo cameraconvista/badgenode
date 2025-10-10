@@ -16,7 +16,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   // TODO: re-enable Auth when backend ready
-  // Mock session for development without Supabase
   const mockSession = {
     access_token: 'mock-token',
     refresh_token: 'mock-refresh',
@@ -26,13 +25,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       id: 'mock-user-id',
       email: 'mock@local.dev',
       app_metadata: {},
-      user_metadata: { pin: 7 },
+      user_metadata: {}, // Rimosso PIN hardcoded
       aud: 'authenticated',
       created_at: new Date().toISOString()
     }
   } as Session;
-
-  const [session] = useState<Session | null>(mockSession);
   const [loading] = useState(false); // Always loaded in mock mode
 
   // TODO: re-enable Auth when backend ready
@@ -49,9 +46,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   //   return () => subscription.unsubscribe();
   // }, []);
 
-  const user = AuthService.getUserInfo(session);
-  const isAdmin = AuthService.isAdmin(session);
-  const pin = AuthService.getPin(session);
+  const user = AuthService.getUserInfo(mockSession);
+  const isAdmin = AuthService.isAdmin(mockSession);
+  const pin = AuthService.getPin(mockSession);
 
   const login = async (email: string, password: string) => {
     // TODO: re-enable Auth when backend ready
@@ -67,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const value = {
-    session,
+    session: mockSession,
     user,
     loading,
     isAdmin,

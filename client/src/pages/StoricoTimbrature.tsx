@@ -10,7 +10,22 @@ interface StoricoTimbratureProps {
   pin?: number; // PIN del dipendente da visualizzare
 }
 
-export default function StoricoTimbrature({ pin = 7 }: StoricoTimbratureProps) {
+export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
+  // Se non c'è PIN, mostra errore
+  if (!pin) {
+    return (
+      <div className="min-h-screen bg-gray-900 p-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-gray-800/50 rounded-lg p-8 text-center">
+            <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-white mb-2">PIN richiesto</h2>
+            <p className="text-gray-400">Specificare un PIN valido per visualizzare lo storico</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const {
     dipendente,
     filters,
