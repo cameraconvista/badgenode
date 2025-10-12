@@ -27,10 +27,10 @@ export function useModaleTimbrature(
       const uscita = timbrature.find(t => t.tipo === 'uscita');
 
       setFormData({
-        dataEntrata: entrata?.data || formatDataItaliana(new Date().toISOString()),
-        oraEntrata: entrata?.ore?.substring(0, 5) || '',
-        dataUscita: uscita?.data || formatDataItaliana(new Date().toISOString()),
-        oraUscita: uscita?.ore?.substring(0, 5) || ''
+        dataEntrata: entrata?.data_locale || formatDataItaliana(new Date().toISOString()),
+        oraEntrata: entrata?.ora_locale?.substring(0, 5) || '',
+        dataUscita: uscita?.data_locale || formatDataItaliana(new Date().toISOString()),
+        oraUscita: uscita?.ora_locale?.substring(0, 5) || ''
       });
       setErrors([]);
       setShowDeleteConfirm(false);
@@ -49,24 +49,26 @@ export function useModaleTimbrature(
     if (newErrors.length === 0) {
       // Crea oggetti temporanei per validazione business
       const entrataTemp: Timbratura = {
-        id: 'temp-entrata',
+        id: 0, // temp ID
         pin: timbrature[0]?.pin || 0,
         tipo: 'entrata',
-        data: formData.dataEntrata,
-        ore: formData.oraEntrata + ':00',
-        giornologico: giornologico,
+        ts_order: new Date().toISOString(),
+        giorno_logico: giornologico,
+        data_locale: formData.dataEntrata,
+        ora_locale: formData.oraEntrata + ':00',
         nome: timbrature[0]?.nome || '',
         cognome: timbrature[0]?.cognome || '',
         created_at: new Date().toISOString()
       };
 
       const uscitaTemp: Timbratura = {
-        id: 'temp-uscita',
+        id: 0, // temp ID
         pin: timbrature[0]?.pin || 0,
         tipo: 'uscita',
-        data: formData.dataUscita,
-        ore: formData.oraUscita + ':00',
-        giornologico: giornologico,
+        ts_order: new Date().toISOString(),
+        giorno_logico: giornologico,
+        data_locale: formData.dataUscita,
+        ora_locale: formData.oraUscita + ':00',
         nome: timbrature[0]?.nome || '',
         cognome: timbrature[0]?.cognome || '',
         created_at: new Date().toISOString()

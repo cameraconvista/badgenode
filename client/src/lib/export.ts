@@ -48,11 +48,11 @@ export function generateCSV(data: ExportData): string {
   const sortedDates = Array.from(byDate.keys()).sort();
   for (const giorno of sortedDates) {
     const timbratureGiorno = byDate.get(giorno)!;
-    const entrate = timbratureGiorno.filter(t => t.tipo === 'entrata').sort((a, b) => a.ora_locale.localeCompare(b.ora_locale));
-    const uscite = timbratureGiorno.filter(t => t.tipo === 'uscita').sort((a, b) => b.ora_locale.localeCompare(a.ora_locale));
+    const entrate = timbratureGiorno.filter(t => t.tipo === 'entrata' && t.ora_locale).sort((a, b) => (a.ora_locale || '').localeCompare(b.ora_locale || ''));
+    const uscite = timbratureGiorno.filter(t => t.tipo === 'uscita' && t.ora_locale).sort((a, b) => (b.ora_locale || '').localeCompare(a.ora_locale || ''));
     
-    const entrata = entrate.length > 0 ? entrate[0].ora_locale.substring(0, 5) : '';
-    const uscita = uscite.length > 0 ? uscite[0].ora_locale.substring(0, 5) : '';
+    const entrata = entrate.length > 0 ? (entrate[0].ora_locale || '').substring(0, 5) : '';
+    const uscita = uscite.length > 0 ? (uscite[0].ora_locale || '').substring(0, 5) : '';
     
     // Calcola ore lavorate
     let oreLavorate = 0;

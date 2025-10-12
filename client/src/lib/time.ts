@@ -1,16 +1,20 @@
 // Utility centralizzate per gestione tempo e logica giorno logico
 // Timezone: Europe/Rome (+2)
 
+// DEPRECATED: Usa il tipo in @/types/timbrature.ts
 export interface Timbratura {
-  id: string;
+  id: number;
   pin: number;
   tipo: 'entrata' | 'uscita';
-  data_locale: string; // Data calendario effettiva (YYYY-MM-DD)
-  ora_locale: string; // Orario (HH:MM:SS)
-  giorno_logico: string; // Data logica per raggruppamento (YYYY-MM-DD)
-  nome: string;
-  cognome: string;
-  created_at: string;
+  ts_order: string;               // ISO timestamp UTC
+  giorno_logico: string;          // 'YYYY-MM-DD'
+  data_locale: string | null;     // opzionale
+  ora_locale: string | null;      // opzionale
+  client_event_id?: string | null;
+  // Campi legacy per compatibilità UI
+  nome?: string;
+  cognome?: string;
+  created_at?: string;
 }
 
 export interface TimbratureGiorno {
@@ -79,8 +83,12 @@ export function computeGiornoLogico(params: {
  * Usa prima entrata e ultima uscita dello stesso giorno logico
  */
 export function computeOreLavoratePerGiorno(timbrature: Timbratura[]): number {
-  const entrate = timbrature.filter(t => t.tipo === 'entrata').sort((a, b) => a.ora_locale.localeCompare(b.ora_locale));
-  const uscite = timbrature.filter(t => t.tipo === 'uscita').sort((a, b) => b.ora_locale.localeCompare(a.ora_locale));
+  const entrate = timbrature
+    .filter(t => t.tipo === 'entrata' && t.ora_locale)
+    .sort((a, b) => (a.ora_locale || '').localeCompare(b.ora_locale || ''));
+  const uscite = timbrature
+    .filter(t => t.tipo === 'uscita' && t.ora_locale)
+    .sort((a, b) => (b.ora_locale || '').localeCompare(a.ora_locale || ''));
   
   if (entrate.length === 0 || uscite.length === 0) return 0;
   
@@ -94,6 +102,10 @@ export function computeOreLavoratePerGiorno(timbrature: Timbratura[]): number {
  * Calcola ore lavorate tra due timbrature considerando turni notturni
  */
 function calcolaOreLavorateTraDue(entrata: Timbratura, uscita: Timbratura): number {
+  if (!entrata.data_locale || !entrata.ora_locale || !uscita.data_locale || !uscita.ora_locale) {
+    return 0; // Dati mancanti
+  }
+  
   const dataEntrata = new Date(`${entrata.data_locale}T${entrata.ora_locale}`);
   const dataUscita = new Date(`${uscita.data_locale}T${uscita.ora_locale}`);
   
