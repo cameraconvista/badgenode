@@ -1,21 +1,7 @@
 // Utility centralizzate per gestione tempo e logica giorno logico
 // Timezone: Europe/Rome (+2)
 
-// DEPRECATED: Usa il tipo in @/types/timbrature.ts
-export interface Timbratura {
-  id: number;
-  pin: number;
-  tipo: 'entrata' | 'uscita';
-  ts_order: string;               // ISO timestamp UTC
-  giorno_logico: string;          // 'YYYY-MM-DD'
-  data_locale: string | null;     // opzionale
-  ora_locale: string | null;      // opzionale
-  client_event_id?: string | null;
-  // Campi legacy per compatibilità UI
-  nome?: string;
-  cognome?: string;
-  created_at?: string;
-}
+import type { Timbratura } from '@/types/timbrature';
 
 export interface TimbratureGiorno {
   giorno_logico: string;

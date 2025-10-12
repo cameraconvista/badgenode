@@ -1,5 +1,5 @@
 // Servizio per calcolo statistiche timbrature
-import { Timbratura } from '@/lib/time';
+import type { Timbratura } from '@/types/timbrature';
 
 export interface TimbratureStats {
   totaleMensileOre: number;
@@ -32,8 +32,15 @@ export class TimbratureStatsService {
       
       if (entrate.length > 0 && uscite.length > 0) {
         // Calcola ore lavorate (prima entrata, ultima uscita)
-        const primaEntrata = entrate.sort((a: Timbratura, b: Timbratura) => a.ora_locale.localeCompare(b.ora_locale))[0];
-        const ultimaUscita = uscite.sort((a: Timbratura, b: Timbratura) => b.ora_locale.localeCompare(a.ora_locale))[0];
+        const primaEntrata = entrate.sort((a: Timbratura, b: Timbratura) => 
+          (a.ora_locale || '').localeCompare(b.ora_locale || ''))[0];
+        const ultimaUscita = uscite.sort((a: Timbratura, b: Timbratura) => 
+          (b.ora_locale || '').localeCompare(a.ora_locale || ''))[0];
+        
+        if (!primaEntrata.data_locale || !primaEntrata.ora_locale || 
+            !ultimaUscita.data_locale || !ultimaUscita.ora_locale) {
+          continue; // Salta se mancano dati essenziali
+        }
         
         const dataEntrata = new Date(`${primaEntrata.data_locale}T${primaEntrata.ora_locale}`);
         const dataUscita = new Date(`${ultimaUscita.data_locale}T${ultimaUscita.ora_locale}`);

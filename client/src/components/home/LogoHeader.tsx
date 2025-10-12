@@ -15,10 +15,8 @@ export default function LogoHeader({ className = "" }: LogoHeaderProps) {
             filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
           }}
           onLoad={() => {
-            console.log('✅ Logo loaded successfully');
           }}
           onError={() => {
-            console.error('❌ Logo failed to load');
           }}
         />
       </div>

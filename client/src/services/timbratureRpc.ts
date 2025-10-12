@@ -25,24 +25,21 @@ export async function callInsertTimbro({
   client_event_id 
 }: InsertTimbroParams): Promise<InsertTimbroResult> {
   try {
-    console.log('🚀 [TimbratureRPC] callInsertTimbro:', { pin, tipo, client_event_id });
     
     const { data, error } = await supabase
       .rpc('insert_timbro_v2', {
         p_pin: pin,
-        p_tipo: tipo
-        // TODO: client_event_id sarà aggiunto in step futuri per gestione offline queue
+        p_tipo: tipo,
+        p_client_event_id: client_event_id
       });
 
     if (error) {
-      console.error('❌ [TimbratureRPC] RPC Error:', error);
       return {
         success: false,
         error: error.message
       };
     }
 
-    console.log('✅ [TimbratureRPC] RPC Success:', data);
     return {
       success: true,
       data
@@ -50,7 +47,6 @@ export async function callInsertTimbro({
 
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Errore sconosciuto';
-    console.error('❌ [TimbratureRPC] Catch Error:', message);
     return {
       success: false,
       error: message
@@ -58,7 +54,3 @@ export async function callInsertTimbro({
   }
 }
 
-// TODO: Gestione offline queue sarà implementata in step successivi
-// - Retry automatico in caso di errore di rete
-// - Coda locale con IndexedDB
-// - Sincronizzazione quando torna online

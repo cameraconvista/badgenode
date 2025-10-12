@@ -52,14 +52,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     // TODO: re-enable Auth when backend ready
-    console.log('Mock login:', email, password);
     // Mock login always succeeds and redirects to home
     window.location.href = '/';
   };
 
   const logout = async () => {
     // TODO: re-enable Auth when backend ready
-    console.log('Mock logout');
     // Mock logout always succeeds
   };
 

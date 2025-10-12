@@ -38,7 +38,6 @@ export function useStoricoTimbrature(pin: number) {
 
     const unsubscribe = subscribeTimbrature({
       onChange: (payload) => {
-        console.debug('📡 Storico Admin received realtime event:', payload);
         debouncedInvalidate();
       }
     });
@@ -56,7 +55,6 @@ export function useStoricoTimbrature(pin: number) {
   });
   
   if (dipendenteError) {
-    console.error('[Storico] Query dipendente error:', dipendenteError);
   }
 
   // Query per dataset v5 (include tutti i giorni del range)
@@ -71,7 +69,6 @@ export function useStoricoTimbrature(pin: number) {
   }) as { data: StoricoDatasetV5[], isLoading: boolean, error: any };
   
   if (storicoError) {
-    console.error('[Storico] Query storico error:', storicoError);
   }
 
   // Query per turni completi (legacy, per compatibilità componenti)
@@ -86,7 +83,6 @@ export function useStoricoTimbrature(pin: number) {
   }) as { data: GiornoLogicoDettagliato[], isLoading: boolean, error: any };
   
   if (turniError) {
-    console.error('[Storico] Query turni error:', turniError);
   }
 
   // Trasforma dataset v5 in formato StoricoRowData per tabella con sotto-righe

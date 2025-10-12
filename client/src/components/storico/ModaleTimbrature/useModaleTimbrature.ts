@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Timbratura, formatDataItaliana } from '@/lib/time';
+import { formatDataItaliana } from '@/lib/time';
+import type { Timbratura } from '@/types/timbrature';
 import { validateTimbratura } from '@/lib/validation';
 import type { FormData } from './types';
 

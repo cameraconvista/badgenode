@@ -24,7 +24,6 @@ export default function StoricoWrapper() {
   useEffect(() => {
     if (!isValidPin && utenti && utenti.length > 0) {
       const primoUtente = utenti[0];
-      console.log('🔄 [StoricoWrapper] PIN non valido:', raw, '→ reindirizzo a PIN:', primoUtente.pin);
       setLocation(`/storico-timbrature/${primoUtente.pin}`);
     }
   }, [isValidPin, raw, utenti, setLocation]);
@@ -32,7 +31,6 @@ export default function StoricoWrapper() {
   // Validazione PIN con log di errore
   if (!isValidPin) {
     if (raw) {
-      console.error('[Storico] PIN non valido:', raw);
     }
     
     // Se non c'è PIN e stiamo ancora caricando utenti, mostra loading

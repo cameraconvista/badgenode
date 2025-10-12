@@ -93,7 +93,6 @@ export default function ModaleModificaDipendente({
       await onSave(formData);
       onClose();
     } catch (error) {
-      console.error('Errore salvataggio:', error);
       setErrors({ general: 'Errore durante il salvataggio' });
     } finally {
       setIsLoading(false);

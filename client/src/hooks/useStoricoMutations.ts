@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { TimbratureService } from '@/services/timbrature.service';
-import { Timbratura } from '@/lib/time';
+import type { Timbratura } from '@/types/timbrature';
 
 interface UpdateData {
   dataEntrata: string;
@@ -23,14 +23,14 @@ export function useStoricoMutations(
       const uscite = timbratureGiorno.filter(t => t.tipo === 'uscita');
       
       if (entrate.length > 0) {
-        await TimbratureService.updateTimbratura(entrate[0].id, {
+        await TimbratureService.updateTimbratura(entrate[0].id.toString(), {
           data: updates.dataEntrata,
           ore: updates.oraEntrata + ':00'
         });
       }
       
       if (uscite.length > 0) {
-        await TimbratureService.updateTimbratura(uscite[0].id, {
+        await TimbratureService.updateTimbratura(uscite[0].id.toString(), {
           data: updates.dataUscita,
           ore: updates.oraUscita + ':00',
           dataEntrata: updates.dataEntrata
@@ -57,7 +57,7 @@ export function useStoricoMutations(
   const deleteMutation = useMutation({
     mutationFn: async () => {
       for (const timbratura of timbratureGiorno) {
-        await TimbratureService.deleteTimbratura(timbratura.id);
+        await TimbratureService.deleteTimbratura(timbratura.id.toString());
       }
     },
     onSuccess: () => {

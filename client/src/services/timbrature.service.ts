@@ -1,7 +1,7 @@
 // Servizio per gestione timbrature - SEMPLIFICATO: lettura diretta da public.timbrature
 // Pairing e totali lato client, scrittura offline-first con insert diretto
 
-import { Timbratura } from '@/lib/time';
+import type { Timbratura } from '@/types/timbrature';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
 import { supabase } from '@/lib/supabaseClient';
 import type { 
@@ -42,17 +42,11 @@ export class TimbratureService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('❌ [timbrature.service] getTimbratureByRange error (table direct):', {
-          code: error.code,
-          message: error.message,
-          details: error.details
-        });
         throw error;
       }
 
       return data || [];
     } catch (error) {
-      console.error('❌ Error in getTimbratureByRange:', error);
       throw error;
     }
   }
@@ -68,18 +62,18 @@ export class TimbratureService {
       
       // Converti al formato legacy per compatibilità
       return timbrature.map(t => ({
-        id: t.id.toString(),
+        id: t.id,
         pin: t.pin,
         tipo: t.tipo,
         data_locale: t.data_locale,
         ora_locale: t.ora_locale,
         giorno_logico: t.giorno_logico,
-        nome: '', // TODO: join con tabella utenti se necessario
-        cognome: '', // TODO: join con tabella utenti se necessario
+        ts_order: t.ts_order,
+        nome: '',
+        cognome: '',
         created_at: t.created_at
       }));
     } catch (error) {
-      console.error('❌ Error in getTimbraturePeriodo:', error);
       throw error;
     }
   }
@@ -95,23 +89,23 @@ export class TimbratureService {
       
       // Converti al formato legacy per compatibilità
       return timbrature.map(t => ({
-        id: t.id.toString(),
+        id: t.id,
         pin: t.pin,
         tipo: t.tipo,
         data_locale: t.data_locale,
         ora_locale: t.ora_locale,
         giorno_logico: t.giorno_logico,
-        nome: '', // TODO: join con tabella utenti se necessario
-        cognome: '', // TODO: join con tabella utenti se necessario
+        ts_order: t.ts_order,
+        nome: '',
+        cognome: '',
         created_at: t.created_at
       }));
     } catch (error) {
-      console.error('❌ Error in getTimbratureGiorno:', error);
       throw error;
     }
   }
 
-  // CRUD operations: TODO - use Supabase RPC functions
+  // CRUD operations
   static async updateTimbratura(id: string, input: { data: string; ore: string; dataEntrata?: string }): Promise<Timbratura> {
     throw new Error('updateTimbratura not implemented - use Supabase RPC functions');
   }
@@ -149,7 +143,6 @@ export class TimbratureService {
           created_at: t.created_at
         }));
     } catch (error) {
-      console.error('❌ Error in loadStoricoRaw:', error);
       return [];
     }
   }
@@ -179,7 +172,6 @@ export class TimbratureService {
           created_at: t.created_at
         }));
     } catch (error) {
-      console.error('❌ Error in getTimbratureByPin:', error);
       throw error;
     }
   }

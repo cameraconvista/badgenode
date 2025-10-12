@@ -10,6 +10,10 @@ export type Timbratura = {
   data_locale: string | null;     // opzionale
   ora_locale: string | null;      // opzionale
   client_event_id?: string | null;
+  // Campi legacy per compatibilità UI
+  nome?: string;
+  cognome?: string;
+  created_at?: string;
 };
 
 export type StoricoParams = {

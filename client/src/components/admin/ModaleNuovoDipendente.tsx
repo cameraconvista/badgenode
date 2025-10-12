@@ -99,7 +99,6 @@ export default function ModaleNuovoDipendente({
       await onSave(formData);
       onClose();
     } catch (error) {
-      console.error('Errore salvataggio:', error);
       setErrors({ general: 'Errore durante il salvataggio' });
     } finally {
       setIsLoading(false);
@@ -124,7 +123,6 @@ export default function ModaleNuovoDipendente({
         setErrors(prev => ({ ...prev, pin: `PIN ${pin} già in uso` }));
       }
     } catch (error) {
-      console.error('Errore verifica PIN:', error);
     }
   };
 

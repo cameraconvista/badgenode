@@ -31,7 +31,6 @@ export default function ArchivioDipendenti() {
     }, 250);
     const unsubscribe = subscribeTimbrature({
       onChange: (payload) => {
-        console.debug('📡 Archivio received realtime event:', payload);
         debouncedInvalidate();
       }
     });
@@ -44,7 +43,6 @@ export default function ArchivioDipendenti() {
       const data = await UtentiService.getUtenti();
       setUtenti(data);
     } catch (error) {
-      console.error('Errore caricamento utenti:', error);
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +55,6 @@ export default function ArchivioDipendenti() {
     setShowModaleModifica(true);
   };
   const handleArchivia = async (id: string) => {
-    console.log('Archivia utente ID:', id);
   };
   const handleEliminaClick = (utente: Utente) => {
     setUtenteSelezionato(utente);
@@ -72,7 +69,6 @@ export default function ArchivioDipendenti() {
       setShowModaleElimina(false);
       setUtenteSelezionato(null);
     } catch (error) {
-      console.error('Errore eliminazione:', error);
     } finally {
       setIsEliminaLoading(false);
     }
@@ -85,7 +81,6 @@ export default function ArchivioDipendenti() {
       setShowModaleModifica(false);
       setUtenteSelezionato(null);
     } catch (error) {
-      console.error('Errore modifica:', error);
       throw error;
     }
   };
@@ -95,12 +90,11 @@ export default function ArchivioDipendenti() {
       await loadUtenti();
       setShowModaleNuovo(false);
     } catch (error) {
-      console.error('Errore creazione:', error);
       throw error;
     }
   };
   const handleBackToLogin = () => setLocation('/');
-  const handleExDipendenti = () => console.log('📋 Navigazione ex-dipendenti');
+  const handleExDipendenti = () => {};
 
   return (
     <div 

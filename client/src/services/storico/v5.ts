@@ -58,7 +58,6 @@ export async function loadTotaliGiornoLogico({
       sessioni_totali: 0  // TODO: calcolare se necessario
     }));
   } catch (error) {
-    console.error('❌ Error in loadTotaliGiornoLogico:', error);
     return [];
   }
 }
@@ -99,7 +98,6 @@ export async function loadSessioniGiornoLogico({
 
     return sessioni;
   } catch (error) {
-    console.error('❌ Error in loadSessioniGiornoLogico:', error);
     return [];
   }
 }
@@ -158,7 +156,6 @@ export async function buildStoricoDataset({
       };
     });
   } catch (error) {
-    console.error('❌ Error in buildStoricoDataset:', error);
     return [];
   }
 }

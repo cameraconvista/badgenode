@@ -1,5 +1,5 @@
 // Validazioni per timbrature e business logic
-import { Timbratura } from './time';
+import type { Timbratura } from '@/types/timbrature';
 
 /**
  * Calcola ore lavorate tra due timbrature considerando turni notturni

@@ -1,5 +1,6 @@
 // Utility per export PDF/Excel dello storico timbrature
-import { Timbratura, formatOre, formatDataItaliana, getMeseItaliano } from './time';
+import { formatOre, formatDataItaliana, getMeseItaliano } from './time';
+import type { Timbratura } from '@/types/timbrature';
 import { Utente } from '@/services/utenti.service';
 
 export interface ExportData {

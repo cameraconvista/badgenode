@@ -1,4 +1,4 @@
-import { Timbratura } from '@/lib/time';
+import type { Timbratura } from '@/types/timbrature';
 
 export interface FormData {
   dataEntrata: string;

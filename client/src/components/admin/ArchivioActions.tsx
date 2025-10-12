@@ -30,7 +30,6 @@ export default function ArchivioActions({
       await onArchivia(utente.id);
       setShowArchiviaDialog(false);
     } catch (error) {
-      console.error('Errore archiviazione:', error);
     } finally {
       setIsLoading(false);
     }

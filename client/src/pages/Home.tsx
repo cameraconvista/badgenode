@@ -35,7 +35,6 @@ export default function Home() {
     const unsubscribe = subscribeTimbrature({
       pin: user.pin,
       onChange: (payload) => {
-        console.debug('📡 Home received realtime event:', payload);
         debouncedInvalidate();
       }
     });
@@ -72,14 +71,11 @@ export default function Home() {
         .single();
       
       if (error || !data) {
-        console.log('❌ [HOME] PIN non valido:', pinNumber);
         return false;
       }
       
-      console.log('✅ [HOME] PIN validato:', pinNumber);
       return true;
     } catch (error) {
-      console.error('❌ [HOME] Errore validazione PIN:', error);
       return false;
     }
   };
@@ -105,9 +101,7 @@ export default function Home() {
         return;
       }
       
-      console.log('[HOME] Chiamata timbra con PIN validato:', pinNumber, 'tipo: entrata');
       const id = await TimbratureService.timbra(pinNumber, 'entrata');
-      console.debug('🟢 ID timbratura:', id);
       
       // Invalida cache per refresh automatico
       invalidateAfterTimbratura(pinNumber);
@@ -143,9 +137,7 @@ export default function Home() {
         return;
       }
       
-      console.log('[HOME] Chiamata timbra con PIN validato:', pinNumber, 'tipo: uscita');
       const id = await TimbratureService.timbra(pinNumber, 'uscita');
-      console.debug('🟢 ID timbratura:', id);
       
       // Invalida cache per refresh automatico
       invalidateAfterTimbratura(pinNumber);

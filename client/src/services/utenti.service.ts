@@ -35,7 +35,6 @@ export class UtentiService {
   // Ottieni lista utenti attivi
   static async getUtenti(): Promise<Utente[]> {
     try {
-      console.log('📋 [Supabase] Caricamento utenti attivi...');
       
       const { data, error } = await supabase
         .from('utenti')
@@ -43,14 +42,11 @@ export class UtentiService {
         .order('pin');
 
       if (error) {
-        console.error('[Supabase] Error loading utenti:', error);
         throw error;
       }
 
-      console.log('✅ [Supabase] Utenti caricati:', data?.length || 0);
       return data || [];
     } catch (error) {
-      console.error('❌ Error in getUtenti:', error);
       throw error;
     }
   }
@@ -58,7 +54,6 @@ export class UtentiService {
   // Ottieni lista ex-dipendenti
   static async getExDipendenti(): Promise<ExDipendente[]> {
     try {
-      console.log('📋 [Supabase] Caricamento ex-dipendenti...');
       
       const { data, error } = await supabase
         .from('ex_dipendenti')
@@ -66,14 +61,11 @@ export class UtentiService {
         .order('archiviato_at', { ascending: false });
 
       if (error) {
-        console.error('[Supabase] Error loading ex-dipendenti:', error);
         throw error;
       }
 
-      console.log('✅ [Supabase] Ex-dipendenti caricati:', data?.length || 0);
       return data || [];
     } catch (error) {
-      console.error('❌ Error in getExDipendenti:', error);
       throw error;
     }
   }
@@ -94,7 +86,6 @@ export class UtentiService {
 
       return data;
     } catch (error) {
-      console.error('❌ Error in getUtenteById:', error);
       return null;
     }
   }
@@ -102,7 +93,6 @@ export class UtentiService {
   // Crea/Aggiorna utente via RPC
   static async upsertUtente(pin: number, nome: string, cognome: string): Promise<void> {
     try {
-      console.log('[Supabase RPC] upsert_utente_rpc args:', { p_pin: pin, p_nome: nome, p_cognome: cognome });
       
       const { data, error } = await supabase.rpc('upsert_utente_rpc', { 
         p_pin: pin, 
@@ -111,13 +101,10 @@ export class UtentiService {
       });
 
       if (error) {
-        console.error('[Supabase RPC ERROR upsert_utente_rpc]', error);
         throw error;
       }
 
-      console.debug('🟢 Utente upsert OK', data);
     } catch (error) {
-      console.error('❌ Errore upsert utente:', error);
       throw error;
     }
   }
@@ -152,7 +139,6 @@ export class UtentiService {
 
   static async deleteUtente(pin: number): Promise<void> {
     try {
-      console.log('🗑️ [API] Eliminazione utente PIN:', pin);
       const response = await fetch(`/api/utenti/${pin}`, {
         method: 'DELETE',
         headers: {
@@ -162,16 +148,13 @@ export class UtentiService {
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Errore sconosciuto' }));
-        console.error('❌ [API] Error deleting utente:', errorData);
         if (response.status === 503) {
           throw new Error('⚠️ Servizio eliminazione non disponibile. Contattare l\'amministratore per configurare le credenziali Supabase.');
         }
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
       const result = await response.json();
-      console.log('✅ [API] Utente eliminato con successo:', result.message);
     } catch (error) {
-      console.error('❌ Error in deleteUtente:', error);
       throw error;
     }
   }
@@ -190,7 +173,6 @@ export class UtentiService {
       }
       return false; // PIN trovato = non disponibile
     } catch (error) {
-      console.error('❌ Error in isPinAvailable:', error);
       return false; // In caso di errore, assumiamo non disponibile per sicurezza
     }
   }

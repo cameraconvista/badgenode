@@ -13,12 +13,10 @@ export const qk = {
 // Invalidazioni per dipendente (PIN specifico)
 export function invalidateStoricoForPin(pin: number) {
   queryClient.invalidateQueries({ queryKey: qk.storicoByPin(pin) });
-  console.debug('🔄 Invalidated storico for PIN:', pin);
 }
 
 export function invalidateTotaliForPin(pin: number) {
   queryClient.invalidateQueries({ queryKey: qk.totaliByPin(pin) });
-  console.debug('🔄 Invalidated totali for PIN:', pin);
 }
 
 // Invalidazione completa dopo timbratura
@@ -28,29 +26,24 @@ export function invalidateAfterTimbratura(pin: number) {
   // Invalida anche le cache globali per admin
   invalidateStoricoGlobale();
   invalidateTotaliGlobali();
-  console.debug('🔄 Invalidated all caches after timbratura for PIN:', pin);
 }
 
 // Invalidazioni per admin (globali)
 export function invalidateStoricoGlobale() {
   queryClient.invalidateQueries({ queryKey: qk.storicoAdmin });
-  console.debug('🔄 Invalidated storico globale');
 }
 
 export function invalidateTotaliGlobali() {
   queryClient.invalidateQueries({ queryKey: qk.totaliAdmin });
-  console.debug('🔄 Invalidated totali globali');
 }
 
 // Invalidazioni liste utenti (per admin)
 export function invalidateUtenti() {
   queryClient.invalidateQueries({ queryKey: qk.utenti });
-  console.debug('🔄 Invalidated utenti');
 }
 
 export function invalidateExDipendenti() {
   queryClient.invalidateQueries({ queryKey: qk.exDipendenti });
-  console.debug('🔄 Invalidated ex-dipendenti');
 }
 
 // Utility per debounce
