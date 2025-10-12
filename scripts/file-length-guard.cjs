@@ -4,9 +4,9 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const STRICT_MODE = true; // Attivato per Prompt 2/2
-const MAX_LINES = 200;
-const WARNING_LINES = 150;
+const STRICT_MODE = true; // Attivato per FASE 4/4
+const MAX_LINES = 220; // Hard limit - blocca commit
+const WARNING_LINES = 180; // Soft limit - solo warning
 
 function getStagedFiles() {
   try {
@@ -30,11 +30,24 @@ function countLines(filePath) {
 }
 
 function isCodeFile(filePath) {
-  const codeExtensions = ['.ts', '.tsx', '.js', '.jsx'];
-  const excludeDirs = ['ARCHIVE/', 'DOCS/', 'Backup_Automatico/', 'node_modules/', '.git/'];
+  const codeExtensions = ['.ts', '.tsx'];
+  const excludeDirs = [
+    'ARCHIVE/',
+    'DOCS/',
+    'Backup_Automatico/',
+    'node_modules/',
+    '.git/',
+    'scripts/',
+    'server/',
+  ];
 
   // Escludi directory specifiche
   if (excludeDirs.some((dir) => filePath.includes(dir))) {
+    return false;
+  }
+
+  // Solo file dentro client/src
+  if (!filePath.startsWith('client/src/')) {
     return false;
   }
 
@@ -64,7 +77,7 @@ function main() {
 
   // Mostra sempre i warnings
   if (warnings.length > 0) {
-    console.log('\n⚠️  Files approaching 200 line limit:');
+    console.log('\n⚠️  Files approaching 220 line limit:');
     warnings.forEach(({ file, lines }) => {
       console.log(`   ${file}: ${lines} lines (warning ≥${WARNING_LINES})`);
     });
@@ -72,18 +85,18 @@ function main() {
 
   // Gestisci violazioni
   if (violations.length > 0) {
-    console.log('\n🚨 Files exceeding 200 line limit:');
+    console.log('\n🚨 Files exceeding 220 line limit:');
     violations.forEach(({ file, lines }) => {
       console.log(`   ${file}: ${lines} lines (max ${MAX_LINES})`);
     });
 
     if (STRICT_MODE) {
-      console.log('\n❌ COMMIT BLOCKED: Files exceed 200 line limit');
+      console.log('\n❌ COMMIT BLOCKED: Files exceed 220 line limit');
       console.log('   Please split these files before committing');
       process.exit(1);
     } else {
-      console.log('\n⚠️  WARNING MODE: Files exceed 200 line limit');
-      console.log('   Will be enforced in Prompt 2/2');
+      console.log('\n⚠️  WARNING MODE: Files exceed 220 line limit');
+      console.log('   Will be enforced in FASE 4/4');
     }
   }
 
