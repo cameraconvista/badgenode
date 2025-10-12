@@ -81,18 +81,34 @@ export class UtentiService {
     }
   }
 
-  // Crea/Aggiorna utente via RPC
-  static async upsertUtente(pin: number, nome: string, cognome: string): Promise<void> {
+  // Crea/Aggiorna utente via REST upsert
+  static async upsertUtente(input: UtenteInput): Promise<Utente> {
     try {
-      const { data, error } = await supabase.rpc('upsert_utente_rpc', {
-        p_pin: pin,
-        p_nome: nome || null,
-        p_cognome: cognome || null,
-      });
+      const payload = {
+        pin: input.pin,
+        nome: input.nome,
+        cognome: input.cognome,
+        email: input.email || null,
+        telefono: input.telefono || null,
+        ore_contrattuali: input.ore_contrattuali || 8,
+        descrizione_contratto: input.descrizione_contratto || null,
+      };
+
+      const { data, error } = await supabase
+        .from('utenti')
+        .upsert([payload], { onConflict: 'pin' })
+        .select('*')
+        .single();
 
       if (error) {
         throw error;
       }
+
+      if (!data) {
+        throw new Error('Nessun dato restituito dopo upsert');
+      }
+
+      return data;
     } catch (error) {
       throw error;
     }
@@ -100,26 +116,29 @@ export class UtentiService {
 
   // Crea nuovo utente (wrapper per compatibilità)
   static async createUtente(input: UtenteInput): Promise<Utente> {
-    await this.upsertUtente(input.pin, input.nome, input.cognome);
-    const utenti = await this.getUtenti();
-    const nuovoUtente = utenti.find((u) => u.pin === input.pin);
-    if (!nuovoUtente) {
-      throw new Error('Errore durante la creazione utente');
-    }
-    return nuovoUtente;
+    return await this.upsertUtente(input);
   }
 
-  // Aggiorna utente esistente (usa upsert RPC)
+  // Aggiorna utente esistente (usa upsert REST)
   static async updateUtente(id: string, input: Partial<UtenteInput>): Promise<Utente> {
-    if (input.pin && input.nome && input.cognome) {
-      await this.upsertUtente(input.pin, input.nome, input.cognome);
+    // Ottieni i dati attuali dell'utente
+    const utenteCorrente = await this.getUtenteById(id);
+    if (!utenteCorrente) {
+      throw new Error('Utente non trovato');
     }
-    const utenti = await this.getUtenti();
-    const utenteAggiornato = utenti.find((u) => u.id === id);
-    if (!utenteAggiornato) {
-      throw new Error('Utente non trovato dopo aggiornamento');
-    }
-    return utenteAggiornato;
+
+    // Merge dei dati attuali con quelli nuovi
+    const inputCompleto: UtenteInput = {
+      pin: input.pin ?? utenteCorrente.pin,
+      nome: input.nome ?? utenteCorrente.nome,
+      cognome: input.cognome ?? utenteCorrente.cognome,
+      email: input.email ?? utenteCorrente.email,
+      telefono: input.telefono ?? utenteCorrente.telefono,
+      ore_contrattuali: input.ore_contrattuali ?? utenteCorrente.ore_contrattuali,
+      descrizione_contratto: input.descrizione_contratto ?? utenteCorrente.descrizione_contratto,
+    };
+
+    return await this.upsertUtente(inputCompleto);
   }
 
   static async archiviaUtente(id: string, motivo?: string): Promise<void> {
