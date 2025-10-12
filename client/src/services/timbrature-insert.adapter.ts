@@ -70,48 +70,29 @@ export class TimbratureInsertAdapter {
 
   private async trySend(ev: PendingEvent): Promise<{ success: boolean; error?: string }> {
     try {
-      
-      // Calcola campi temporali (simula trigger server)
-      const dt = new Date(ev.created_at);
-      const rome = new Intl.DateTimeFormat('sv-SE', {
-        timeZone: 'Europe/Rome', year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      }).format(dt);
-      
-      const [dataLocale, oraLocale] = rome.split(' ');
-      const oraNum = parseInt(oraLocale.split(':')[0]);
-      
-      // Giorno logico: se ora < 06:00 → giorno precedente
-      let giornoLogico = dataLocale;
-      if (oraNum < 6) {
-        const prev = new Date(dataLocale + 'T00:00:00');
-        prev.setDate(prev.getDate() - 1);
-        giornoLogico = prev.toISOString().split('T')[0];
-      }
-      
-      // INSERT DIRETTO su tabella timbrature con campi calcolati
+      // CHIAMATA RPC insert_timbro_v2 con validazione PIN e logica business completa
+      // La RPC gestisce internamente: timezone Europe/Rome, giorno logico, alternanza, validazione PIN
       const { data, error } = await supabase
-        .from('timbrature')
-        .insert([{
-          pin: ev.pin,
-          tipo: ev.tipo,
-          created_at: ev.created_at,
-          client_event_id: ev.client_event_id,
-          data_locale: dataLocale,
-          ora_locale: oraLocale,
-          giorno_logico: giornoLogico,
-          ts_order: ev.created_at
-        }])
-        .select()
-        .single();
+        .rpc('insert_timbro_v2', {
+          p_pin: ev.pin,
+          p_tipo: ev.tipo
+        });
       
 
       if (error) {
-        // Errori idempotenza: duplicate key su client_event_id = successo
         const msg = (error.message || '').toLowerCase();
+        const errorCode = error.code;
+        
+        // Errori business logic RPC (PIN inesistente, alternanza errata) - NON retry
+        if (errorCode === 'P0001' || errorCode === 'P0002' || msg.includes('pin') || msg.includes('alternanza')) {
+          console.error('❌ [TimbratureSync] Errore business logic RPC:', error.message);
+          await this.db.delete(ev.client_event_id); // Rimuovi dalla coda, non retry
+          return { success: false, error: error.message };
+        }
+        
+        // Errori idempotenza: duplicate key = successo
         const isConflict = msg.includes('duplicate') || 
                           msg.includes('unique') || 
-                          msg.includes('ux_timbrature_client_event_id') ||
                           msg.includes('already exists');
         
         if (isConflict) {
@@ -119,7 +100,7 @@ export class TimbratureInsertAdapter {
           return { success: true };
         }
 
-        // Altri errori: incrementa attempts e conserva
+        // Altri errori (rete, temporanei): incrementa attempts e conserva per retry
         ev.attempts += 1;
         ev.last_error = error.message ?? String(error);
         await this.db.put(ev);

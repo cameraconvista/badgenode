@@ -23,7 +23,7 @@ export function generateCSV(data: ExportData): string {
   // Raggruppa per giorno logico
   const byDate = new Map<string, Timbratura[]>();
   for (const t of timbrature) {
-    const key = t.giornologico;
+    const key = t.giorno_logico;
     if (!byDate.has(key)) {
       byDate.set(key, []);
     }
@@ -48,17 +48,17 @@ export function generateCSV(data: ExportData): string {
   const sortedDates = Array.from(byDate.keys()).sort();
   for (const giorno of sortedDates) {
     const timbratureGiorno = byDate.get(giorno)!;
-    const entrate = timbratureGiorno.filter(t => t.tipo === 'entrata').sort((a, b) => a.ore.localeCompare(b.ore));
-    const uscite = timbratureGiorno.filter(t => t.tipo === 'uscita').sort((a, b) => b.ore.localeCompare(a.ore));
+    const entrate = timbratureGiorno.filter(t => t.tipo === 'entrata').sort((a, b) => a.ora_locale.localeCompare(b.ora_locale));
+    const uscite = timbratureGiorno.filter(t => t.tipo === 'uscita').sort((a, b) => b.ora_locale.localeCompare(a.ora_locale));
     
-    const entrata = entrate.length > 0 ? entrate[0].ore.substring(0, 5) : '';
-    const uscita = uscite.length > 0 ? uscite[0].ore.substring(0, 5) : '';
+    const entrata = entrate.length > 0 ? entrate[0].ora_locale.substring(0, 5) : '';
+    const uscita = uscite.length > 0 ? uscite[0].ora_locale.substring(0, 5) : '';
     
     // Calcola ore lavorate
     let oreLavorate = 0;
     if (entrate.length > 0 && uscite.length > 0) {
-      const dataEntrata = new Date(`${entrate[0].data}T${entrate[0].ore}`);
-      const dataUscita = new Date(`${uscite[0].data}T${uscite[0].ore}`);
+      const dataEntrata = new Date(`${entrate[0].data_locale}T${entrate[0].ora_locale}`);
+      const dataUscita = new Date(`${uscite[0].data_locale}T${uscite[0].ora_locale}`);
       
       if (dataUscita < dataEntrata) {
         dataUscita.setDate(dataUscita.getDate() + 1);

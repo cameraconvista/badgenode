@@ -14,7 +14,7 @@ export class TimbratureStatsService {
     // Raggruppa per giorno logico
     const byDate = new Map<string, Timbratura[]>();
     for (const t of timbrature) {
-      const key = t.giornologico;
+      const key = t.giorno_logico;
       if (!byDate.has(key)) {
         byDate.set(key, []);
       }
@@ -32,11 +32,11 @@ export class TimbratureStatsService {
       
       if (entrate.length > 0 && uscite.length > 0) {
         // Calcola ore lavorate (prima entrata, ultima uscita)
-        const primaEntrata = entrate.sort((a: Timbratura, b: Timbratura) => a.ore.localeCompare(b.ore))[0];
-        const ultimaUscita = uscite.sort((a: Timbratura, b: Timbratura) => b.ore.localeCompare(a.ore))[0];
+        const primaEntrata = entrate.sort((a: Timbratura, b: Timbratura) => a.ora_locale.localeCompare(b.ora_locale))[0];
+        const ultimaUscita = uscite.sort((a: Timbratura, b: Timbratura) => b.ora_locale.localeCompare(a.ora_locale))[0];
         
-        const dataEntrata = new Date(`${primaEntrata.data}T${primaEntrata.ore}`);
-        const dataUscita = new Date(`${ultimaUscita.data}T${ultimaUscita.ore}`);
+        const dataEntrata = new Date(`${primaEntrata.data_locale}T${primaEntrata.ora_locale}`);
+        const dataUscita = new Date(`${ultimaUscita.data_locale}T${ultimaUscita.ora_locale}`);
         
         // Gestione turni notturni
         if (dataUscita < dataEntrata) {

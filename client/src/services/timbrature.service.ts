@@ -71,9 +71,9 @@ export class TimbratureService {
         id: t.id.toString(),
         pin: t.pin,
         tipo: t.tipo,
-        data: t.data_locale,
-        ore: t.ora_locale,
-        giornologico: t.giorno_logico,
+        data_locale: t.data_locale,
+        ora_locale: t.ora_locale,
+        giorno_logico: t.giorno_logico,
         nome: '', // TODO: join con tabella utenti se necessario
         cognome: '', // TODO: join con tabella utenti se necessario
         created_at: t.created_at
@@ -85,12 +85,12 @@ export class TimbratureService {
   }
 
   // LEGACY: Reindirizzato a tabella diretta
-  static async getTimbratureGiorno(pin: number, giornologico: string): Promise<Timbratura[]> {
+  static async getTimbratureGiorno(pin: number, giorno_logico: string): Promise<Timbratura[]> {
     try {
       // Reindirizza al nuovo sistema
       const timbrature = await this.getTimbratureByRange({
         pin,
-        from: giornologico
+        from: giorno_logico
       });
       
       // Converti al formato legacy per compatibilità
@@ -98,9 +98,9 @@ export class TimbratureService {
         id: t.id.toString(),
         pin: t.pin,
         tipo: t.tipo,
-        data: t.data_locale,
-        ore: t.ora_locale,
-        giornologico: t.giorno_logico,
+        data_locale: t.data_locale,
+        ora_locale: t.ora_locale,
+        giorno_logico: t.giorno_logico,
         nome: '', // TODO: join con tabella utenti se necessario
         cognome: '', // TODO: join con tabella utenti se necessario
         created_at: t.created_at
@@ -143,9 +143,9 @@ export class TimbratureService {
           id: t.id,
           pin: t.pin,
           tipo: t.tipo,
-          data: t.data_locale,
-          ore: t.ora_locale,
-          giornologico: t.giorno_logico,
+          data_locale: t.data_locale,
+          ora_locale: t.ora_locale,
+          giorno_logico: t.giorno_logico,
           created_at: t.created_at
         }));
     } catch (error) {
@@ -154,12 +154,11 @@ export class TimbratureService {
     }
   }
 
-  // MIGRATO: Usa offline-first adapter con insert diretto
+  // REFACTOR: Usa RPC unico centralizzato
   static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<number> {
-    // Importazione lazy per evitare dipendenze circolari
-    const { timbratureSync } = await import('./timbrature-sync');
-    const result = await timbratureSync.insertNowOrEnqueue({ pin, tipo });
-    return result.ok ? 1 : 0; // 1 = sync immediato, 0 = accodato
+    const { callInsertTimbro } = await import('./timbratureRpc');
+    const result = await callInsertTimbro({ pin, tipo });
+    return result.success ? 1 : 0; // 1 = successo, 0 = errore
   }
 
   // Funzione per refresh storico dopo timbratura - SEMPLIFICATO: tabella diretta
@@ -174,9 +173,9 @@ export class TimbratureService {
           id: t.id,
           pin: t.pin,
           tipo: t.tipo,
-          data: t.data_locale,
-          ore: t.ora_locale,
-          giornologico: t.giorno_logico,
+          data_locale: t.data_locale,
+          ora_locale: t.ora_locale,
+          giorno_logico: t.giorno_logico,
           created_at: t.created_at
         }));
     } catch (error) {

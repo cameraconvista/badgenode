@@ -5,16 +5,16 @@ export interface Timbratura {
   id: string;
   pin: number;
   tipo: 'entrata' | 'uscita';
-  data: string; // Data calendario effettiva (YYYY-MM-DD)
-  ore: string; // Orario (HH:MM:SS)
-  giornologico: string; // Data logica per raggruppamento (YYYY-MM-DD)
+  data_locale: string; // Data calendario effettiva (YYYY-MM-DD)
+  ora_locale: string; // Orario (HH:MM:SS)
+  giorno_logico: string; // Data logica per raggruppamento (YYYY-MM-DD)
   nome: string;
   cognome: string;
   created_at: string;
 }
 
 export interface TimbratureGiorno {
-  giornologico: string;
+  giorno_logico: string;
   entrate: Timbratura[];
   uscite: Timbratura[];
   oreLavorate: number;
@@ -79,8 +79,8 @@ export function computeGiornoLogico(params: {
  * Usa prima entrata e ultima uscita dello stesso giorno logico
  */
 export function computeOreLavoratePerGiorno(timbrature: Timbratura[]): number {
-  const entrate = timbrature.filter(t => t.tipo === 'entrata').sort((a, b) => a.ore.localeCompare(b.ore));
-  const uscite = timbrature.filter(t => t.tipo === 'uscita').sort((a, b) => b.ore.localeCompare(a.ore));
+  const entrate = timbrature.filter(t => t.tipo === 'entrata').sort((a, b) => a.ora_locale.localeCompare(b.ora_locale));
+  const uscite = timbrature.filter(t => t.tipo === 'uscita').sort((a, b) => b.ora_locale.localeCompare(a.ora_locale));
   
   if (entrate.length === 0 || uscite.length === 0) return 0;
   
@@ -94,8 +94,8 @@ export function computeOreLavoratePerGiorno(timbrature: Timbratura[]): number {
  * Calcola ore lavorate tra due timbrature considerando turni notturni
  */
 function calcolaOreLavorateTraDue(entrata: Timbratura, uscita: Timbratura): number {
-  const dataEntrata = new Date(`${entrata.data}T${entrata.ore}`);
-  const dataUscita = new Date(`${uscita.data}T${uscita.ore}`);
+  const dataEntrata = new Date(`${entrata.data_locale}T${entrata.ora_locale}`);
+  const dataUscita = new Date(`${uscita.data_locale}T${uscita.ora_locale}`);
   
   // Se uscita < entrata, aggiungi 24 ore (turno notturno)
   if (dataUscita < dataEntrata) {

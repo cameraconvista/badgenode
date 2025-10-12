@@ -5,8 +5,8 @@ import { Timbratura } from './time';
  * Calcola ore lavorate tra due timbrature considerando turni notturni
  */
 function calcolaOreLavorateTraDue(entrata: Timbratura, uscita: Timbratura): number {
-  const dataEntrata = new Date(`${entrata.data}T${entrata.ore}`);
-  const dataUscita = new Date(`${uscita.data}T${uscita.ore}`);
+  const dataEntrata = new Date(`${entrata.data_locale}T${entrata.ora_locale}`);
+  const dataUscita = new Date(`${uscita.data_locale}T${uscita.ora_locale}`);
   
   // Se uscita < entrata, aggiungi 24 ore (turno notturno)
   if (dataUscita < dataEntrata) {
@@ -24,7 +24,7 @@ export function validateTimbratura(entrata: Timbratura, uscita: Timbratura): { v
   const errors: string[] = [];
   
   // Stesso giorno logico
-  if (entrata.giornologico !== uscita.giornologico) {
+  if (entrata.giorno_logico !== uscita.giorno_logico) {
     errors.push('Entrata e uscita devono appartenere allo stesso giorno logico');
   }
   

@@ -11,6 +11,7 @@ import { TimbratureService } from '@/services/timbrature.service';
 import { useToast } from '@/hooks/use-toast';
 import { subscribeTimbrature } from '@/lib/realtime';
 import { invalidateAfterTimbratura, debounce } from '@/state/timbrature.cache';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function Home() {
   const [pin, setPin] = useState('');
@@ -61,6 +62,28 @@ export default function Home() {
     window.location.href = '/archivio-dipendenti';
   };
 
+  // Validazione PIN locale - verifica esistenza in tabella utenti
+  const validatePIN = async (pinNumber: number): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase
+        .from('utenti')
+        .select('pin')
+        .eq('pin', pinNumber)
+        .single();
+      
+      if (error || !data) {
+        console.log('❌ [HOME] PIN non valido:', pinNumber);
+        return false;
+      }
+      
+      console.log('✅ [HOME] PIN validato:', pinNumber);
+      return true;
+    } catch (error) {
+      console.error('❌ [HOME] Errore validazione PIN:', error);
+      return false;
+    }
+  };
+
 
   const handleEntrata = async () => {
     if (pin.length === 0) {
@@ -72,7 +95,17 @@ export default function Home() {
     setLoading(true);
     try {
       const pinNumber = Number(pin);
-      console.log('[HOME] Chiamata timbra con PIN:', pinNumber, 'tipo: entrata');
+      
+      // VALIDAZIONE PIN LOCALE - Verifica esistenza prima di timbrare
+      const isPinValid = await validatePIN(pinNumber);
+      if (!isPinValid) {
+        setFeedback({ type: 'error', message: 'PIN non registrato nel sistema' });
+        setLoading(false);
+        setTimeout(() => setFeedback({ type: null, message: '' }), 5000);
+        return;
+      }
+      
+      console.log('[HOME] Chiamata timbra con PIN validato:', pinNumber, 'tipo: entrata');
       const id = await TimbratureService.timbra(pinNumber, 'entrata');
       console.debug('🟢 ID timbratura:', id);
       
@@ -100,7 +133,17 @@ export default function Home() {
     setLoading(true);
     try {
       const pinNumber = Number(pin);
-      console.log('[HOME] Chiamata timbra con PIN:', pinNumber, 'tipo: uscita');
+      
+      // VALIDAZIONE PIN LOCALE - Verifica esistenza prima di timbrare
+      const isPinValid = await validatePIN(pinNumber);
+      if (!isPinValid) {
+        setFeedback({ type: 'error', message: 'PIN non registrato nel sistema' });
+        setLoading(false);
+        setTimeout(() => setFeedback({ type: null, message: '' }), 5000);
+        return;
+      }
+      
+      console.log('[HOME] Chiamata timbra con PIN validato:', pinNumber, 'tipo: uscita');
       const id = await TimbratureService.timbra(pinNumber, 'uscita');
       console.debug('🟢 ID timbratura:', id);
       
