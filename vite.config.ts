@@ -76,6 +76,10 @@ export default defineConfig(({ mode }) => {
         deny: ['**/.*'],
       },
     },
-    // Rimuovo define esplicito - Vite gestisce automaticamente le VITE_ env vars
+    define: {
+      // Explicitly define env vars for client
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
+      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
+    },
   };
 });
