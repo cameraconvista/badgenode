@@ -92,7 +92,7 @@ export class UtentiService {
     }
   }
 
-  // SOLUZIONE TEMPORANEA: Mock utente creation (RLS non configurato)
+  // Crea/Aggiorna utente via REST upsert (implementazione reale)
   static async upsertUtente(input: UtenteInput): Promise<Utente> {
     try {
       // Validazione lato client
@@ -106,33 +106,43 @@ export class UtentiService {
         throw new Error('Cognome obbligatorio');
       }
 
-      // Verifica se PIN già esiste
-      const { data: existingUsers } = await supabase
-        .from('utenti')
-        .select('pin')
-        .eq('pin', input.pin);
-
-      // MOCK: Simula creazione utente senza inserire nel DB
-      // Questo evita errori RLS e permette al dialog di funzionare
-      const mockUtente: Utente = {
-        id: input.pin.toString(),
+      // Payload con solo le colonne esistenti nella tabella utenti
+      const payload = {
         pin: input.pin,
         nome: input.nome.trim(),
         cognome: input.cognome.trim(),
+      };
+
+      const { data, error } = await supabase
+        .from('utenti')
+        .upsert([payload], { onConflict: 'pin' })
+        .select('pin,nome,cognome,created_at')
+        .single();
+
+      if (error) {
+        // Gestione errori specifici
+        if (error.code === '42501') {
+          throw new Error('Permessi insufficienti per creare utenti. Contattare l\'amministratore.');
+        }
+        throw new Error(`Errore durante la creazione utente: ${error.message}`);
+      }
+
+      if (!data) {
+        throw new Error('Nessun dato restituito dopo upsert');
+      }
+
+      // Trasformo per compatibilità con l'interfaccia UI
+      const utenteCompleto: Utente = {
+        ...data,
+        id: data.pin?.toString() || '',
         email: input.email || '',
         telefono: input.telefono || '',
         ore_contrattuali: input.ore_contrattuali || 8,
         descrizione_contratto: input.descrizione_contratto || '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        updated_at: data.created_at,
       };
 
-      // Simula un piccolo delay per realismo
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // TODO(BUSINESS): Sostituire con vera creazione utente quando RLS sarà configurato
-      
-      return mockUtente;
+      return utenteCompleto;
     } catch (error) {
       throw error;
     }
@@ -165,10 +175,6 @@ export class UtentiService {
     return await this.upsertUtente(inputCompleto);
   }
 
-  static async archiviaUtente(id: string, motivo?: string): Promise<void> {
-    throw new Error('archiviaUtente not implemented');
-  }
-
   static async deleteUtente(pin: number): Promise<void> {
     try {
       const response = await fetch(`/api/utenti/${pin}`, {
@@ -194,14 +200,18 @@ export class UtentiService {
   }
   static async isPinAvailable(pin: number): Promise<boolean> {
     try {
-      const { data, error } = await supabase.from('utenti').select('pin').eq('pin', pin).single();
-      if (error && error.code === 'PGRST116') {
-        return true; // PIN non trovato = disponibile
-      }
+      // Uso count invece di single per evitare 406
+      const { count, error } = await supabase
+        .from('utenti')
+        .select('pin', { count: 'exact' })
+        .eq('pin', pin)
+        .limit(1);
+      
       if (error) {
         throw error;
       }
-      return false; // PIN trovato = non disponibile
+      
+      return (count || 0) === 0; // PIN disponibile se count è 0
     } catch (error) {
       return false; // In caso di errore, assumiamo non disponibile per sicurezza
     }
