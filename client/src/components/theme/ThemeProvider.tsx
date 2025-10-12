@@ -26,12 +26,12 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   // Pre-apply tema per evitare flash
   const getInitialTheme = (): Theme => {
     if (typeof window === 'undefined') return 'dark';
-    
+
     const savedTheme = localStorage.getItem('theme') as Theme;
     if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
       return savedTheme;
     }
-    
+
     // Fallback a prefers-color-scheme
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   };
@@ -47,14 +47,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
-    
+
     // Rimuovi classe precedente
     root.classList.remove('light', 'dark');
-    
+
     // Aggiungi nuova classe e dataset
     root.classList.add(newTheme);
     root.dataset.theme = newTheme;
-    
+
     // Applica CSS custom properties per compatibilità
     if (newTheme === 'dark') {
       root.style.setProperty('--background', '#0f0a1a');
@@ -68,7 +68,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       root.style.setProperty('--muted-foreground', '#a1a1aa');
       root.style.setProperty('--border', 'rgba(231, 116, 240, 0.3)');
       // Applica background per pagina admin
-      document.body.style.background = 'radial-gradient(ellipse at center, #2d1b3d 0%, #1a0f2e 50%, #0f0a1a 100%)';
+      document.body.style.background =
+        'radial-gradient(ellipse at center, #2d1b3d 0%, #1a0f2e 50%, #0f0a1a 100%)';
     } else {
       root.style.setProperty('--background', '#ffffff');
       root.style.setProperty('--foreground', '#510357');
@@ -81,7 +82,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       root.style.setProperty('--muted-foreground', '#64748b');
       root.style.setProperty('--border', '#e2e8f0');
       // Applica background light per pagina admin
-      document.body.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)';
+      document.body.style.background =
+        'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)';
     }
   };
 

@@ -10,7 +10,7 @@ export default function ModaleTimbrature(props: ModaleTimbratureProps) {
     showDeleteConfirm,
     setShowDeleteConfirm,
     handleSave,
-    handleDelete
+    handleDelete,
   } = useModaleTimbrature(
     props.isOpen,
     props.timbrature,

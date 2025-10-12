@@ -16,39 +16,39 @@ export function useStoricoExport({ dipendente, timbrature, filters }: UseStorico
 
   const handleExportPDF = () => {
     toast({
-      title: "Export PDF",
-      description: "Funzionalità in sviluppo",
+      title: 'Export PDF',
+      description: 'Funzionalità in sviluppo',
     });
   };
 
   const handleExportXLS = async () => {
     if (!dipendente || timbrature.length === 0) {
       toast({
-        title: "Nessun dato da esportare",
-        description: "Seleziona un periodo con timbrature",
-        variant: "destructive",
+        title: 'Nessun dato da esportare',
+        description: 'Seleziona un periodo con timbrature',
+        variant: 'destructive',
       });
       return;
     }
 
     try {
-      // TODO: Implementare export con nuovi dati TurnoGiornaliero
+      // TODO(BUSINESS): Implementare export con nuovi dati TurnoGiornaliero
       toast({
-        title: "Export Excel",
-        description: "Funzionalità temporaneamente disabilitata durante migrazione RPC",
-        variant: "default",
+        title: 'Export Excel',
+        description: 'Funzionalità temporaneamente disabilitata durante migrazione RPC',
+        variant: 'default',
       });
     } catch {
       toast({
-        title: "Errore export",
-        description: "Impossibile generare il file Excel",
-        variant: "destructive",
+        title: 'Errore export',
+        description: 'Impossibile generare il file Excel',
+        variant: 'destructive',
       });
     }
   };
 
   return {
     handleExportPDF,
-    handleExportXLS
+    handleExportXLS,
   };
 }

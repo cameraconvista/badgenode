@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Edit, Save, Trash2, X, AlertTriangle } from 'lucide-react';
@@ -34,13 +34,12 @@ export default function ModaleTimbratureView({
   showDeleteConfirm,
   setShowDeleteConfirm,
   handleSave,
-  handleDelete
+  handleDelete,
 }: ModaleTimbratureViewProps) {
-  const entrata = timbrature.find(t => t.tipo === 'entrata');
-  const uscita = timbrature.find(t => t.tipo === 'uscita');
-  const nomeCompleto = entrata?.nome && entrata?.cognome 
-    ? `${entrata.nome} ${entrata.cognome}` 
-    : 'Dipendente';
+  const entrata = timbrature.find((t) => t.tipo === 'entrata');
+  const uscita = timbrature.find((t) => t.tipo === 'uscita');
+  const nomeCompleto =
+    entrata?.nome && entrata?.cognome ? `${entrata.nome} ${entrata.cognome}` : 'Dipendente';
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -80,12 +79,7 @@ export default function ModaleTimbratureView({
             <AlertDescription>
               Sei sicuro di voler eliminare tutte le timbrature di questo giorno?
               <div className="flex gap-2 mt-2">
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={handleDelete}
-                  disabled={isLoading}
-                >
+                <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isLoading}>
                   Elimina
                 </Button>
                 <Button
@@ -111,7 +105,7 @@ export default function ModaleTimbratureView({
             <Trash2 className="h-4 w-4 mr-2" />
             Elimina
           </Button>
-          
+
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose} disabled={isLoading}>
               <X className="h-4 w-4 mr-2" />

@@ -19,7 +19,6 @@ export default function FormNuovoDipendente({
   onInputChange,
   firstInputRef,
 }: FormNuovoDipendenteProps) {
-
   return (
     <div className="space-y-6">
       {/* Sezione Dati Anagrafici */}
@@ -28,10 +27,12 @@ export default function FormNuovoDipendente({
           <User className="w-5 h-5 text-violet-400" />
           <h3 className="text-lg font-semibold text-white">Dati Anagrafici</h3>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="nome" className="text-gray-200">Nome *</Label>
+            <Label htmlFor="nome" className="text-gray-200">
+              Nome *
+            </Label>
             <Input
               ref={firstInputRef}
               id="nome"
@@ -47,7 +48,9 @@ export default function FormNuovoDipendente({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cognome" className="text-gray-200">Cognome *</Label>
+            <Label htmlFor="cognome" className="text-gray-200">
+              Cognome *
+            </Label>
             <Input
               id="cognome"
               type="text"
@@ -62,7 +65,9 @@ export default function FormNuovoDipendente({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-200">Email</Label>
+            <Label htmlFor="email" className="text-gray-200">
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
@@ -77,7 +82,9 @@ export default function FormNuovoDipendente({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="telefono" className="text-gray-200">Numero di Telefono</Label>
+            <Label htmlFor="telefono" className="text-gray-200">
+              Numero di Telefono
+            </Label>
             <Input
               id="telefono"
               type="tel"
@@ -90,7 +97,9 @@ export default function FormNuovoDipendente({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="pin" className="text-yellow-400 font-bold">PIN (1-99) *</Label>
+            <Label htmlFor="pin" className="text-yellow-400 font-bold">
+              PIN (1-99) *
+            </Label>
             <Input
               id="pin"
               type="text"
@@ -127,7 +136,9 @@ export default function FormNuovoDipendente({
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="descrizione" className="text-gray-200">Descrizione Contratto in Corso</Label>
+            <Label htmlFor="descrizione" className="text-gray-200">
+              Descrizione Contratto in Corso
+            </Label>
             <Textarea
               id="descrizione_contratto"
               value={formData.descrizione_contratto || ''}
@@ -139,7 +150,9 @@ export default function FormNuovoDipendente({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="ore_contrattuali" className="text-gray-200">Ore max giornaliere da contratto *</Label>
+            <Label htmlFor="ore_contrattuali" className="text-gray-200">
+              Ore max giornaliere da contratto *
+            </Label>
             <Input
               id="ore_contrattuali"
               type="number"
@@ -161,9 +174,7 @@ export default function FormNuovoDipendente({
       </div>
 
       {/* Errore generale */}
-      {errors.general && (
-        <p className="text-sm text-red-400 text-center">{errors.general}</p>
-      )}
+      {errors.general && <p className="text-sm text-red-400 text-center">{errors.general}</p>}
     </div>
   );
 }

@@ -21,10 +21,7 @@ export const ChartLegendContent = React.forwardRef<
   }
 
   return (
-    <div
-      ref={ref}
-      className={cn('flex items-center justify-center gap-4', className)}
-    >
+    <div ref={ref} className={cn('flex items-center justify-center gap-4', className)}>
       {payload.map((item) => {
         const key = `${nameKey || item.dataKey || 'value'}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);

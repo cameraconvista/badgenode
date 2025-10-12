@@ -44,20 +44,17 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-      <div 
+      <div
         className="rounded-2xl p-6 shadow-2xl border-2 max-w-sm w-full"
         style={{
           backgroundColor: '#2b0048',
           borderColor: 'rgba(231, 116, 240, 0.5)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3)'
+          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3)',
         }}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-white">Codice Admin</h2>
-          <button
-            onClick={handleCancel}
-            className="text-white hover:text-gray-300 p-1"
-          >
+          <button onClick={handleCancel} className="text-white hover:text-gray-300 p-1">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -78,11 +75,7 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
             }`}
             autoFocus
           />
-          {error && (
-            <p className="text-red-300 text-sm text-center mt-2">
-              PIN non valido
-            </p>
-          )}
+          {error && <p className="text-red-300 text-sm text-center mt-2">PIN non valido</p>}
         </form>
 
         <div className="flex gap-3">

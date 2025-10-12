@@ -12,7 +12,7 @@ export class AuthService {
   static async login(email: string, password: string) {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password
+      password,
     });
 
     if (error) throw error;
@@ -23,7 +23,7 @@ export class AuthService {
 
     if (!pin && !isAdmin) {
       await this.logout();
-      throw new Error('PIN non configurato. Contatta l\'amministratore.');
+      throw new Error("PIN non configurato. Contatta l'amministratore.");
     }
 
     return data;
@@ -35,7 +35,9 @@ export class AuthService {
   }
 
   static async getSession() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     return session;
   }
 
@@ -54,11 +56,9 @@ export class AuthService {
     if (!session?.user) return null;
 
     const user = session.user;
-    
+
     // Cerca PIN in ordine: top-level → user_metadata → app_metadata
-    const pin = (user as any).pin || 
-                user.user_metadata?.pin || 
-                user.app_metadata?.pin;
+    const pin = (user as any).pin || user.user_metadata?.pin || user.app_metadata?.pin;
 
     if (typeof pin === 'number' && pin >= 1 && pin <= 99) {
       return pin;
@@ -74,7 +74,7 @@ export class AuthService {
       id: session.user.id,
       email: session.user.email || '',
       pin: this.getPin(session) || undefined,
-      isAdmin: this.isAdmin(session)
+      isAdmin: this.isAdmin(session),
     };
   }
 }

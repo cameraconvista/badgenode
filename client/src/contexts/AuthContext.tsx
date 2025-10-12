@@ -15,7 +15,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // TODO: re-enable Auth when backend ready
+  // TODO(BUSINESS): re-enable Auth when backend ready
   const mockSession = {
     access_token: 'mock-token',
     refresh_token: 'mock-refresh',
@@ -27,12 +27,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       app_metadata: {},
       user_metadata: {}, // Rimosso PIN hardcoded
       aud: 'authenticated',
-      created_at: new Date().toISOString()
-    }
+      created_at: new Date().toISOString(),
+    },
   } as Session;
   const [loading] = useState(false); // Always loaded in mock mode
 
-  // TODO: re-enable Auth when backend ready
+  // TODO(BUSINESS): re-enable Auth when backend ready
   // useEffect(() => {
   //   // Get initial session
   //   AuthService.getSession().then(setSession);
@@ -51,13 +51,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pin = AuthService.getPin(mockSession);
 
   const login = async (email: string, password: string) => {
-    // TODO: re-enable Auth when backend ready
+    // TODO(BUSINESS): re-enable Auth when backend ready
     // Mock login always succeeds and redirects to home
     window.location.href = '/';
   };
 
   const logout = async () => {
-    // TODO: re-enable Auth when backend ready
+    // TODO(BUSINESS): re-enable Auth when backend ready
     // Mock logout always succeeds
   };
 
@@ -68,14 +68,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdmin,
     pin,
     login,
-    logout
+    logout,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

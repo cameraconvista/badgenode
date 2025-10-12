@@ -79,8 +79,10 @@ export default function ModaleModificaDipendente({
     const newErrors: Record<string, string> = {};
     if (!formData.nome.trim()) newErrors.nome = 'Nome obbligatorio';
     if (!formData.cognome.trim()) newErrors.cognome = 'Cognome obbligatorio';
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Email non valida';
-    if (formData.ore_contrattuali <= 0 || formData.ore_contrattuali > 24) newErrors.ore_contrattuali = 'Ore devono essere tra 0.25 e 24';
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      newErrors.email = 'Email non valida';
+    if (formData.ore_contrattuali <= 0 || formData.ore_contrattuali > 24)
+      newErrors.ore_contrattuali = 'Ore devono essere tra 0.25 e 24';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -99,9 +101,9 @@ export default function ModaleModificaDipendente({
     }
   };
   const handleInputChange = (field: keyof UtenteInput, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -115,7 +117,7 @@ export default function ModaleModificaDipendente({
         style={{
           backgroundColor: '#2b0048',
           borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)'
+          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
         }}
         role="dialog"
         aria-modal="true"

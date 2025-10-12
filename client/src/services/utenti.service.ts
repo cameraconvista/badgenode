@@ -35,11 +35,7 @@ export class UtentiService {
   // Ottieni lista utenti attivi
   static async getUtenti(): Promise<Utente[]> {
     try {
-      
-      const { data, error } = await supabase
-        .from('utenti')
-        .select('*')
-        .order('pin');
+      const { data, error } = await supabase.from('utenti').select('*').order('pin');
 
       if (error) {
         throw error;
@@ -54,7 +50,6 @@ export class UtentiService {
   // Ottieni lista ex-dipendenti
   static async getExDipendenti(): Promise<ExDipendente[]> {
     try {
-      
       const { data, error } = await supabase
         .from('ex_dipendenti')
         .select('*')
@@ -73,11 +68,7 @@ export class UtentiService {
   // Ottieni utente per ID
   static async getUtenteById(id: string): Promise<Utente | null> {
     try {
-      const { data, error } = await supabase
-        .from('utenti')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const { data, error } = await supabase.from('utenti').select('*').eq('id', id).single();
 
       if (error) {
         if (error.code === 'PGRST116') return null; // Not found
@@ -93,17 +84,15 @@ export class UtentiService {
   // Crea/Aggiorna utente via RPC
   static async upsertUtente(pin: number, nome: string, cognome: string): Promise<void> {
     try {
-      
-      const { data, error } = await supabase.rpc('upsert_utente_rpc', { 
-        p_pin: pin, 
-        p_nome: nome || null, 
-        p_cognome: cognome || null 
+      const { data, error } = await supabase.rpc('upsert_utente_rpc', {
+        p_pin: pin,
+        p_nome: nome || null,
+        p_cognome: cognome || null,
       });
 
       if (error) {
         throw error;
       }
-
     } catch (error) {
       throw error;
     }
@@ -113,7 +102,7 @@ export class UtentiService {
   static async createUtente(input: UtenteInput): Promise<Utente> {
     await this.upsertUtente(input.pin, input.nome, input.cognome);
     const utenti = await this.getUtenti();
-    const nuovoUtente = utenti.find(u => u.pin === input.pin);
+    const nuovoUtente = utenti.find((u) => u.pin === input.pin);
     if (!nuovoUtente) {
       throw new Error('Errore durante la creazione utente');
     }
@@ -126,7 +115,7 @@ export class UtentiService {
       await this.upsertUtente(input.pin, input.nome, input.cognome);
     }
     const utenti = await this.getUtenti();
-    const utenteAggiornato = utenti.find(u => u.id === id);
+    const utenteAggiornato = utenti.find((u) => u.id === id);
     if (!utenteAggiornato) {
       throw new Error('Utente non trovato dopo aggiornamento');
     }
@@ -143,13 +132,15 @@ export class UtentiService {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Errore sconosciuto' }));
         if (response.status === 503) {
-          throw new Error('⚠️ Servizio eliminazione non disponibile. Contattare l\'amministratore per configurare le credenziali Supabase.');
+          throw new Error(
+            "⚠️ Servizio eliminazione non disponibile. Contattare l'amministratore per configurare le credenziali Supabase."
+          );
         }
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
@@ -160,11 +151,7 @@ export class UtentiService {
   }
   static async isPinAvailable(pin: number): Promise<boolean> {
     try {
-      const { data, error } = await supabase
-        .from('utenti')
-        .select('pin')
-        .eq('pin', pin)
-        .single();
+      const { data, error } = await supabase.from('utenti').select('pin').eq('pin', pin).single();
       if (error && error.code === 'PGRST116') {
         return true; // PIN non trovato = disponibile
       }

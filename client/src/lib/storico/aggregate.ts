@@ -29,44 +29,46 @@ export function normalizeDate(date: string): string {
  * Aggrega timbrature per giorno logico (client-side)
  */
 export function aggregateTimbratureByGiornoLogico(
-  timbrature: TimbratureRaw[], 
-  pin: number, 
+  timbrature: TimbratureRaw[],
+  pin: number,
   oreContrattuali: number = 8
 ): GiornoLogicoDettagliato[] {
   // Group by giornologico
-  const grouped = timbrature.reduce((acc, t) => {
-    const key = t.giornologico;
-    if (!acc[key]) {
-      acc[key] = { entrate: [], uscite: [] };
-    }
-    
-    if (t.tipo === 'entrata') {
-      acc[key].entrate.push(t);
-    } else if (t.tipo === 'uscita') {
-      acc[key].uscite.push(t);
-    }
-    
-    return acc;
-  }, {} as Record<string, { entrate: TimbratureRaw[]; uscite: TimbratureRaw[] }>);
+  const grouped = timbrature.reduce(
+    (acc, t) => {
+      const key = t.giornologico;
+      if (!acc[key]) {
+        acc[key] = { entrate: [], uscite: [] };
+      }
+
+      if (t.tipo === 'entrata') {
+        acc[key].entrate.push(t);
+      } else if (t.tipo === 'uscita') {
+        acc[key].uscite.push(t);
+      }
+
+      return acc;
+    },
+    {} as Record<string, { entrate: TimbratureRaw[]; uscite: TimbratureRaw[] }>
+  );
 
   // Calcola aggregati per ogni giorno con multi-sessione
   return Object.entries(grouped).map(([giorno, data]) => {
     // Combina entrate e uscite per pairing
     const allTimbrature = [...data.entrate, ...data.uscite];
-    
+
     // Calcola sessioni con pairing
     const sessioni = pairSessionsForGiorno(allTimbrature);
-    
+
     // Calcola totali giorno (solo sessioni chiuse)
-    const sessioniChiuse = sessioni.filter(s => !s.isAperta);
+    const sessioniChiuse = sessioni.filter((s) => !s.isAperta);
     const oreTotali = sessioniChiuse.reduce((acc, s) => acc + s.ore, 0);
     const extra = Math.max(0, oreTotali - oreContrattuali);
-    
+
     // Prima entrata e ultima uscita (per compatibilità)
     const primaEntrata = sessioni[0]?.entrata || null;
-    const ultimaUscita = sessioniChiuse
-      .slice(-1)[0]?.uscita || null;
-    
+    const ultimaUscita = sessioniChiuse.slice(-1)[0]?.uscita || null;
+
     return {
       pin,
       giorno,
@@ -75,7 +77,7 @@ export function aggregateTimbratureByGiornoLogico(
       uscita: ultimaUscita,
       ore: oreTotali,
       extra,
-      sessioni  // NUOVO: Array sessioni
+      sessioni, // NUOVO: Array sessioni
     };
   });
 }

@@ -10,45 +10,38 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, user, isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: re-enable Auth when backend ready
+    // TODO(BUSINESS): re-enable Auth when backend ready
     // Mock login - always redirect to home
     setLocation('/');
   };
 
   return (
-    <div 
+    <div
       className="h-screen flex items-center justify-center p-4"
       style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
       }}
     >
       <div className="w-full max-w-md">
-        <div 
+        <div
           className="rounded-3xl p-8 shadow-2xl border-2"
           style={{
             backgroundColor: '#2b0048',
             borderColor: 'rgba(231, 116, 240, 0.6)',
-            boxShadow: '0 0 50px rgba(231, 116, 240, 0.3)'
+            boxShadow: '0 0 50px rgba(231, 116, 240, 0.3)',
           }}
         >
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <img 
-              src="/logo2_app.png" 
-              alt="BADGENODE" 
-              className="h-12 w-auto"
-            />
+            <img src="/logo2_app.png" alt="BADGENODE" className="h-12 w-auto" />
           </div>
 
-          <h1 className="text-2xl font-bold text-white text-center mb-8">
-            Accesso BadgeNode
-          </h1>
+          <h1 className="text-2xl font-bold text-white text-center mb-8">Accesso BadgeNode</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

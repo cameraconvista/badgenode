@@ -12,7 +12,7 @@ export function generateDateRange(from: string, to: string): string[] {
   const dates: string[] = [];
   const start = new Date(from + 'T00:00:00');
   const end = new Date(to + 'T00:00:00');
-  
+
   // Normalizzazione Europe/Rome: mantieni date locali senza shift UTC
   const current = new Date(start);
   while (current <= end) {
@@ -21,10 +21,10 @@ export function generateDateRange(from: string, to: string): string[] {
     const month = String(current.getMonth() + 1).padStart(2, '0');
     const day = String(current.getDate()).padStart(2, '0');
     dates.push(`${year}-${month}-${day}`);
-    
+
     current.setDate(current.getDate() + 1);
   }
-  
+
   return dates;
 }
 
@@ -34,7 +34,7 @@ export function generateDateRange(from: string, to: string): string[] {
 export async function loadTotaliGiornoLogico({
   pin,
   from,
-  to
+  to,
 }: {
   pin: number;
   from: string;
@@ -43,19 +43,19 @@ export async function loadTotaliGiornoLogico({
   try {
     // 1. Carica timbrature da fonte unica
     const timbrature = await TimbratureService.getTimbratureByRange({ pin, from, to });
-    
+
     // 2. Pairing lato client
     const pairs = pairTimbrature(timbrature);
-    
+
     // 3. Calcola totali giornalieri
     const dailyTotals = buildDailyTotals(pairs);
-    
+
     // 4. Converti al formato legacy per compatibilità
-    return dailyTotals.map(total => ({
+    return dailyTotals.map((total) => ({
       giorno_logico: total.giorno_logico,
       ore_totali_chiuse: total.ore_totali_sec / 3600, // sec → ore
-      sessioni_chiuse: 0, // TODO: calcolare se necessario
-      sessioni_totali: 0  // TODO: calcolare se necessario
+      sessioni_chiuse: 0, // TODO(BUSINESS): calcolare se necessario
+      sessioni_totali: 0, // TODO(BUSINESS): calcolare se necessario
     }));
   } catch (error) {
     return [];
@@ -68,7 +68,7 @@ export async function loadTotaliGiornoLogico({
 export async function loadSessioniGiornoLogico({
   pin,
   from,
-  to
+  to,
 }: {
   pin: number;
   from: string;
@@ -77,13 +77,13 @@ export async function loadSessioniGiornoLogico({
   try {
     // 1. Carica timbrature da fonte unica
     const timbrature = await TimbratureService.getTimbratureByRange({ pin, from, to });
-    
+
     // 2. Pairing lato client
     const pairs = pairTimbrature(timbrature);
-    
+
     // 3. Converti pairs al formato legacy per compatibilità
     const sessioni: (SessioneV5 & { giorno_logico: string })[] = [];
-    
+
     pairs.forEach((pair, index) => {
       sessioni.push({
         giorno_logico: pair.giorno_logico,
@@ -92,7 +92,7 @@ export async function loadSessioniGiornoLogico({
         uscita_id: pair.uscita?.id || null,
         uscita_ore: pair.uscita?.ora_locale || null,
         ore_sessione: pair.durata_sec ? pair.durata_sec / 3600 : 0, // sec → ore
-        sessione_num: index + 1
+        sessione_num: index + 1,
       });
     });
 
@@ -109,7 +109,7 @@ export async function loadSessioniGiornoLogico({
 export async function buildStoricoDataset({
   pin,
   from,
-  to
+  to,
 }: {
   pin: number;
   from: string;
@@ -118,19 +118,19 @@ export async function buildStoricoDataset({
   try {
     // 1. Genera tutti i giorni del range
     const allDays = generateDateRange(from, to);
-    
+
     // 2. Carica totali e sessioni in parallelo
     const [totali, sessioni] = await Promise.all([
       loadTotaliGiornoLogico({ pin, from, to }),
-      loadSessioniGiornoLogico({ pin, from, to })
+      loadSessioniGiornoLogico({ pin, from, to }),
     ]);
-    
+
     // 3. Crea mappe per lookup efficiente
     const totaliMap = new Map<string, TotaleGiornoV5>();
-    totali.forEach(t => totaliMap.set(t.giorno_logico, t));
-    
+    totali.forEach((t) => totaliMap.set(t.giorno_logico, t));
+
     const sessioniMap = new Map<string, SessioneV5[]>();
-    sessioni.forEach(s => {
+    sessioni.forEach((s) => {
       if (!sessioniMap.has(s.giorno_logico)) {
         sessioniMap.set(s.giorno_logico, []);
       }
@@ -140,24 +140,22 @@ export async function buildStoricoDataset({
         uscita_id: s.uscita_id,
         uscita_ore: s.uscita_ore,
         ore_sessione: s.ore_sessione,
-        sessione_num: s.sessione_num
+        sessione_num: s.sessione_num,
       });
     });
-    
+
     // 4. Costruisci dataset finale ordinato
-    return allDays.map(day => {
+    return allDays.map((day) => {
       const totale = totaliMap.get(day);
       const sessioniGiorno = sessioniMap.get(day) || [];
-      
+
       return {
         giorno_logico: day,
         ore_totali_chiuse: totale?.ore_totali_chiuse || 0,
-        sessioni: sessioniGiorno
+        sessioni: sessioniGiorno,
       };
     });
   } catch (error) {
     return [];
   }
 }
-
-

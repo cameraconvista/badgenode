@@ -6,10 +6,10 @@ interface StoricoTotalsBarProps {
   giorniLavorati: number;
 }
 
-export default function StoricoTotalsBar({ 
-  totaleMensileOre, 
-  totaleMensileExtra, 
-  giorniLavorati 
+export default function StoricoTotalsBar({
+  totaleMensileOre,
+  totaleMensileExtra,
+  giorniLavorati,
 }: StoricoTotalsBarProps) {
   return (
     <div className="bg-violet-900/30 border-t-2 border-violet-400 flex-shrink-0 p-4">
@@ -20,13 +20,15 @@ export default function StoricoTotalsBar({
           <div className="text-violet-300 font-semibold text-sm mb-1">Giorni lavorati</div>
           <div className="text-white font-bold text-base">{giorniLavorati}</div>
         </div>
-        
+
         {/* Ore totali - allineato con colonna Ore */}
         <div className="text-center">
           <div className="text-violet-300 font-semibold text-sm mb-1">Ore totali</div>
-          <div className="text-yellow-300 font-bold text-base tabular-nums">{formatOre(totaleMensileOre)}</div>
+          <div className="text-yellow-300 font-bold text-base tabular-nums">
+            {formatOre(totaleMensileOre)}
+          </div>
         </div>
-        
+
         {/* Ore totali extra - allineato con colonna Extra */}
         <div className="text-right">
           <div className="text-violet-300 font-semibold text-sm mb-1">Ore totali extra</div>
@@ -34,7 +36,7 @@ export default function StoricoTotalsBar({
             {totaleMensileExtra > 0 ? formatOre(totaleMensileExtra) : '0.00'}
           </div>
         </div>
-        
+
         {/* Spazio vuoto per colonna Modifica */}
         <div></div>
       </div>

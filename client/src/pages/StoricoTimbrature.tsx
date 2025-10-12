@@ -41,7 +41,7 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
     handleExportXLS,
     updateMutation,
     deleteMutation,
-    setSelectedGiorno
+    setSelectedGiorno,
   } = useStoricoTimbrature(pin);
 
   if (!dipendente) {
@@ -59,60 +59,60 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
   }
 
   return (
-    <div 
+    <div
       className="h-screen flex items-center justify-center p-4"
       style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
       }}
     >
       <div className="w-full max-w-[1200px] flex items-center justify-center h-full">
-        <div 
+        <div
           className="rounded-3xl p-6 shadow-2xl border-2 w-full h-[95vh] overflow-hidden relative flex flex-col gap-4"
           style={{
             backgroundColor: '#2b0048',
             borderColor: 'rgba(231, 116, 240, 0.6)',
-            boxShadow: '0 0 50px rgba(231, 116, 240, 0.3)'
+            boxShadow: '0 0 50px rgba(231, 116, 240, 0.3)',
           }}
         >
-        {/* Header - FISSO */}
-        <StoricoHeader
-          dipendente={dipendente}
-          onExportPDF={handleExportPDF}
-          onExportXLS={handleExportXLS}
-        />
-
-        {/* Filtri - FISSO */}
-        <div className="flex-shrink-0">
-          <StoricoFilters
-            filters={{ dal: filters.dal, al: filters.al }}
-            onFiltersChange={handleFiltersChange}
-            isLoading={isLoading}
+          {/* Header - FISSO */}
+          <StoricoHeader
+            dipendente={dipendente}
+            onExportPDF={handleExportPDF}
+            onExportXLS={handleExportXLS}
           />
-        </div>
 
-        {/* Tabella - SCROLLABILE */}
-        <div className="flex-1 min-h-0">
-          <StoricoTable
-            timbrature={turniGiornalieri}
-            storicoDataset={storicoDataset}
-            storicoDatasetV5={storicoDatasetV5}
-            filters={{ dal: filters.dal, al: filters.al }}
-            oreContrattuali={dipendente.ore_contrattuali}
-            onEditTimbrature={handleEditTimbrature}
-            isLoading={isLoading}
+          {/* Filtri - FISSO */}
+          <div className="flex-shrink-0">
+            <StoricoFilters
+              filters={{ dal: filters.dal, al: filters.al }}
+              onFiltersChange={handleFiltersChange}
+              isLoading={isLoading}
+            />
+          </div>
+
+          {/* Tabella - SCROLLABILE */}
+          <div className="flex-1 min-h-0">
+            <StoricoTable
+              timbrature={turniGiornalieri}
+              storicoDataset={storicoDataset}
+              storicoDatasetV5={storicoDatasetV5}
+              filters={{ dal: filters.dal, al: filters.al }}
+              oreContrattuali={dipendente.ore_contrattuali}
+              onEditTimbrature={handleEditTimbrature}
+              isLoading={isLoading}
+            />
+          </div>
+
+          {/* Modale Modifica */}
+          <ModaleTimbrature
+            isOpen={!!selectedGiorno}
+            onClose={() => setSelectedGiorno(null)}
+            giornologico={selectedGiorno || ''}
+            timbrature={timbratureGiorno}
+            onSave={(updates) => updateMutation.mutateAsync(updates)}
+            onDelete={() => deleteMutation.mutateAsync()}
+            isLoading={updateMutation.isPending || deleteMutation.isPending}
           />
-        </div>
-
-        {/* Modale Modifica */}
-        <ModaleTimbrature
-          isOpen={!!selectedGiorno}
-          onClose={() => setSelectedGiorno(null)}
-          giornologico={selectedGiorno || ''}
-          timbrature={timbratureGiorno}
-          onSave={(updates) => updateMutation.mutateAsync(updates)}
-          onDelete={() => deleteMutation.mutateAsync()}
-          isLoading={updateMutation.isPending || deleteMutation.isPending}
-        />
         </div>
       </div>
     </div>

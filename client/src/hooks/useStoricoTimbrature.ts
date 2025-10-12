@@ -8,19 +8,23 @@ import { useStoricoExport } from '@/hooks/useStoricoExport';
 import { useStoricoMutations } from '@/hooks/useStoricoMutations';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeTimbrature } from '@/lib/realtime';
-import { invalidateStoricoGlobale, invalidateTotaliGlobali, debounce } from '@/state/timbrature.cache';
+import {
+  invalidateStoricoGlobale,
+  invalidateTotaliGlobali,
+  debounce,
+} from '@/state/timbrature.cache';
 import { formatDateLocal, getMeseItaliano } from '@/lib/time';
 
 export function useStoricoTimbrature(pin: number) {
   const { isAdmin } = useAuth();
-  
+
   // State per filtri
   const [filters, setFilters] = useState(() => {
     const today = new Date();
     return {
       pin,
       dal: formatDateLocal(new Date(today.getFullYear(), today.getMonth(), 1)),
-      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0))
+      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0)),
     };
   });
 
@@ -39,7 +43,7 @@ export function useStoricoTimbrature(pin: number) {
     const unsubscribe = subscribeTimbrature({
       onChange: (payload) => {
         debouncedInvalidate();
-      }
+      },
     });
 
     return () => unsubscribe();
@@ -50,72 +54,73 @@ export function useStoricoTimbrature(pin: number) {
     queryKey: ['utente', pin],
     queryFn: async () => {
       const utenti = await UtentiService.getUtenti();
-      return utenti.find(u => u.pin === pin);
-    }
+      return utenti.find((u) => u.pin === pin);
+    },
   });
-  
+
   if (dipendenteError) {
   }
 
   // Query per dataset v5 (include tutti i giorni del range)
-  const { 
-    data: storicoDatasetV5 = [], 
+  const {
+    data: storicoDatasetV5 = [],
     isLoading: isLoadingTimbrature,
-    error: storicoError
+    error: storicoError,
   } = useQuery({
     queryKey: ['storico-dataset-v5', filters],
     queryFn: () => buildStoricoDataset({ pin: filters.pin, from: filters.dal, to: filters.al }),
-    enabled: !!dipendente
-  }) as { data: StoricoDatasetV5[], isLoading: boolean, error: any };
-  
+    enabled: !!dipendente,
+  }) as { data: StoricoDatasetV5[]; isLoading: boolean; error: any };
+
   if (storicoError) {
   }
 
   // Query per turni completi (legacy, per compatibilità componenti)
-  const { 
-    data: turniGiornalieri = [], 
+  const {
+    data: turniGiornalieri = [],
     isLoading: isLoadingLegacy,
-    error: turniError
+    error: turniError,
   } = useQuery({
     queryKey: ['turni-completi-legacy', filters],
     queryFn: () => loadTurniFull({ pin: filters.pin, from: filters.dal, to: filters.al }),
-    enabled: !!dipendente
-  }) as { data: GiornoLogicoDettagliato[], isLoading: boolean, error: any };
-  
+    enabled: !!dipendente,
+  }) as { data: GiornoLogicoDettagliato[]; isLoading: boolean; error: any };
+
   if (turniError) {
   }
 
   // Trasforma dataset v5 in formato StoricoRowData per tabella con sotto-righe
   const storicoDataset = useMemo(() => {
     const dataset: any[] = [];
-    
-    storicoDatasetV5.forEach(item => {
+
+    storicoDatasetV5.forEach((item) => {
       // Riga principale giorno
       const giornoDettagliato: GiornoLogicoDettagliato = {
         pin: filters.pin,
         giorno: item.giorno_logico,
         mese_label: getMeseItaliano(item.giorno_logico),
         entrata: item.sessioni.length > 0 ? item.sessioni[0].entrata_ore : null,
-        uscita: item.sessioni.length > 0 ? item.sessioni[item.sessioni.length - 1].uscita_ore : null,
+        uscita:
+          item.sessioni.length > 0 ? item.sessioni[item.sessioni.length - 1].uscita_ore : null,
         ore: item.ore_totali_chiuse,
         extra: Math.max(0, item.ore_totali_chiuse - (dipendente?.ore_contrattuali || 8)),
-        sessioni: item.sessioni.map(s => ({
+        sessioni: item.sessioni.map((s) => ({
           numeroSessione: s.sessione_num,
           entrata: s.entrata_ore,
           uscita: s.uscita_ore,
           ore: s.ore_sessione,
-          isAperta: !s.uscita_ore
-        }))
+          isAperta: !s.uscita_ore,
+        })),
       };
-      
+
       dataset.push({
         type: 'giorno',
-        giorno: giornoDettagliato
+        giorno: giornoDettagliato,
       });
-      
+
       // Sotto-righe sessioni (dalla 2ª in poi, come da spec v2.1)
       if (item.sessioni.length > 1) {
-        item.sessioni.slice(1).forEach(sessione => {
+        item.sessioni.slice(1).forEach((sessione) => {
           dataset.push({
             type: 'sessione',
             sessione: {
@@ -123,14 +128,14 @@ export function useStoricoTimbrature(pin: number) {
               entrata: sessione.entrata_ore,
               uscita: sessione.uscita_ore,
               ore: sessione.ore_sessione,
-              isAperta: !sessione.uscita_ore
+              isAperta: !sessione.uscita_ore,
             },
-            giornoParent: item.giorno_logico
+            giornoParent: item.giorno_logico,
           });
         });
       }
     });
-    
+
     return dataset;
   }, [storicoDatasetV5, dipendente?.ore_contrattuali, filters.pin]);
 
@@ -138,24 +143,23 @@ export function useStoricoTimbrature(pin: number) {
   const { data: timbratureGiorno = [] } = useQuery({
     queryKey: ['timbrature-giorno', pin, selectedGiorno],
     queryFn: () => TimbratureService.getTimbratureGiorno(pin, selectedGiorno!),
-    enabled: !!selectedGiorno
+    enabled: !!selectedGiorno,
   });
 
   // Hook per export
   const { handleExportPDF, handleExportXLS } = useStoricoExport({
     dipendente,
     timbrature: turniGiornalieri,
-    filters
+    filters,
   });
 
   // Hook per mutations
-  const { updateMutation, deleteMutation } = useStoricoMutations(
-    timbratureGiorno,
-    () => setSelectedGiorno(null)
+  const { updateMutation, deleteMutation } = useStoricoMutations(timbratureGiorno, () =>
+    setSelectedGiorno(null)
   );
 
   const handleFiltersChange = (newFilters: { dal: string; al: string }) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
   };
 
   const handleEditTimbrature = (giornologico: string) => {
@@ -177,6 +181,6 @@ export function useStoricoTimbrature(pin: number) {
     handleExportXLS,
     updateMutation,
     deleteMutation,
-    setSelectedGiorno
+    setSelectedGiorno,
   };
 }

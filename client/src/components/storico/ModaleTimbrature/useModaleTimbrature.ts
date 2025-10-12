@@ -16,7 +16,7 @@ export function useModaleTimbrature(
     dataEntrata: '',
     oraEntrata: '',
     dataUscita: '',
-    oraUscita: ''
+    oraUscita: '',
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -24,14 +24,14 @@ export function useModaleTimbrature(
   // Inizializza form quando si apre il modale
   useEffect(() => {
     if (isOpen && timbrature.length > 0) {
-      const entrata = timbrature.find(t => t.tipo === 'entrata');
-      const uscita = timbrature.find(t => t.tipo === 'uscita');
+      const entrata = timbrature.find((t) => t.tipo === 'entrata');
+      const uscita = timbrature.find((t) => t.tipo === 'uscita');
 
       setFormData({
         dataEntrata: entrata?.data_locale || formatDataItaliana(new Date().toISOString()),
         oraEntrata: entrata?.ora_locale?.substring(0, 5) || '',
         dataUscita: uscita?.data_locale || formatDataItaliana(new Date().toISOString()),
-        oraUscita: uscita?.ora_locale?.substring(0, 5) || ''
+        oraUscita: uscita?.ora_locale?.substring(0, 5) || '',
       });
       setErrors([]);
       setShowDeleteConfirm(false);
@@ -59,7 +59,7 @@ export function useModaleTimbrature(
         ora_locale: formData.oraEntrata + ':00',
         nome: timbrature[0]?.nome || '',
         cognome: timbrature[0]?.cognome || '',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       };
 
       const uscitaTemp: Timbratura = {
@@ -72,7 +72,7 @@ export function useModaleTimbrature(
         ora_locale: formData.oraUscita + ':00',
         nome: timbrature[0]?.nome || '',
         cognome: timbrature[0]?.cognome || '',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       };
 
       // Valida coerenza business
@@ -102,7 +102,7 @@ export function useModaleTimbrature(
       await onDelete();
       onClose();
     } catch (error) {
-      setErrors([error instanceof Error ? error.message : 'Errore durante l\'eliminazione']);
+      setErrors([error instanceof Error ? error.message : "Errore durante l'eliminazione"]);
     }
   };
 
@@ -113,6 +113,6 @@ export function useModaleTimbrature(
     showDeleteConfirm,
     setShowDeleteConfirm,
     handleSave,
-    handleDelete
+    handleDelete,
   };
 }

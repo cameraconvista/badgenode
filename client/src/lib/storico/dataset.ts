@@ -8,14 +8,14 @@ import { GiornoLogicoDettagliato, StoricoRowData } from './types';
  */
 export function buildStoricoDataset(giorni: GiornoLogicoDettagliato[]): StoricoRowData[] {
   const dataset: StoricoRowData[] = [];
-  
+
   for (const giorno of giorni) {
     // Riga principale giorno (sempre presente)
     dataset.push({
       type: 'giorno',
-      giorno
+      giorno,
     });
-    
+
     // Sotto-righe sessioni: SOLO dalla seconda sessione in poi
     if (giorno.sessioni.length > 1) {
       for (let i = 1; i < giorno.sessioni.length; i++) {
@@ -23,11 +23,11 @@ export function buildStoricoDataset(giorni: GiornoLogicoDettagliato[]): StoricoR
         dataset.push({
           type: 'sessione',
           sessione,
-          giornoParent: giorno.giorno
+          giornoParent: giorno.giorno,
         });
       }
     }
   }
-  
+
   return dataset;
 }

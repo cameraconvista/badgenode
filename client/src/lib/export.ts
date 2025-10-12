@@ -20,7 +20,7 @@ export interface ExportData {
  */
 export function generateCSV(data: ExportData): string {
   const { dipendente, timbrature, periodo, totali } = data;
-  
+
   // Raggruppa per giorno logico
   const byDate = new Map<string, Timbratura[]>();
   for (const t of timbrature) {
@@ -32,7 +32,7 @@ export function generateCSV(data: ExportData): string {
   }
 
   let csv = '';
-  
+
   // Header informazioni dipendente
   csv += 'STORICO TIMBRATURE\n';
   csv += `Dipendente,${dipendente.nome} ${dipendente.cognome}\n`;
@@ -41,39 +41,43 @@ export function generateCSV(data: ExportData): string {
   csv += `Ore Contrattuali,${formatOre(dipendente.ore_contrattuali)}\n`;
   csv += `Periodo,${periodo.dal} - ${periodo.al}\n`;
   csv += '\n';
-  
+
   // Header tabella
   csv += 'Data,Giorno Settimana,Mese,Entrata,Uscita,Ore Lavorate,Ore Extra\n';
-  
+
   // Dati per ogni giorno
   const sortedDates = Array.from(byDate.keys()).sort();
   for (const giorno of sortedDates) {
     const timbratureGiorno = byDate.get(giorno)!;
-    const entrate = timbratureGiorno.filter(t => t.tipo === 'entrata' && t.ora_locale).sort((a, b) => (a.ora_locale || '').localeCompare(b.ora_locale || ''));
-    const uscite = timbratureGiorno.filter(t => t.tipo === 'uscita' && t.ora_locale).sort((a, b) => (b.ora_locale || '').localeCompare(a.ora_locale || ''));
-    
+    const entrate = timbratureGiorno
+      .filter((t) => t.tipo === 'entrata' && t.ora_locale)
+      .sort((a, b) => (a.ora_locale || '').localeCompare(b.ora_locale || ''));
+    const uscite = timbratureGiorno
+      .filter((t) => t.tipo === 'uscita' && t.ora_locale)
+      .sort((a, b) => (b.ora_locale || '').localeCompare(a.ora_locale || ''));
+
     const entrata = entrate.length > 0 ? (entrate[0].ora_locale || '').substring(0, 5) : '';
     const uscita = uscite.length > 0 ? (uscite[0].ora_locale || '').substring(0, 5) : '';
-    
+
     // Calcola ore lavorate
     let oreLavorate = 0;
     if (entrate.length > 0 && uscite.length > 0) {
       const dataEntrata = new Date(`${entrate[0].data_locale}T${entrate[0].ora_locale}`);
       const dataUscita = new Date(`${uscite[0].data_locale}T${uscite[0].ora_locale}`);
-      
+
       if (dataUscita < dataEntrata) {
         dataUscita.setDate(dataUscita.getDate() + 1);
       }
-      
+
       const diffMs = dataUscita.getTime() - dataEntrata.getTime();
       oreLavorate = Math.round((diffMs / (1000 * 60 * 60)) * 100) / 100;
     }
-    
+
     const oreExtra = Math.max(0, oreLavorate - dipendente.ore_contrattuali);
-    
+
     csv += `${formatDataItaliana(giorno)},${getMeseItaliano(giorno)},${entrata},${uscita},${formatOre(oreLavorate)},${formatOre(oreExtra)}\n`;
   }
-  
+
   // Totali
   csv += '\n';
   csv += 'TOTALI MENSILI\n';
@@ -81,7 +85,7 @@ export function generateCSV(data: ExportData): string {
   csv += `Ore Extra,${formatOre(totali.oreExtra)}\n`;
   csv += `Giorni Lavorati,${totali.giorniLavorati}\n`;
   csv += `Media Ore/Giorno,${formatOre(totali.mediaOreGiorno)}\n`;
-  
+
   return csv;
 }
 
@@ -92,9 +96,9 @@ export function downloadCSV(data: ExportData): void {
   const csv = generateCSV(data);
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
-  
+
   const filename = `${data.dipendente.cognome}_${data.dipendente.nome}_${data.periodo.dal.replace(/-/g, '')}_storico.csv`;
-  
+
   if (link.download !== undefined) {
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);

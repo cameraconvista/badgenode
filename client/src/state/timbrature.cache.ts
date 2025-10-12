@@ -7,7 +7,7 @@ export const qk = {
   storicoAdmin: ['timbrature', 'storico', 'ALL'],
   totaliAdmin: ['timbrature', 'totali', 'ALL'],
   utenti: ['utenti'],
-  exDipendenti: ['ex-dipendenti']
+  exDipendenti: ['ex-dipendenti'],
 };
 
 // Invalidazioni per dipendente (PIN specifico)

@@ -6,11 +6,11 @@ interface KeyButtonProps {
   className?: string;
 }
 
-export default function KeyButton({ value, onClick, className = "" }: KeyButtonProps) {
+export default function KeyButton({ value, onClick, className = '' }: KeyButtonProps) {
   const handleClick = () => {
     onClick(value);
   };
-  
+
   return (
     <button
       data-testid={`button-key-${value === '⚙' ? 'settings' : value === 'C' ? 'clear' : value}`}
@@ -25,13 +25,15 @@ export default function KeyButton({ value, onClick, className = "" }: KeyButtonP
         flex items-center justify-center
         ${className}
       `}
-      style={{
-        backgroundColor: '#3a0a57',
-        borderColor: 'rgba(231, 116, 240, 0.4)',
-        borderWidth: '2px',
-        borderStyle: 'solid',
-        '--tw-ring-color': '#e774f0',
-      } as React.CSSProperties}
+      style={
+        {
+          backgroundColor: '#3a0a57',
+          borderColor: 'rgba(231, 116, 240, 0.4)',
+          borderWidth: '2px',
+          borderStyle: 'solid',
+          '--tw-ring-color': '#e774f0',
+        } as React.CSSProperties
+      }
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = 'rgba(231, 116, 240, 0.7)';
       }}

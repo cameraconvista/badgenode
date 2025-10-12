@@ -1,7 +1,13 @@
 import { useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Calendar } from 'lucide-react';
 import { formatDateLocal } from '@/lib/time';
 
@@ -14,7 +20,11 @@ interface StoricoFiltersProps {
   isLoading?: boolean;
 }
 
-export default function StoricoFilters({ filters, onFiltersChange, isLoading }: StoricoFiltersProps) {
+export default function StoricoFilters({
+  filters,
+  onFiltersChange,
+  isLoading,
+}: StoricoFiltersProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('corrente');
   const dalInputRef = useRef<HTMLInputElement>(null);
   const alInputRef = useRef<HTMLInputElement>(null);
@@ -24,17 +34,17 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
     const today = new Date();
     const currentMonth = {
       dal: formatDateLocal(new Date(today.getFullYear(), today.getMonth(), 1)),
-      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0))
+      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0)),
     };
-    
+
     const previousMonth = {
       dal: formatDateLocal(new Date(today.getFullYear(), today.getMonth() - 1, 1)),
-      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth(), 0))
+      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth(), 0)),
     };
-    
+
     const twoMonthsAgo = {
       dal: formatDateLocal(new Date(today.getFullYear(), today.getMonth() - 2, 1)),
-      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth() - 1, 0))
+      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth() - 1, 0)),
     };
 
     return { currentMonth, previousMonth, twoMonthsAgo };
@@ -43,7 +53,7 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
   const handlePeriodChange = (period: string) => {
     setSelectedPeriod(period);
     const ranges = getDateRanges();
-    
+
     switch (period) {
       case 'corrente':
         onFiltersChange(ranges.currentMonth);
@@ -63,7 +73,7 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
   const handleDateChange = (field: 'dal' | 'al', value: string) => {
     onFiltersChange({
       ...filters,
-      [field]: value
+      [field]: value,
     });
     // Se cambia manualmente le date, passa a personalizzato
     if (selectedPeriod !== 'personalizzato') {
@@ -87,7 +97,7 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
         // Fallback per browser che non supportano showPicker
         inputRef.current.focus();
         inputRef.current.click();
-        
+
         // Trigger manuale dell'evento per aprire il picker
         const event = new MouseEvent('click', {
           view: window,
@@ -103,15 +113,16 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
 
   return (
     <div className="bg-gray-800/50 rounded-lg p-6 space-y-4">
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Periodo Rapido */}
         <div className="space-y-2">
           <Label className="text-gray-200 text-base">Periodo</Label>
           <Select value={selectedPeriod} onValueChange={handlePeriodChange} disabled={isLoading}>
-            <SelectTrigger className={`bg-gray-700/50 border-gray-600 text-base ${
-              selectedPeriod === 'personalizzato' ? 'text-yellow-400' : 'text-white'
-            }`}>
+            <SelectTrigger
+              className={`bg-gray-700/50 border-gray-600 text-base ${
+                selectedPeriod === 'personalizzato' ? 'text-yellow-400' : 'text-white'
+              }`}
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -125,10 +136,12 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
 
         {/* Data Dal */}
         <div className="space-y-2">
-          <Label htmlFor="dal" className="text-gray-200 text-base">Dal</Label>
+          <Label htmlFor="dal" className="text-gray-200 text-base">
+            Dal
+          </Label>
           <div className="relative">
-            <Calendar 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white cursor-pointer z-10" 
+            <Calendar
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white cursor-pointer z-10"
               onClick={() => handleCalendarClick('dal')}
             />
             <Input
@@ -145,10 +158,12 @@ export default function StoricoFilters({ filters, onFiltersChange, isLoading }: 
 
         {/* Data Al */}
         <div className="space-y-2">
-          <Label htmlFor="al" className="text-gray-200 text-base">Al</Label>
+          <Label htmlFor="al" className="text-gray-200 text-base">
+            Al
+          </Label>
           <div className="relative">
-            <Calendar 
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white cursor-pointer z-10" 
+            <Calendar
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white cursor-pointer z-10"
               onClick={() => handleCalendarClick('al')}
             />
             <Input

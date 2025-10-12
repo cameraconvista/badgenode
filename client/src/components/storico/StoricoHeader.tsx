@@ -12,10 +12,10 @@ interface StoricoHeaderProps {
   onExportXLS: () => void;
 }
 
-export default function StoricoHeader({ 
-  dipendente, 
-  onExportPDF, 
-  onExportXLS 
+export default function StoricoHeader({
+  dipendente,
+  onExportPDF,
+  onExportXLS,
 }: StoricoHeaderProps) {
   const [, setLocation] = useLocation();
 
@@ -59,13 +59,9 @@ export default function StoricoHeader({
 
       {/* Logo centrato */}
       <div className="flex justify-center mb-4">
-        <img 
-          src="/logo2_app.png" 
-          alt="BADGENODE" 
-          className="h-10 w-auto"
-        />
+        <img src="/logo2_app.png" alt="BADGENODE" className="h-10 w-auto" />
       </div>
-      
+
       <div className="flex flex-col items-center gap-4">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-white mb-3">Storico Timbrature</h1>

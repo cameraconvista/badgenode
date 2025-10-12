@@ -7,19 +7,19 @@ import { UtentiService } from '@/services/utenti.service';
 export default function StoricoWrapper() {
   const [match, params] = useRoute('/storico-timbrature/:pin');
   const [, setLocation] = useLocation();
-  
+
   // Estrazione robusta del PIN
   const raw = params?.pin;
   const pin = Number(raw);
   const isValidPin = Number.isFinite(pin) && pin > 0;
-  
+
   // Query per ottenere il primo utente se PIN non specificato o non valido
   const { data: utenti } = useQuery({
     queryKey: ['utenti'],
     queryFn: () => UtentiService.getUtenti(),
-    enabled: !isValidPin
+    enabled: !isValidPin,
   });
-  
+
   // Se PIN non valido, reindirizza al primo utente disponibile
   useEffect(() => {
     if (!isValidPin && utenti && utenti.length > 0) {
@@ -27,12 +27,12 @@ export default function StoricoWrapper() {
       setLocation(`/storico-timbrature/${primoUtente.pin}`);
     }
   }, [isValidPin, raw, utenti, setLocation]);
-  
+
   // Validazione PIN con log di errore
   if (!isValidPin) {
     if (raw) {
     }
-    
+
     // Se non c'è PIN e stiamo ancora caricando utenti, mostra loading
     if (!utenti || utenti.length === 0) {
       return (
@@ -45,11 +45,11 @@ export default function StoricoWrapper() {
         </div>
       );
     }
-    
+
     // Se PIN non valido, non renderizzare nulla (il redirect è in corso)
     return null;
   }
-  
+
   // PIN valido, passa al componente principale
   return <StoricoTimbrature pin={pin} />;
 }

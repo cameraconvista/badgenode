@@ -29,30 +29,36 @@ export class TimbratureStatsService {
     for (const [, timbratureGiorno] of Array.from(byDate.entries())) {
       const entrate = timbratureGiorno.filter((t: Timbratura) => t.tipo === 'entrata');
       const uscite = timbratureGiorno.filter((t: Timbratura) => t.tipo === 'uscita');
-      
+
       if (entrate.length > 0 && uscite.length > 0) {
         // Calcola ore lavorate (prima entrata, ultima uscita)
-        const primaEntrata = entrate.sort((a: Timbratura, b: Timbratura) => 
-          (a.ora_locale || '').localeCompare(b.ora_locale || ''))[0];
-        const ultimaUscita = uscite.sort((a: Timbratura, b: Timbratura) => 
-          (b.ora_locale || '').localeCompare(a.ora_locale || ''))[0];
-        
-        if (!primaEntrata.data_locale || !primaEntrata.ora_locale || 
-            !ultimaUscita.data_locale || !ultimaUscita.ora_locale) {
+        const primaEntrata = entrate.sort((a: Timbratura, b: Timbratura) =>
+          (a.ora_locale || '').localeCompare(b.ora_locale || '')
+        )[0];
+        const ultimaUscita = uscite.sort((a: Timbratura, b: Timbratura) =>
+          (b.ora_locale || '').localeCompare(a.ora_locale || '')
+        )[0];
+
+        if (
+          !primaEntrata.data_locale ||
+          !primaEntrata.ora_locale ||
+          !ultimaUscita.data_locale ||
+          !ultimaUscita.ora_locale
+        ) {
           continue; // Salta se mancano dati essenziali
         }
-        
+
         const dataEntrata = new Date(`${primaEntrata.data_locale}T${primaEntrata.ora_locale}`);
         const dataUscita = new Date(`${ultimaUscita.data_locale}T${ultimaUscita.ora_locale}`);
-        
+
         // Gestione turni notturni
         if (dataUscita < dataEntrata) {
           dataUscita.setDate(dataUscita.getDate() + 1);
         }
-        
+
         const diffMs = dataUscita.getTime() - dataEntrata.getTime();
         const oreLavorate = Math.round((diffMs / (1000 * 60 * 60)) * 100) / 100;
-        
+
         totaleMensileOre += oreLavorate;
         totaleMensileExtra += Math.max(0, oreLavorate - oreContrattuali);
         giorniLavorati++;
@@ -63,7 +69,7 @@ export class TimbratureStatsService {
       totaleMensileOre,
       totaleMensileExtra,
       giorniLavorati,
-      mediaOreGiorno: giorniLavorati > 0 ? totaleMensileOre / giorniLavorati : 0
+      mediaOreGiorno: giorniLavorati > 0 ? totaleMensileOre / giorniLavorati : 0,
     };
   }
 }

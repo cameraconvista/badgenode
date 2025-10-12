@@ -18,7 +18,7 @@ interface ModaleTimbratureFormProps {
 export default function ModaleTimbratureForm({
   formData,
   onInputChange,
-  isLoading
+  isLoading,
 }: ModaleTimbratureFormProps) {
   return (
     <div className="space-y-4">
@@ -28,10 +28,12 @@ export default function ModaleTimbratureForm({
           <Clock className="w-4 h-4 text-green-400" />
           <h4 className="font-semibold text-green-400">Entrata</h4>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label htmlFor="dataEntrata" className="text-gray-200">Data</Label>
+            <Label htmlFor="dataEntrata" className="text-gray-200">
+              Data
+            </Label>
             <Input
               id="dataEntrata"
               type="date"
@@ -42,7 +44,9 @@ export default function ModaleTimbratureForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="oraEntrata" className="text-gray-200">Ora</Label>
+            <Label htmlFor="oraEntrata" className="text-gray-200">
+              Ora
+            </Label>
             <Input
               id="oraEntrata"
               type="time"
@@ -61,10 +65,12 @@ export default function ModaleTimbratureForm({
           <Clock className="w-4 h-4 text-red-400" />
           <h4 className="font-semibold text-red-400">Uscita</h4>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <Label htmlFor="dataUscita" className="text-gray-200">Data</Label>
+            <Label htmlFor="dataUscita" className="text-gray-200">
+              Data
+            </Label>
             <Input
               id="dataUscita"
               type="date"
@@ -75,7 +81,9 @@ export default function ModaleTimbratureForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="oraUscita" className="text-gray-200">Ora</Label>
+            <Label htmlFor="oraUscita" className="text-gray-200">
+              Ora
+            </Label>
             <Input
               id="oraUscita"
               type="time"

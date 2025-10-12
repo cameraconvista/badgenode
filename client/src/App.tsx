@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
-// TODO: re-enable Auth when backend ready
+// TODO(BUSINESS): re-enable Auth when backend ready
 // import { AdminRoute, UserRoute } from '@/components/auth/RouteGuard';
 import Home from '@/pages/Home';
 import ArchivioDipendenti from '@/pages/ArchivioDipendenti';

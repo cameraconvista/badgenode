@@ -1,14 +1,17 @@
 import { supabase } from '@/lib/supabaseClient';
 
-type ChangeHandler = (payload: { type: 'INSERT'|'UPDATE'|'DELETE', new?: any, old?: any }) => void;
+type ChangeHandler = (payload: {
+  type: 'INSERT' | 'UPDATE' | 'DELETE';
+  new?: any;
+  old?: any;
+}) => void;
 
 export function subscribeTimbrature(params: { pin?: number; onChange: ChangeHandler }) {
   const { pin, onChange } = params;
 
-  const channel = supabase.channel(
-    pin ? `timbrature:pin:${pin}` : 'timbrature:all',
-    { config: { broadcast: { ack: true }, presence: { key: 'badgenode' } } }
-  );
+  const channel = supabase.channel(pin ? `timbrature:pin:${pin}` : 'timbrature:all', {
+    config: { broadcast: { ack: true }, presence: { key: 'badgenode' } },
+  });
 
   const filter = pin ? `pin=eq.${pin}` : undefined;
 
@@ -21,13 +24,11 @@ export function subscribeTimbrature(params: { pin?: number; onChange: ChangeHand
     }
   );
 
-  channel.subscribe((status) => {
-  });
+  channel.subscribe((status) => {});
 
   return () => {
-    try { 
+    try {
       supabase.removeChannel(channel);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 }

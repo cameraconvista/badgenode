@@ -55,17 +55,17 @@ export default function ModaleNuovoDipendente({
       if (e.key === 'Escape') {
         onClose();
       }
-      
+
       // Focus trap
       if (e.key === 'Tab') {
         const focusableElements = modalRef.current?.querySelectorAll(
           'button, input, textarea, [tabindex]:not([tabindex="-1"])'
         );
         if (!focusableElements?.length) return;
-        
+
         const firstElement = focusableElements[0] as HTMLElement;
         const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-        
+
         if (e.shiftKey && document.activeElement === firstElement) {
           e.preventDefault();
           lastElement.focus();
@@ -84,9 +84,12 @@ export default function ModaleNuovoDipendente({
     const newErrors: Record<string, string> = {};
     if (!formData.nome.trim()) newErrors.nome = 'Nome obbligatorio';
     if (!formData.cognome.trim()) newErrors.cognome = 'Cognome obbligatorio';
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Email non valida';
-    if (!formData.pin || formData.pin < 1 || formData.pin > 99) newErrors.pin = 'PIN deve essere tra 1 e 99';
-    if (formData.ore_contrattuali <= 0 || formData.ore_contrattuali > 24) newErrors.ore_contrattuali = 'Ore devono essere tra 0.25 e 24';
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      newErrors.email = 'Email non valida';
+    if (!formData.pin || formData.pin < 1 || formData.pin > 99)
+      newErrors.pin = 'PIN deve essere tra 1 e 99';
+    if (formData.ore_contrattuali <= 0 || formData.ore_contrattuali > 24)
+      newErrors.ore_contrattuali = 'Ore devono essere tra 0.25 e 24';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -105,9 +108,9 @@ export default function ModaleNuovoDipendente({
     }
   };
   const handleInputChange = (field: keyof UtenteInput, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
     // Verifica disponibilità PIN in tempo reale
     if (field === 'pin' && typeof value === 'number') {
@@ -116,14 +119,13 @@ export default function ModaleNuovoDipendente({
   };
   const checkPinAvailability = async (pin: number) => {
     if (pin < 1 || pin > 99) return;
-    
+
     try {
       const isAvailable = await UtentiService.isPinAvailable(pin);
       if (!isAvailable) {
-        setErrors(prev => ({ ...prev, pin: `PIN ${pin} già in uso` }));
+        setErrors((prev) => ({ ...prev, pin: `PIN ${pin} già in uso` }));
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   if (!isOpen) return null;
@@ -136,7 +138,7 @@ export default function ModaleNuovoDipendente({
         style={{
           backgroundColor: '#2b0048',
           borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)'
+          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
         }}
         role="dialog"
         aria-modal="true"

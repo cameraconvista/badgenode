@@ -5,10 +5,10 @@ export type Timbratura = {
   id: number;
   pin: number;
   tipo: 'entrata' | 'uscita';
-  ts_order: string;               // ISO timestamp UTC
-  giorno_logico: string;          // 'YYYY-MM-DD'
-  data_locale: string | null;     // opzionale
-  ora_locale: string | null;      // opzionale
+  ts_order: string; // ISO timestamp UTC
+  giorno_logico: string; // 'YYYY-MM-DD'
+  data_locale: string | null; // opzionale
+  ora_locale: string | null; // opzionale
   client_event_id?: string | null;
   // Campi legacy per compatibilità UI
   nome?: string;
@@ -19,5 +19,5 @@ export type Timbratura = {
 export type StoricoParams = {
   pin: number;
   from?: string; // 'YYYY-MM-DD'
-  to?: string;   // 'YYYY-MM-DD'
+  to?: string; // 'YYYY-MM-DD'
 };

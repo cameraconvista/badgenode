@@ -9,7 +9,7 @@ export default function ActionButtons({
   onEntrata,
   onUscita,
   disabled = false,
-  className = ""
+  className = '',
 }: ActionButtonsProps) {
   return (
     <div className={`w-full ${className}`}>

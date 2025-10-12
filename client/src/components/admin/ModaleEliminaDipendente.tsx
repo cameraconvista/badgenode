@@ -40,17 +40,17 @@ export default function ModaleEliminaDipendente({
       if (e.key === 'Escape') {
         onClose();
       }
-      
+
       // Focus trap
       if (e.key === 'Tab') {
         const focusableElements = modalRef.current?.querySelectorAll(
           'button, [tabindex]:not([tabindex="-1"])'
         );
         if (!focusableElements?.length) return;
-        
+
         const firstElement = focusableElements[0] as HTMLElement;
         const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-        
+
         if (e.shiftKey && document.activeElement === firstElement) {
           e.preventDefault();
           lastElement.focus();
@@ -83,7 +83,7 @@ export default function ModaleEliminaDipendente({
         style={{
           backgroundColor: '#2b0048',
           borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)'
+          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
         }}
         role="dialog"
         aria-modal="true"
@@ -118,9 +118,7 @@ export default function ModaleEliminaDipendente({
           <div className="text-center space-y-3">
             {!showConferma ? (
               <>
-                <p className="text-white text-lg">
-                  Stai per eliminare definitivamente
-                </p>
+                <p className="text-white text-lg">Stai per eliminare definitivamente</p>
                 <p className="text-xl font-bold text-white">
                   {utente.nome} {utente.cognome}
                 </p>
@@ -133,15 +131,11 @@ export default function ModaleEliminaDipendente({
                 <p className="text-red-400 text-lg font-bold">
                   ATTENZIONE: ELIMINAZIONE DEFINITIVA
                 </p>
-                <p className="text-white text-lg">
-                  Confermi di voler eliminare per sempre
-                </p>
+                <p className="text-white text-lg">Confermi di voler eliminare per sempre</p>
                 <p className="text-xl font-bold text-white">
                   {utente.nome} {utente.cognome}
                 </p>
-                <p className="text-red-300">
-                  Tutti i dati associati andranno persi.
-                </p>
+                <p className="text-red-300">Tutti i dati associati andranno persi.</p>
               </>
             )}
           </div>
@@ -154,8 +148,8 @@ export default function ModaleEliminaDipendente({
                 <p className="font-semibold text-red-400">Operazione irreversibile</p>
               </div>
               <p className="text-sm text-red-300">
-                Tutti i dati associati al dipendente andranno persi definitivamente.
-                Si consiglia di esportare lo storico prima di procedere.
+                Tutti i dati associati al dipendente andranno persi definitivamente. Si consiglia di
+                esportare lo storico prima di procedere.
               </p>
             </div>
           )}
@@ -179,12 +173,7 @@ export default function ModaleEliminaDipendente({
             disabled={isLoading}
             className="bg-red-600 hover:bg-red-700 text-white border-2 border-red-600"
           >
-            {isLoading 
-              ? 'Eliminazione...' 
-              : !showConferma 
-                ? 'Procedi' 
-                : 'ELIMINA DEFINITIVAMENTE'
-            }
+            {isLoading ? 'Eliminazione...' : !showConferma ? 'Procedi' : 'ELIMINA DEFINITIVAMENTE'}
           </Button>
         </div>
       </div>

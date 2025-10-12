@@ -31,7 +31,11 @@ export function ArchiviaDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Archivia Dipendente</AlertDialogTitle>
           <AlertDialogDescription>
-            Sei sicuro di voler archiviare <strong>{utente.nome} {utente.cognome}</strong>?
+            Sei sicuro di voler archiviare{' '}
+            <strong>
+              {utente.nome} {utente.cognome}
+            </strong>
+            ?
             <br />
             Il dipendente verrà spostato negli ex-dipendenti e il PIN {utente.pin} sarà liberato.
           </AlertDialogDescription>
@@ -78,7 +82,11 @@ export function EliminaDialog({
           <AlertDialogDescription>
             {!showConferma ? (
               <>
-                Stai per eliminare definitivamente <strong>{utente.nome} {utente.cognome}</strong>.
+                Stai per eliminare definitivamente{' '}
+                <strong>
+                  {utente.nome} {utente.cognome}
+                </strong>
+                .
                 <br />
                 <strong className="text-red-600">Questa operazione è irreversibile!</strong>
                 <br />
@@ -88,7 +96,11 @@ export function EliminaDialog({
               <>
                 <strong className="text-red-600">ATTENZIONE: ELIMINAZIONE DEFINITIVA</strong>
                 <br />
-                Confermi di voler eliminare per sempre <strong>{utente.nome} {utente.cognome}</strong>?
+                Confermi di voler eliminare per sempre{' '}
+                <strong>
+                  {utente.nome} {utente.cognome}
+                </strong>
+                ?
                 <br />
                 Tutti i dati associati andranno persi.
               </>
@@ -102,12 +114,7 @@ export function EliminaDialog({
             disabled={isLoading}
             className="bg-red-600 hover:bg-red-700"
           >
-            {isLoading 
-              ? 'Eliminazione...' 
-              : !showConferma 
-                ? 'Procedi' 
-                : 'ELIMINA DEFINITIVAMENTE'
-            }
+            {isLoading ? 'Eliminazione...' : !showConferma ? 'Procedi' : 'ELIMINA DEFINITIVAMENTE'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

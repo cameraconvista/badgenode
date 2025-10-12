@@ -4,10 +4,7 @@
 import type { Timbratura } from '@/types/timbrature';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
 import { supabase } from '@/lib/supabaseClient';
-import type { 
-  TimbraturaCanon, 
-  TimbratureRangeParams 
-} from '../../../shared/types/timbrature';
+import type { TimbraturaCanon, TimbratureRangeParams } from '../../../shared/types/timbrature';
 
 export interface TimbratureFilters {
   pin: number;
@@ -23,13 +20,15 @@ export class TimbratureService {
     try {
       let query = supabase
         .from('timbrature')
-        .select('id, pin, tipo, created_at, data_locale, ora_locale, giorno_logico, ts_order, client_event_id');
+        .select(
+          'id, pin, tipo, created_at, data_locale, ora_locale, giorno_logico, ts_order, client_event_id'
+        );
 
       // Filtri
       if (params.pin) {
         query = query.eq('pin', params.pin);
       }
-      
+
       if (params.from && params.to) {
         query = query.gte('giorno_logico', params.from).lte('giorno_logico', params.to);
       } else if (params.from) {
@@ -57,11 +56,11 @@ export class TimbratureService {
       const timbrature = await this.getTimbratureByRange({
         pin: filters.pin,
         from: filters.dal,
-        to: filters.al
+        to: filters.al,
       });
-      
+
       // Converti al formato legacy per compatibilità
-      return timbrature.map(t => ({
+      return timbrature.map((t) => ({
         id: t.id,
         pin: t.pin,
         tipo: t.tipo,
@@ -71,7 +70,7 @@ export class TimbratureService {
         ts_order: t.ts_order,
         nome: '',
         cognome: '',
-        created_at: t.created_at
+        created_at: t.created_at,
       }));
     } catch (error) {
       throw error;
@@ -84,11 +83,11 @@ export class TimbratureService {
       // Reindirizza al nuovo sistema
       const timbrature = await this.getTimbratureByRange({
         pin,
-        from: giorno_logico
+        from: giorno_logico,
       });
-      
+
       // Converti al formato legacy per compatibilità
-      return timbrature.map(t => ({
+      return timbrature.map((t) => ({
         id: t.id,
         pin: t.pin,
         tipo: t.tipo,
@@ -98,7 +97,7 @@ export class TimbratureService {
         ts_order: t.ts_order,
         nome: '',
         cognome: '',
-        created_at: t.created_at
+        created_at: t.created_at,
       }));
     } catch (error) {
       throw error;
@@ -106,7 +105,10 @@ export class TimbratureService {
   }
 
   // CRUD operations
-  static async updateTimbratura(id: string, input: { data: string; ore: string; dataEntrata?: string }): Promise<Timbratura> {
+  static async updateTimbratura(
+    id: string,
+    input: { data: string; ore: string; dataEntrata?: string }
+  ): Promise<Timbratura> {
     throw new Error('updateTimbratura not implemented - use Supabase RPC functions');
   }
 
@@ -115,7 +117,10 @@ export class TimbratureService {
   }
 
   // Calcola statistiche periodo
-  static async getStatsPeriodo(filters: TimbratureFilters, oreContrattuali: number): Promise<TimbratureStats> {
+  static async getStatsPeriodo(
+    filters: TimbratureFilters,
+    oreContrattuali: number
+  ): Promise<TimbratureStats> {
     const timbrature = await this.getTimbraturePeriodo(filters);
     return TimbratureStatsService.calculateStats(timbrature, oreContrattuali);
   }
@@ -127,20 +132,20 @@ export class TimbratureService {
       if (pin) {
         params.pin = pin;
       }
-      
+
       const timbrature = await this.getTimbratureByRange(params);
-      
+
       // Ordina per created_at desc per compatibilità
       return timbrature
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .map(t => ({
+        .map((t) => ({
           id: t.id,
           pin: t.pin,
           tipo: t.tipo,
           data_locale: t.data_locale,
           ora_locale: t.ora_locale,
           giorno_logico: t.giorno_logico,
-          created_at: t.created_at
+          created_at: t.created_at,
         }));
     } catch (error) {
       return [];
@@ -158,18 +163,18 @@ export class TimbratureService {
   static async getTimbratureByPin(pin: number): Promise<any[]> {
     try {
       const timbrature = await this.getTimbratureByRange({ pin });
-      
+
       // Ordina per created_at desc per compatibilità
       return timbrature
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .map(t => ({
+        .map((t) => ({
           id: t.id,
           pin: t.pin,
           tipo: t.tipo,
           data_locale: t.data_locale,
           ora_locale: t.ora_locale,
           giorno_logico: t.giorno_logico,
-          created_at: t.created_at
+          created_at: t.created_at,
         }));
     } catch (error) {
       throw error;

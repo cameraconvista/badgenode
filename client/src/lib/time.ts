@@ -25,7 +25,7 @@ export function computeGiornoLogico(params: {
 }): { giornologico: string; dataReale: string } {
   const { data, ora, tipo, dataEntrata } = params;
   const [ore] = ora.split(':').map(Number);
-  
+
   if (tipo === 'entrata') {
     // ENTRATA: Solo orari notturni (00-04) → giorno precedente
     if (ore >= 0 && ore < 5) {
@@ -33,33 +33,34 @@ export function computeGiornoLogico(params: {
       d.setDate(d.getDate() - 1);
       return {
         giornologico: formatDateLocal(d),
-        dataReale: data
+        dataReale: data,
       };
     }
     return {
       giornologico: data,
-      dataReale: data
+      dataReale: data,
     };
   } else {
     // USCITA: Logica più complessa per turni notturni
     if (ore >= 0 && ore < 5 && dataEntrata) {
       const dataEntrataObj = new Date(dataEntrata);
       const dataUscitaObj = new Date(data);
-      const diffGiorni = (dataUscitaObj.getTime() - dataEntrataObj.getTime()) / (1000 * 60 * 60 * 24);
-      
+      const diffGiorni =
+        (dataUscitaObj.getTime() - dataEntrataObj.getTime()) / (1000 * 60 * 60 * 24);
+
       // Se diff ≤ 1 giorno, appartiene allo stesso turno
       if (diffGiorni <= 1) {
         const d = new Date(data + 'T00:00:00');
         d.setDate(d.getDate() + 1); // Data reale: giorno successivo
         return {
           giornologico: dataEntrata, // Stesso giorno logico dell'entrata
-          dataReale: formatDateLocal(d)
+          dataReale: formatDateLocal(d),
         };
       }
     }
     return {
       giornologico: data,
-      dataReale: data
+      dataReale: data,
     };
   }
 }
@@ -70,17 +71,17 @@ export function computeGiornoLogico(params: {
  */
 export function computeOreLavoratePerGiorno(timbrature: Timbratura[]): number {
   const entrate = timbrature
-    .filter(t => t.tipo === 'entrata' && t.ora_locale)
+    .filter((t) => t.tipo === 'entrata' && t.ora_locale)
     .sort((a, b) => (a.ora_locale || '').localeCompare(b.ora_locale || ''));
   const uscite = timbrature
-    .filter(t => t.tipo === 'uscita' && t.ora_locale)
+    .filter((t) => t.tipo === 'uscita' && t.ora_locale)
     .sort((a, b) => (b.ora_locale || '').localeCompare(a.ora_locale || ''));
-  
+
   if (entrate.length === 0 || uscite.length === 0) return 0;
-  
+
   const primaEntrata = entrate[0];
   const ultimaUscita = uscite[0];
-  
+
   return calcolaOreLavorateTraDue(primaEntrata, ultimaUscita);
 }
 
@@ -91,15 +92,15 @@ function calcolaOreLavorateTraDue(entrata: Timbratura, uscita: Timbratura): numb
   if (!entrata.data_locale || !entrata.ora_locale || !uscita.data_locale || !uscita.ora_locale) {
     return 0; // Dati mancanti
   }
-  
+
   const dataEntrata = new Date(`${entrata.data_locale}T${entrata.ora_locale}`);
   const dataUscita = new Date(`${uscita.data_locale}T${uscita.ora_locale}`);
-  
+
   // Se uscita < entrata, aggiungi 24 ore (turno notturno)
   if (dataUscita < dataEntrata) {
     dataUscita.setDate(dataUscita.getDate() + 1);
   }
-  
+
   const diffMs = dataUscita.getTime() - dataEntrata.getTime();
   return Math.round((diffMs / (1000 * 60 * 60)) * 100) / 100; // Ore con 2 decimali
 }
@@ -128,12 +129,12 @@ export function expandDaysRange(dal: string, al: string): string[] {
   const days: string[] = [];
   const current = new Date(dal + 'T00:00:00');
   const end = new Date(al + 'T00:00:00');
-  
+
   while (current <= end) {
     days.push(formatDateLocal(current));
     current.setDate(current.getDate() + 1);
   }
-  
+
   return days;
 }
 
@@ -154,7 +155,7 @@ export function formatDataItaliana(data: string): string {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
-    year: 'numeric'
+    year: 'numeric',
   });
 }
 
@@ -165,7 +166,7 @@ export function formatDataBreve(data: string): string {
   const d = new Date(data + 'T00:00:00');
   const formatted = d.toLocaleDateString('it-IT', {
     weekday: 'short',
-    day: '2-digit'
+    day: '2-digit',
   });
   // Capitalizza prima lettera del giorno della settimana
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
@@ -178,7 +179,7 @@ export function getMeseItaliano(data: string): string {
   const d = new Date(data + 'T00:00:00');
   const formatted = d.toLocaleDateString('it-IT', {
     month: 'long',
-    year: 'numeric'
+    year: 'numeric',
   });
   // Capitalizza prima lettera del mese
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
@@ -188,8 +189,8 @@ export function getMeseItaliano(data: string): string {
  * Formatta timestamp created_at per visualizzazione (solo secondi, no millisecondi)
  */
 export function formatCreatedAt(created_at: string): string {
-  return new Date(created_at).toLocaleTimeString('it-IT', { 
-    hour12: false, 
-    timeStyle: 'medium' 
+  return new Date(created_at).toLocaleTimeString('it-IT', {
+    hour12: false,
+    timeStyle: 'medium',
   });
 }

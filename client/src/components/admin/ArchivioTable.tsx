@@ -59,26 +59,28 @@ export default function ArchivioTable({
           <table className="w-full">
             <thead>
               <tr>
-                <th className="text-left p-4 font-medium text-base text-gray-200 w-24">
-                  Storico
-                </th>
+                <th className="text-left p-4 font-medium text-base text-gray-200 w-24">Storico</th>
                 <th className="text-left p-4 font-medium text-base text-gray-200 w-20">
-                  <button 
+                  <button
                     onClick={toggleSortOrder}
                     className="flex items-center gap-2 hover:text-white transition-colors"
                   >
                     PIN
-                    <ChevronUp className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} />
+                    <ChevronUp
+                      className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`}
+                    />
                   </button>
                 </th>
                 <th className="text-left p-4 font-medium text-base text-gray-200 w-40">Nome</th>
-                <th className="text-center p-4 font-medium text-base text-gray-200 w-40">Cognome</th>
+                <th className="text-center p-4 font-medium text-base text-gray-200 w-40">
+                  Cognome
+                </th>
                 <th className="text-center p-4 font-medium text-base text-gray-200 w-28">Azioni</th>
               </tr>
             </thead>
           </table>
         </div>
-        
+
         {/* Body scrollabile */}
         <div className="flex-1 overflow-y-auto">
           <table className="w-full">
@@ -91,7 +93,10 @@ export default function ArchivioTable({
                 </tr>
               ) : (
                 sortedUtenti.map((utente) => (
-                  <tr key={utente.id || `pin-${utente.pin}`} className="border-t border-gray-600 hover:bg-gray-700/50 transition-colors">
+                  <tr
+                    key={utente.id || `pin-${utente.pin}`}
+                    className="border-t border-gray-600 hover:bg-gray-700/50 transition-colors"
+                  >
                     <td className="p-4 w-24">
                       <Button
                         variant="ghost"
@@ -133,7 +138,6 @@ export default function ArchivioTable({
           </table>
         </div>
       </div>
-
     </div>
   );
 }

@@ -14,7 +14,13 @@ export const ChartTooltipContent = React.forwardRef<
     label?: any;
     labelFormatter?: (value: any, payload: Array<any>) => React.ReactNode;
     labelClassName?: string;
-    formatter?: (value: any, name: any, item: any, index: number, payload: Array<any>) => React.ReactNode;
+    formatter?: (
+      value: any,
+      name: any,
+      item: any,
+      index: number,
+      payload: Array<any>
+    ) => React.ReactNode;
     color?: string;
     hideLabel?: boolean;
     hideIndicator?: boolean;
@@ -112,7 +118,8 @@ export const ChartTooltipContent = React.forwardRef<
                             {
                               'h-2.5 w-2.5': indicator === 'dot',
                               'w-1': indicator === 'line',
-                              'w-0 border-[1.5px] border-dashed bg-transparent': indicator === 'dashed',
+                              'w-0 border-[1.5px] border-dashed bg-transparent':
+                                indicator === 'dashed',
                               'my-0.5': nestLabel && indicator === 'dashed',
                             }
                           )}

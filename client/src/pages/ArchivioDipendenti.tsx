@@ -32,11 +32,13 @@ export default function ArchivioDipendenti() {
     const unsubscribe = subscribeTimbrature({
       onChange: (payload) => {
         debouncedInvalidate();
-      }
+      },
     });
     return () => unsubscribe();
   }, [isAdmin]);
-  useEffect(() => { loadUtenti(); }, []);
+  useEffect(() => {
+    loadUtenti();
+  }, []);
   const loadUtenti = async () => {
     setIsLoading(true);
     try {
@@ -54,8 +56,7 @@ export default function ArchivioDipendenti() {
     setUtenteSelezionato(utente);
     setShowModaleModifica(true);
   };
-  const handleArchivia = async (id: string) => {
-  };
+  const handleArchivia = async (id: string) => {};
   const handleEliminaClick = (utente: Utente) => {
     setUtenteSelezionato(utente);
     setShowModaleElimina(true);
@@ -97,20 +98,20 @@ export default function ArchivioDipendenti() {
   const handleExDipendenti = () => {};
 
   return (
-    <div 
+    <div
       className="h-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
-      style={{ 
+      style={{
         background: 'radial-gradient(ellipse at center, #2d1b3d 0%, #1a0f2e 50%, #0f0a1a 100%)',
-        backgroundAttachment: 'fixed'
+        backgroundAttachment: 'fixed',
       }}
     >
       <div className="w-full max-w-[1120px] flex items-center justify-center h-full">
-        <div 
+        <div
           className="rounded-3xl p-4 shadow-2xl border-2 w-full h-[90vh] overflow-hidden relative flex flex-col"
           style={{
             backgroundColor: '#2b0048',
             borderColor: 'rgba(231, 116, 240, 0.6)',
-            boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)'
+            boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
           }}
         >
           {/* Header con logo centrato e toggle tema */}
