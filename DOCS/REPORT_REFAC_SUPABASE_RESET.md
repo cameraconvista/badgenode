@@ -320,6 +320,97 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 
 ---
 
-**Status**: 🟢 **STEP 4 COMPLETATO** - Configurazione nuovo progetto Supabase  
-**Commit**: `0214db9` su branch `refactor/supabase-reset`  
-**Prossimo**: Attendere OK per step successivo (sincronizzazione offline queue)
+---
+
+## 🎯 **STEP 6 COMPLETATO (100%)**
+
+### **📋 FIX STORICO: PIN + CRASH TOFIXED**
+
+**Obiettivo**: Correggere storico dipendente per PIN sempre **number** (non `undefined`) e totali senza crash. Zero modifiche UX.
+
+#### **✅ MODIFICHE IMPLEMENTATE:**
+
+**1. Route Param PIN (wouter) - ROBUSTO**
+- File: `client/src/components/storico/StoricoWrapper.tsx`
+- Sostituito `useParams()` con `useRoute('/storico-timbrature/:pin')`
+- Validazione PIN: `Number.isFinite(pin) && pin > 0`
+- Log errori: `console.error('[Storico] PIN non valido:', raw)`
+- Redirect automatico al primo utente se PIN non valido
+
+**2. Service Storico - VALIDAZIONE OBBLIGATORIA**
+- File: `client/src/services/storico.service.ts`
+- Aggiunta guardia in `getStoricoByPin()`: `if (!Number.isFinite(pin) || pin <= 0) throw new Error(...)`
+- Return sicuro: `return data ?? []` invece di `return data as Timbratura[]`
+
+**3. Fix Crash toFixed - GUARDIE COMPLETE**
+- File: `client/src/lib/time.ts`
+- Funzione `formatOre()` aggiornata:
+  ```typescript
+  export function formatOre(n?: number | null): string {
+    const v = Number.isFinite(n as number) ? (n as number) : 0;
+    return v.toFixed(2);
+  }
+  ```
+
+**4. StoricoTable - PROTEZIONE ARRAY**
+- File: `client/src/components/storico/StoricoTable.tsx`
+- Protezione: `const list = Array.isArray(storicoDatasetV5) ? storicoDatasetV5 : []`
+- Fix destructuring: `{ totaleOre, totaleExtra }` (non `{ totOre, totExtra }`)
+
+**5. React Query - GESTIONE ERRORI**
+- File: `client/src/hooks/useStoricoTimbrature.ts`
+- Aggiunto `error` handling per tutte le query
+- Log non-bloccanti: `console.error('[Storico] Query error:', error)`
+
+#### **🧪 VERIFICHE COMPLETATE:**
+
+**Query URL Corretta:**
+```
+.../rest/v1/timbrature?select=id,pin,tipo,ts_order,giorno_logico,data_locale,ora_locale,client_event_id&pin=eq.1&order=giorno_logico.asc,ts_order.asc
+```
+
+**Test formatOre (no crash):**
+- `formatOre(undefined)` → `"0.00"` ✅
+- `formatOre(null)` → `"0.00"` ✅  
+- `formatOre(NaN)` → `"0.00"` ✅
+- `formatOre(8.5)` → `"8.50"` ✅
+
+**Sistema:**
+- ✅ Build: 629KB bundle SUCCESS
+- ✅ App: http://localhost:3001 attiva
+- ✅ Console pulita da errori PIN undefined
+- ✅ TotalsBar renderizza senza crash toFixed
+
+#### **📊 FILE TOCCATI:**
+```
+client/src/components/storico/StoricoWrapper.tsx (routing robusto)
+client/src/services/storico.service.ts (PIN validation)
+client/src/lib/time.ts (formatOre safe)
+client/src/components/storico/StoricoTable.tsx (array protection)
+client/src/hooks/useStoricoTimbrature.ts (error handling)
+```
+
+---
+
+## 📊 **RISULTATI FINALI STEP 1-6**
+
+### **✅ OBIETTIVI RAGGIUNTI:**
+- **Centralizzazione RPC**: ✅ `callInsertTimbro()` unico punto ingresso
+- **Eliminazione INSERT diretti**: ✅ Zero `.from('timbrature').insert()`
+- **Allineamento SELECT**: ✅ Solo nuove colonne (giorno_logico, data_locale, ora_locale)
+- **Nuovo progetto Supabase**: ✅ Connessione live verificata
+- **Fix storico PIN**: ✅ Routing robusto + validazione obbligatoria
+- **Fix crash toFixed**: ✅ Guardie complete per null/undefined
+- **Build funzionante**: ✅ 629KB bundle, app stabile
+- **Zero modifiche UX**: ✅ Layout/stili immutati
+
+### **🔄 TODO STEP FUTURI:**
+- Sincronizzazione offline queue (step successivo)
+- Completare refactor UI legacy (errori TS rimanenti)
+- Test end-to-end completo
+
+---
+
+**Status**: 🟢 **STEP 6 COMPLETATO** - Fix storico (PIN + crash toFixed)  
+**Commit**: `41a35c1` su branch `refactor/supabase-reset`  
+**Prossimo**: Attendere OK per step successivo
