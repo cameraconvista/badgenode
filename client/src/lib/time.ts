@@ -154,8 +154,9 @@ export function expandDaysRange(dal: string, al: string): string[] {
 /**
  * Formatta ore per visualizzazione (2 decimali)
  */
-export function formatOre(ore: number): string {
-  return ore.toFixed(2);
+export function formatOre(n?: number | null): string {
+  const v = Number.isFinite(n as number) ? (n as number) : 0;
+  return v.toFixed(2);
 }
 
 /**

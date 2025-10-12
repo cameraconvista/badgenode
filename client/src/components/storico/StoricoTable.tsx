@@ -30,8 +30,10 @@ export default function StoricoTable({
   isLoading 
 }: StoricoTableProps) {
   
-  // Calcola totali dal dataset v5 (fonte unica di verità)
-  const { totOre: totaleMensileOre, totExtra: totaleMensileExtra, giorniLavorati } = calcolaTotaliV5(storicoDatasetV5, oreContrattuali);
+  // Calcola totali dal dataset v5 (fonte unica di verità) con protezione
+  const list = Array.isArray(storicoDatasetV5) ? storicoDatasetV5 : [];
+  const { totaleOre: totaleMensileOre, totaleExtra: totaleMensileExtra } = calcolaTotaliV5(list);
+  const giorniLavorati = list.length;
 
   if (isLoading) {
     return (

@@ -12,6 +12,11 @@ import type { TurnoFull, StoricoDatasetV5, SessioneV5 } from './storico/types';
 export async function getStoricoByPin(params: StoricoParams): Promise<Timbratura[]> {
   const { pin, from, to } = params;
   
+  // Validazione PIN obbligatoria
+  if (!Number.isFinite(pin) || pin <= 0) {
+    throw new Error(`PIN undefined/invalid: ${pin}`);
+  }
+  
   let q = supabase
     .from('timbrature')
     .select('id,pin,tipo,ts_order,giorno_logico,data_locale,ora_locale,client_event_id')
@@ -25,7 +30,7 @@ export async function getStoricoByPin(params: StoricoParams): Promise<Timbratura
   const { data, error } = await q;
   if (error) throw error;
   
-  return data as Timbratura[];
+  return data ?? [];
 }
 
 /**
@@ -53,6 +58,7 @@ export function formatTimeOrDash(time: string | null | undefined): string {
  * Carica turni full (compatibilità)
  */
 export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]> {
+  // Validazione PIN (delegata a getStoricoByPin)
   const timbrature = await getStoricoByPin(params);
   
   // Raggruppa per giorno_logico

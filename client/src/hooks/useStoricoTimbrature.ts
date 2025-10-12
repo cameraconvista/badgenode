@@ -47,33 +47,47 @@ export function useStoricoTimbrature(pin: number) {
   }, [isAdmin]);
 
   // Query per dati dipendente
-  const { data: dipendente } = useQuery({
+  const { data: dipendente, error: dipendenteError } = useQuery({
     queryKey: ['utente', pin],
     queryFn: async () => {
       const utenti = await UtentiService.getUtenti();
       return utenti.find(u => u.pin === pin);
     }
   });
+  
+  if (dipendenteError) {
+    console.error('[Storico] Query dipendente error:', dipendenteError);
+  }
 
   // Query per dataset v5 (include tutti i giorni del range)
   const { 
     data: storicoDatasetV5 = [], 
-    isLoading: isLoadingTimbrature
+    isLoading: isLoadingTimbrature,
+    error: storicoError
   } = useQuery({
     queryKey: ['storico-dataset-v5', filters],
     queryFn: () => buildStoricoDataset({ pin: filters.pin, from: filters.dal, to: filters.al }),
     enabled: !!dipendente
-  }) as { data: StoricoDatasetV5[], isLoading: boolean };
+  }) as { data: StoricoDatasetV5[], isLoading: boolean, error: any };
+  
+  if (storicoError) {
+    console.error('[Storico] Query storico error:', storicoError);
+  }
 
   // Query per turni completi (legacy, per compatibilità componenti)
   const { 
     data: turniGiornalieri = [], 
-    isLoading: isLoadingLegacy
+    isLoading: isLoadingLegacy,
+    error: turniError
   } = useQuery({
     queryKey: ['turni-completi-legacy', filters],
-    queryFn: () => loadTurniFull(filters.pin, filters.dal, filters.al, dipendente?.ore_contrattuali || 8),
+    queryFn: () => loadTurniFull({ pin: filters.pin, from: filters.dal, to: filters.al }),
     enabled: !!dipendente
-  }) as { data: GiornoLogicoDettagliato[], isLoading: boolean };
+  }) as { data: GiornoLogicoDettagliato[], isLoading: boolean, error: any };
+  
+  if (turniError) {
+    console.error('[Storico] Query turni error:', turniError);
+  }
 
   // Trasforma dataset v5 in formato StoricoRowData per tabella con sotto-righe
   const storicoDataset = useMemo(() => {
