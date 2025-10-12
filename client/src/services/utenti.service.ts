@@ -41,7 +41,18 @@ export class UtentiService {
         throw error;
       }
 
-      return data || [];
+      // Trasformo i dati per compatibilità con l'interfaccia Utente
+      const utentiCompleti: Utente[] = (data || []).map(utente => ({
+        ...utente,
+        id: utente.pin?.toString() || '', // Uso PIN come ID
+        email: '', // Campo non presente nel DB
+        telefono: '', // Campo non presente nel DB
+        ore_contrattuali: 8, // Valore di default
+        descrizione_contratto: '', // Campo non presente nel DB
+        updated_at: utente.created_at, // Uso created_at come updated_at
+      }));
+
+      return utentiCompleti;
     } catch (error) {
       throw error;
     }
@@ -81,17 +92,14 @@ export class UtentiService {
     }
   }
 
-  // Crea/Aggiorna utente via REST upsert
+  // Crea/Aggiorna utente via REST upsert (solo colonne esistenti)
   static async upsertUtente(input: UtenteInput): Promise<Utente> {
     try {
+      // Payload con solo le colonne esistenti nella tabella utenti
       const payload = {
         pin: input.pin,
         nome: input.nome,
         cognome: input.cognome,
-        email: input.email || null,
-        telefono: input.telefono || null,
-        ore_contrattuali: input.ore_contrattuali || 8,
-        descrizione_contratto: input.descrizione_contratto || null,
       };
 
       const { data, error } = await supabase
@@ -101,6 +109,10 @@ export class UtentiService {
         .single();
 
       if (error) {
+        // Gestione specifica per errori RLS
+        if (error.code === '42501') {
+          throw new Error('Permessi insufficienti per creare utenti. Contattare l\'amministratore per configurare le policy di sicurezza.');
+        }
         throw error;
       }
 
@@ -108,7 +120,18 @@ export class UtentiService {
         throw new Error('Nessun dato restituito dopo upsert');
       }
 
-      return data;
+      // Aggiungo i campi mancanti per compatibilità con l'interfaccia
+      const utenteCompleto: Utente = {
+        ...data,
+        id: data.pin?.toString() || '', // Uso PIN come ID se non c'è campo id
+        email: input.email || '',
+        telefono: input.telefono || '',
+        ore_contrattuali: input.ore_contrattuali || 8,
+        descrizione_contratto: input.descrizione_contratto || '',
+        updated_at: data.created_at, // Uso created_at come updated_at
+      };
+
+      return utenteCompleto;
     } catch (error) {
       throw error;
     }
