@@ -122,7 +122,7 @@ export class UtentiService {
       if (error) {
         // Gestione errori specifici
         if (error.code === '42501') {
-          throw new Error('Permessi insufficienti per creare utenti. Contattare l\'amministratore.');
+          throw new Error('⚠️ Creazione utenti temporaneamente disabilitata. Contattare l\'amministratore per abilitare i permessi.');
         }
         throw new Error(`Errore durante la creazione utente: ${error.message}`);
       }
