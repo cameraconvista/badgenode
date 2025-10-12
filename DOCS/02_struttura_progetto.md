@@ -40,6 +40,7 @@ BadgeNode/
 ## 📁 Cartelle Principali
 
 ### **DOCS/** - Documentazione
+
 ```
 DOCS/
 ├── 01_database_api.md          # Schema DB e API endpoints
@@ -54,6 +55,7 @@ DOCS/
 ```
 
 ### **ARCHIVE/** - Archiviazione
+
 ```
 ARCHIVE/
 ├── _unused/                    # Componenti/file non utilizzati
@@ -63,6 +65,7 @@ ARCHIVE/
 ```
 
 ### **Backup_Automatico/** - Sistema Backup
+
 ```
 Backup_Automatico/
 ├── backup_YYYY.MM.DD_HH.MM.tar # Backup rotazione (max 3)
@@ -75,6 +78,7 @@ Backup_Automatico/
 ## 🎨 Frontend Structure
 
 ### **client/** - Applicazione React
+
 ```
 client/
 ├── public/                     # Asset statici
@@ -109,6 +113,7 @@ client/
 ```
 
 ### **Regole Frontend**
+
 - **Componenti**: Max 200 righe, warning ≥150
 - **Organizzazione**: Per funzione, non per tipo
 - **Naming**: PascalCase per componenti, camelCase per utility
@@ -119,6 +124,7 @@ client/
 ## ⚙️ Backend Structure
 
 ### **server/** - API Express
+
 ```
 server/
 ├── index.ts                   # Entry point server
@@ -129,6 +135,7 @@ server/
 ```
 
 ### **shared/** - Tipi Condivisi
+
 ```
 shared/
 └── schema.ts                 # TypeScript interfaces comuni
@@ -139,6 +146,7 @@ shared/
 ## 🛠️ Scripts e Automazione
 
 ### **scripts/** - Utility
+
 ```
 scripts/
 ├── backup.ts                 # Sistema backup automatico
@@ -154,6 +162,7 @@ scripts/
 ```
 
 ### **Scripts NPM Principali**
+
 ```json
 {
   "dev": "NODE_ENV=development tsx server/index.ts",
@@ -172,6 +181,7 @@ scripts/
 ## 📏 Governance e Regole
 
 ### **File Length Guard**
+
 ```
 Limiti STRICT (STRICT_200=true):
 - ≤200 righe: OK
@@ -185,6 +195,7 @@ Eccezioni:
 ```
 
 ### **Backup System**
+
 ```
 Rotazione automatica:
 - Max 3 backup simultanei
@@ -194,6 +205,7 @@ Rotazione automatica:
 ```
 
 ### **Git Workflow**
+
 ```
 Branch strategy:
 - main: production ready
@@ -208,6 +220,7 @@ Commit rules:
 ```
 
 ### **Code Quality**
+
 ```
 Tools attivi:
 - ESLint: linting JavaScript/TypeScript
@@ -227,23 +240,27 @@ Standards:
 ## 🎯 Responsabilità Cartelle
 
 ### **Development**
+
 - `client/src/`: Frontend development
 - `server/`: Backend API development
 - `scripts/`: Automation e maintenance
 - `shared/`: Shared types e utilities
 
 ### **Documentation**
+
 - `DOCS/`: Project documentation
 - `README.md`: Quick start guide
 - `.env.example`: Environment setup
 
 ### **Operations**
+
 - `Backup_Automatico/`: Backup management
 - `ARCHIVE/`: File archival
 - `dist/`: Production builds
 - `.husky/`: Git hooks configuration
 
 ### **Assets**
+
 - `public/`: Static assets
 - `client/public/`: PWA assets
 - Logo: `/logo_app.png` (PNG, transparent, max 60px height)
@@ -253,6 +270,7 @@ Standards:
 ## 🔧 Configuration Files
 
 ### **Root Level**
+
 ```
 package.json          # Dependencies e scripts
 tsconfig.json         # TypeScript configuration
@@ -264,6 +282,7 @@ eslint.config.js      # ESLint rules
 ```
 
 ### **Specialized Config**
+
 ```
 tailwind.config.ts    # Tailwind CSS configuration
 postcss.config.js     # PostCSS plugins
@@ -276,12 +295,14 @@ components.json       # Radix UI components config
 ## 📊 Metriche Progetto
 
 ### **Dimensioni Target**
+
 - File singolo: ≤200 righe
 - Componente: ≤150 righe (warning)
 - Build size: ≤1MB gzipped
 - Bundle chunks: ottimizzati per lazy loading
 
 ### **Performance**
+
 - Build time: <10 secondi
 - Dev server start: <5 secondi
 - Hot reload: <1 secondo

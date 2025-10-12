@@ -18,6 +18,7 @@
 ## 🎯 Design Overview
 
 ### **Filosofia Design**
+
 ```
 Approccio: Mobile-first verticale
 Target: Smartphone/tablet portrait
@@ -32,6 +33,7 @@ Principi chiave:
 ```
 
 ### **Layout Generale**
+
 ```
 ┌─────────────────────────────┐
 │        Logo App             │  ← Header fisso
@@ -58,13 +60,14 @@ Principi chiave:
 ## 📐 Layout e Dimensioni
 
 ### **Container Principale**
+
 ```css
 .keypad-container {
-  max-width: 380px;        /* Limite larghezza */
-  min-width: 320px;        /* Mobile minimo */
-  margin: 0 auto;          /* Centrato */
-  padding: 1rem;           /* Breathing room */
-  min-height: 100vh;       /* Full viewport */
+  max-width: 380px; /* Limite larghezza */
+  min-width: 320px; /* Mobile minimo */
+  margin: 0 auto; /* Centrato */
+  padding: 1rem; /* Breathing room */
+  min-height: 100vh; /* Full viewport */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -72,27 +75,29 @@ Principi chiave:
 ```
 
 ### **Griglia Tastierino**
+
 ```css
 .keypad-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  gap: 0.75rem;            /* 12px spacing */
-  max-width: 360px;        /* Griglia massima */
-  margin: 2rem auto;       /* Centrata con margini */
+  gap: 0.75rem; /* 12px spacing */
+  max-width: 360px; /* Griglia massima */
+  margin: 2rem auto; /* Centrata con margini */
 }
 ```
 
 ### **Dimensioni Tasti**
+
 ```css
 .keypad-button {
-  width: 76px;             /* Larghezza fissa */
-  height: 76px;            /* Altezza fissa */
-  min-width: 48px;         /* WCAG minimum */
-  min-height: 48px;        /* WCAG minimum */
-  border-radius: 12px;     /* Angoli arrotondati */
-  font-size: 1.5rem;       /* 24px text */
-  font-weight: 600;        /* Semi-bold */
+  width: 76px; /* Larghezza fissa */
+  height: 76px; /* Altezza fissa */
+  min-width: 48px; /* WCAG minimum */
+  min-height: 48px; /* WCAG minimum */
+  border-radius: 12px; /* Angoli arrotondati */
+  font-size: 1.5rem; /* 24px text */
+  font-weight: 600; /* Semi-bold */
 }
 
 /* Responsive scaling */
@@ -109,31 +114,30 @@ Principi chiave:
 ## 🎨 Palette Colori
 
 ### **Schema Viola a Tre Livelli**
+
 ```css
 :root {
   /* Palette principale */
-  --violet-primary: #510357;    /* Viola brand principale */
-  --pink-accent: #e774f0;       /* Rosa accent */
-  --white-pure: #ffffff;        /* Bianco puro */
-  
+  --violet-primary: #510357; /* Viola brand principale */
+  --pink-accent: #e774f0; /* Rosa accent */
+  --white-pure: #ffffff; /* Bianco puro */
+
   /* Sfumature viola (scuro → chiaro) */
-  --bg-darkest: #0b0b10;        /* Sfondo app molto scuro */
-  --bg-darker: #1a1625;         /* Sfondo card scuro */
-  --bg-dark: #2d2438;           /* Sfondo elementi */
-  --bg-medium: #3f3451;         /* Tasti base */
-  --bg-light: #524669;          /* Tasti hover */
-  --bg-lighter: #6b5b95;        /* Tasti active */
+  --bg-darkest: #0b0b10; /* Sfondo app molto scuro */
+  --bg-darker: #1a1625; /* Sfondo card scuro */
+  --bg-dark: #2d2438; /* Sfondo elementi */
+  --bg-medium: #3f3451; /* Tasti base */
+  --bg-light: #524669; /* Tasti hover */
+  --bg-lighter: #6b5b95; /* Tasti active */
 }
 ```
 
 ### **Applicazione Colori**
+
 ```css
 /* Sfondo app */
 .app-background {
-  background: linear-gradient(135deg, 
-    var(--bg-darkest) 0%, 
-    var(--bg-darker) 100%
-  );
+  background: linear-gradient(135deg, var(--bg-darkest) 0%, var(--bg-darker) 100%);
 }
 
 /* Card tastierino */
@@ -162,6 +166,7 @@ Principi chiave:
 ```
 
 ### **Stati Colori**
+
 ```css
 /* Entrata (verde) */
 .button-entrata {
@@ -195,6 +200,7 @@ Principi chiave:
 ## 🧩 Componenti UI
 
 ### **Logo App**
+
 ```typescript
 // Specifiche logo
 interface LogoSpecs {
@@ -206,15 +212,16 @@ interface LogoSpecs {
 }
 
 // Implementazione
-<img 
-  src="/logo_app.png" 
-  alt="BadgeNode" 
+<img
+  src="/logo_app.png"
+  alt="BadgeNode"
   className="h-12 w-auto mx-auto"  // max-height 48px, width auto
   loading="eager"                   // Carica subito
 />
 ```
 
 ### **Display PIN**
+
 ```typescript
 // Box visualizzazione PIN
 interface PinDisplayProps {
@@ -245,6 +252,7 @@ interface PinDisplayProps {
 ```
 
 ### **Effetto Riflesso Bordo**
+
 ```css
 /* Riflesso che gira sulla cornice */
 .keypad-button {
@@ -277,8 +285,12 @@ interface PinDisplayProps {
 }
 
 @keyframes borderGlow {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 ```
 
@@ -287,6 +299,7 @@ interface PinDisplayProps {
 ## ⚡ Interazioni e Stati
 
 ### **Feedback Touch**
+
 ```css
 /* Feedback immediato al tocco */
 .keypad-button {
@@ -317,7 +330,9 @@ interface PinDisplayProps {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   transform: translate(-50%, -50%);
-  transition: width 0.3s, height 0.3s;
+  transition:
+    width 0.3s,
+    height 0.3s;
 }
 
 .keypad-button:active::after {
@@ -327,15 +342,16 @@ interface PinDisplayProps {
 ```
 
 ### **Stati Input**
+
 ```typescript
 // Stati del componente PIN
-type PinState = 
-  | 'empty'        // Nessun input, mostra placeholder
-  | 'typing'       // Utente sta digitando
-  | 'complete'     // PIN completo (1-2 cifre)
-  | 'error'        // PIN non valido
-  | 'loading'      // Verifica in corso
-  | 'success';     // PIN verificato
+type PinState =
+  | 'empty' // Nessun input, mostra placeholder
+  | 'typing' // Utente sta digitando
+  | 'complete' // PIN completo (1-2 cifre)
+  | 'error' // PIN non valido
+  | 'loading' // Verifica in corso
+  | 'success'; // PIN verificato
 
 // Stili per stato
 const pinStateStyles = {
@@ -344,21 +360,22 @@ const pinStateStyles = {
   complete: 'border-green-400 text-white',
   error: 'border-red-400 text-red-300 animate-shake',
   loading: 'border-yellow-400 text-yellow-300 animate-pulse',
-  success: 'border-green-400 text-green-300'
+  success: 'border-green-400 text-green-300',
 };
 ```
 
 ### **Validazioni Real-time**
+
 ```typescript
 // Validazione PIN durante digitazione
 const validatePIN = (value: string): PinState => {
   if (value === '') return 'empty';
   if (value.length > 2) return 'error';
   if (!/^\d+$/.test(value)) return 'error';
-  
+
   const pinNumber = parseInt(value);
   if (pinNumber < 1 || pinNumber > 99) return 'error';
-  
+
   return value.length <= 2 ? 'typing' : 'complete';
 };
 ```
@@ -368,6 +385,7 @@ const validatePIN = (value: string): PinState => {
 ## 🔧 Implementazione Tecnica
 
 ### **Struttura Componente**
+
 ```typescript
 interface KeypadProps {
   onPinSubmit: (pin: string, type: 'entrata' | 'uscita') => void;
@@ -375,24 +393,21 @@ interface KeypadProps {
   error?: string;
 }
 
-const HomeKeypad: React.FC<KeypadProps> = ({ 
-  onPinSubmit, 
-  loading, 
-  error 
-}) => {
+const HomeKeypad: React.FC<KeypadProps> = ({ onPinSubmit, loading, error }) => {
   const [pin, setPin] = useState('');
   const [pinState, setPinState] = useState<PinState>('empty');
-  
+
   // Implementazione...
 };
 ```
 
 ### **Gestione Input**
+
 ```typescript
 // Handler tasti numerici
 const handleNumberPress = (number: string) => {
   if (pin.length >= 2) return; // Max 2 cifre
-  
+
   const newPin = pin + number;
   setPin(newPin);
   setPinState(validatePIN(newPin));
@@ -408,13 +423,14 @@ const handleBackspace = () => {
 // Handler submit
 const handleSubmit = (type: 'entrata' | 'uscita') => {
   if (pinState !== 'complete') return;
-  
+
   setPinState('loading');
   onPinSubmit(pin, type);
 };
 ```
 
 ### **Accessibilità**
+
 ```typescript
 // ARIA labels e keyboard support
 <button
@@ -433,7 +449,7 @@ const handleSubmit = (type: 'entrata' | 'uscita') => {
 </button>
 
 // Screen reader support
-<div 
+<div
   className="pin-display"
   aria-label={`PIN inserito: ${pin || 'vuoto'}`}
   aria-live="polite"
@@ -448,6 +464,7 @@ const handleSubmit = (type: 'entrata' | 'uscita') => {
 ## 🚨 Errori Risolti
 
 ### **Manifest PWA**
+
 ```json
 // ❌ PROBLEMA: JSON non valido
 {
@@ -460,7 +477,7 @@ const handleSubmit = (type: 'entrata' | 'uscita') => {
 // ✅ SOLUZIONE: JSON pulito
 {
   "name": "BadgeNode",
-  "short_name": "BadgeNode", 
+  "short_name": "BadgeNode",
   "description": "Sistema di timbratura con PIN per la gestione delle presenze",
   "theme_color": "#510357",
   "background_color": "#0b0b10",
@@ -469,7 +486,7 @@ const handleSubmit = (type: 'entrata' | 'uscita') => {
   "icons": [
     {
       "src": "icons/icon-192.png",
-      "sizes": "192x192", 
+      "sizes": "192x192",
       "type": "image/png"
     }
   ]
@@ -477,6 +494,7 @@ const handleSubmit = (type: 'entrata' | 'uscita') => {
 ```
 
 ### **Layout Mobile**
+
 ```css
 /* ❌ PROBLEMA: Scroll necessario su mobile */
 .old-layout {
@@ -496,6 +514,7 @@ const handleSubmit = (type: 'entrata' | 'uscita') => {
 ```
 
 ### **Touch Targets**
+
 ```css
 /* ❌ PROBLEMA: Tasti troppo piccoli */
 .old-button {
@@ -507,7 +526,7 @@ const handleSubmit = (type: 'entrata' | 'uscita') => {
 .new-button {
   width: 76px;
   height: 76px;
-  min-width: 48px;  /* WCAG AA compliant */
+  min-width: 48px; /* WCAG AA compliant */
   min-height: 48px;
 }
 ```
@@ -517,6 +536,7 @@ const handleSubmit = (type: 'entrata' | 'uscita') => {
 ## 📊 Metriche Performance
 
 ### **Target Performance**
+
 ```
 First Paint: <200ms
 Largest Contentful Paint: <500ms
@@ -529,6 +549,7 @@ CSS: <10KB (component styles)
 ```
 
 ### **Ottimizzazioni**
+
 ```typescript
 // Lazy loading per componenti non critici
 const KeypadStats = lazy(() => import('./KeypadStats'));

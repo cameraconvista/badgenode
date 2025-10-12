@@ -18,6 +18,7 @@
 ## 🛠️ Overview Scripts
 
 ### **Comandi NPM Disponibili**
+
 ```bash
 # Backup e Restore
 npm run esegui:backup          # Backup automatico con rotazione
@@ -43,6 +44,7 @@ npm run ensure:dev             # Verifica e avvia se necessario
 ## 💾 Sistema Backup
 
 ### **backup.ts** - Backup Automatico
+
 ```
 Funzionalità:
 - Archiviazione completa progetto
@@ -76,6 +78,7 @@ Posizione: Backup_Automatico/
 ```
 
 ### **backup-restore.ts** - Ripristino Backup
+
 ```
 Funzionalità:
 - Lista backup disponibili
@@ -104,6 +107,7 @@ Sicurezza:
 ## 🔍 Diagnosi e Manutenzione
 
 ### **diagnose.ts** - Diagnosi Progetto
+
 ```
 Funzionalità:
 - Scansione file duplicati
@@ -138,6 +142,7 @@ Force: npm run diagnose:force (ignora cache)
 ```
 
 ### **health-check-runner.ts** - Health Check
+
 ```
 Funzionalità:
 - Verifica servizi esterni (Supabase)
@@ -176,6 +181,7 @@ Output: Report console + log file
 ## 📚 Documentazione
 
 ### **consolidate-docs.ts** - Consolidamento DOCS
+
 ```
 Funzionalità:
 - Raccoglie tutti i file DOCS/
@@ -204,6 +210,7 @@ Formato output:
 ```
 
 ### **template-component.ts** - Scaffold Componenti
+
 ```
 Funzionalità:
 - Genera template componente React
@@ -235,6 +242,7 @@ Dimensioni: <140 righe (garantito)
 ## 🚀 Development Tools
 
 ### **auto-start-dev.ts** - Avvio Automatico
+
 ```
 Funzionalità:
 - Verifica se dev server è attivo
@@ -259,6 +267,7 @@ Configurazioni:
 ```
 
 ### **cascade-auto-wrapper.ts** - Integrazione Cascade
+
 ```
 Funzionalità:
 - Wrapper per integrazione Cascade AI
@@ -280,6 +289,7 @@ Features:
 ## 🔧 Utility Condivise
 
 ### **scripts/utils/diagnose-core.ts**
+
 ```
 Funzioni principali:
 - scanFileLength(): verifica lunghezza file
@@ -294,6 +304,7 @@ Utilizzato da:
 ```
 
 ### **scripts/utils/docs-core.ts**
+
 ```
 Funzioni principali:
 - parseMarkdown(): parsing file MD
@@ -311,6 +322,7 @@ Utilizzato da:
 ## ⚙️ Configurazioni Script
 
 ### **Environment Variables**
+
 ```bash
 # Script Configuration
 STRICT_200=true                # Abilita file length guard strict
@@ -325,6 +337,7 @@ VITE_DEV_SERVER=true         # Abilita Vite dev server
 ```
 
 ### **File Configurazione**
+
 ```
 .diagnose_done               # Cache diagnosi (timestamp)
 REPORT_BACKUP.txt           # Log operazioni backup
@@ -339,6 +352,7 @@ REPORT_CONSOLIDATO.txt      # Documentazione consolidata
 ### **Errori Comuni**
 
 #### **Backup Fails**
+
 ```bash
 # Verifica permessi
 ls -la Backup_Automatico/
@@ -352,6 +366,7 @@ npm run esegui:backup
 ```
 
 #### **Diagnose Issues**
+
 ```bash
 # Reset cache
 rm .diagnose_done
@@ -366,6 +381,7 @@ npm install
 ```
 
 #### **Dev Server Problems**
+
 ```bash
 # Kill existing process
 pkill -f "tsx server/index.ts"
@@ -382,12 +398,14 @@ npm run auto:start
 ## 📊 Metriche Script
 
 ### **Performance Target**
+
 - Backup: <30 secondi (progetto completo)
 - Diagnosi: <10 secondi (cache attiva)
 - Consolidate docs: <5 secondi
 - Component generation: <2 secondi
 
 ### **Reliability**
+
 - Backup success rate: >99%
 - Diagnosi accuracy: >95%
 - Auto-recovery: attivo per dev tools

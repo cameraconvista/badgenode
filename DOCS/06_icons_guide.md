@@ -18,6 +18,7 @@
 ## 🔧 Overview Sistema
 
 ### **unplugin-icons**
+
 ```
 Vantaggi:
 - Tree-shaking automatico (solo icone utilizzate)
@@ -33,6 +34,7 @@ Collezioni supportate:
 ```
 
 ### **Configurazione Vite**
+
 ```typescript
 // vite.config.ts
 import Icons from 'unplugin-icons/vite';
@@ -45,9 +47,9 @@ export default defineConfig({
       autoInstall: true,
       scale: 1,
       defaultStyle: '',
-      defaultClass: ''
-    })
-  ]
+      defaultClass: '',
+    }),
+  ],
 });
 ```
 
@@ -56,6 +58,7 @@ export default defineConfig({
 ## 📦 Configurazione
 
 ### **Installazione**
+
 ```bash
 # Plugin principale
 npm install -D unplugin-icons
@@ -68,6 +71,7 @@ npm install -D @types/react
 ```
 
 ### **TypeScript Configuration**
+
 ```typescript
 // vite-env.d.ts
 declare module '~icons/*' {
@@ -78,6 +82,7 @@ declare module '~icons/*' {
 ```
 
 ### **ESLint Configuration**
+
 ```json
 // eslint.config.js
 {
@@ -97,6 +102,7 @@ declare module '~icons/*' {
 ## 🎯 Utilizzo Base
 
 ### **Import Pattern**
+
 ```typescript
 // Pattern: ~icons/{collection}/{icon-name}
 import IconClock from '~icons/lucide/clock';
@@ -117,6 +123,7 @@ export const Dashboard = () => {
 ```
 
 ### **Props Disponibili**
+
 ```typescript
 interface IconProps extends SVGProps<SVGSVGElement> {
   size?: number | string;    // Dimensione (width + height)
@@ -136,6 +143,7 @@ interface IconProps extends SVGProps<SVGSVGElement> {
 ## 🎨 Collezioni Disponibili
 
 ### **Lucide Icons (Primary)**
+
 ```typescript
 // Icone comuni BadgeNode
 import IconClock from '~icons/lucide/clock';
@@ -169,6 +177,7 @@ import IconFilter from '~icons/lucide/filter';
 ```
 
 ### **Tabler Icons (Secondary)**
+
 ```typescript
 // Icone aggiuntive se Lucide non disponibile
 import IconDashboard from '~icons/tabler/dashboard';
@@ -191,12 +200,13 @@ import IconPhone from '~icons/tabler/phone';
 ## 🎨 Design Guidelines
 
 ### **Dimensioni Standard**
+
 ```typescript
 // Sizing system BadgeNode
 const IconSizes = {
   xs: 'w-3 h-3',    // 12px - badges, indicators
   sm: 'w-4 h-4',    // 16px - buttons small
-  md: 'w-5 h-5',    // 20px - buttons standard  
+  md: 'w-5 h-5',    // 20px - buttons standard
   lg: 'w-6 h-6',    // 24px - headers, navigation
   xl: 'w-8 h-8',    // 32px - hero sections
   '2xl': 'w-12 h-12' // 48px - large displays
@@ -208,11 +218,12 @@ const IconSizes = {
 ```
 
 ### **Colori e Stati**
+
 ```typescript
 // Color system BadgeNode
 const IconColors = {
   primary: 'text-violet-600',     // #510357
-  secondary: 'text-pink-400',     // #e774f0  
+  secondary: 'text-pink-400',     // #e774f0
   success: 'text-green-500',      // Entrata
   danger: 'text-red-500',         // Uscita
   warning: 'text-yellow-500',     // Ore extra
@@ -225,6 +236,7 @@ const IconColors = {
 ```
 
 ### **Stroke Width**
+
 ```typescript
 // Consistenza stroke (Lucide/Tabler = 2px default)
 // Non modificare stroke-width per mantenere coerenza
@@ -241,39 +253,42 @@ const IconColors = {
 ## 🚀 Best Practices
 
 ### **Performance**
+
 ```typescript
 // ✅ TREE-SHAKING OTTIMALE
 import IconClock from '~icons/lucide/clock';
 import IconUser from '~icons/lucide/user';
 
 // ❌ EVITARE - Import multipli da stesso modulo
-import { Clock, User } from 'lucide-react';  // Bundle più grande
+import { Clock, User } from 'lucide-react'; // Bundle più grande
 
 // ✅ LAZY LOADING per icone non critiche
 const IconSettings = lazy(() => import('~icons/lucide/settings'));
 ```
 
 ### **Naming Conventions**
+
 ```typescript
 // ✅ NAMING CONSISTENTE
-import IconClock from '~icons/lucide/clock';        // Icon + PascalCase
+import IconClock from '~icons/lucide/clock'; // Icon + PascalCase
 import IconUserPlus from '~icons/lucide/user-plus'; // Kebab-case → PascalCase
 
 // Utilizzo in componente
-const ClockIcon = IconClock;  // Alias se necessario
+const ClockIcon = IconClock; // Alias se necessario
 ```
 
 ### **Accessibilità**
+
 ```typescript
 // ✅ ACCESSIBILITÀ COMPLETA
-<IconClock 
+<IconClock
   className="w-5 h-5"
   aria-label="Orario corrente"
   role="img"
 />
 
 // Per icone decorative
-<IconUser 
+<IconUser
   className="w-4 h-4"
   aria-hidden="true"
 />
@@ -284,6 +299,7 @@ const ClockIcon = IconClock;  // Alias se necessario
 ```
 
 ### **Componenti Wrapper**
+
 ```typescript
 // Wrapper riutilizzabile per icone comuni
 interface BadgeIconProps {
@@ -293,22 +309,22 @@ interface BadgeIconProps {
   className?: string;
 }
 
-export const BadgeIcon: React.FC<BadgeIconProps> = ({ 
-  name, 
-  size = 'md', 
+export const BadgeIcon: React.FC<BadgeIconProps> = ({
+  name,
+  size = 'md',
   color = 'current',
-  className 
+  className
 }) => {
   const icons = {
     clock: IconClock,
-    user: IconUser, 
+    user: IconUser,
     settings: IconSettings
   };
-  
+
   const Icon = icons[name];
   const sizeClass = IconSizes[size];
   const colorClass = IconColors[color];
-  
+
   return (
     <Icon className={cn(sizeClass, colorClass, className)} />
   );
@@ -323,10 +339,11 @@ export const BadgeIcon: React.FC<BadgeIconProps> = ({
 ## 🔍 Ricerca e Discovery
 
 ### **Browsing Icone**
+
 ```bash
 # Siti per browsing icone
 https://lucide.dev/icons/          # Lucide icons
-https://tabler-icons.io/           # Tabler icons  
+https://tabler-icons.io/           # Tabler icons
 https://icon-sets.iconify.design/  # Tutte le collezioni
 
 # Ricerca locale (se installato @iconify/json)
@@ -335,6 +352,7 @@ npx @iconify/json-tools list lucide
 ```
 
 ### **Verifica Disponibilità**
+
 ```typescript
 // Test import prima dell'uso
 try {
@@ -352,6 +370,7 @@ try {
 ### **Errori Comuni**
 
 #### **Import non risolto**
+
 ```bash
 # Verifica auto-install attivo
 grep -r "autoInstall.*true" vite.config.ts
@@ -364,6 +383,7 @@ npm run dev
 ```
 
 #### **TypeScript errors**
+
 ```typescript
 // Aggiungi types in vite-env.d.ts
 /// <reference types="unplugin-icons/types/react" />
@@ -377,6 +397,7 @@ declare module '~icons/*' {
 ```
 
 #### **Bundle size issues**
+
 ```bash
 # Analizza bundle
 npm run build -- --analyze
@@ -391,6 +412,7 @@ grep -r "~icons" src/        # Dovrebbe mostrare import specifici
 ## 📊 Metriche Performance
 
 ### **Bundle Impact**
+
 ```
 Icona singola: ~1-2KB (minified)
 Collezione completa: ~500KB+ (evitare)
@@ -401,6 +423,7 @@ Monitoring: webpack-bundle-analyzer
 ```
 
 ### **Runtime Performance**
+
 ```
 Rendering: <1ms per icona
 Memory: ~100B per istanza

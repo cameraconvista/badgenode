@@ -18,6 +18,7 @@
 ## 💻 Requisiti Sistema
 
 ### **Software Richiesto**
+
 ```
 Node.js: ≥18.0.0 (LTS recommended)
 npm: ≥9.0.0 (o yarn ≥3.0.0)
@@ -35,6 +36,7 @@ Editor raccomandato:
 ```
 
 ### **Verifiche Pre-Setup**
+
 ```bash
 # Check versioni
 node --version          # ≥18.0.0
@@ -53,6 +55,7 @@ curl -I https://registry.npmjs.org/
 ## 🔧 Environment Setup
 
 ### **.env.example** - Template Configurazione
+
 ```bash
 # === SUPABASE CONFIGURATION ===
 VITE_SUPABASE_URL=https://your-project.supabase.co
@@ -83,6 +86,7 @@ DEBUG_MODE=false
 ```
 
 ### **File Environment Locali**
+
 ```
 .env.local              # Configurazione locale (gitignored)
 .env.development.local  # Override per development
@@ -96,6 +100,7 @@ Priorità caricamento:
 ```
 
 ### **Variabili Obbligatorie**
+
 ```bash
 # Client (pubbliche, prefisso VITE_)
 VITE_SUPABASE_URL         # URL progetto Supabase
@@ -113,6 +118,7 @@ STRICT_200                # File length guard (true/false)
 ## 📦 Scripts NPM
 
 ### **Development Scripts**
+
 ```json
 {
   "dev": "NODE_ENV=development tsx server/index.ts",
@@ -124,6 +130,7 @@ STRICT_200                # File length guard (true/false)
 ```
 
 ### **Quality Assurance**
+
 ```json
 {
   "lint": "eslint . --ext ts,tsx",
@@ -135,6 +142,7 @@ STRICT_200                # File length guard (true/false)
 ```
 
 ### **Database & Environment**
+
 ```json
 {
   "db:push": "drizzle-kit push",
@@ -144,6 +152,7 @@ STRICT_200                # File length guard (true/false)
 ```
 
 ### **Utility Scripts**
+
 ```json
 {
   "esegui:backup": "tsx scripts/backup.ts",
@@ -160,18 +169,15 @@ STRICT_200                # File length guard (true/false)
 ## 🌐 Configurazioni PWA
 
 ### **PWA Development Settings**
+
 ```typescript
 // vite.config.ts - PWA Configuration
 VitePWA({
   registerType: 'autoUpdate',
-  devOptions: { 
-    enabled: false  // Disabilitato in development
+  devOptions: {
+    enabled: false, // Disabilitato in development
   },
-  includeAssets: [
-    'favicon.ico', 
-    'logo_app.png',
-    'robots.txt'
-  ],
+  includeAssets: ['favicon.ico', 'logo_app.png', 'robots.txt'],
   manifest: {
     name: 'BadgeNode',
     short_name: 'BadgeNode',
@@ -184,32 +190,34 @@ VitePWA({
       {
         src: 'icons/icon-192.png',
         sizes: '192x192',
-        type: 'image/png'
+        type: 'image/png',
       },
       {
-        src: 'icons/icon-512.png', 
+        src: 'icons/icon-512.png',
         sizes: '512x512',
-        type: 'image/png'
-      }
-    ]
-  }
-})
+        type: 'image/png',
+      },
+    ],
+  },
+});
 ```
 
 ### **Service Worker Guard**
+
 ```typescript
 // Protezione Service Worker in development
 if (import.meta.env.DEV) {
   // Disabilita SW su porta 8080 e localhost:3001
   if (location.port === '8080' || location.port === '3001') {
-    navigator.serviceWorker?.getRegistrations().then(registrations => {
-      registrations.forEach(registration => registration.unregister());
+    navigator.serviceWorker?.getRegistrations().then((registrations) => {
+      registrations.forEach((registration) => registration.unregister());
     });
   }
 }
 ```
 
 ### **Logo App Configuration**
+
 ```
 Asset principale: /logo_app.png
 - Formato: PNG trasparente
@@ -229,6 +237,7 @@ Icone PWA:
 ## 🔄 Git e Commit
 
 ### **Commit Sicuri**
+
 ```bash
 # ✅ METODI SICURI (raccomandati)
 
@@ -238,7 +247,7 @@ git commit -m "feat: aggiungi tastierino PIN" -m "- Implementa griglia 3x4" -m "
 # Metodo 2: File temporaneo
 echo "feat: aggiungi tastierino PIN
 
-- Implementa griglia 3x4  
+- Implementa griglia 3x4
 - Aggiunge validazione input
 - Fix responsive mobile" > commit_msg.txt
 git commit -F commit_msg.txt
@@ -250,6 +259,7 @@ git commit  # Apre VS Code per messaggio
 ```
 
 ### **Commit NON Sicuri (evitare)**
+
 ```bash
 # ❌ EVITARE - Problemi con terminale
 git commit -m "messaggio con 'apici' problematici"
@@ -261,10 +271,11 @@ git commit --no-verify -m "emergency fix"
 ```
 
 ### **Pre-commit Checklist**
+
 ```bash
 # Verifica automatica (Husky hooks)
 1. ESLint: 0 errori
-2. Prettier: formattazione corretta  
+2. Prettier: formattazione corretta
 3. TypeScript: 0 errori compilazione
 4. File length: ≤200 righe (STRICT_200=true)
 5. Tests: tutti passati (se presenti)
@@ -274,6 +285,7 @@ npm run lint && npm run check && npm run build
 ```
 
 ### **Branch Strategy**
+
 ```
 main              # Production ready
 ├── chore/*       # Manutenzione, fix, cleanup
@@ -283,7 +295,7 @@ main              # Production ready
 
 Naming convention:
 - chore/fix-backup-rotation
-- feature/admin-dashboard  
+- feature/admin-dashboard
 - hotfix/critical-security-patch
 - docs/update-api-reference
 ```
@@ -293,11 +305,12 @@ Naming convention:
 ## 🛠️ Development Tools
 
 ### **VS Code Extensions (raccomandato)**
+
 ```json
 {
   "recommendations": [
     "bradlc.vscode-tailwindcss",
-    "esbenp.prettier-vscode", 
+    "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "ms-vscode.vscode-typescript-next",
     "bradlc.vscode-tailwindcss",
@@ -307,6 +320,7 @@ Naming convention:
 ```
 
 ### **VS Code Settings**
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -322,10 +336,11 @@ Naming convention:
 ```
 
 ### **Debug Configuration**
+
 ```json
 {
   "type": "node",
-  "request": "launch", 
+  "request": "launch",
   "name": "Debug Server",
   "program": "${workspaceFolder}/server/index.ts",
   "env": {
@@ -342,6 +357,7 @@ Naming convention:
 ### **Problemi Comuni**
 
 #### **Environment Variables Non Caricate**
+
 ```bash
 # Verifica file .env
 cat .env.local
@@ -354,6 +370,7 @@ npm run dev
 ```
 
 #### **Port 3001 Occupato**
+
 ```bash
 # Trova processo
 lsof -ti:3001
@@ -366,6 +383,7 @@ PORT=3002 npm run dev
 ```
 
 #### **Build Failures**
+
 ```bash
 # Clean build
 npm run build:clean
@@ -379,6 +397,7 @@ npm install
 ```
 
 #### **PWA Issues in Dev**
+
 ```bash
 # Disabilita SW manualmente
 # In DevTools > Application > Service Workers > Unregister
@@ -395,12 +414,14 @@ grep -r "registerSW" client/src/
 ## 📊 Performance Targets
 
 ### **Development**
+
 - Dev server start: <5 secondi
-- Hot reload: <1 secondo  
+- Hot reload: <1 secondo
 - TypeScript check: <3 secondi
 - Build time: <10 secondi
 
 ### **Bundle Size**
+
 - Total bundle: <1MB gzipped
 - Main chunk: <500KB
 - Vendor chunk: <300KB

@@ -18,6 +18,7 @@
 ## 🗄️ Schema Tabelle
 
 ### **utenti** - Dipendenti Attivi
+
 ```
 Campi principali:
 - id: UUID (PK, auto-generated)
@@ -37,6 +38,7 @@ Vincoli:
 ```
 
 ### **timbrature** - Registrazioni Entrate/Uscite
+
 ```
 Campi principali:
 - id: BIGSERIAL (PK)
@@ -53,6 +55,7 @@ Logica giorno logico:
 ```
 
 ### **ex_dipendenti** - Archivio
+
 ```
 Campi principali:
 - id: UUID (PK)
@@ -69,10 +72,12 @@ Campi principali:
 ## 🔗 Relazioni e Indici
 
 ### **Relazioni Principali**
+
 - `timbrature.pin` → `utenti.pin` (CASCADE DELETE)
 - `ex_dipendenti` → copia dati da `utenti` prima dell'eliminazione
 
 ### **Indici Suggeriti**
+
 ```
 Performance critici:
 - idx_utenti_pin (UNIQUE)
@@ -91,6 +96,7 @@ Ricerche frequenti:
 ## 🌐 API Endpoints
 
 ### **Utenti Management**
+
 ```
 GET /api/utenti
 - Lista utenti attivi
@@ -110,6 +116,7 @@ DELETE /api/utenti/:pin
 ```
 
 ### **Timbrature**
+
 ```
 POST /api/timbrature
 - Registra entrata/uscita
@@ -127,6 +134,7 @@ GET /api/storico/:pin
 ```
 
 ### **Ex-Dipendenti**
+
 ```
 GET /api/ex-dipendenti
 - Lista archivio
@@ -142,6 +150,7 @@ GET /api/ex-dipendenti/:id/export
 ## 📦 Payload Examples
 
 ### **Registrazione Timbratura**
+
 ```json
 Request POST /api/timbrature:
 {
@@ -165,6 +174,7 @@ Response 400 (errore business):
 ```
 
 ### **Creazione Utente**
+
 ```json
 Request POST /api/utenti:
 {
@@ -187,6 +197,7 @@ Response 201:
 ```
 
 ### **Report Storico**
+
 ```json
 Response GET /api/storico/25?mese=2025-10:
 [
@@ -208,6 +219,7 @@ Response GET /api/storico/25?mese=2025-10:
 ## 🔐 Security & RLS
 
 ### **Row Level Security (Concettuale)**
+
 ```
 Policies principali:
 - utenti: lettura pubblica, scrittura admin
@@ -221,6 +233,7 @@ Ruoli:
 ```
 
 ### **Validazioni Business**
+
 ```
 Timbrature:
 - PIN deve esistere in utenti attivi
@@ -235,6 +248,7 @@ Utenti:
 ```
 
 ### **Rate Limiting**
+
 ```
 Suggerimenti:
 - /api/timbrature: 10 req/min per PIN
@@ -247,11 +261,13 @@ Suggerimenti:
 ## 🔧 Implementazione Notes
 
 ### **Database Provider**
+
 - **Supabase PostgreSQL** (production)
 - **SQLite** (development/testing)
 - **Migrations**: Drizzle ORM
 
 ### **Caching Strategy**
+
 ```
 Cache layers:
 - React Query: client-side (5min TTL)
@@ -265,6 +281,7 @@ Invalidation:
 ```
 
 ### **Monitoring**
+
 ```
 Metriche chiave:
 - Latency API < 200ms

@@ -18,6 +18,7 @@
 ## ⚡ Quick Start
 
 ### **Setup Completo (5 minuti)**
+
 ```bash
 # 1. Clona repository
 git clone https://github.com/cameraconvista/badgenode.git
@@ -41,6 +42,7 @@ open http://localhost:3001
 ```
 
 ### **Verifica Installazione**
+
 ```bash
 # Test completo sistema
 npm run health:check
@@ -57,6 +59,7 @@ npm run diagnose
 ## 📥 Clonazione e Setup
 
 ### **Repository Setup**
+
 ```bash
 # Clonazione con SSH (raccomandato)
 git clone git@github.com:cameraconvista/badgenode.git
@@ -72,6 +75,7 @@ git remote -v
 ```
 
 ### **Dependencies Installation**
+
 ```bash
 # Installazione standard
 npm install
@@ -85,6 +89,7 @@ npm list --depth=0
 ```
 
 ### **Environment Configuration**
+
 ```bash
 # Copia template
 cp .env.example .env.local
@@ -103,6 +108,7 @@ STRICT_200=true
 ## 🔄 Workflow Development
 
 ### **Branch Strategy**
+
 ```bash
 # Checkout da main
 git checkout main
@@ -121,12 +127,13 @@ git push origin feature/admin-dashboard
 ```
 
 ### **Micro-Commit Pattern**
+
 ```bash
 # Commit frequenti e piccoli
 git add src/components/Dashboard.tsx
 git commit -m "feat: crea componente Dashboard base"
 
-git add src/components/UserTable.tsx  
+git add src/components/UserTable.tsx
 git commit -m "feat: aggiungi tabella utenti"
 
 git add src/hooks/useUsers.ts
@@ -137,6 +144,7 @@ git push origin feature/admin-dashboard
 ```
 
 ### **Backup Before Merge**
+
 ```bash
 # SEMPRE backup prima di merge importanti
 npm run esegui:backup
@@ -155,6 +163,7 @@ git push origin main
 ## ✅ Checklist Pre-Commit
 
 ### **Verifiche Automatiche (Husky)**
+
 ```bash
 # Pre-commit hook esegue automaticamente:
 1. ESLint check (0 errori richiesti)
@@ -168,6 +177,7 @@ git commit --no-verify -m "emergency: critical hotfix"
 ```
 
 ### **Verifiche Manuali**
+
 ```bash
 # 1. Lint e Type Check
 npm run lint
@@ -176,7 +186,7 @@ npm run check
 # 2. Build Test
 npm run build
 
-# 3. Dev Server Test  
+# 3. Dev Server Test
 npm run dev
 # Verifica http://localhost:3001 funzionante
 
@@ -188,6 +198,7 @@ npm run esegui:backup
 ```
 
 ### **Code Quality Standards**
+
 ```typescript
 // ✅ BUONE PRATICHE
 
@@ -211,8 +222,8 @@ import { useUsers } from '@/hooks/useUsers';
 
 // 5. Naming conventions
 const handleUserClick = () => {}; // camelCase
-const UserTable = () => {};       // PascalCase
-const API_ENDPOINT = '';          // UPPER_CASE
+const UserTable = () => {}; // PascalCase
+const API_ENDPOINT = ''; // UPPER_CASE
 ```
 
 ---
@@ -220,6 +231,7 @@ const API_ENDPOINT = '';          // UPPER_CASE
 ## 🖥️ Development Environment
 
 ### **Prompt Unica Finestra Nera**
+
 ```bash
 # Setup terminale per sviluppo efficiente
 
@@ -241,6 +253,7 @@ kill %1 %2 %3
 ```
 
 ### **VS Code Workspace**
+
 ```json
 // .vscode/settings.json
 {
@@ -261,6 +274,7 @@ kill %1 %2 %3
 ```
 
 ### **Debug Configuration**
+
 ```json
 // .vscode/launch.json
 {
@@ -291,6 +305,7 @@ kill %1 %2 %3
 ## 🔧 Utility Commands
 
 ### **Sviluppo Quotidiano**
+
 ```bash
 # Avvio rapido
 npm run dev
@@ -309,6 +324,7 @@ npm run docs:consolidate
 ```
 
 ### **Manutenzione**
+
 ```bash
 # Diagnosi completa
 npm run diagnose
@@ -326,6 +342,7 @@ npm audit fix
 ```
 
 ### **Git Utilities**
+
 ```bash
 # Status completo
 git status
@@ -347,6 +364,7 @@ git stash pop
 ### **Problemi Setup Iniziale**
 
 #### **npm install fails**
+
 ```bash
 # Clear npm cache
 npm cache clean --force
@@ -362,6 +380,7 @@ yarn install
 ```
 
 #### **Environment variables non funzionano**
+
 ```bash
 # Verifica file .env.local esiste
 ls -la .env*
@@ -375,6 +394,7 @@ npm run dev
 ```
 
 #### **TypeScript errors**
+
 ```bash
 # Verifica tsconfig.json
 npm run check
@@ -389,6 +409,7 @@ rm -rf node_modules/.cache
 ### **Problemi Development**
 
 #### **Port 3001 occupato**
+
 ```bash
 # Trova processo
 lsof -ti:3001
@@ -401,6 +422,7 @@ PORT=3002 npm run dev
 ```
 
 #### **Hot reload non funziona**
+
 ```bash
 # Verifica Vite config
 cat vite.config.ts | grep -A5 server
@@ -411,6 +433,7 @@ npm run dev
 ```
 
 #### **Build fails**
+
 ```bash
 # Verifica errori TypeScript
 npm run check
@@ -425,6 +448,7 @@ npm run build:clean
 ### **Problemi Git**
 
 #### **Commit bloccato da pre-commit**
+
 ```bash
 # Verifica errori
 npm run lint
@@ -439,6 +463,7 @@ git commit -m "fix: risolve errori linting"
 ```
 
 #### **Merge conflicts**
+
 ```bash
 # Backup preventivo
 npm run esegui:backup
@@ -457,6 +482,7 @@ git commit -m "resolve: merge conflicts"
 ## 📊 Performance Monitoring
 
 ### **Metriche Development**
+
 ```bash
 # Build time
 time npm run build
@@ -472,6 +498,7 @@ time npm run check
 ```
 
 ### **Monitoring Tools**
+
 ```bash
 # Processo monitoring
 htop
@@ -489,6 +516,7 @@ lsof +D . | grep node
 ## 🎯 Best Practices
 
 ### **Sviluppo Efficiente**
+
 1. **Micro-commit**: commit piccoli e frequenti
 2. **Backup preventivo**: prima di operazioni rischiose
 3. **Test locale**: sempre prima di push
@@ -496,12 +524,14 @@ lsof +D . | grep node
 5. **Code review**: auto-review prima di commit
 
 ### **Gestione Errori**
+
 1. **Log dettagliati**: usa console.error con context
 2. **Fallback graceful**: gestisci errori di rete
 3. **User feedback**: mostra errori comprensibili
 4. **Recovery automatico**: retry logic dove possibile
 
 ### **Performance**
+
 1. **Lazy loading**: componenti non critici
 2. **Code splitting**: bundle ottimizzati
 3. **Caching**: React Query per API calls

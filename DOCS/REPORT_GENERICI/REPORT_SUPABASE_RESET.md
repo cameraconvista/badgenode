@@ -9,12 +9,14 @@
 ## 📋 SCRIPT SQL PREPARATI
 
 ### ✅ **Script Idempotente Creato**
+
 - **File**: `scripts/sql/reset-supabase-server.sql`
 - **Dimensione**: ~4KB
 - **Guardrail**: Tutto in transazione, solo IF NOT EXISTS / CREATE OR REPLACE
 - **Timezone**: Europe/Rome, cutoff 05:00 per giorno logico
 
 ### ✅ **Smoke Test Preparato**
+
 - **File**: `scripts/sql/smoke-test-supabase.sql`
 - **Test**: 6 scenari di verifica
 - **Validazione**: PIN, alternanza, giorno_logico
@@ -24,6 +26,7 @@
 ## 🔧 CONTENUTO SCRIPT RESET
 
 ### **1. Enum e Tabelle**
+
 ```sql
 -- Enum
 create type if not exists public.timbro_tipo as enum ('entrata','uscita');
@@ -57,6 +60,7 @@ create table if not exists public.timbrature (
 ```
 
 ### **2. Indici Ottimizzati**
+
 ```sql
 create index if not exists idx_timbrature_pin_giorno on public.timbrature(pin, giorno_logico);
 create index if not exists idx_timbrature_pin_ts on public.timbrature(pin, ts_order desc);
@@ -65,6 +69,7 @@ create unique index if not exists ux_timbrature_client_event_id
 ```
 
 ### **3. Trigger Sicurezza (Alternanza + Giorno Logico)**
+
 ```sql
 create or replace function public.enforce_alternanza_fn()
 returns trigger
@@ -112,10 +117,11 @@ $$;
 ```
 
 ### **4. RPC insert_timbro_v2**
+
 ```sql
 create or replace function public.insert_timbro_v2(
-  p_pin int, 
-  p_tipo public.timbro_tipo, 
+  p_pin int,
+  p_tipo public.timbro_tipo,
   p_client_event_id uuid default null
 )
 returns public.timbrature
@@ -143,6 +149,7 @@ $$;
 ```
 
 ### **5. RLS + Grants**
+
 ```sql
 -- Abilitazione RLS
 alter table public.utenti enable row level security;
@@ -174,6 +181,7 @@ grant execute on function public.insert_timbro_v2(int, public.timbro_tipo, uuid)
 ## 🧪 SMOKE TEST PREPARATO
 
 ### **Test Scenarios**
+
 1. **Seed utenti** (idempotente)
 2. **ENTRATA valida** → Deve inserire record
 3. **Doppia ENTRATA** → Deve fallire con P0001
@@ -182,6 +190,7 @@ grant execute on function public.insert_timbro_v2(int, public.timbro_tipo, uuid)
 6. **Verifica giorno_logico** → Cutoff 05:00 Europe/Rome
 
 ### **Output Atteso**
+
 ```sql
 -- Test 1: ENTRATA valida
 SELECT * FROM public.insert_timbro_v2(1,'entrata');
@@ -190,7 +199,7 @@ SELECT * FROM public.insert_timbro_v2(1,'entrata');
 -- Test 2: Doppia ENTRATA
 -- Risultato: NOTICE "OK: doppia entrata bloccata (Alternanza violata...)"
 
--- Test 3: USCITA valida  
+-- Test 3: USCITA valida
 SELECT * FROM public.insert_timbro_v2(1,'uscita');
 -- Risultato: 1 riga inserita
 
@@ -208,12 +217,14 @@ FROM public.timbrature WHERE pin=1 ORDER BY ts_order;
 ## ⚠️ STATO ATTUALE
 
 ### **🔍 Diagnosi Connettività**
+
 - ✅ **App locale attiva**: http://localhost:3001
 - ✅ **Variabili ambiente**: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY presenti
 - ❌ **SUPABASE_SERVICE_ROLE_KEY**: Mancante in .env.local
 - ❌ **Connessione diretta Supabase**: fetch failed
 
 ### **🎯 Azione Richiesta**
+
 Per completare lo STEP 2, è necessario:
 
 1. **Eseguire manualmente** il contenuto di `scripts/sql/reset-supabase-server.sql` nel **SQL Editor di Supabase**
@@ -221,10 +232,11 @@ Per completare lo STEP 2, è necessario:
 3. **Riportare i risultati** dei test
 
 ### **📋 Checklist Esecuzione Manuale**
+
 - [ ] Aprire https://supabase.com/dashboard/project/[PROJECT_ID]/sql/new
 - [ ] Incollare contenuto `reset-supabase-server.sql`
 - [ ] Eseguire → Verificare **COMMIT** senza errori
-- [ ] Incollare contenuto `smoke-test-supabase.sql`  
+- [ ] Incollare contenuto `smoke-test-supabase.sql`
 - [ ] Eseguire → Verificare output atteso
 - [ ] Aggiornare questo report con risultati
 
@@ -233,12 +245,14 @@ Per completare lo STEP 2, è necessario:
 ## 📊 PREPARAZIONE COMPLETATA
 
 ### **✅ Deliverable Pronti**
+
 - **Script SQL**: Idempotente, transazionale, a rischio zero
 - **Smoke Test**: 6 scenari di validazione
 - **Documentazione**: Completa con output atteso
 - **Guardrail**: Nessuna cancellazione a tappeto
 
 ### **🔄 Prossimi Passi**
+
 1. **Esecuzione manuale** script SQL in Supabase
 2. **Verifica risultati** smoke test
 3. **Aggiornamento report** con log esecuzione

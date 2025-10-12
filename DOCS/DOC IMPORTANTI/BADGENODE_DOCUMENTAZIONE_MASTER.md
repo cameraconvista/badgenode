@@ -9,6 +9,7 @@
 **BadgeNode** è una **PWA mobile-first** per la gestione delle **timbrature** dei dipendenti tramite **PIN (1-99)**, con sezione **Admin** desktop-first.
 
 ### **Architettura Generale**
+
 - **PWA mobile-first** per timbrature dipendenti tramite PIN (1-99)
 - **Admin desktop-first** per gestione utenti e storico
 - **Backend**: Supabase PostgreSQL + Realtime + RLS
@@ -16,6 +17,7 @@
 - **Timezone**: Europe/Rome (no UTC conversions)
 
 ### **Stack Tecnico**
+
 - React 18.3.1 + TypeScript 5.6.3
 - Vite 5.4.20 + PWA plugin
 - Supabase 2.74.0 + Realtime
@@ -28,6 +30,7 @@
 ## 🏗️ STRUTTURA PROGETTO
 
 ### **Struttura Pagine**
+
 1. **Home (/)** - Tastierino PIN + timbrature live
 2. **Storico (/storico-timbrature)** - Report mensili con ore extra e export PDF/XLS
 3. **Admin Utenti (/archivio-dipendenti)** - Gestione dipendenti (solo PIN 1909)
@@ -35,11 +38,13 @@
 5. **Login (/login)** - Autenticazione admin
 
 ### **Routing Ottimizzato**
+
 ```
 /login → /archivio-dipendenti → /storico-timbrature/:pin → /storico-timbrature → / → *
 ```
 
 ### **Cartelle Principali**
+
 ```
 ├── client/                 # Frontend React + TypeScript
 │   ├── src/
@@ -61,11 +66,13 @@
 ## 🎨 DESIGN SYSTEM
 
 ### **Palette Colori**
+
 - **Primario**: Viola #510357, Rosa #e774f0, Bianco #ffffff
 - **Stati**: Verde (entrata), Rosso (uscita), Giallo (ore extra)
 - **Temi**: Dark/Light coerenti con contrasto AA
 
 ### **UX Guidelines**
+
 - **Mobile**: Portrait-first, touch targets 44px+
 - **Desktop**: Admin interface ottimizzata
 - **PWA**: Installabile, offline-capable
@@ -75,6 +82,7 @@
 ## 🗄️ DATABASE SCHEMA
 
 ### **Tabelle Principali**
+
 ```sql
 -- Utenti attivi
 utenti: pin(PK), nome, cognome, ore_contrattuali(8.00), email, telefono
@@ -90,6 +98,7 @@ ex_dipendenti: archivio dipendenti con data archiviazione
 ```
 
 ### **Logica Giorno Logico**
+
 - **Entrate 00:00-04:59** → giorno logico = giorno precedente
 - **Uscite 00:00-04:59** → stesso giorno logico dell'entrata se turno notturno
 - **Calcolo ore**: prima entrata → ultima uscita del giorno logico
@@ -100,6 +109,7 @@ ex_dipendenti: archivio dipendenti con data archiviazione
 ## ⚙️ CONFIGURAZIONE SVILUPPO
 
 ### **Environment Variables**
+
 ```bash
 # .env.local
 VITE_SUPABASE_URL=your_supabase_url
@@ -110,6 +120,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 ### **Scripts Principali**
+
 ```json
 {
   "dev": "NODE_ENV=development tsx server/index.ts",
@@ -122,6 +133,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 ### **Build Configuration**
+
 - **Root**: `client/`
 - **Output**: `dist/public/`
 - **Base**: `/`
@@ -132,17 +144,20 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ## 🔧 GOVERNANCE CODICE
 
 ### **Limiti e Regole**
+
 - **Limite rigido**: 200 righe per file (pre-commit hook)
 - **Warning**: ≥150 righe
 - **ESLint + Prettier** attivi
 - **TypeScript strict mode**
 
 ### **Sistema Backup**
+
 - **Rotazione automatica**: 3 copie in `Backup_Automatico/`
 - **Nomenclatura**: `backup_YYYY.MM.DD_HH.MM.tar`
 - **Comando**: `npm run esegui:backup`
 
 ### **Ottimizzazioni Implementate**
+
 - Singleton Supabase client
 - Icone canonicalizzate in `/assets/icons/`
 - Service Worker guard su porta 8080 e Render
@@ -154,11 +169,13 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ## 🚀 DEPLOY E PRODUZIONE
 
 ### **Configurazione Render**
+
 - **Build Command**: `npm ci && npm run build`
 - **Publish Directory**: `dist/public`
 - **Rewrite Rule**: `/* → /index.html`
 
 ### **Stato Attuale**
+
 - ✅ **Console pulita** senza errori SW o 404
 - ✅ **Pagina Storico** completamente funzionante
 - ✅ **PIN dinamico** operativo
@@ -170,6 +187,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ## 📋 CHECKLIST MANUTENZIONE
 
 ### **Prima di ogni deploy**
+
 1. ✅ Lint: 0 errori (warning entro baseline)
 2. ✅ TypeCheck: 0 errori
 3. ✅ Build: successo frontend
@@ -178,6 +196,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 6. ✅ Tag Git creato
 
 ### **Monitoraggio Post-Deploy**
+
 - Console browser pulita
 - Routing funzionante su tutte le pagine
 - Timbrature salvate correttamente
@@ -189,10 +208,12 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ## 🔗 RIFERIMENTI RAPIDI
 
 ### **URL Principali**
+
 - **Dev**: `http://localhost:3001`
 - **Prod**: `https://badgenode.onrender.com`
 
 ### **Comandi Utili**
+
 ```bash
 # Sviluppo
 npm run dev
@@ -209,6 +230,7 @@ npm run diagnose
 ```
 
 ### **File Configurazione Chiave**
+
 - `vite.config.ts` - Build e alias
 - `tailwind.config.ts` - Styling
 - `drizzle.config.ts` - Database
