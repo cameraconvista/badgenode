@@ -1,7 +1,7 @@
 # 02 🏗️ STRUTTURA PROGETTO - BadgeNode
 
 **Mappa directory e responsabilità del repository**  
-**Versione**: 2.0 • **Data**: 2025-10-09
+**Versione**: 4.0 • **Data**: 2025-10-12
 
 ---
 
@@ -25,14 +25,21 @@ BadgeNode/
 ├── 📁 client/                  # Frontend React + TypeScript
 ├── 📁 server/                  # Backend Express + Supabase
 ├── 📁 scripts/                 # Utility automazione e manutenzione
+│   ├── 📁 ci/                  # Script validazione automatica
+│   ├── 📁 utils/               # Utility condivise
+│   └── 📁 db/                  # Script database
 ├── 📁 shared/                  # Tipi condivisi frontend/backend
+├── 📁 supabase/                # Configurazione database
+│   └── 📁 migrations/          # Migrazioni SQL
 ├── 📁 public/                  # Asset statici pubblici
 ├── 📁 dist/                    # Build output (generato)
 ├── 📁 node_modules/            # Dipendenze (gitignored)
 ├── 📄 package.json             # Configurazione npm e scripts
 ├── 📄 vite.config.ts           # Build configuration
 ├── 📄 tsconfig.json            # TypeScript configuration
-└── 📄 .env.example             # Template variabili ambiente
+├── 📄 .env.example             # Template variabili ambiente
+├── 📄 .env.sample              # Template semplificato
+└── 📄 .husky/                  # Git hooks pre-commit
 ```
 
 ---
@@ -48,10 +55,17 @@ DOCS/
 ├── 03_scripts_utilita.md       # Manuale scripts automazione
 ├── 04_config_sviluppo.md       # Setup locale e convenzioni
 ├── 05_setup_sviluppo.md        # Onboarding rapido
-├── ICONS_GUIDE.md              # Guida unplugin-icons
-├── LOGICA_GIORNO_LOGICO.md     # Logica business timbrature
-├── UI_HOME_KEYPAD.md           # Specifiche UI tastierino
-└── REPORT_CONSOLIDATO.txt      # Auto-generato da script
+├── 06_icons_guide.md           # Guida unplugin-icons
+├── 07_logica_giorno_logico.md  # Logica business timbrature
+├── 08_ui_home_keypad.md        # Specifiche UI tastierino
+├── README_PROGETTO.md          # Documentazione completa progetto
+├── REPORT_VALIDAZIONE.md       # Report validazione automatica
+├── REPORT_REFACTOR_FINALE.md   # Report consolidamento finale
+├── REPORT_DIAGNOSI_COMPLETA.md # Diagnosi codebase
+└── DOC IMPORTANTI/             # Documentazione critica
+    ├── BADGENODE_DOCUMENTAZIONE_MASTER.md
+    ├── BADGENODE_REPORTS_STORICI.md
+    └── BADGENODE_SQL_REFERENCE.md
 ```
 
 ### **ARCHIVE/** - Archiviazione
@@ -94,7 +108,9 @@ client/
 │   │   ├── theme/            # Provider temi dark/light
 │   │   └── ui/               # Componenti base (Radix UI)
 │   ├── pages/                # Pagine principali
-│   │   ├── Home.tsx          # Tastierino timbrature
+│   │   ├── Home/             # Tastierino timbrature (modulare)
+│   │   │   ├── index.tsx     # Contenitore principale
+│   │   │   └── components/   # Componenti Home
 │   │   ├── StoricoTimbrature.tsx # Report storico
 │   │   ├── ArchivioDipendenti.tsx # Gestione utenti
 │   │   └── Login/            # Autenticazione admin
@@ -114,10 +130,12 @@ client/
 
 ### **Regole Frontend**
 
-- **Componenti**: Max 200 righe, warning ≥150
+- **Componenti**: Max 220 righe (hard limit), warning ≥180
+- **File splitting**: Obbligatorio per file >220 righe
 - **Organizzazione**: Per funzione, non per tipo
 - **Naming**: PascalCase per componenti, camelCase per utility
 - **Import**: Alias `@/` per src/, `@shared/` per shared/
+- **TODO Policy**: Solo `TODO(BUSINESS)` permessi
 
 ---
 
@@ -149,16 +167,25 @@ shared/
 
 ```
 scripts/
-├── backup.ts                 # Sistema backup automatico
-├── backup-restore.ts         # Ripristino backup
-├── diagnose.ts              # Diagnosi progetto
-├── consolidate-docs.ts      # Genera REPORT_CONSOLIDATO.txt
-├── template-component.ts    # Scaffold componenti
-├── auto-start-dev.ts       # Avvio automatico dev
-├── health-check-runner.ts   # Health check sistema
-└── utils/                   # Utility condivise
-    ├── diagnose-core.ts
-    └── docs-core.ts
+├── ci/                      # Script validazione automatica
+│   ├── checks.sh           # Validazione completa (typecheck + build + grep)
+│   └── smoke-runtime.ts    # Test runtime Supabase
+├── utils/                   # Utility condivise
+│   ├── diagnose-core.ts
+│   ├── diagnose-report.ts
+│   ├── docs-core.ts
+│   └── report-manager.ts
+├── db/                      # Script database
+│   ├── SEED_GIORNO_LOGICO_V5.sql
+│   └── SEMPLIFICAZIONE_STORICO_V1.sql
+├── backup.ts                # Sistema backup automatico
+├── backup-restore.ts        # Ripristino backup
+├── diagnose.ts             # Diagnosi progetto
+├── consolidate-docs.ts     # Genera REPORT_CONSOLIDATO.txt
+├── template-component.ts   # Scaffold componenti
+├── auto-start-dev.ts      # Avvio automatico dev
+├── health-check-runner.ts  # Health check sistema
+└── file-length-guard.cjs   # Controllo lunghezza file (pre-commit)
 ```
 
 ### **Scripts NPM Principali**
@@ -171,6 +198,8 @@ scripts/
   "esegui:backup": "tsx scripts/backup.ts",
   "docs:consolidate": "tsx scripts/consolidate-docs.ts",
   "diagnose": "tsx scripts/diagnose.ts",
+  "check:ci": "bash scripts/ci/checks.sh",
+  "smoke:runtime": "tsx scripts/ci/smoke-runtime.ts",
   "lint": "eslint . --ext ts,tsx",
   "check": "tsc -p tsconfig.json --noEmit"
 }
@@ -183,15 +212,18 @@ scripts/
 ### **File Length Guard**
 
 ```
-Limiti STRICT (STRICT_200=true):
-- ≤200 righe: OK
-- ≥150 righe: WARNING
-- >200 righe: BLOCK commit
+Limiti STRICT (FASE 4/4):
+- ≤220 righe: OK
+- ≥180 righe: WARNING (commit permesso)
+- >220 righe: BLOCK commit (hard limit)
 
-Eccezioni:
-- File di configurazione
-- File auto-generati
-- File in ARCHIVE/
+Scope:
+- Solo *.ts e *.tsx in client/src/
+- Esclude scripts/, server/, ARCHIVE/
+
+Enforcement:
+- Pre-commit hook automatico
+- Script: file-length-guard.cjs
 ```
 
 ### **Backup System**
@@ -225,14 +257,20 @@ Commit rules:
 Tools attivi:
 - ESLint: linting JavaScript/TypeScript
 - Prettier: code formatting
-- Husky: git hooks
+- Husky: git hooks + pre-commit validation
 - TypeScript: type checking strict
 
 Standards:
-- No console.log in production
+- No console.log/FIXME/HACK in production
+- Solo TODO(BUSINESS) permessi
 - Prefer const over let
 - Explicit return types
 - JSDoc per funzioni pubbliche
+
+Validazione automatica:
+- npm run check:ci (typecheck + build + grep guard)
+- npm run smoke:runtime (test Supabase)
+- Pre-commit hooks obbligatori
 ```
 
 ---
@@ -296,9 +334,9 @@ components.json       # Radix UI components config
 
 ### **Dimensioni Target**
 
-- File singolo: ≤200 righe
-- Componente: ≤150 righe (warning)
-- Build size: ≤1MB gzipped
+- File singolo: ≤220 righe (hard limit)
+- Componente: ≤180 righe (warning)
+- Build size: ≤626KB gzipped (attuale)
 - Bundle chunks: ottimizzati per lazy loading
 
 ### **Performance**

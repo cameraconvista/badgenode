@@ -1,7 +1,7 @@
 # 04 ⚙️ CONFIG SVILUPPO - BadgeNode
 
 **Setup locale e convenzioni di sviluppo**  
-**Versione**: 2.0 • **Data**: 2025-10-09
+**Versione**: 4.0 • **Data**: 2025-10-12
 
 ---
 
@@ -54,11 +54,18 @@ curl -I https://registry.npmjs.org/
 
 ## 🔧 Environment Setup
 
-### **.env.example** - Template Configurazione
+### **.env.sample** - Template Semplificato (NUOVO)
+
+```bash
+VITE_SUPABASE_URL=https://tutllgsjrbxkmrwseogz.supabase.co
+VITE_SUPABASE_ANON_KEY=***INCOLLA_ANON_KEY***
+```
+
+### **.env.example** - Template Configurazione Completa
 
 ```bash
 # === SUPABASE CONFIGURATION ===
-VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_URL=https://tutllgsjrbxkmrwseogz.supabase.co
 VITE_SUPABASE_ANON_KEY=your_anon_key_here
 
 # === SERVER CONFIGURATION (Admin only) ===
@@ -69,8 +76,9 @@ NODE_ENV=development
 PORT=3001
 VITE_DEV_SERVER=true
 
-# === FILE LENGTH GUARD ===
-STRICT_200=true
+# === FILE LENGTH GUARD (AGGIORNATO FASE 4/4) ===
+STRICT_220=true                # Hard limit 220 righe
+WARNING_180=true               # Soft limit 180 righe
 
 # === PWA DEVELOPMENT ===
 VITE_PWA_DEV_ENABLED=false
@@ -110,7 +118,8 @@ VITE_SUPABASE_ANON_KEY    # Chiave anonima Supabase
 SUPABASE_SERVICE_ROLE_KEY # Chiave admin Supabase (opzionale)
 
 # Development
-STRICT_200                # File length guard (true/false)
+STRICT_220                # File length guard hard limit (true/false)
+WARNING_180               # File length guard soft limit (true/false)
 ```
 
 ---
@@ -137,7 +146,9 @@ STRICT_200                # File length guard (true/false)
   "lint:fix": "eslint . --ext ts,tsx --fix",
   "format": "prettier --write .",
   "check": "tsc -p tsconfig.json --noEmit",
-  "check:dev": "tsx scripts/check-dev.ts"
+  "check:dev": "tsx scripts/check-dev.ts",
+  "check:ci": "bash scripts/ci/checks.sh",
+  "smoke:runtime": "tsx scripts/ci/smoke-runtime.ts"
 }
 ```
 
@@ -273,15 +284,16 @@ git commit --no-verify -m "emergency fix"
 ### **Pre-commit Checklist**
 
 ```bash
-# Verifica automatica (Husky hooks)
+# Verifica automatica (Husky hooks - AGGIORNATO FASE 4/4)
 1. ESLint: 0 errori
 2. Prettier: formattazione corretta
 3. TypeScript: 0 errori compilazione
-4. File length: ≤200 righe (STRICT_200=true)
-5. Tests: tutti passati (se presenti)
+4. File length: ≤220 righe hard limit, ≥180 warning
+5. Validazione CI: npm run check:ci
+6. Grep guard: no console.log/FIXME/HACK/TODO non-business
 
 # Verifica manuale
-npm run lint && npm run check && npm run build
+npm run lint && npm run check && npm run check:ci
 ```
 
 ### **Branch Strategy**

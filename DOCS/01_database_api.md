@@ -1,7 +1,7 @@
 # 01 📊 DATABASE API - BadgeNode
 
 **Descrizione concettuale del modello dati e API endpoints**  
-**Versione**: 2.0 • **Data**: 2025-10-09
+**Versione**: 4.0 • **Data**: 2025-10-12
 
 ---
 
@@ -118,10 +118,11 @@ DELETE /api/utenti/:pin
 ### **Timbrature**
 
 ```
-POST /api/timbrature
-- Registra entrata/uscita
-- Body: {pin, tipo}
-- Response: {id, message, timestamp}
+RPC insert_timbro_v2
+- Registra entrata/uscita con validazione PIN
+- Params: {p_pin: number, p_tipo: 'entrata'|'uscita'}
+- Response: {success: boolean, message: string}
+- Validazione: PIN deve esistere in tabella utenti
 
 GET /api/timbrature/:pin
 - Storico timbrature per PIN
@@ -152,24 +153,32 @@ GET /api/ex-dipendenti/:id/export
 ### **Registrazione Timbratura**
 
 ```json
-Request POST /api/timbrature:
+Request RPC insert_timbro_v2:
 {
-  "pin": 15,
-  "tipo": "entrata"
+  "p_pin": 15,
+  "p_tipo": "entrata"
 }
 
 Response 200:
 {
-  "id": 1234567890,
+  "success": true,
   "message": "Entrata registrata",
-  "timestamp": "2025-10-09T08:30:00+02:00",
-  "giornologico": "2025-10-09"
+  "timestamp": "2025-10-12T08:30:00+02:00",
+  "giornologico": "2025-10-12"
 }
 
 Response 400 (errore business):
 {
-  "error": "Hai già fatto entrata per oggi",
-  "code": "DUPLICATE_ENTRY"
+  "success": false,
+  "error": "Alternanza entrata/uscita non rispettata",
+  "code": "INVALID_SEQUENCE"
+}
+
+Response 400 (PIN non valido):
+{
+  "success": false,
+  "error": "PIN non registrato nel sistema",
+  "code": "INVALID_PIN"
 }
 ```
 

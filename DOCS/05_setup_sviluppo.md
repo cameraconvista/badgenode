@@ -1,7 +1,7 @@
 # 05 🚀 SETUP SVILUPPO - BadgeNode
 
 **Onboarding rapido per sviluppatori**  
-**Versione**: 2.0 • **Data**: 2025-10-09
+**Versione**: 4.0 • **Data**: 2025-10-12
 
 ---
 
@@ -27,12 +27,12 @@ cd badgenode
 # 2. Installa dipendenze
 npm install
 
-# 3. Configura environment
-cp .env.example .env.local
-# Modifica .env.local con le tue configurazioni
+# 3. Configura environment (SEMPLIFICATO)
+cp .env.sample .env.local
+# Modifica .env.local con la tua VITE_SUPABASE_ANON_KEY
 
-# 4. Verifica setup
-npm run check && npm run lint
+# 4. Verifica setup (AGGIORNATO FASE 4/4)
+npm run check && npm run check:ci
 
 # 5. Avvia development
 npm run dev

@@ -1,7 +1,7 @@
 # 08 🎨 UI HOME KEYPAD - BadgeNode
 
 **Storico e specifiche finali della Home Tastierino**  
-**Versione**: 2.0 • **Data**: 2025-10-09
+**Versione**: 4.0 • **Data**: 2025-10-12
 
 ---
 
@@ -566,4 +566,46 @@ const debouncedValidation = useMemo(
 
 ---
 
-**Nota**: Questo design è ottimizzato per usabilità mobile e accessibilità. Tutte le specifiche sono testate su dispositivi reali e rispettano gli standard WCAG AA.
+## 🏗️ Struttura Modulare (FASE 4/4)
+
+### **Refactoring Architetturale**
+
+```
+PRIMA (Home.tsx monolitico - 208 righe):
+pages/Home.tsx                    # File unico troppo lungo
+
+DOPO (Struttura modulare - max 114 righe per file):
+pages/Home/
+├── index.tsx                     # Contenitore principale (82 righe)
+├── components/
+│   ├── HomeContainer.tsx         # Layout UI (81 righe)
+│   └── TimbratureActions.tsx     # Business logic (114 righe)
+```
+
+### **Benefici Architetturali**
+
+```
+✅ Separation of Concerns:
+- index.tsx: State management + hooks
+- HomeContainer.tsx: UI layout + styling
+- TimbratureActions.tsx: Business logic + API calls
+
+✅ Manutenibilità:
+- File piccoli e focalizzati
+- Responsabilità chiare
+- Testing più semplice
+
+✅ Performance:
+- Bundle splitting ottimizzato
+- Tree shaking migliorato
+- Hot reload più veloce
+
+✅ Compliance:
+- Tutti i file <220 righe (hard limit)
+- Pre-commit hooks attivi
+- Zero regressioni UX
+```
+
+---
+
+**Nota**: Questo design è ottimizzato per usabilità mobile e accessibilità. La struttura modulare garantisce manutenibilità e rispetto dei limiti di lunghezza file. Tutte le specifiche sono testate su dispositivi reali e rispettano gli standard WCAG AA.

@@ -1,7 +1,7 @@
 # 📅 LOGICA GIORNO LOGICO — BadgeNode
 
-**Data aggiornamento**: 2025-10-10
-**Versione documento**: v2.1 (hotfix sotto-righe + chiarimenti pairing)
+**Data aggiornamento**: 2025-10-12
+**Versione documento**: v4.0 (consolidamento finale + RPC insert_timbro_v2)
 **Autore**: BadgeNode • Revisione tecnica Cascade
 
 ---

@@ -1,7 +1,7 @@
 # 06 🎨 ICONS GUIDE - BadgeNode
 
 **Guida completa all'uso di unplugin-icons con collezioni Lucide e Tabler**  
-**Versione**: 2.0 • **Data**: 2025-10-09
+**Versione**: 4.0 • **Data**: 2025-10-12
 
 ---
 

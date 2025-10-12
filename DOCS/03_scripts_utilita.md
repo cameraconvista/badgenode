@@ -1,7 +1,7 @@
 # 03 🔧 SCRIPTS UTILITÀ - BadgeNode
 
 **Manuale completo degli script di automazione e manutenzione**  
-**Versione**: 2.0 • **Data**: 2025-10-09
+**Versione**: 4.0 • **Data**: 2025-10-12
 
 ---
 
@@ -25,6 +25,10 @@ npm run esegui:backup          # Backup automatico con rotazione
 npm run backup:list            # Lista backup esistenti
 npm run backup:restore         # Ripristino interattivo
 
+# Validazione Automatica (NUOVO - FASE 4/4)
+npm run check:ci               # Validazione completa (typecheck + build + grep)
+npm run smoke:runtime          # Test runtime Supabase (utenti + RPC)
+
 # Diagnosi e Manutenzione
 npm run diagnose               # Diagnosi completa progetto
 npm run diagnose:force         # Forza diagnosi (ignora cache)
@@ -37,6 +41,54 @@ npm run gen:component          # Scaffold nuovo componente
 # Development
 npm run auto:start             # Avvio automatico dev server
 npm run ensure:dev             # Verifica e avvia se necessario
+```
+
+---
+
+## ✅ Validazione Automatica (FASE 4/4)
+
+### **scripts/ci/checks.sh** - Validazione Completa
+
+```
+Funzionalità:
+- TypeScript check (0 errori)
+- Build production test (626KB bundle)
+- Grep guard (blocca console.log/FIXME/HACK/TODO non-business)
+- Verifica presenza file SQL smoke test
+
+Comando: npm run check:ci
+
+Processo:
+1. npm run check (TypeScript compilation)
+2. npm run build (Vite + ESBuild)
+3. Grep guard per debug residui
+4. Verifica file scripts/sql/smoke-test-supabase.sql
+5. Report finale con timing
+
+Tempo esecuzione: ~4.3 secondi
+Exit code: 0 se tutti i controlli passano, 1 se fallisce
+```
+
+### **scripts/ci/smoke-runtime.ts** - Test Runtime
+
+```
+Funzionalità:
+- Test connettività Supabase
+- Query tabella utenti (SELECT pin LIMIT 3)
+- Test RPC insert_timbro_v2 (dry run con PIN 3)
+- Validazione response format
+
+Comando: npm run smoke:runtime
+
+Processo:
+1. Carica environment variables (.env.local)
+2. Crea client Supabase (no auth persistence)
+3. Test SELECT su tabella utenti
+4. Test RPC insert_timbro_v2 (gestisce errori business)
+5. Verifica format response
+
+Tempo esecuzione: ~0.5 secondi
+Output: "OK smoke runtime" se successo
 ```
 
 ---
