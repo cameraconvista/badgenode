@@ -35,7 +35,7 @@ async function killExistingProcesses(): Promise<void> {
       console.log(`🔄 Terminando processi esistenti sulla porta ${DEV_PORT}...`);
       await execAsync(`kill -9 ${stdout.trim()}`);
       // Aspetta un momento per la pulizia
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   } catch {
     // Nessun processo da terminare
@@ -48,11 +48,11 @@ async function killExistingProcesses(): Promise<void> {
 function startDevServer(): Promise<void> {
   return new Promise((resolve, reject) => {
     console.log(`🚀 Avviando server di sviluppo su porta ${DEV_PORT}...`);
-    
+
     const devProcess = spawn('npm', ['run', 'dev'], {
       env: { ...process.env, PORT: DEV_PORT.toString() },
       stdio: 'inherit',
-      detached: true
+      detached: true,
     });
 
     // Timeout per verificare l'avvio
@@ -81,19 +81,19 @@ function startDevServer(): Promise<void> {
  */
 export async function ensureDevServerRunning(): Promise<void> {
   console.log('🔍 Verificando stato server di sviluppo...');
-  
+
   const isRunning = await isServerRunning();
-  
+
   if (isRunning) {
     console.log(`✅ Server già attivo su ${DEV_URL}`);
     return;
   }
 
   console.log('⚠️  Server non attivo, avvio automatico...');
-  
+
   // Pulisci eventuali processi zombie
   await killExistingProcesses();
-  
+
   // Avvia il server
   await startDevServer();
 }

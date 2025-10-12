@@ -4,13 +4,13 @@
 export type TimbraturaTipo = 'entrata' | 'uscita';
 
 export type PendingEvent = {
-  client_event_id: string;       // uuid v4
+  client_event_id: string; // uuid v4
   pin: number;
   tipo: TimbraturaTipo;
-  created_at: string;            // ISO string tz (timestamptz)
-  attempts: number;              // retry count
-  last_error?: string;           // optional
-  created_local_ts: number;      // Date.now() per ordering locale
+  created_at: string; // ISO string tz (timestamptz)
+  attempts: number; // retry count
+  last_error?: string; // optional
+  created_local_ts: number; // Date.now() per ordering locale
 };
 
 export type SyncResult = {

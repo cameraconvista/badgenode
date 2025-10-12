@@ -10,22 +10,22 @@ import { BadgeNodeHealthChecker } from './auto-health-check';
 class CascadeAutoWrapper {
   private checker: BadgeNodeHealthChecker;
   private isEnabled: boolean = true;
-  
+
   constructor() {
     this.checker = new BadgeNodeHealthChecker();
   }
-  
+
   /**
    * Verifica automatica da chiamare dopo ogni azione di Cascade
    */
   async postActionCheck(actionDescription: string = 'azione'): Promise<void> {
     if (!this.isEnabled) return;
-    
+
     console.log(`\n🔄 Auto-verifica post ${actionDescription}...`);
-    
+
     try {
       const isHealthy = await this.checker.ensureAppRunning();
-      
+
       if (isHealthy) {
         console.log(`✅ App verificata e funzionante dopo ${actionDescription}`);
       } else {
@@ -38,19 +38,19 @@ class CascadeAutoWrapper {
       await this.emergencyRestart();
     }
   }
-  
+
   /**
    * Riavvio di emergenza
    */
   private async emergencyRestart(): Promise<void> {
     console.log('🚨 Tentativo riavvio di emergenza...');
-    
+
     try {
       await this.checker.killExistingProcesses();
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       const restarted = await this.checker.ensureAppRunning();
-      
+
       if (restarted) {
         console.log('🆘 Riavvio di emergenza riuscito!');
       } else {
@@ -60,7 +60,7 @@ class CascadeAutoWrapper {
       console.error('💥 Errore durante riavvio di emergenza:', error);
     }
   }
-  
+
   /**
    * Verifica iniziale all'avvio di Cascade
    */
@@ -68,7 +68,7 @@ class CascadeAutoWrapper {
     console.log('🎬 Verifica iniziale Cascade...');
     await this.postActionCheck('avvio Cascade');
   }
-  
+
   /**
    * Disabilita temporaneamente le verifiche automatiche
    */
@@ -76,7 +76,7 @@ class CascadeAutoWrapper {
     this.isEnabled = false;
     console.log('⏸️ Auto-verifica disabilitata');
   }
-  
+
   /**
    * Riabilita le verifiche automatiche
    */
@@ -95,42 +95,42 @@ export const autoCheck = {
    * Da chiamare dopo modifiche ai file
    */
   afterFileEdit: () => cascadeWrapper.postActionCheck('modifica file'),
-  
+
   /**
    * Da chiamare dopo operazioni git
    */
   afterGitOperation: () => cascadeWrapper.postActionCheck('operazione git'),
-  
+
   /**
    * Da chiamare dopo installazione dipendenze
    */
   afterDependencyInstall: () => cascadeWrapper.postActionCheck('installazione dipendenze'),
-  
+
   /**
    * Da chiamare dopo build/compile
    */
   afterBuild: () => cascadeWrapper.postActionCheck('build'),
-  
+
   /**
    * Verifica generica
    */
   generic: (action: string) => cascadeWrapper.postActionCheck(action),
-  
+
   /**
    * Verifica iniziale
    */
   initial: () => cascadeWrapper.initialCheck(),
-  
+
   /**
    * Controllo manuale
    */
   manual: () => cascadeWrapper.postActionCheck('verifica manuale'),
-  
+
   /**
    * Disabilita/abilita
    */
   disable: () => cascadeWrapper.disable(),
-  enable: () => cascadeWrapper.enable()
+  enable: () => cascadeWrapper.enable(),
 };
 
 // Auto-esecuzione se chiamato direttamente

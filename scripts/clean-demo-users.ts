@@ -31,10 +31,7 @@ async function cleanDemoUsers() {
 
     // 1. Elimina tutte le timbrature
     console.log('🗑️  Eliminazione timbrature...');
-    const { error: timbratureError } = await supabase
-      .from('timbrature')
-      .delete()
-      .neq('pin', 0); // Elimina tutto
+    const { error: timbratureError } = await supabase.from('timbrature').delete().neq('pin', 0); // Elimina tutto
 
     if (timbratureError) {
       console.error('❌ Errore eliminazione timbrature:', timbratureError);
@@ -57,10 +54,7 @@ async function cleanDemoUsers() {
 
     // 3. Elimina tutti gli utenti
     console.log('🗑️  Eliminazione utenti...');
-    const { error: utentiError } = await supabase
-      .from('utenti')
-      .delete()
-      .neq('pin', 0); // Elimina tutto (usa pin invece di id)
+    const { error: utentiError } = await supabase.from('utenti').delete().neq('pin', 0); // Elimina tutto (usa pin invece di id)
 
     if (utentiError) {
       console.error('❌ Errore eliminazione utenti:', utentiError);
@@ -70,7 +64,7 @@ async function cleanDemoUsers() {
 
     // 4. Verifica pulizia
     console.log('🔍 Verifica pulizia...');
-    
+
     const { data: utentiRimasti } = await supabase
       .from('utenti')
       .select('count', { count: 'exact' });
@@ -83,7 +77,6 @@ async function cleanDemoUsers() {
     console.log(`📊 Timbrature rimaste: ${timbratureRimaste?.[0]?.count || 0}`);
 
     console.log('✨ Pulizia completata! Database vuoto e pronto per dati reali.');
-
   } catch (error) {
     console.error('❌ Errore durante la pulizia:', error);
     process.exit(1);

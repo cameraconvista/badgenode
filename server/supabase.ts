@@ -20,8 +20,8 @@ if (!supabaseUrl || !supabaseServiceKey) {
   supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
-      persistSession: false
-    }
+      persistSession: false,
+    },
   });
   console.log('✅ [Supabase Admin] Connected with SERVICE_ROLE_KEY');
 }

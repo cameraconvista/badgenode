@@ -13,14 +13,14 @@ import { autoCheck } from './cascade-auto-wrapper';
 class CascadeIntegration {
   private static instance: CascadeIntegration;
   private isAutoCheckEnabled = true;
-  
+
   static getInstance(): CascadeIntegration {
     if (!CascadeIntegration.instance) {
       CascadeIntegration.instance = new CascadeIntegration();
     }
     return CascadeIntegration.instance;
   }
-  
+
   /**
    * Wrapper per operazioni che modificano file
    */
@@ -30,25 +30,25 @@ class CascadeIntegration {
   ): Promise<T> {
     try {
       const result = await operation();
-      
+
       if (this.isAutoCheckEnabled) {
         console.log(`\n🔄 Auto-verifica dopo ${description}...`);
         await autoCheck.afterFileEdit();
       }
-      
+
       return result;
     } catch (error) {
       console.error(`❌ Errore durante ${description}:`, error);
-      
+
       if (this.isAutoCheckEnabled) {
         console.log('🚨 Verifica di emergenza dopo errore...');
         await autoCheck.manual();
       }
-      
+
       throw error;
     }
   }
-  
+
   /**
    * Wrapper per operazioni Git
    */
@@ -58,19 +58,19 @@ class CascadeIntegration {
   ): Promise<T> {
     try {
       const result = await operation();
-      
+
       if (this.isAutoCheckEnabled) {
         console.log(`\n🔄 Auto-verifica dopo ${description}...`);
         await autoCheck.afterGitOperation();
       }
-      
+
       return result;
     } catch (error) {
       console.error(`❌ Errore durante ${description}:`, error);
       throw error;
     }
   }
-  
+
   /**
    * Wrapper per operazioni di build/compile
    */
@@ -80,25 +80,25 @@ class CascadeIntegration {
   ): Promise<T> {
     try {
       const result = await operation();
-      
+
       if (this.isAutoCheckEnabled) {
         console.log(`\n🔄 Auto-verifica dopo ${description}...`);
         await autoCheck.afterBuild();
       }
-      
+
       return result;
     } catch (error) {
       console.error(`❌ Errore durante ${description}:`, error);
-      
+
       if (this.isAutoCheckEnabled) {
         console.log('🚨 Verifica di emergenza dopo errore build...');
         await autoCheck.manual();
       }
-      
+
       throw error;
     }
   }
-  
+
   /**
    * Verifica finale obbligatoria
    */
@@ -106,7 +106,7 @@ class CascadeIntegration {
     console.log('\n🎯 Verifica finale obbligatoria...');
     await autoCheck.manual();
   }
-  
+
   /**
    * Disabilita temporaneamente le verifiche automatiche
    */
@@ -114,7 +114,7 @@ class CascadeIntegration {
     this.isAutoCheckEnabled = false;
     console.log('⏸️ Auto-verifica disabilitata temporaneamente');
   }
-  
+
   /**
    * Riabilita le verifiche automatiche
    */
@@ -129,36 +129,36 @@ export const cascadeOps = {
   /**
    * Esegue operazione con auto-verifica file
    */
-  withFileOp: <T>(op: () => Promise<T> | T, desc?: string) => 
+  withFileOp: <T>(op: () => Promise<T> | T, desc?: string) =>
     CascadeIntegration.getInstance().withFileOperation(op, desc),
-  
+
   /**
    * Esegue operazione Git con auto-verifica
    */
-  withGitOp: <T>(op: () => Promise<T> | T, desc?: string) => 
+  withGitOp: <T>(op: () => Promise<T> | T, desc?: string) =>
     CascadeIntegration.getInstance().withGitOperation(op, desc),
-  
+
   /**
    * Esegue operazione build con auto-verifica
    */
-  withBuildOp: <T>(op: () => Promise<T> | T, desc?: string) => 
+  withBuildOp: <T>(op: () => Promise<T> | T, desc?: string) =>
     CascadeIntegration.getInstance().withBuildOperation(op, desc),
-  
+
   /**
    * Verifica finale
    */
   finalCheck: () => CascadeIntegration.getInstance().finalCheck(),
-  
+
   /**
    * Controlli manuali
    */
   disable: () => CascadeIntegration.getInstance().disableAutoCheck(),
   enable: () => CascadeIntegration.getInstance().enableAutoCheck(),
-  
+
   /**
    * Verifica immediata
    */
-  checkNow: () => autoCheck.manual()
+  checkNow: () => autoCheck.manual(),
 };
 
 // Inizializzazione automatica

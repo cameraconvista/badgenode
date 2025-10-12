@@ -17,20 +17,20 @@ export interface ReportConfig {
  */
 export function saveReport(config: ReportConfig): string {
   const { type, component, content, date = getCurrentDate() } = config;
-  
+
   // Assicura che la cartella esista
   const reportDir = join(process.cwd(), 'DOCS', 'REPORT_GENERICI');
   if (!existsSync(reportDir)) {
     mkdirSync(reportDir, { recursive: true });
   }
-  
+
   // Genera nome file standardizzato
   const fileName = `REPORT_${type}_${component.toUpperCase()}_${date}.md`;
   const filePath = join(reportDir, fileName);
-  
+
   // Salva il file
   writeFileSync(filePath, content, 'utf8');
-  
+
   console.log(`📋 Report salvato: DOCS/REPORT_GENERICI/${fileName}`);
   return filePath;
 }

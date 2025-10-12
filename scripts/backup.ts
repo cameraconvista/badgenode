@@ -38,7 +38,9 @@ function getExistingBackups(): Array<{ name: string; path: string; mtime: Date }
   try {
     const files = readdirSync(BACKUP_DIR);
     return files
-      .filter((file) => file.startsWith('backup_') && (file.endsWith('.tar.gz') || file.endsWith('.tar')))
+      .filter(
+        (file) => file.startsWith('backup_') && (file.endsWith('.tar.gz') || file.endsWith('.tar'))
+      )
       .map((file) => {
         const path = join(BACKUP_DIR, file);
         const stats = statSync(path);
