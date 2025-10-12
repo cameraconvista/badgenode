@@ -59,7 +59,10 @@ curl -I https://registry.npmjs.org/
 ```bash
 VITE_SUPABASE_URL=https://tutllgsjrbxkmrwseogz.supabase.co
 VITE_SUPABASE_ANON_KEY=***INCOLLA_ANON_KEY***
+SUPABASE_SERVICE_ROLE_KEY=***INCOLLA_SERVICE_ROLE_KEY***
 ```
+
+> **Nota v4.1:** Service role key necessaria per gestione utenti (bypassa RLS)
 
 ### **.env.example** - Template Configurazione Completa
 

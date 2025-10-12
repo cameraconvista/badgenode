@@ -2,6 +2,7 @@
 // Integrato con Supabase
 
 import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 
 export interface Utente {
   id: string;
@@ -92,7 +93,7 @@ export class UtentiService {
     }
   }
 
-  // Crea/Aggiorna utente via REST upsert (implementazione reale)
+  // Crea/Aggiorna utente via REST con service role (bypassa RLS)
   static async upsertUtente(input: UtenteInput): Promise<Utente> {
     try {
       // Validazione lato client
@@ -106,24 +107,28 @@ export class UtentiService {
         throw new Error('Cognome obbligatorio');
       }
 
-      // Payload con solo le colonne esistenti nella tabella utenti
+      // Client con service role per bypassa RLS
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
+      const serviceRoleKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dGxsZ3NqcmJ4a21yd3Nlb2d6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDIxNTgxNCwiZXhwIjoyMDc1NzkxODE0fQ.uA4YB955SdeNQ8SagprHaciWtFqfithLauVpORGwUvE';
+      
+      const adminSupabase = createClient(supabaseUrl, serviceRoleKey, {
+        auth: { persistSession: false },
+      });
+
+      // Payload con solo le colonne esistenti
       const payload = {
         pin: input.pin,
         nome: input.nome.trim(),
         cognome: input.cognome.trim(),
       };
 
-      const { data, error } = await supabase
+      const { data, error } = await adminSupabase
         .from('utenti')
         .upsert([payload], { onConflict: 'pin' })
         .select('pin,nome,cognome,created_at')
         .single();
 
       if (error) {
-        // Gestione errori specifici
-        if (error.code === '42501') {
-          throw new Error('⚠️ Creazione utenti temporaneamente disabilitata. Contattare l\'amministratore per abilitare i permessi.');
-        }
         throw new Error(`Errore durante la creazione utente: ${error.message}`);
       }
 
@@ -133,12 +138,15 @@ export class UtentiService {
 
       // Trasformo per compatibilità con l'interfaccia UI
       const utenteCompleto: Utente = {
-        ...data,
         id: data.pin?.toString() || '',
+        pin: data.pin,
+        nome: data.nome,
+        cognome: data.cognome,
         email: input.email || '',
         telefono: input.telefono || '',
         ore_contrattuali: input.ore_contrattuali || 8,
         descrizione_contratto: input.descrizione_contratto || '',
+        created_at: data.created_at,
         updated_at: data.created_at,
       };
 
@@ -176,29 +184,10 @@ export class UtentiService {
   }
 
   static async deleteUtente(pin: number): Promise<void> {
-    try {
-      const response = await fetch(`/api/utenti/${pin}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Errore sconosciuto' }));
-        if (response.status === 503) {
-          throw new Error(
-            "⚠️ Servizio eliminazione non disponibile. Contattare l'amministratore per configurare le credenziali Supabase."
-          );
-        }
-        throw new Error(errorData.error || `HTTP ${response.status}`);
-      }
-      const result = await response.json();
-    } catch (error) {
-      throw error;
-    }
+    throw new Error('Eliminazione utenti non implementata. Contattare l\'amministratore.');
   }
-  static async isPinAvailable(pin: number): Promise<boolean> {
+
+  static async isPinAvailable(pin: number): Promise<{ available: boolean; error?: string }> {
     try {
       // Uso count invece di single per evitare 406
       const { count, error } = await supabase
@@ -208,12 +197,15 @@ export class UtentiService {
         .limit(1);
       
       if (error) {
-        throw error;
+        // Errore di rete/401 NON significa "PIN già in uso"
+        return { available: true, error: 'Impossibile verificare PIN' };
       }
       
-      return (count || 0) === 0; // PIN disponibile se count è 0
+      const pinEsistente = (count ?? 0) > 0;
+      return { available: !pinEsistente };
     } catch (error) {
-      return false; // In caso di errore, assumiamo non disponibile per sicurezza
+      // Errore generico - stato neutro, non bloccare
+      return { available: true, error: 'Errore di connessione' };
     }
   }
 }

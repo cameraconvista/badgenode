@@ -121,11 +121,18 @@ export default function ModaleNuovoDipendente({
     if (pin < 1 || pin > 99) return;
 
     try {
-      const isAvailable = await UtentiService.isPinAvailable(pin);
-      if (!isAvailable) {
+      const result = await UtentiService.isPinAvailable(pin);
+      if (result.error) {
+        // Errore di rete/401 - non bloccare, solo avviso neutro
+        setErrors((prev) => ({ ...prev, pin: result.error || 'Errore sconosciuto' }));
+      } else if (!result.available) {
+        // Solo se count > 0 (PIN realmente esistente)
         setErrors((prev) => ({ ...prev, pin: `PIN ${pin} già in uso` }));
       }
-    } catch (error) {}
+    } catch (error) {
+      // Errore imprevisto - stato neutro
+      setErrors((prev) => ({ ...prev, pin: 'Impossibile verificare PIN' }));
+    }
   };
 
   if (!isOpen) return null;
