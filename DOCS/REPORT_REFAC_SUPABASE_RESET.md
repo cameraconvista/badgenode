@@ -229,6 +229,97 @@ client/src/services/timbrature.service.ts (2 errori)
 
 ---
 
-**Status**: 🟢 **STEP 3 COMPLETATO** - Allineamento lettura storici + fix TS principali  
-**Commit**: `8e41a38` su branch `refactor/supabase-reset`  
-**Prossimo**: Attendere OK per step successivo
+---
+
+## 🎯 **STEP 4 COMPLETATO (100%)**
+
+### **📋 CONFIGURAZIONE NUOVO PROGETTO SUPABASE:**
+```
+URL: https://tutllgsjrbxkmrwseogz.supabase.co
+ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dGxsZ3NqcmJ4a21yd3Nlb2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyMTU4MTQsImV4cCI6MjA3NTc5MTgxNH0.TnHXfwBI-KRaill9EIxreEXUyyDV1_RDLBmeDrJWfcY
+```
+
+### **✅ TEST CONNESSIONE LIVE (SUCCESSO):**
+
+#### **1. SELECT utenti:**
+```json
+{
+  "error": null,
+  "data": [
+    { "pin": 1, "nome": "Mario", "cognome": "Rossi" },
+    { "pin": 2, "nome": "Luisa", "cognome": "Bianchi" },
+    { "pin": 3, "nome": "Test", "cognome": "User" }
+  ],
+  "status": 200
+}
+```
+
+#### **2. RPC insert_timbro_v2:**
+```json
+{
+  "error": {
+    "code": "P0001",
+    "message": "Alternanza violata: timbro uguale al precedente nello stesso giorno_logico"
+  },
+  "status": 400
+}
+```
+**✅ CORRETTO**: Errore P0001 per alternanza violata è il comportamento atteso!
+
+#### **3. SELECT timbrature:**
+```json
+{
+  "error": null,
+  "data": [
+    {
+      "id": 1, "pin": 1, "tipo": "entrata",
+      "giorno_logico": "2025-10-12",
+      "data_locale": "2025-10-12", 
+      "ora_locale": "22:33:44"
+    },
+    {
+      "id": 3, "pin": 1, "tipo": "uscita",
+      "giorno_logico": "2025-10-12",
+      "data_locale": "2025-10-12",
+      "ora_locale": "22:33:44"
+    }
+  ],
+  "status": 200
+}
+```
+
+### **✅ VERIFICHE FINALI:**
+- **RPC insert_timbro_v2**: ✅ Risponde correttamente (validazione alternanza attiva)
+- **SELECT storici**: ✅ 2 timbrature seed con nuove colonne
+- **Build**: ✅ Successo (628KB bundle)
+- **App locale**: ✅ http://localhost:3001 attiva
+- **Nessuna modifica UI**: ✅ Layout immutato
+
+### **📊 STATO VARIABILI .env.local:**
+```bash
+VITE_SUPABASE_URL=https://tutllgsjrbxkmrwseogz.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dGxsZ3NqcmJ4a21yd3Nlb2d6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyMTU4MTQsImV4cCI6MjA3NTc5MTgxNH0.TnHXfwBI-KRaill9EIxreEXUyyDV1_RDLBmeDrJWfcY
+```
+
+---
+
+## 📊 **RISULTATI FINALI STEP 1-4**
+
+### **✅ OBIETTIVI RAGGIUNTI:**
+- **Centralizzazione RPC**: ✅ `callInsertTimbro()` unico punto ingresso
+- **Eliminazione INSERT diretti**: ✅ Zero `.from('timbrature').insert()`
+- **Allineamento SELECT**: ✅ Solo nuove colonne (giorno_logico, data_locale, ora_locale)
+- **Nuovo progetto Supabase**: ✅ Connessione live verificata
+- **Build funzionante**: ✅ 628KB bundle, app stabile
+- **Zero modifiche UX**: ✅ Layout/stili immutati
+
+### **🔄 TODO STEP FUTURI:**
+- Sincronizzazione offline queue (step successivo)
+- Completare refactor UI legacy (14 errori TS)
+- Test end-to-end completo
+
+---
+
+**Status**: 🟢 **STEP 4 COMPLETATO** - Configurazione nuovo progetto Supabase  
+**Commit**: `0214db9` su branch `refactor/supabase-reset`  
+**Prossimo**: Attendere OK per step successivo (sincronizzazione offline queue)
