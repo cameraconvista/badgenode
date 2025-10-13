@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Archive, Plus } from 'lucide-react';
 import LogoHeader from '@/components/home/LogoHeader';
-import ThemeToggle from '@/components/admin/ThemeToggle';
 import ArchivioTable from '@/components/admin/ArchivioTable';
 import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
 import ModaleModificaDipendente from '@/components/admin/ModaleModificaDipendente';
@@ -117,10 +116,8 @@ export default function ArchivioDipendenti() {
           }}
         >
           {/* Header con logo centrato e toggle tema */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-8"></div> {/* Spacer per bilanciare */}
+          <div className="flex items-center justify-center mb-4">
             <LogoHeader />
-            <ThemeToggle />
           </div>
           <div className="text-center mb-4">
             <h1 className="text-2xl font-bold text-white mb-2">Archivio Dipendenti</h1>
