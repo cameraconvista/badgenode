@@ -190,6 +190,19 @@ export function formatDataBreve(data: string): string {
 }
 
 /**
+ * Formatta data con giorno settimana esteso + numero (per colonna Data estesa)
+ */
+export function formatDataEstesa(data: string): string {
+  const d = new Date(data + 'T00:00:00');
+  const formatted = d.toLocaleDateString('it-IT', {
+    weekday: 'long',
+    day: '2-digit',
+  });
+  // Capitalizza prima lettera del giorno della settimana
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
+
+/**
  * Ottieni nome mese in italiano
  */
 export function getMeseItaliano(data: string): string {

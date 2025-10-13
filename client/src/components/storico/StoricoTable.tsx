@@ -1,6 +1,6 @@
 import { Edit, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { formatOre, formatDataBreve, getMeseItaliano, formatCreatedAt } from '@/lib/time';
+import { formatOre, formatDataBreve, formatDataEstesa, getMeseItaliano, formatCreatedAt } from '@/lib/time';
 import {
   TurnoFull,
   formatTimeOrDash,
@@ -48,12 +48,23 @@ export default function StoricoTable({
     <div className="bg-gray-800/50 rounded-lg flex flex-col h-full overflow-hidden">
       {/* Tabella HTML Standard */}
       <div className="flex-1 overflow-y-auto">
-        <table className="table-auto w-full border-collapse">
+        <table className="table-fixed w-full border-collapse">
+          {/* Definizione larghezze colonne */}
+          <colgroup>
+            <col className="w-32" /> {/* Data - più larga per giorno esteso */}
+            <col className="w-24" /> {/* Mese */}
+            <col className="w-20" /> {/* Entrata */}
+            <col className="w-20" /> {/* Uscita */}
+            <col className="w-16" /> {/* Ore */}
+            <col className="w-16" /> {/* Extra */}
+            <col className="w-12" /> {/* Modifica - più stretta */}
+          </colgroup>
+          
           {/* Header fisso */}
           <thead className="bg-gray-700/50 border-b border-gray-600 sticky top-0 z-10">
             <tr className="h-11">
               <th className="px-4 text-left text-white font-semibold text-base align-middle border-r border-gray-600/30">Data</th>
-              <th className="px-4 text-left text-white font-semibold text-base align-middle border-r border-gray-600/30">Mese</th>
+              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Mese</th>
               <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Entrata</th>
               <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Uscita</th>
               <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30 tabular-nums">Ore</th>
@@ -99,12 +110,12 @@ export default function StoricoTable({
         {/* Data */}
         <td className="px-4 text-left align-middle border-r border-gray-600/30 text-sm">
           <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
-            {formatDataBreve(giorno.giorno)}
+            {formatDataEstesa(giorno.giorno)}
           </span>
         </td>
 
         {/* Mese */}
-        <td className="px-4 text-left align-middle border-r border-gray-600/30 text-sm">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
           <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
             {getMeseItaliano(giorno.giorno)}
           </span>
@@ -141,15 +152,15 @@ export default function StoricoTable({
         </td>
 
         {/* Modifica */}
-        <td className="px-4 text-center align-middle">
+        <td className="px-2 text-center align-middle">
           {giorno.ore > 0 ? (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onEditTimbrature(giorno.giorno)}
-              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-8 w-8 p-0 flex items-center justify-center mx-auto"
+              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 w-7 p-0 flex items-center justify-center mx-auto"
             >
-              <Edit className="w-4 h-4" />
+              <Edit className="w-3.5 h-3.5" />
             </Button>
           ) : (
             <span className="text-gray-500">—</span>
@@ -170,7 +181,7 @@ export default function StoricoTable({
         <td className="px-4 text-left align-middle border-r border-gray-600/30"></td>
 
         {/* Mese - indicatore sessione (solo dalla #2 in poi) */}
-        <td className="px-4 text-left align-middle border-r border-gray-600/30 text-xs">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-xs">
           <span className="text-gray-400">
             {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
           </span>

@@ -13,39 +13,54 @@ export default function StoricoTotalsBar({
 }: StoricoTotalsBarProps) {
   return (
     <div className="bg-violet-900/30 border-t-2 border-violet-400 flex-shrink-0 p-4">
-      {/* Usa stesso grid della tabella per allineamento perfetto */}
-      <div className="grid grid-cols-7" style={{gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr'}}>
-        {/* Giorni lavorati - prime 4 colonne */}
-        <div className="col-span-4 flex items-center px-4">
-          <div>
-            <div className="text-violet-300 font-semibold text-sm mb-1">Giorni lavorati</div>
-            <div className="text-white font-bold text-base">{giorniLavorati}</div>
-          </div>
-        </div>
+      {/* Usa stesso schema colonne della tabella per allineamento perfetto */}
+      <table className="table-fixed w-full">
+        {/* Stesso colgroup della tabella principale */}
+        <colgroup>
+          <col className="w-32" /> {/* Data */}
+          <col className="w-24" /> {/* Mese */}
+          <col className="w-20" /> {/* Entrata */}
+          <col className="w-20" /> {/* Uscita */}
+          <col className="w-16" /> {/* Ore */}
+          <col className="w-16" /> {/* Extra */}
+          <col className="w-12" /> {/* Modifica */}
+        </colgroup>
+        
+        <tbody>
+          <tr>
+            {/* Prime 4 colonne - Giorni lavorati */}
+            <td colSpan={4} className="px-4 text-left align-middle">
+              <div>
+                <div className="text-violet-300 font-semibold text-sm mb-1">Giorni lavorati</div>
+                <div className="text-white font-bold text-base">{giorniLavorati}</div>
+              </div>
+            </td>
 
-        {/* Ore totali - allineato con colonna Ore */}
-        <div className="flex items-center justify-center px-4 border-l border-gray-600/30">
-          <div className="text-center">
-            <div className="text-violet-300 font-semibold text-sm mb-1">Ore totali</div>
-            <div className="text-yellow-300 font-bold text-base tabular-nums">
-              {formatOre(totaleMensileOre)}
-            </div>
-          </div>
-        </div>
+            {/* Colonna Ore - Totale */}
+            <td className="px-4 text-center align-middle border-l border-gray-600/30">
+              <div>
+                <div className="text-violet-300 font-semibold text-sm mb-1">Totale</div>
+                <div className="text-yellow-300 font-bold text-base tabular-nums">
+                  {formatOre(totaleMensileOre)}
+                </div>
+              </div>
+            </td>
 
-        {/* Ore totali extra - allineato con colonna Extra */}
-        <div className="flex items-center justify-center px-4 border-l border-gray-600/30">
-          <div className="text-center">
-            <div className="text-violet-300 font-semibold text-sm mb-1">Ore totali extra</div>
-            <div className="text-yellow-400 font-bold text-base tabular-nums">
-              {totaleMensileExtra > 0 ? formatOre(totaleMensileExtra) : '0.00'}
-            </div>
-          </div>
-        </div>
+            {/* Colonna Extra - Totale Extra */}
+            <td className="px-4 text-center align-middle border-l border-gray-600/30">
+              <div>
+                <div className="text-violet-300 font-semibold text-sm mb-1">Totale Extra</div>
+                <div className="text-yellow-400 font-bold text-base tabular-nums">
+                  {totaleMensileExtra > 0 ? formatOre(totaleMensileExtra) : '0.00'}
+                </div>
+              </div>
+            </td>
 
-        {/* Spazio vuoto per colonna Modifica */}
-        <div className="flex items-center justify-center px-4 border-l border-gray-600/30"></div>
-      </div>
+            {/* Colonna Modifica - vuota */}
+            <td className="px-4 text-center align-middle border-l border-gray-600/30"></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
