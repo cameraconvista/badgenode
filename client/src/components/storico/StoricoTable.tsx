@@ -47,7 +47,7 @@ export default function StoricoTable({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Tabella HTML Standard */}
-      <div className="bg-white rounded-t-lg flex-1 overflow-y-auto shadow-lg">
+      <div className="flex-1 overflow-y-auto">
         <table className="table-fixed w-full border-collapse">
           {/* Definizione larghezze colonne */}
           <colgroup>
