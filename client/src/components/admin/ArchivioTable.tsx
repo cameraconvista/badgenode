@@ -52,18 +52,24 @@ export default function ArchivioTable({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Tabella con header fisso */}
+      {/* Tabella TableKit Standard */}
       <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50 flex-1 flex flex-col">
-        {/* Header fisso */}
-        <div className="bg-gray-700/80">
-          <table className="w-full">
-            <thead>
+        <div className="flex-1 overflow-y-auto">
+          <table className="w-full table-fixed border-collapse">
+            <colgroup>
+              <col style={{width: '72px'}} />    {/* Storico (icona grafico) */}
+              <col style={{width: '96px'}} />    {/* PIN */}
+              <col />                            {/* Nome (auto) */}
+              <col />                            {/* Cognome (auto) */}
+              <col style={{width: '140px'}} />   {/* Azioni */}
+            </colgroup>
+            <thead className="sticky top-0 z-10 bg-[rgba(255,255,255,0.06)] h-[44px]">
               <tr>
-                <th className="text-left p-4 font-medium text-base text-gray-200 w-24">Storico</th>
-                <th className="text-left p-4 font-medium text-base text-gray-200 w-20">
+                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Storico</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">
                   <button
                     onClick={toggleSortOrder}
-                    className="flex items-center gap-2 hover:text-white transition-colors"
+                    className="flex items-center justify-center gap-2 hover:text-white transition-colors w-full"
                   >
                     PIN
                     <ChevronUp
@@ -71,23 +77,15 @@ export default function ArchivioTable({
                     />
                   </button>
                 </th>
-                <th className="text-left p-4 font-medium text-base text-gray-200 w-40">Nome</th>
-                <th className="text-center p-4 font-medium text-base text-gray-200 w-40">
-                  Cognome
-                </th>
-                <th className="text-center p-4 font-medium text-base text-gray-200 w-28">Azioni</th>
+                <th className="px-4 text-left align-middle text-sm font-semibold text-white/90">Nome</th>
+                <th className="px-4 text-left align-middle text-sm font-semibold text-white/90">Cognome</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Azioni</th>
               </tr>
             </thead>
-          </table>
-        </div>
-
-        {/* Body scrollabile */}
-        <div className="flex-1 overflow-y-auto">
-          <table className="w-full">
             <tbody>
               {sortedUtenti.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="p-8">
+                <tr className="bn-row bn-row-dense align-middle">
+                  <td colSpan={5} className="bn-cell px-4 text-center py-8">
                     <EmptyState hasSearch={false} searchTerm="" />
                   </td>
                 </tr>
@@ -95,9 +93,9 @@ export default function ArchivioTable({
                 sortedUtenti.map((utente) => (
                   <tr
                     key={utente.id || `pin-${utente.pin}`}
-                    className="border-t border-gray-600 hover:bg-gray-700/50 transition-colors"
+                    className="bn-row bn-row-dense align-middle"
                   >
-                    <td className="p-4 w-24">
+                    <td className="bn-cell px-4 text-center">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -108,21 +106,19 @@ export default function ArchivioTable({
                         <BarChart3 className="w-5 h-5" />
                       </Button>
                     </td>
-                    <td className="p-4 w-20">
+                    <td className="bn-cell px-4 text-center tabular-nums">
                       <span className="font-mono font-medium text-base text-violet-400">
                         {utente.pin.toString().padStart(2, '0')}
                       </span>
                     </td>
-                    <td className="p-4 w-40">
+                    <td className="bn-cell px-4 text-left">
                       <span className="font-medium text-base text-white">{utente.nome}</span>
                     </td>
-                    <td className="p-4 w-40 text-center">
-                      <div className="flex justify-center">
-                        <span className="font-medium text-base text-white">{utente.cognome}</span>
-                      </div>
+                    <td className="bn-cell px-4 text-left">
+                      <span className="font-medium text-base text-white">{utente.cognome}</span>
                     </td>
-                    <td className="p-4 w-28">
-                      <div className="flex justify-center">
+                    <td className="bn-cell px-4">
+                      <div className="flex items-center justify-center">
                         <ArchivioActions
                           utente={utente}
                           onModifica={onModifica}
