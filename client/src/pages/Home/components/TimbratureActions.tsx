@@ -29,7 +29,8 @@ export function useTimbratureActions({
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       return false;
     }
   };
@@ -54,7 +55,8 @@ export function useTimbratureActions({
         return;
       }
 
-      const id = await TimbratureService.timbra(pinNumber, 'entrata');
+      const _id = await TimbratureService.timbra(pinNumber, 'entrata');
+      void _id;
 
       // Invalida cache per refresh automatico
       invalidateAfterTimbratura(pinNumber);
@@ -90,7 +92,8 @@ export function useTimbratureActions({
         return;
       }
 
-      const id = await TimbratureService.timbra(pinNumber, 'uscita');
+      const _id = await TimbratureService.timbra(pinNumber, 'uscita');
+      void _id;
 
       // Invalida cache per refresh automatico
       invalidateAfterTimbratura(pinNumber);

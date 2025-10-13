@@ -89,7 +89,8 @@ export class UtentiService {
       }
 
       return data;
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       return null;
     }
   }

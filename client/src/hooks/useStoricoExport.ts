@@ -20,7 +20,8 @@ interface UseStoricoExportProps {
   filters: { pin: number; dal: string; al: string };
 }
 
-export function useStoricoExport({ dipendente, timbrature, filters }: UseStoricoExportProps) {
+export function useStoricoExport({ dipendente, timbrature, filters: _filters }: UseStoricoExportProps) {
+  void _filters;
   const { toast } = useToast();
 
   const handleExportPDF = () => {

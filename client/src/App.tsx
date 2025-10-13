@@ -8,7 +8,8 @@ import { AuthProvider } from '@/contexts/AuthContext';
 // import { AdminRoute, UserRoute } from '@/components/auth/RouteGuard';
 import Home from '@/pages/Home';
 import ArchivioDipendenti from '@/pages/ArchivioDipendenti';
-import StoricoTimbrature from '@/pages/StoricoTimbrature';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import StoricoTimbrature from '@/pages/StoricoTimbrature';
 import StoricoWrapper from '@/components/storico/StoricoWrapper';
 import LoginPage from '@/pages/Login/LoginPage';
 import NotFound from '@/pages/not-found';

@@ -29,7 +29,8 @@ export default function ArchivioDipendenti() {
       loadUtenti();
     }, 250);
     const unsubscribe = subscribeTimbrature({
-      onChange: (payload) => {
+      onChange: (_payload: unknown) => {
+        void _payload;
         debouncedInvalidate();
       },
     });
@@ -43,7 +44,8 @@ export default function ArchivioDipendenti() {
     try {
       const data = await UtentiService.getUtenti();
       setUtenti(data);
-    } catch (error) {
+    } catch (_error) {
+      void _error;
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +53,7 @@ export default function ArchivioDipendenti() {
   const handleStorico = (pin: number) => {
     setLocation(`/storico-timbrature/${pin}`);
   };
-  const onEditClick: (_id: number) => void = (_id) => { void _id;
+  const _onEditClick: (_id: number) => void = (_id) => { void _id;
     setLocation(`/storico-timbrature/${_id}`);
   };
   const handleModifica = (utente: Utente) => {
@@ -99,7 +101,7 @@ export default function ArchivioDipendenti() {
     }
   };
   const handleBackToLogin = () => setLocation('/');
-  const handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
+  const _handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
   const handleExDipendenti = () => {};
 
   return (

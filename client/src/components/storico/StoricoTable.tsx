@@ -89,7 +89,8 @@ export default function StoricoTable({
   );
 
   // Funzione render riga giorno (convertita a HTML table)
-  function renderRigaGiorno(giorno: GiornoLogicoDettagliato, index: number) {
+  function renderRigaGiorno(giorno: GiornoLogicoDettagliato, _index: number) {
+    void _index;
     // Determina se è weekend (sabato=6, domenica=0)
     const date = new Date(giorno.giorno);
     const weekday = date.getDay();
@@ -165,10 +166,11 @@ export default function StoricoTable({
   }
 
   // Funzione render riga sessione (convertita a HTML table)
-  function renderRigaSessione(sessione: SessioneTimbratura, giornoParent: string, index: number) {
+  function renderRigaSessione(sessione: SessioneTimbratura, _giornoParent: string, _index: number) {
+    void _index; void _giornoParent;
     return (
       <tr
-        key={`${giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`}
+        key={`${_giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`}
         className="bn-table__row--session text-sm"
       >
         {/* Data - vuota */}

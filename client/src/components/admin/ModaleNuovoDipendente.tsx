@@ -101,7 +101,8 @@ export default function ModaleNuovoDipendente({
     try {
       await onSave(formData);
       onClose();
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       setErrors({ general: 'Errore durante il salvataggio' });
     } finally {
       setIsLoading(false);
@@ -129,7 +130,8 @@ export default function ModaleNuovoDipendente({
         // Solo se count > 0 (PIN realmente esistente)
         setErrors((prev) => ({ ...prev, pin: `PIN ${pin} già in uso` }));
       }
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       // Errore imprevisto - stato neutro
       setErrors((prev) => ({ ...prev, pin: 'Impossibile verificare PIN' }));
     }
