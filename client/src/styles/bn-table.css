@@ -23,17 +23,17 @@
   z-index: 10;
 }
 
-/* Riga base (giorni feriali) */
+/* Riga base (giorni feriali) - SFONDO UNIFORME */
 .bn-row {
-  background-color: #2b0048; /* Viola chiaro BadgeNode - colore pieno */
+  background-color: #2b0048; /* Viola uniforme per TUTTE le righe */
   border-bottom: 1px solid rgba(255, 255, 255, 0.06); /* Bordo separatore */
   height: 2.5rem; /* Ridotta da 2.75rem a 2.5rem (~10% in meno) */
-  transition: background-color 0.15s ease;
+  transition: none; /* Rimossa transizione hover */
 }
 
-/* Riga weekend (sabato E domenica separati) */
+/* Riga weekend - STESSO SFONDO delle righe normali */
 .bn-row--weekend {
-  background-color: #3d0063; /* Viola medio BadgeNode - colore pieno */
+  background-color: #2b0048; /* STESSO colore delle righe feriali - UNIFORME */
   border-bottom: 1px solid rgba(255, 255, 255, 0.06); /* Stesso bordo per separazione */
 }
 
@@ -45,21 +45,17 @@
 }
 
 /* --- Storico Timbrature: hardening visuale --- */
-/* Disabilita qualunque highlight di hover/selected */
+/* Disabilita qualunque highlight di hover/selected - SFONDO UNIFORME */
 .bn-row:hover,
 .bn-row--weekend:hover,
 .bn-table__row--session:hover,
 .bn-row[aria-selected="true"],
 .bn-row[data-state="hover"],
-.bn-row[data-state="selected"] {
-  background-color: #2b0048 !important; /* Stesso colore base, NO hover */
-}
-
-.bn-row--weekend:hover,
+.bn-row[data-state="selected"],
 .bn-row--weekend[aria-selected="true"],
 .bn-row--weekend[data-state="hover"],
 .bn-row--weekend[data-state="selected"] {
-  background-color: #3d0063 !important; /* Stesso colore weekend, NO hover */
+  background-color: #2b0048 !important; /* STESSO colore uniforme per TUTTE le righe */
 }
 
 /* Barra totali - colore pieno coerente */
@@ -81,8 +77,8 @@
 
 /* Celle nella barra totali - altezza ridotta (~20-25% in meno) */
 .bn-table__totals .bn-table__cell {
-  height: 3rem; /* Ridotta da 4rem a 3rem (~25% in meno) */
-  padding: 0.75rem; /* Ridotto da 1rem a 0.75rem */
+  height: 2.5rem; /* Ridotta drasticamente per essere PIÙ BASSA */
+  padding: 0.5rem; /* Padding ridotto per compattezza */
 }
 
 /* Footer più compatto (~20-25% in meno) */
