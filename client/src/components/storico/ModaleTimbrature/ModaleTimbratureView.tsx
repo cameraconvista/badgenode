@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogOverlay,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -45,16 +44,18 @@ export default function ModaleTimbratureView({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogOverlay className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
-      <DialogContent 
-        className="bn-modal w-full max-w-[720px] md:max-w-[800px] lg:max-w-[880px] xl:max-w-[960px] mx-auto p-0"
-        aria-describedby="modtimbr-desc"
-      >
+      <DialogContent className="bn-modal w-full max-w-[720px] md:max-w-[800px] lg:max-w-[880px] xl:max-w-[960px] mx-auto p-0">
+        <DialogTitle className="sr-only">
+          Modifica Timbrature — {formatDataItaliana(giornologico)}
+        </DialogTitle>
+        
+        <DialogDescription className="sr-only">
+          Modifica orari di entrata e uscita per la giornata selezionata.
+        </DialogDescription>
+
         <div className="bn-modal-header flex justify-between items-center">
           <div>
-            <DialogTitle asChild>
-              <h3 className="bn-modal-title">Modifica Timbrature — {formatDataItaliana(giornologico)}</h3>
-            </DialogTitle>
+            <h3 className="bn-modal-title">Modifica Timbrature — {formatDataItaliana(giornologico)}</h3>
             <p className="text-sm text-muted-foreground mt-1">
               {nomeCompleto} (PIN: {entrata?.pin || uscita?.pin})
             </p>
@@ -67,10 +68,6 @@ export default function ModaleTimbratureView({
             ✕
           </button>
         </div>
-
-        <DialogDescription id="modtimbr-desc" className="sr-only">
-          Modifica orari di entrata e uscita per la giornata selezionata.
-        </DialogDescription>
 
         <div className="bn-modal-body space-y-6 overflow-y-auto max-h-[75vh] md:max-h-[70vh] px-2 sm:px-4 md:px-6 lg:px-8">
           {errors.length > 0 && (
