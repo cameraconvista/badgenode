@@ -46,28 +46,33 @@ export default function StoricoTable({
 
   return (
     <div className="bg-gray-800/50 rounded-lg flex flex-col h-full overflow-hidden">
-      {/* Header fisso */}
-      <div className="bg-gray-700/50 border-b border-gray-600 flex-shrink-0">
-        <div className="grid grid-cols-7 gap-4 py-3 px-4 min-h-12 text-white font-semibold text-base items-center">
-          <div className="flex items-center justify-start min-h-8">Data</div>
-          <div className="flex items-center justify-start min-h-8">Mese</div>
-          <div className="flex items-center justify-center min-h-8">Entrata</div>
-          <div className="flex items-center justify-center min-h-8">Uscita</div>
-          <div className="flex items-center justify-center min-h-8 tabular-nums">Ore</div>
-          <div className="flex items-center justify-center min-h-8 tabular-nums">Extra</div>
-          <div className="flex items-center justify-center min-h-8">Modifica</div>
-        </div>
-      </div>
-
-      {/* Body scrollabile */}
+      {/* Tabella HTML Standard */}
       <div className="flex-1 overflow-y-auto">
-        {storicoDataset.map((row, index) => {
-          if (row.type === 'giorno') {
-            return renderRigaGiorno(row.giorno!, index);
-          } else {
-            return renderRigaSessione(row.sessione!, row.giornoParent!, index);
-          }
-        })}
+        <table className="table-auto w-full border-collapse">
+          {/* Header fisso */}
+          <thead className="bg-gray-700/50 border-b border-gray-600 sticky top-0 z-10">
+            <tr className="h-11">
+              <th className="px-4 text-left text-white font-semibold text-base align-middle border-r border-gray-600/30">Data</th>
+              <th className="px-4 text-left text-white font-semibold text-base align-middle border-r border-gray-600/30">Mese</th>
+              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Entrata</th>
+              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Uscita</th>
+              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30 tabular-nums">Ore</th>
+              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30 tabular-nums">Extra</th>
+              <th className="px-4 text-center text-white font-semibold text-base align-middle">Modifica</th>
+            </tr>
+          </thead>
+
+          {/* Body scrollabile */}
+          <tbody>
+            {storicoDataset.map((row, index) => {
+              if (row.type === 'giorno') {
+                return renderRigaGiorno(row.giorno!, index);
+              } else {
+                return renderRigaSessione(row.sessione!, row.giornoParent!, index);
+              }
+            })}
+          </tbody>
+        </table>
       </div>
 
       {/* Footer fisso - Totali Mensili */}
@@ -79,121 +84,121 @@ export default function StoricoTable({
     </div>
   );
 
-  // Funzione render riga giorno (logica esistente)
+  // Funzione render riga giorno (convertita a HTML table)
   function renderRigaGiorno(giorno: GiornoLogicoDettagliato, index: number) {
     return (
-      <div
+      <tr
         key={`giorno-${giorno.giorno}`}
         className={`
-          grid grid-cols-7 gap-4 py-3 px-4 min-h-12 border-b border-gray-600/50 text-base items-center
+          h-11 border-b border-gray-600/50 text-base
           ${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'}
           ${giorno.ore === 0 ? 'opacity-60' : ''}
           hover:bg-gray-600/30 transition-colors
         `}
       >
         {/* Data */}
-        <div className="flex items-center justify-start min-h-8 text-sm">
+        <td className="px-4 text-left align-middle border-r border-gray-600/30 text-sm">
           <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
             {formatDataBreve(giorno.giorno)}
           </span>
-        </div>
+        </td>
 
         {/* Mese */}
-        <div className="flex items-center justify-start min-h-8 text-sm">
+        <td className="px-4 text-left align-middle border-r border-gray-600/30 text-sm">
           <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
             {getMeseItaliano(giorno.giorno)}
           </span>
-        </div>
+        </td>
 
         {/* Entrata */}
-        <div className="flex items-center justify-center min-h-8 text-sm">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
           <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
             {formatTimeOrDash(giorno.entrata)}
           </span>
-        </div>
+        </td>
 
         {/* Uscita */}
-        <div className="flex items-center justify-center min-h-8 text-sm">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
           <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
             {formatTimeOrDash(giorno.uscita)}
           </span>
-        </div>
+        </td>
 
         {/* Ore Lavorate */}
-        <div className="flex items-center justify-center min-h-8 text-sm tabular-nums">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm tabular-nums">
           <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
             {formatOre(giorno.ore)}
           </span>
-        </div>
+        </td>
 
         {/* Ore Extra */}
-        <div className="flex items-center justify-center min-h-8 text-sm tabular-nums">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm tabular-nums">
           {giorno.extra > 0 ? (
             <span className="text-yellow-400 font-bold">{formatOre(giorno.extra)}</span>
           ) : (
             <span className="text-gray-500">—</span>
           )}
-        </div>
+        </td>
 
         {/* Modifica */}
-        <div className="flex items-center justify-center min-h-8">
+        <td className="px-4 text-center align-middle">
           {giorno.ore > 0 ? (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onEditTimbrature(giorno.giorno)}
-              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-8 w-8 p-0 flex items-center justify-center"
+              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-8 w-8 p-0 flex items-center justify-center mx-auto"
             >
               <Edit className="w-4 h-4" />
             </Button>
           ) : (
             <span className="text-gray-500">—</span>
           )}
-        </div>
-      </div>
+        </td>
+      </tr>
     );
   }
 
-  // NUOVA: Funzione render riga sessione
+  // Funzione render riga sessione (convertita a HTML table)
   function renderRigaSessione(sessione: SessioneTimbratura, giornoParent: string, index: number) {
     return (
-      <div
+      <tr
         key={`${giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`}
-        className="grid grid-cols-7 gap-4 py-3 px-4 min-h-12 border-b border-gray-600/30 text-sm bg-gray-800/20 items-center"
+        className="h-11 border-b border-gray-600/30 text-sm bg-gray-800/20"
       >
         {/* Data - vuota */}
-        <div className="flex items-center justify-start min-h-8"></div>
+        <td className="px-4 text-left align-middle border-r border-gray-600/30"></td>
 
         {/* Mese - indicatore sessione (solo dalla #2 in poi) */}
-        <div className="flex items-center justify-start min-h-8 text-xs">
+        <td className="px-4 text-left align-middle border-r border-gray-600/30 text-xs">
           <span className="text-gray-400">
             {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
           </span>
-        </div>
+        </td>
 
         {/* Entrata sessione */}
-        <div className="flex items-center justify-center min-h-8">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30">
           <span className="text-white/70">{formatTimeOrDash(sessione.entrata)}</span>
-        </div>
+        </td>
 
         {/* Uscita sessione */}
-        <div className="flex items-center justify-center min-h-8">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30">
           <span className="text-white/70">
             {sessione.isAperta ? '—' : formatTimeOrDash(sessione.uscita)}
           </span>
-        </div>
+        </td>
 
         {/* Ore sessione */}
-        <div className="flex items-center justify-center min-h-8 tabular-nums">
+        <td className="px-4 text-center align-middle border-r border-gray-600/30 tabular-nums">
           <span className="text-white/70">{formatOre(sessione.ore)}</span>
-        </div>
+        </td>
 
         {/* Extra - vuoto per sessioni */}
-        <div className="flex items-center justify-center min-h-8"></div>
+        <td className="px-4 text-center align-middle border-r border-gray-600/30"></td>
 
         {/* Modifica - vuoto per sessioni */}
-        <div className="flex items-center justify-center min-h-8"></div>
-      </div>
+        <td className="px-4 text-center align-middle"></td>
+      </tr>
     );
   }
 }

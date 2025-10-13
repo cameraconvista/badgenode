@@ -30,3 +30,57 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 
 // Inizializza diagnostica una sola volta
 getRuntimeSupabaseConfig();
+
+// Diagnosi PROD vs LOCAL - Solo in produzione
+if (import.meta.env.PROD) {
+  console.info('🔍 BadgeNode PROD Diagnostics');
+  
+  // 1. Config rilevata
+  const config = getRuntimeSupabaseConfig();
+  console.info('📊 Supabase Config:', {
+    url: config.url,
+    domain: config.url.split('//')[1]?.split('.')[0] || 'unknown',
+    anonKeyHash: supabaseAnonKey.slice(0, 8) + '...',
+    keyLength: supabaseAnonKey.length
+  });
+
+  // 2. Probe lettura dati (async, non blocca l'app)
+  setTimeout(async () => {
+    try {
+      console.info('🔍 Testing data access...');
+      
+      // Test utenti
+      const { count: utentiCount, error: utentiError } = await supabase
+        .from('utenti')
+        .select('*', { count: 'exact', head: true });
+      
+      console.info('👥 Utenti probe:', { 
+        count: utentiCount, 
+        error: utentiError?.message || null 
+      });
+
+      // Test timbrature  
+      const { count: timbratureCount, error: timbratureError } = await supabase
+        .from('timbrature')
+        .select('*', { count: 'exact', head: true });
+      
+      console.info('⏰ Timbrature probe:', { 
+        count: timbratureCount, 
+        error: timbratureError?.message || null 
+      });
+
+      // Test RPC (solo verifica presenza, non esecuzione)
+      const { data: rpcData, error: rpcError } = await supabase
+        .rpc('insert_timbro_v2', { p_pin: 999, p_tipo: 'entrata' })
+        .limit(0); // Non esegue, solo verifica esistenza
+      
+      console.info('🔧 RPC insert_timbro_v2 probe:', { 
+        exists: !rpcError || !rpcError.message.includes('does not exist'),
+        error: rpcError?.message || null 
+      });
+
+    } catch (err) {
+      console.error('❌ PROD Diagnostics failed:', err);
+    }
+  }, 1000);
+}
