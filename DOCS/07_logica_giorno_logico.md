@@ -1,7 +1,7 @@
 # 📅 LOGICA GIORNO LOGICO — BadgeNode
 
-**Data aggiornamento**: 2025-10-12
-**Versione documento**: v4.0 (consolidamento finale + RPC insert_timbro_v2)
+**Data aggiornamento**: 2025-10-13
+**Versione documento**: v5.0 (fix giorno logico cutoff 05:00 + formato ore.minuti + tutti i giorni)
 **Autore**: BadgeNode • Revisione tecnica Cascade
 
 ---
@@ -56,7 +56,7 @@ Le pagine devono mostrare **tutti i giorni** del periodo, anche senza timbri (ri
 - **Sessione**: coppia _Entrata_ → _Uscita_; se l’uscita manca, la sessione è **aperta** e non rientra nei totali.
 - **Ore sessione**: differenza temporale normalizzata (gestendo eventuale passaggio di data).
 - **Ore giornaliere**: somma delle ore di **tutte le sessioni** del giorno logico.
-- **Extra**: se configurate, `max(0, ore_giornaliere − oreContrattuali)`. In assenza di `oreContrattuali`, impostare **`extra = 0`** e annotare `// FIXME` nel codice.
+- **Totale giorno**: **9.00** (formato ore.minuti) — **Extra**: in base a configurazione, `max(0, ore_giornaliere − oreContrattuali)`. In assenza di `oreContrattuali`, impostare **`extra = 0`** e annotare `// FIXME` nel codice.
 
 ---
 
@@ -147,6 +147,7 @@ Percorso consigliato nel repo: `DOCS/07_logica_giorno_logico.md`
 
 ## 🧾 Cronologia versioni
 
+- **v5.0 — 2025-10-13**: **MAJOR FIX** - Implementato calcolo giorno_logico con cutoff 05:00 nel trigger DB, formato ore.minuti (es. 2.27 per 2h27m), visualizzazione di tutti i giorni del periodo anche senza timbrature.
 - **v2.1 — 2025-10-10**: Hotfix sotto-righe solo dalla #2 sessione; chiarimenti algoritmo pairing e test performance.
 - **v2.0 — 2025-10-09**: Aggiunta **gestione multi‑sessione** e regole di visualizzazione delle sotto‑righe; chiariti edge cases e test obbligatori.
 - **v1.x — storico**: Definizione base del giorno logico con riepilogo per giorno (prima entrata/ultima uscita) e calcolo ore.

@@ -139,11 +139,28 @@ export function expandDaysRange(dal: string, al: string): string[] {
 }
 
 /**
- * Formatta ore per visualizzazione (2 decimali)
+ * Formatta ore per visualizzazione in formato ore:minuti (es. 2.27 per 2h27m)
+ * 
+ * ⚠️  FUNZIONE STABILE - NON MODIFICARE
+ * Questa funzione è utilizzata in tutta l'applicazione per garantire
+ * un formato consistente delle ore. Qualsiasi modifica potrebbe causare
+ * inconsistenze nella visualizzazione.
+ * 
+ * Esempi:
+ * - 2.45 ore decimali → "2.27" (2 ore e 27 minuti)
+ * - 8.5 ore decimali → "8.30" (8 ore e 30 minuti)
+ * - 1.75 ore decimali → "1.45" (1 ora e 45 minuti)
  */
 export function formatOre(n?: number | null): string {
   const v = Number.isFinite(n as number) ? (n as number) : 0;
-  return v.toFixed(2);
+  
+  // Converte ore decimali in formato ore.minuti
+  const ore = Math.floor(v);
+  const minutiDecimali = (v - ore) * 60;
+  const minuti = Math.round(minutiDecimali);
+  
+  // Formato: ore.minuti (es. 2.27 per 2h27m)
+  return `${ore}.${minuti.toString().padStart(2, '0')}`;
 }
 
 /**

@@ -90,8 +90,12 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
       primaEntrata.data_locale &&
       ultimaUscita.data_locale
     ) {
-      const entrata = new Date(`${primaEntrata.data_locale}T${primaEntrata.ora_locale}`);
-      const uscita = new Date(`${ultimaUscita.data_locale}T${ultimaUscita.ora_locale}`);
+      // Arrotonda al minuto per calcolo più user-friendly
+      const entrataTime = primaEntrata.ora_locale.substring(0, 5) + ':00'; // HH:MM:00
+      const uscitaTime = ultimaUscita.ora_locale.substring(0, 5) + ':00';   // HH:MM:00
+      
+      const entrata = new Date(`${primaEntrata.data_locale}T${entrataTime}`);
+      const uscita = new Date(`${ultimaUscita.data_locale}T${uscitaTime}`);
       if (uscita < entrata) uscita.setDate(uscita.getDate() + 1);
       ore = (uscita.getTime() - entrata.getTime()) / (1000 * 60 * 60);
     }
@@ -111,36 +115,62 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
 }
 
 /**
- * Costruisce dataset storico (compatibilità)
+ * Costruisce dataset storico con TUTTI i giorni del range (anche senza timbrature)
  */
 export async function buildStoricoDataset(params: StoricoParams): Promise<StoricoDatasetV5[]> {
+  const { from, to } = params;
+  
+  // Importa la funzione per espandere i giorni
+  const { expandDaysRange } = await import('@/lib/time');
+  
+  // Ottieni tutti i giorni del range
+  const tuttiIGiorni = expandDaysRange(from!, to!);
+  
+  // Ottieni solo i giorni con timbrature
   const turni = await loadTurniFull(params);
+  const turniMap = new Map(turni.map(t => [t.giorno, t]));
 
-  return turni.map((turno) => ({
-    giorno_logico: turno.giorno,
-    ore_totali_chiuse: turno.ore,
-    sessioni: [
-      {
-        entrata_id: 1,
-        entrata_ore: turno.entrata || '00:00:00',
-        uscita_id: turno.uscita ? 2 : null,
-        uscita_ore: turno.uscita,
-        ore_sessione: turno.ore,
-        sessione_num: 1,
-      },
-    ],
-  }));
+  // Crea dataset per tutti i giorni
+  return tuttiIGiorni.map((giorno) => {
+    const turno = turniMap.get(giorno);
+    
+    if (turno) {
+      // Giorno con timbrature
+      return {
+        giorno_logico: turno.giorno,
+        ore_totali_chiuse: turno.ore,
+        sessioni: [
+          {
+            entrata_id: 1,
+            entrata_ore: turno.entrata || '00:00:00',
+            uscita_id: turno.uscita ? 2 : null,
+            uscita_ore: turno.uscita,
+            ore_sessione: turno.ore,
+            sessione_num: 1,
+          },
+        ],
+      };
+    } else {
+      // Giorno senza timbrature
+      return {
+        giorno_logico: giorno,
+        ore_totali_chiuse: 0,
+        sessioni: [],
+      };
+    }
+  });
 }
 
 /**
- * Calcola totali V5 (compatibilità)
+ * Calcola totali V5 (solo giorni lavorati)
  */
 export function calcolaTotaliV5(dataset: StoricoDatasetV5[]): {
   totaleOre: number;
   totaleExtra: number;
 } {
-  const totaleOre = dataset.reduce((sum, d) => sum + d.ore_totali_chiuse, 0);
-  const totaleExtra = Math.max(0, totaleOre - dataset.length * 8); // 8 ore standard
+  const giorniLavorati = dataset.filter(d => d.ore_totali_chiuse > 0);
+  const totaleOre = giorniLavorati.reduce((sum, d) => sum + d.ore_totali_chiuse, 0);
+  const totaleExtra = Math.max(0, totaleOre - giorniLavorati.length * 8); // 8 ore standard
 
   return { totaleOre, totaleExtra };
 }

@@ -184,7 +184,43 @@ export class UtentiService {
   }
 
   static async deleteUtente(pin: number): Promise<void> {
-    throw new Error('Eliminazione utenti non implementata. Contattare l\'amministratore.');
+    try {
+      // Validazione PIN
+      if (!pin || pin < 1 || pin > 99) {
+        throw new Error('PIN non valido');
+      }
+
+      // Client con service role per bypassare RLS
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
+      const serviceRoleKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1dGxsZ3NqcmJ4a21yd3Nlb2d6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDIxNTgxNCwiZXhwIjoyMDc1NzkxODE0fQ.uA4YB955SdeNQ8SagprHaciWtFqfithLauVpORGwUvE';
+      
+      const adminSupabase = createClient(supabaseUrl, serviceRoleKey, {
+        auth: { persistSession: false },
+      });
+
+      // Elimina prima le timbrature associate (per integrità referenziale)
+      const { error: timbratureError } = await adminSupabase
+        .from('timbrature')
+        .delete()
+        .eq('pin', pin);
+
+      if (timbratureError) {
+        throw new Error(`Errore eliminazione timbrature: ${timbratureError.message}`);
+      }
+
+      // Elimina l'utente
+      const { error: utenteError } = await adminSupabase
+        .from('utenti')
+        .delete()
+        .eq('pin', pin);
+
+      if (utenteError) {
+        throw new Error(`Errore eliminazione utente: ${utenteError.message}`);
+      }
+
+    } catch (error) {
+      throw error;
+    }
   }
 
   static async isPinAvailable(pin: number): Promise<{ available: boolean; error?: string }> {

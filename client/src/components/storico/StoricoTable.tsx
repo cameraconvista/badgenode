@@ -32,7 +32,7 @@ export default function StoricoTable({
   // Calcola totali dal dataset v5 (fonte unica di verità) con protezione
   const list = Array.isArray(storicoDatasetV5) ? storicoDatasetV5 : [];
   const { totaleOre: totaleMensileOre, totaleExtra: totaleMensileExtra } = calcolaTotaliV5(list);
-  const giorniLavorati = list.length;
+  const giorniLavorati = list.filter(d => d.ore_totali_chiuse > 0).length;
 
   if (isLoading) {
     return (
@@ -48,14 +48,14 @@ export default function StoricoTable({
     <div className="bg-gray-800/50 rounded-lg flex flex-col h-full overflow-hidden">
       {/* Header fisso */}
       <div className="bg-gray-700/50 border-b border-gray-600 flex-shrink-0">
-        <div className="grid grid-cols-7 gap-4 p-4 text-white font-semibold text-base">
-          <div className="px-0">Data</div>
-          <div className="px-0">Mese</div>
-          <div className="text-center px-0">Entrata</div>
-          <div className="text-center px-0">Uscita</div>
-          <div className="text-center tabular-nums px-0">Ore</div>
-          <div className="text-right tabular-nums px-0">Extra</div>
-          <div className="text-center px-0">Modifica</div>
+        <div className="grid grid-cols-7 gap-4 py-3 px-4 min-h-12 text-white font-semibold text-base items-center">
+          <div className="flex items-center justify-start min-h-8">Data</div>
+          <div className="flex items-center justify-start min-h-8">Mese</div>
+          <div className="flex items-center justify-center min-h-8">Entrata</div>
+          <div className="flex items-center justify-center min-h-8">Uscita</div>
+          <div className="flex items-center justify-center min-h-8 tabular-nums">Ore</div>
+          <div className="flex items-center justify-center min-h-8 tabular-nums">Extra</div>
+          <div className="flex items-center justify-center min-h-8">Modifica</div>
         </div>
       </div>
 
@@ -85,39 +85,49 @@ export default function StoricoTable({
       <div
         key={`giorno-${giorno.giorno}`}
         className={`
-          grid grid-cols-7 gap-4 p-4 border-b border-gray-600/50 text-base
+          grid grid-cols-7 gap-4 py-3 px-4 min-h-12 border-b border-gray-600/50 text-base items-center
           ${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'}
           ${giorno.ore === 0 ? 'opacity-60' : ''}
           hover:bg-gray-600/30 transition-colors
         `}
       >
         {/* Data */}
-        <div className="font-medium text-white/90 flex items-center px-0 text-sm">
-          {formatDataBreve(giorno.giorno)}
+        <div className="flex items-center justify-start min-h-8 text-sm">
+          <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
+            {formatDataBreve(giorno.giorno)}
+          </span>
         </div>
 
         {/* Mese */}
-        <div className="text-white/90 font-medium px-0 text-sm">
-          {getMeseItaliano(giorno.giorno)}
+        <div className="flex items-center justify-start min-h-8 text-sm">
+          <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
+            {getMeseItaliano(giorno.giorno)}
+          </span>
         </div>
 
         {/* Entrata */}
-        <div className="text-center px-0 text-sm">
-          <span className="text-white/90 font-medium">{formatTimeOrDash(giorno.entrata)}</span>
+        <div className="flex items-center justify-center min-h-8 text-sm">
+          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+            {formatTimeOrDash(giorno.entrata)}
+          </span>
         </div>
 
         {/* Uscita */}
-        <div className="text-center px-0 text-sm">
-          <span className="text-white/90 font-medium">{formatTimeOrDash(giorno.uscita)}</span>
+        <div className="flex items-center justify-center min-h-8 text-sm">
+          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+            {formatTimeOrDash(giorno.uscita)}
+          </span>
         </div>
 
         {/* Ore Lavorate */}
-        <div className="text-center tabular-nums px-0 text-sm">
-          <span className="text-white/90 font-medium">{formatOre(giorno.ore)}</span>
+        <div className="flex items-center justify-center min-h-8 text-sm tabular-nums">
+          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+            {formatOre(giorno.ore)}
+          </span>
         </div>
 
         {/* Ore Extra */}
-        <div className="text-right tabular-nums px-0 text-sm">
+        <div className="flex items-center justify-center min-h-8 text-sm tabular-nums">
           {giorno.extra > 0 ? (
             <span className="text-yellow-400 font-bold">{formatOre(giorno.extra)}</span>
           ) : (
@@ -126,13 +136,13 @@ export default function StoricoTable({
         </div>
 
         {/* Modifica */}
-        <div className="text-center px-0 text-sm">
+        <div className="flex items-center justify-center min-h-8">
           {giorno.ore > 0 ? (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onEditTimbrature(giorno.giorno)}
-              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10"
+              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-8 w-8 p-0 flex items-center justify-center"
             >
               <Edit className="w-4 h-4" />
             </Button>
@@ -149,38 +159,40 @@ export default function StoricoTable({
     return (
       <div
         key={`${giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`}
-        className="grid grid-cols-7 gap-4 p-2 border-b border-gray-600/30 text-sm bg-gray-800/20"
+        className="grid grid-cols-7 gap-4 py-3 px-4 min-h-12 border-b border-gray-600/30 text-sm bg-gray-800/20 items-center"
       >
         {/* Data - vuota */}
-        <div></div>
+        <div className="flex items-center justify-start min-h-8"></div>
 
         {/* Mese - indicatore sessione (solo dalla #2 in poi) */}
-        <div className="text-gray-400 text-xs">
-          {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
+        <div className="flex items-center justify-start min-h-8 text-xs">
+          <span className="text-gray-400">
+            {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
+          </span>
         </div>
 
         {/* Entrata sessione */}
-        <div className="text-center">
+        <div className="flex items-center justify-center min-h-8">
           <span className="text-white/70">{formatTimeOrDash(sessione.entrata)}</span>
         </div>
 
         {/* Uscita sessione */}
-        <div className="text-center">
+        <div className="flex items-center justify-center min-h-8">
           <span className="text-white/70">
             {sessione.isAperta ? '—' : formatTimeOrDash(sessione.uscita)}
           </span>
         </div>
 
         {/* Ore sessione */}
-        <div className="text-center tabular-nums">
+        <div className="flex items-center justify-center min-h-8 tabular-nums">
           <span className="text-white/70">{formatOre(sessione.ore)}</span>
         </div>
 
         {/* Extra - vuoto per sessioni */}
-        <div></div>
+        <div className="flex items-center justify-center min-h-8"></div>
 
         {/* Modifica - vuoto per sessioni */}
-        <div></div>
+        <div className="flex items-center justify-center min-h-8"></div>
       </div>
     );
   }

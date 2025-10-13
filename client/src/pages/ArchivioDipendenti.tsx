@@ -70,6 +70,8 @@ export default function ArchivioDipendenti() {
       setShowModaleElimina(false);
       setUtenteSelezionato(null);
     } catch (error) {
+      console.error('Errore eliminazione dipendente:', error);
+      // L'errore viene gestito dal modale che rimane aperto
     } finally {
       setIsEliminaLoading(false);
     }
