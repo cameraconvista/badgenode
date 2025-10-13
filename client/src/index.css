@@ -1,5 +1,6 @@
-/* BadgeNode Table Styles - Single Source of Truth */
+/* BadgeNode Styles - Single Source of Truth */
 @import './styles/bn-table.css';
+@import './styles/badgenode.css';
 
 @tailwind base;
 @tailwind components;

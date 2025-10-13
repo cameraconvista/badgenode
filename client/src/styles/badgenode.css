@@ -1,0 +1,136 @@
+/* BadgeNode UI Styles - Desktop-friendly improvements */
+
+/* Tabella: sfondo uniforme, niente hover, testo bianco solo se c'è timbratura */
+.bn-row {
+  background: var(--card);
+}
+
+.bn-row:hover,
+.bn-row[aria-selected="true"],
+.bn-row[data-state="hover"],
+.bn-row[data-state="selected"] {
+  background: var(--card) !important;
+}
+
+.bn-row .bn-cell {
+  color: var(--muted-foreground);
+}
+
+.bn-row.has-timbrature .bn-cell {
+  color: #fff;
+}
+
+/* Densità righe ~ -10% */
+.bn-row-dense {
+  padding-block: 10px;
+  line-height: 1.25;
+}
+
+/* Footer Totali ~ -22% altezza */
+.bn-footer {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  min-height: unset !important;
+  line-height: 1.2;
+}
+
+.bn-footer .bn-footer-inner {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  margin: 0 !important;
+  min-height: unset !important;
+}
+
+.bn-footer:hover,
+.bn-footer:focus-within {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Modale stile coerente "Aggiungi Dipendente" */
+.bn-modal {
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.bn-modal-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bn-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.bn-modal-body {
+  padding: 16px 20px;
+}
+
+.bn-modal-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #c0ffc0;
+  margin-bottom: 8px;
+}
+
+.bn-modal-field + .bn-modal-field {
+  margin-top: 12px;
+}
+
+.bn-modal-field label {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.bn-input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.bn-input:focus {
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 0 3px rgba(231, 116, 240, 0.18);
+}
+
+.bn-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+
+.btn-primary {
+  background: #3fbf52;
+  color: #0b0b0b;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 700;
+}
+
+.btn-danger {
+  background: #d24e43;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 700;
+}

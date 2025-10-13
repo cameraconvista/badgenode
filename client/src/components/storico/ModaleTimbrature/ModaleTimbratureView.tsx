@@ -43,80 +43,85 @@ export default function ModaleTimbratureView({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Edit className="h-5 w-5" />
-            Modifica Timbrature - {formatDataItaliana(giornologico)}
-          </DialogTitle>
-          <p className="text-sm text-muted-foreground">
-            {nomeCompleto} (PIN: {entrata?.pin || uscita?.pin})
-          </p>
-        </DialogHeader>
+      <DialogContent className="bn-modal w-full max-w-[720px] md:max-w-[800px] lg:max-w-[880px] xl:max-w-[960px] mx-auto p-0">
+        <div className="bn-modal-header flex justify-between items-center">
+          <div>
+            <h3 className="bn-modal-title">Modifica Timbrature — {formatDataItaliana(giornologico)}</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              {nomeCompleto} (PIN: {entrata?.pin || uscita?.pin})
+            </p>
+          </div>
+          <button 
+            className="text-white/60 hover:text-white transition-colors text-lg font-bold" 
+            onClick={onClose} 
+            aria-label="Chiudi"
+          >
+            ✕
+          </button>
+        </div>
 
-        {errors.length > 0 && (
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              <ul className="list-disc list-inside space-y-1">
-                {errors.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            </AlertDescription>
-          </Alert>
-        )}
+        <div className="bn-modal-body space-y-6 overflow-y-auto max-h-[75vh] md:max-h-[70vh] px-2 sm:px-4 md:px-6 lg:px-8">
+          {errors.length > 0 && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                <ul className="list-disc list-inside space-y-1">
+                  {errors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
 
-        <ModaleTimbratureForm
-          formData={formData}
-          onInputChange={(field, value) => setFormData({ ...formData, [field]: value })}
-          isLoading={isLoading}
-        />
+          <ModaleTimbratureForm
+            formData={formData}
+            onInputChange={(field, value) => setFormData({ ...formData, [field]: value })}
+            isLoading={isLoading}
+          />
+        </div>
 
         {showDeleteConfirm && (
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              Sei sicuro di voler eliminare tutte le timbrature di questo giorno?
-              <div className="flex gap-2 mt-2">
-                <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isLoading}>
-                  Elimina
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowDeleteConfirm(false)}
-                  disabled={isLoading}
-                >
-                  Annulla
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
+          <div className="bn-modal-body px-4 sm:px-6 md:px-8">
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                Sei sicuro di voler eliminare tutte le timbrature di questo giorno?
+                <div className="flex gap-2 mt-2">
+                  <button className="btn-danger" onClick={handleDelete} disabled={isLoading}>
+                    Elimina
+                  </button>
+                  <button
+                    className="btn-ghost"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isLoading}
+                  >
+                    Annulla
+                  </button>
+                </div>
+              </AlertDescription>
+            </Alert>
+          </div>
         )}
 
-        <DialogFooter className="flex justify-between">
-          <Button
-            variant="destructive"
+        <div className="bn-modal-footer px-4 sm:px-6 md:px-8">
+          <button
+            type="button"
+            className="btn-danger"
             onClick={() => setShowDeleteConfirm(true)}
             disabled={isLoading || showDeleteConfirm}
-            className="mr-auto"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
             Elimina
-          </Button>
-
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose} disabled={isLoading}>
-              <X className="h-4 w-4 mr-2" />
+          </button>
+          <div className="flex items-center gap-2">
+            <button type="button" className="btn-ghost" onClick={onClose} disabled={isLoading}>
               Annulla
-            </Button>
-            <Button onClick={handleSave} disabled={isLoading}>
-              <Save className="h-4 w-4 mr-2" />
+            </button>
+            <button type="button" className="btn-primary" onClick={handleSave} disabled={isLoading}>
               Salva
-            </Button>
+            </button>
           </div>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
