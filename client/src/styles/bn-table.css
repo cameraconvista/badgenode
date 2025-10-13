@@ -27,7 +27,7 @@
 .bn-row {
   background-color: #2b0048; /* Viola chiaro BadgeNode - colore pieno */
   border-bottom: 1px solid rgba(255, 255, 255, 0.06); /* Bordo separatore */
-  height: 2.75rem; /* 44px - altezza fissa */
+  height: 2.5rem; /* Ridotta da 2.75rem a 2.5rem (~10% in meno) */
   transition: background-color 0.15s ease;
 }
 
@@ -44,11 +44,22 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.04); /* Bordo più sottile per sessioni */
 }
 
-/* Hover state per tutte le righe */
+/* --- Storico Timbrature: hardening visuale --- */
+/* Disabilita qualunque highlight di hover/selected */
 .bn-row:hover,
 .bn-row--weekend:hover,
-.bn-table__row--session:hover {
-  background-color: #4a0070; /* Viola hover BadgeNode uniforme */
+.bn-table__row--session:hover,
+.bn-row[aria-selected="true"],
+.bn-row[data-state="hover"],
+.bn-row[data-state="selected"] {
+  background-color: #2b0048 !important; /* Stesso colore base, NO hover */
+}
+
+.bn-row--weekend:hover,
+.bn-row--weekend[aria-selected="true"],
+.bn-row--weekend[data-state="hover"],
+.bn-row--weekend[data-state="selected"] {
+  background-color: #3d0063 !important; /* Stesso colore weekend, NO hover */
 }
 
 /* Barra totali - colore pieno coerente */
@@ -65,13 +76,33 @@
   text-align: center;
   vertical-align: middle;
   border-right: 1px solid rgba(255, 255, 255, 0.06);
-  height: 2.75rem; /* Altezza uniforme */
+  height: 2.5rem; /* Ridotta da 2.75rem a 2.5rem (~10% in meno) */
 }
 
-/* Celle nella barra totali - altezza maggiore per contenuto */
+/* Celle nella barra totali - altezza ridotta (~20-25% in meno) */
 .bn-table__totals .bn-table__cell {
-  height: 4rem; /* Altezza maggiore per label + valore */
-  padding: 1rem; /* Padding interno per il contenuto */
+  height: 3rem; /* Ridotta da 4rem a 3rem (~25% in meno) */
+  padding: 0.75rem; /* Ridotto da 1rem a 0.75rem */
+}
+
+/* Footer più compatto (~20-25% in meno) */
+.bn-footer {
+  padding-block: 12px; /* ~-25% se era 16px */
+}
+
+/* Righe più dense (~10% in meno) */
+.bn-row-dense {
+  padding-block: 10px; /* ~-10% */
+  line-height: 1.25;   /* testo più compatto senza tagliare glifi */
+}
+
+/* Controllo testo righe con/senza timbrature */
+.bn-row .bn-cell {
+  color: rgb(156 163 175); /* text-gray-400 - testo muted di default */
+}
+
+.bn-row.has-timbrature .bn-cell {
+  color: #ffffff; /* mantiene testo bianco SOLO se c'è timbratura */
 }
 
 .bn-table__cell--left {

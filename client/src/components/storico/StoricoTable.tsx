@@ -99,69 +99,66 @@ export default function StoricoTable({
       <tr
         key={`giorno-${giorno.giorno}`}
         className={`
-          ${isWeekendDay ? 'bn-row bn-row--weekend' : 'bn-row'}
+          ${isWeekendDay ? 'bn-row bn-row--weekend bn-row-dense' : 'bn-row bn-row-dense'}
+          ${giorno.ore > 0 ? 'has-timbrature' : ''}
           ${giorno.ore === 0 ? 'opacity-60' : ''}
           text-base
         `}
       >
         {/* Data */}
-        <td className="bn-table__cell bn-table__cell--left text-sm">
-          <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
+        <td className="bn-table__cell bn-table__cell--left bn-cell text-sm">
+          <span className="font-medium">
             {formatDataEstesa(giorno.giorno)}
           </span>
         </td>
 
         {/* Mese */}
-        <td className="bn-table__cell text-sm">
-          <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
+        <td className="bn-table__cell bn-cell text-sm">
+          <span className="font-medium">
             {getMeseItaliano(giorno.giorno)}
           </span>
         </td>
 
         {/* Entrata */}
-        <td className="bn-table__cell text-sm">
-          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+        <td className="bn-table__cell bn-cell text-sm">
+          <span className="font-medium">
             {formatTimeOrDash(giorno.entrata)}
           </span>
         </td>
 
         {/* Uscita */}
-        <td className="bn-table__cell text-sm">
-          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+        <td className="bn-table__cell bn-cell text-sm">
+          <span className="font-medium">
             {formatTimeOrDash(giorno.uscita)}
           </span>
         </td>
 
         {/* Ore Lavorate */}
-        <td className="bn-table__cell text-sm tabular-nums">
-          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+        <td className="bn-table__cell bn-cell text-sm tabular-nums">
+          <span className="font-medium">
             {formatOre(giorno.ore)}
           </span>
         </td>
 
         {/* Ore Extra */}
-        <td className="bn-table__cell text-sm tabular-nums">
+        <td className="bn-table__cell bn-cell text-sm tabular-nums">
           {giorno.extra > 0 ? (
             <span className="text-yellow-400 font-bold">{formatOre(giorno.extra)}</span>
           ) : (
-            <span className="text-gray-500">—</span>
+            <span>—</span>
           )}
         </td>
 
         {/* Modifica */}
-        <td className="bn-table__cell">
-          {giorno.ore > 0 ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onEditTimbrature(giorno.giorno)}
-              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 w-7 p-0 flex items-center justify-center mx-auto"
-            >
-              <Edit className="w-3.5 h-3.5" />
-            </Button>
-          ) : (
-            <span className="text-gray-500">—</span>
-          )}
+        <td className="bn-table__cell bn-cell">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onEditTimbrature(giorno.giorno)}
+            className="h-8 w-8 p-0 hover:bg-white/10"
+          >
+            <Edit className="h-4 w-4 text-yellow-400 hover:text-yellow-300 transition-colors" />
+          </Button>
         </td>
       </tr>
     );
@@ -175,37 +172,37 @@ export default function StoricoTable({
         className="bn-table__row--session text-sm"
       >
         {/* Data - vuota */}
-        <td className="bn-table__cell bn-table__cell--left"></td>
+        <td className="bn-table__cell bn-table__cell--left bn-cell"></td>
 
         {/* Mese - indicatore sessione (solo dalla #2 in poi) */}
-        <td className="bn-table__cell text-xs">
+        <td className="bn-table__cell bn-cell text-xs">
           <span className="text-gray-400">
             {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
           </span>
         </td>
 
         {/* Entrata sessione */}
-        <td className="bn-table__cell">
+        <td className="bn-table__cell bn-cell">
           <span className="text-white/70">{formatTimeOrDash(sessione.entrata)}</span>
         </td>
 
         {/* Uscita sessione */}
-        <td className="bn-table__cell">
+        <td className="bn-table__cell bn-cell">
           <span className="text-white/70">
             {sessione.isAperta ? '—' : formatTimeOrDash(sessione.uscita)}
           </span>
         </td>
 
         {/* Ore sessione */}
-        <td className="bn-table__cell tabular-nums">
+        <td className="bn-table__cell bn-cell tabular-nums">
           <span className="text-white/70">{formatOre(sessione.ore)}</span>
         </td>
 
         {/* Extra - vuoto per sessioni */}
-        <td className="bn-table__cell"></td>
+        <td className="bn-table__cell bn-cell"></td>
 
         {/* Modifica - vuoto per sessioni */}
-        <td className="bn-table__cell"></td>
+        <td className="bn-table__cell bn-cell"></td>
       </tr>
     );
   }
