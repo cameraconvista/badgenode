@@ -88,7 +88,8 @@ export default function StoricoFilters({
       if (typeof inputRef.current.showPicker === 'function') {
         try {
           inputRef.current.showPicker();
-        } catch (error) {
+        } catch (_error) {
+        void _error;
           // Fallback: focus e click
           inputRef.current.focus();
           inputRef.current.click();

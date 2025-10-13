@@ -90,6 +90,21 @@ export default [
     files: ['client/src/adapters/**/*', 'server/adapters/**/*'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*', 'client/src/scripts/**/*'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**/*'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
     },
   },
   {

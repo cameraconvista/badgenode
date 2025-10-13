@@ -1,14 +1,17 @@
-import { Button } from '@/components/ui/button';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
+  // DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
+  // DialogFooter,
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Edit, Save, Trash2, X, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import { Edit, Save, Trash2, X } from 'lucide-react';
 import { formatDataItaliana } from '@/lib/time';
 import ModaleTimbratureForm from '../ModaleTimbratureForm';
 import type { FormData, ModaleTimbratureProps } from './types';

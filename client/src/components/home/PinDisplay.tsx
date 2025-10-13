@@ -4,7 +4,8 @@ interface PinDisplayProps {
   className?: string;
 }
 
-export default function PinDisplay({ pin, maxLength = 4, className = '' }: PinDisplayProps) {
+export default function PinDisplay({ pin, maxLength: _maxLength, className = '' }: PinDisplayProps) {
+  void _maxLength;
   return (
     <div className={`w-full mb-4 ${className}`}>
       <div

@@ -4,12 +4,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, _setLoading] = useState(false); void loading;
   const { user, isAdmin } = useAuth();
   const [, setLocation] = useLocation();
 

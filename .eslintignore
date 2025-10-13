@@ -1,0 +1,7 @@
+ARCHIVE/**
+scripts/legacy/**
+dist/**
+build/**
+node_modules/**
+Backup_Automatico/**
+*.config.*

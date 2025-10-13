@@ -20,6 +20,9 @@ export const ChartLegendContent = React.forwardRef<
     return null;
   }
 
+  const { verticalAlign: _verticalAlign, ...delegated } = { className, hideIcon, payload, verticalAlign, nameKey };
+  void _verticalAlign;
+
   return (
     <div ref={ref} className={cn('flex items-center justify-center gap-4', className)}>
       {payload.map((item) => {

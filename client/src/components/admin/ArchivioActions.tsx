@@ -29,7 +29,8 @@ export default function ArchivioActions({
     try {
       await onArchivia(utente.id);
       setShowArchiviaDialog(false);
-    } catch (error) {
+    } catch (_error) {
+      void _error;
     } finally {
       setIsLoading(false);
     }

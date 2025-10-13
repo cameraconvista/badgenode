@@ -108,13 +108,15 @@ export class TimbratureService {
 
   // CRUD operations
   static async updateTimbratura(
-    id: string,
-    input: { data: string; ore: string; dataEntrata?: string }
+    _id: string,
+    _input: { data: string; ore: string; dataEntrata?: string }
   ): Promise<Timbratura> {
+    void _id; void _input;
     throw new Error('updateTimbratura not implemented - use Supabase RPC functions');
   }
 
   static async deleteById(_id: number, _input: unknown): Promise<void> {
+    void _id; void _input;
     throw new Error('deleteTimbratura not implemented - use Supabase RPC functions');
   }
 

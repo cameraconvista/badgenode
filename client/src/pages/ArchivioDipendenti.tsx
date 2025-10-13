@@ -51,14 +51,14 @@ export default function ArchivioDipendenti() {
   const handleStorico = (pin: number) => {
     setLocation(`/storico-timbrature/${pin}`);
   };
-  const onEditClick: (_id: number) => void = (_id) => {
+  const onEditClick: (_id: number) => void = (_id) => { void _id;
     setLocation(`/storico-timbrature/${_id}`);
   };
   const handleModifica = (utente: Utente) => {
     setUtenteSelezionato(utente);
     setShowModaleModifica(true);
   };
-  const handleArchivia = async (id: string) => {};
+  const handleArchivia = async (_id: string) => { void _id; };
   const handleEliminaClick = (utente: Utente) => {
     setUtenteSelezionato(utente);
     setShowModaleElimina(true);
@@ -99,7 +99,7 @@ export default function ArchivioDipendenti() {
     }
   };
   const handleBackToLogin = () => setLocation('/');
-  const handleRealtimeChange = useCallback((_payload: unknown) => {}, []);
+  const handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
   const handleExDipendenti = () => {};
 
   return (

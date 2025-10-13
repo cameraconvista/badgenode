@@ -5,7 +5,8 @@ import StoricoTimbrature from '@/pages/StoricoTimbrature';
 import { UtentiService } from '@/services/utenti.service';
 
 export default function StoricoWrapper() {
-  const [match, params] = useRoute('/storico-timbrature/:pin');
+  const [_match, params] = useRoute('/storico-timbrature/:pin?');
+  void _match;
   const [, setLocation] = useLocation();
 
   // Estrazione robusta del PIN

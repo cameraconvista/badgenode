@@ -1,8 +1,7 @@
-import { Edit, Clock } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { formatOre, formatDataBreve, formatDataEstesa, getMeseItaliano, formatCreatedAt, isWeekend } from '@/lib/time';
+import { formatOre, formatDataEstesa, getMeseItaliano } from '@/lib/time';
 import {
-  TurnoFull,
   formatTimeOrDash,
   calcolaTotaliV5,
   StoricoDatasetV5,
@@ -22,14 +21,15 @@ interface StoricoTableProps {
 }
 
 export default function StoricoTable({
-  timbrature, // Legacy (per compatibilità)
+  timbrature: _timbrature,
   storicoDataset, // Dataset con sotto-righe
   storicoDatasetV5, // NUOVO: Dataset v5 per totali
-  filters,
-  oreContrattuali,
+  filters: _filters,
+  oreContrattuali: _oreContrattuali,
   onEditTimbrature,
   isLoading,
 }: StoricoTableProps) {
+  void _timbrature; void _filters; void _oreContrattuali;
   // Calcola totali dal dataset v5 (fonte unica di verità) con protezione
   const list = Array.isArray(storicoDatasetV5) ? storicoDatasetV5 : [];
   const { totaleOre: totaleMensileOre, totaleExtra: totaleMensileExtra } = calcolaTotaliV5(list);
@@ -68,11 +68,11 @@ export default function StoricoTable({
 
           {/* Body scrollabile */}
           <tbody>
-            {storicoDataset.map((row, index) => {
+            {storicoDataset.map((row, _index) => {
               if (row.type === 'giorno') {
-                return renderRigaGiorno(row.giorno!, index);
+                return renderRigaGiorno(row.giorno!, _index);
               } else {
-                return renderRigaSessione(row.sessione!, row.giornoParent!, index);
+                return renderRigaSessione(row.sessione!, row.giornoParent!, _index);
               }
             })}
           </tbody>

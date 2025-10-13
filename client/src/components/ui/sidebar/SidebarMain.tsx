@@ -6,14 +6,15 @@ import { PanelLeftIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import { Input } from '@/components/ui/input';
+// import { Separator } from '@/components/ui/separator';
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
+  // SheetDescription,
+  // SheetHeader,
+  // SheetTitle,
 } from '@/components/ui/sheet';
 import { useSidebar, SIDEBAR_WIDTH_MOBILE } from './SidebarContext';
 

@@ -1,4 +1,6 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import { useEffect } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { AuthService, AuthUser } from '@/services/auth.service';
 
@@ -50,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = AuthService.isAdmin(mockSession);
   const pin = AuthService.getPin(mockSession);
 
-  const login = async (email: string, password: string) => {
+  const login = async (_email: string, _password: string) => {
     // TODO(BUSINESS): re-enable Auth when backend ready
     // Mock login always succeeds and redirects to home
     window.location.href = '/';

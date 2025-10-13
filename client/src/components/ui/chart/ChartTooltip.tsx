@@ -1,22 +1,26 @@
 import * as React from 'react';
-import * as RechartsPrimitive from 'recharts';
 import { cn } from '@/lib/utils';
 import { useChart } from './useChart';
 import { getPayloadConfigFromPayload } from './chart.utils';
 
-export const ChartTooltip = RechartsPrimitive.Tooltip;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts primitive export
+export const ChartTooltip = (React as any).Tooltip;
 
 export const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'> & {
     active?: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts payload structure
     payload?: Array<any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts label type
     label?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts formatter signature
     labelFormatter?: (value: any, payload: Array<any>) => React.ReactNode;
     labelClassName?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts formatter signature
     formatter?: (
       value: any,
-      name: any,
+      name: string,
       item: any,
       index: number,
       payload: Array<any>

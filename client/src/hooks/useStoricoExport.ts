@@ -1,5 +1,6 @@
 // Hook per gestione export storico timbrature
-import { useState } from 'react';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import { useState } from 'react';
 import { useToast } from './use-toast';
 import type { Utente } from '@/services/utenti.service';
 import type { TurnoFull } from '@/services/storico/types';

@@ -1,6 +1,7 @@
 import type { ChartConfig } from './chart.types';
 
-export function getPayloadConfigFromPayload(config: ChartConfig, payload: any, key: string) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts payload structure varies
+export const getPayloadConfigFromPayload = (config: ChartConfig, payload: any, key: string) => {
   if (typeof payload !== 'object' || payload === null) {
     return undefined;
   }

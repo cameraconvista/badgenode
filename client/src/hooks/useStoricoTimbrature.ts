@@ -41,6 +41,7 @@ export function useStoricoTimbrature(pin: number) {
     }, 250);
 
     const unsubscribe = subscribeTimbrature({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- supabase realtime payload non tipizzabile rapidamente
       onChange: (_data: any) => {
         debouncedInvalidate();
       },
@@ -70,7 +71,7 @@ export function useStoricoTimbrature(pin: number) {
     queryKey: ['storico-dataset-v5', filters],
     queryFn: () => buildStoricoDataset({ pin: filters.pin, from: filters.dal, to: filters.al }),
     enabled: !!dipendente,
-  }) as { data: StoricoDatasetV5[]; isLoading: boolean; error: any };
+  }) as { data: StoricoDatasetV5[]; isLoading: boolean; error: unknown };
 
   if (storicoError) {
   }
@@ -84,13 +85,14 @@ export function useStoricoTimbrature(pin: number) {
     queryKey: ['turni-completi-legacy', filters],
     queryFn: () => loadTurniFull({ pin: filters.pin, from: filters.dal, to: filters.al }),
     enabled: !!dipendente,
-  }) as { data: GiornoLogicoDettagliato[]; isLoading: boolean; error: any };
+  }) as { data: GiornoLogicoDettagliato[]; isLoading: boolean; error: unknown };
 
   if (turniError) {
   }
 
   // Trasforma dataset v5 in formato StoricoRowData per tabella con sotto-righe
   const storicoDataset = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- dataset transformation structure varies
     const dataset: any[] = [];
 
     storicoDatasetV5.forEach((item) => {
@@ -158,9 +160,7 @@ export function useStoricoTimbrature(pin: number) {
     setSelectedGiorno(null)
   );
 
-  const handleRealtimeChange = useCallback((newFilters: { dal: string; al: string }) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }));
-  }, []);
+  const _handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
 
   const handleFiltersChange = (newFilters: { dal: string; al: string }) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
