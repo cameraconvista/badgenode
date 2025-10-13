@@ -48,7 +48,9 @@ export function invalidateExDipendenti() {
 
 // Utility per debounce
 export const debounce = (fn: Function, ms = 250) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- timeout handle type varies
   let timeout: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic debounce function
   return (...args: any[]) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => fn(...args), ms);

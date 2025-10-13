@@ -17,12 +17,14 @@ export const ChartTooltipContent = React.forwardRef<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts formatter signature
     labelFormatter?: (value: any, payload: Array<any>) => React.ReactNode;
     labelClassName?: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts formatter signature
     formatter?: (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts formatter signature
       value: any,
       name: string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts formatter signature  
       item: any,
       index: number,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- recharts formatter signature
       payload: Array<any>
     ) => React.ReactNode;
     color?: string;

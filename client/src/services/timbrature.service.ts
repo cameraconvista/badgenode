@@ -130,6 +130,7 @@ export class TimbratureService {
   }
 
   // DEBUG: Lettura da tabella diretta (fonte unica)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- debug function returns raw data
   static async loadStoricoRaw(pin?: number): Promise<any[]> {
     try {
       const params: TimbratureRangeParams = {};

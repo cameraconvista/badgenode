@@ -59,6 +59,7 @@ export class AuthService {
     const user = session.user;
 
     // Cerca PIN in ordine: top-level → user_metadata → app_metadata
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- supabase user structure varies
     const pin = (user as any).pin || user.user_metadata?.pin || user.app_metadata?.pin;
 
     if (typeof pin === 'number' && pin >= 1 && pin <= 99) {
