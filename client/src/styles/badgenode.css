@@ -49,14 +49,15 @@
 
 /* Modale stile coerente "Aggiungi Dipendente" */
 .bn-modal {
-  background: var(--card);
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  background: #2b0048 !important; /* STESSO colore viola fisso del modale Aggiungi Dipendente */
+  border: 2px solid rgba(231, 116, 240, 0.6) !important;
+  border-radius: 24px !important; /* Stesso border-radius */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45) !important;
 }
 
 .bn-modal-header {
-  padding: 18px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px; /* STESSO padding del modale Aggiungi Dipendente */
+  border-bottom: 1px solid #6b7280; /* border-gray-600 */
 }
 
 .bn-modal-title {
@@ -66,7 +67,9 @@
 }
 
 .bn-modal-body {
-  padding: 16px 20px;
+  padding: 24px; /* STESSO padding del modale Aggiungi Dipendente */
+  overflow-y: auto;
+  max-height: 60vh;
 }
 
 .bn-modal-section-title {
@@ -105,8 +108,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 24px; /* STESSO padding del modale Aggiungi Dipendente */
+  border-top: 1px solid #6b7280; /* border-gray-600 */
 }
 
 .btn-ghost {
