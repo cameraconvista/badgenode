@@ -20,11 +20,9 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/archivio-dipendenti" component={ArchivioDipendenti} />
       <Route path="/storico-timbrature/:pin">
-        <StoricoWrapper />
+        {(params) => <StoricoWrapper />}
       </Route>
-      <Route path="/storico-timbrature">
-        <StoricoWrapper />
-      </Route>
+      <Route path="/storico-timbrature" component={StoricoWrapper} />
       <Route path="/" component={Home} />
       <Route component={NotFound} />
     </Switch>
