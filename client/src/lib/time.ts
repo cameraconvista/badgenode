@@ -203,6 +203,15 @@ export function formatDataEstesa(data: string): string {
 }
 
 /**
+ * Verifica se una data è weekend (sabato o domenica)
+ */
+export function isWeekend(data: string): boolean {
+  const d = new Date(data + 'T00:00:00');
+  const dayOfWeek = d.getDay(); // 0 = domenica, 6 = sabato
+  return dayOfWeek === 0 || dayOfWeek === 6;
+}
+
+/**
  * Ottieni nome mese in italiano
  */
 export function getMeseItaliano(data: string): string {

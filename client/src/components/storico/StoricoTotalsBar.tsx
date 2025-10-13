@@ -17,8 +17,8 @@ export default function StoricoTotalsBar({
       <table className="table-fixed w-full">
         {/* Stesso colgroup della tabella principale */}
         <colgroup>
-          <col className="w-32" /> {/* Data */}
-          <col className="w-24" /> {/* Mese */}
+          <col className="w-28" /> {/* Data */}
+          <col className="w-28" /> {/* Mese */}
           <col className="w-20" /> {/* Entrata */}
           <col className="w-20" /> {/* Uscita */}
           <col className="w-16" /> {/* Ore */}
@@ -28,9 +28,9 @@ export default function StoricoTotalsBar({
         
         <tbody>
           <tr>
-            {/* Prime 4 colonne - Giorni lavorati */}
+            {/* Prime 4 colonne - Giorni lavorati allineati a sinistra con Data */}
             <td colSpan={4} className="px-4 text-left align-middle">
-              <div>
+              <div className="pl-0">
                 <div className="text-violet-300 font-semibold text-sm mb-1">Giorni lavorati</div>
                 <div className="text-white font-bold text-base">{giorniLavorati}</div>
               </div>

@@ -1,6 +1,6 @@
 import { Edit, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { formatOre, formatDataBreve, formatDataEstesa, getMeseItaliano, formatCreatedAt } from '@/lib/time';
+import { formatOre, formatDataBreve, formatDataEstesa, getMeseItaliano, formatCreatedAt, isWeekend } from '@/lib/time';
 import {
   TurnoFull,
   formatTimeOrDash,
@@ -45,14 +45,14 @@ export default function StoricoTable({
   }
 
   return (
-    <div className="bg-gray-800/50 rounded-lg flex flex-col h-full overflow-hidden">
+    <div className="bg-white rounded-lg flex flex-col h-full overflow-hidden shadow-lg">
       {/* Tabella HTML Standard */}
       <div className="flex-1 overflow-y-auto">
         <table className="table-fixed w-full border-collapse">
           {/* Definizione larghezze colonne */}
           <colgroup>
-            <col className="w-32" /> {/* Data - più larga per giorno esteso */}
-            <col className="w-24" /> {/* Mese */}
+            <col className="w-28" /> {/* Data - ridotta leggermente */}
+            <col className="w-28" /> {/* Mese - aumentata per equilibrio */}
             <col className="w-20" /> {/* Entrata */}
             <col className="w-20" /> {/* Uscita */}
             <col className="w-16" /> {/* Ore */}
@@ -61,7 +61,7 @@ export default function StoricoTable({
           </colgroup>
           
           {/* Header fisso */}
-          <thead className="bg-gray-700/50 border-b border-gray-600 sticky top-0 z-10">
+          <thead className="bg-gray-700 border-b border-gray-600 sticky top-0 z-10">
             <tr className="h-11">
               <th className="px-4 text-left text-white font-semibold text-base align-middle border-r border-gray-600/30">Data</th>
               <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Mese</th>
@@ -97,57 +97,59 @@ export default function StoricoTable({
 
   // Funzione render riga giorno (convertita a HTML table)
   function renderRigaGiorno(giorno: GiornoLogicoDettagliato, index: number) {
+    const isWeekendDay = isWeekend(giorno.giorno);
+    
     return (
       <tr
         key={`giorno-${giorno.giorno}`}
         className={`
-          h-11 border-b border-gray-600/50 text-base
-          ${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'}
+          h-11 border-b border-gray-300/50 text-base
+          ${isWeekendDay ? 'bg-gray-100' : 'bg-white'}
           ${giorno.ore === 0 ? 'opacity-60' : ''}
-          hover:bg-gray-600/30 transition-colors
+          hover:bg-gray-50 transition-colors
         `}
       >
         {/* Data */}
-        <td className="px-4 text-left align-middle border-r border-gray-600/30 text-sm">
-          <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
+        <td className="px-4 text-left align-middle border-r border-gray-300/30 text-sm">
+          <span className={`font-medium ${giorno.ore === 0 ? "text-gray-400" : "text-gray-800"}`}>
             {formatDataEstesa(giorno.giorno)}
           </span>
         </td>
 
         {/* Mese */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
-          <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
+        <td className="px-4 text-center align-middle border-r border-gray-300/30 text-sm">
+          <span className={`font-medium ${giorno.ore === 0 ? "text-gray-400" : "text-gray-800"}`}>
             {getMeseItaliano(giorno.giorno)}
           </span>
         </td>
 
         {/* Entrata */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
-          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+        <td className="px-4 text-center align-middle border-r border-gray-300/30 text-sm">
+          <span className={giorno.ore === 0 ? "text-gray-400" : "text-gray-800 font-medium"}>
             {formatTimeOrDash(giorno.entrata)}
           </span>
         </td>
 
         {/* Uscita */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
-          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+        <td className="px-4 text-center align-middle border-r border-gray-300/30 text-sm">
+          <span className={giorno.ore === 0 ? "text-gray-400" : "text-gray-800 font-medium"}>
             {formatTimeOrDash(giorno.uscita)}
           </span>
         </td>
 
         {/* Ore Lavorate */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm tabular-nums">
-          <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
+        <td className="px-4 text-center align-middle border-r border-gray-300/30 text-sm tabular-nums">
+          <span className={giorno.ore === 0 ? "text-gray-400" : "text-gray-800 font-medium"}>
             {formatOre(giorno.ore)}
           </span>
         </td>
 
         {/* Ore Extra */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm tabular-nums">
+        <td className="px-4 text-center align-middle border-r border-gray-300/30 text-sm tabular-nums">
           {giorno.extra > 0 ? (
-            <span className="text-yellow-400 font-bold">{formatOre(giorno.extra)}</span>
+            <span className="text-orange-600 font-bold">{formatOre(giorno.extra)}</span>
           ) : (
-            <span className="text-gray-500">—</span>
+            <span className="text-gray-400">—</span>
           )}
         </td>
 
@@ -158,12 +160,12 @@ export default function StoricoTable({
               variant="ghost"
               size="sm"
               onClick={() => onEditTimbrature(giorno.giorno)}
-              className="text-violet-400 hover:text-violet-300 hover:bg-violet-400/10 h-7 w-7 p-0 flex items-center justify-center mx-auto"
+              className="text-violet-600 hover:text-violet-700 hover:bg-violet-100 h-7 w-7 p-0 flex items-center justify-center mx-auto"
             >
               <Edit className="w-3.5 h-3.5" />
             </Button>
           ) : (
-            <span className="text-gray-500">—</span>
+            <span className="text-gray-400">—</span>
           )}
         </td>
       </tr>
@@ -175,37 +177,37 @@ export default function StoricoTable({
     return (
       <tr
         key={`${giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`}
-        className="h-11 border-b border-gray-600/30 text-sm bg-gray-800/20"
+        className="h-11 border-b border-gray-300/30 text-sm bg-white"
       >
         {/* Data - vuota */}
-        <td className="px-4 text-left align-middle border-r border-gray-600/30"></td>
+        <td className="px-4 text-left align-middle border-r border-gray-300/30"></td>
 
         {/* Mese - indicatore sessione (solo dalla #2 in poi) */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-xs">
-          <span className="text-gray-400">
+        <td className="px-4 text-center align-middle border-r border-gray-300/30 text-xs">
+          <span className="text-gray-500">
             {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
           </span>
         </td>
 
         {/* Entrata sessione */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30">
-          <span className="text-white/70">{formatTimeOrDash(sessione.entrata)}</span>
+        <td className="px-4 text-center align-middle border-r border-gray-300/30">
+          <span className="text-gray-600">{formatTimeOrDash(sessione.entrata)}</span>
         </td>
 
         {/* Uscita sessione */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30">
-          <span className="text-white/70">
+        <td className="px-4 text-center align-middle border-r border-gray-300/30">
+          <span className="text-gray-600">
             {sessione.isAperta ? '—' : formatTimeOrDash(sessione.uscita)}
           </span>
         </td>
 
         {/* Ore sessione */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 tabular-nums">
-          <span className="text-white/70">{formatOre(sessione.ore)}</span>
+        <td className="px-4 text-center align-middle border-r border-gray-300/30 tabular-nums">
+          <span className="text-gray-600">{formatOre(sessione.ore)}</span>
         </td>
 
         {/* Extra - vuoto per sessioni */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30"></td>
+        <td className="px-4 text-center align-middle border-r border-gray-300/30"></td>
 
         {/* Modifica - vuoto per sessioni */}
         <td className="px-4 text-center align-middle"></td>
