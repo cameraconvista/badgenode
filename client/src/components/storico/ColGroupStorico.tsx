@@ -5,13 +5,7 @@
 export default function ColGroupStorico() {
   return (
     <colgroup>
-      <col className="w-28" /> {/* Data */}
-      <col className="w-28" /> {/* Mese */}
-      <col className="w-20" /> {/* Entrata */}
-      <col className="w-20" /> {/* Uscita */}
-      <col className="w-16" /> {/* Ore */}
-      <col className="w-16" /> {/* Extra */}
-      <col className="w-12" /> {/* Modifica */}
+      <col className="w-28" /><col className="w-28" /><col className="w-20" /><col className="w-20" /><col className="w-16" /><col className="w-16" /><col className="w-12" />
     </colgroup>
   );
 }
