@@ -47,8 +47,8 @@ export default function StoricoTable({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Tabella HTML Standard */}
-      <div className="flex-1 overflow-y-auto">
-        <table className="table-fixed w-full border-collapse">
+      <div className="flex-1 overflow-y-auto bg-gray-200">
+        <table className="table-fixed w-full border-collapse bg-gray-200">
           {/* Definizione larghezze colonne */}
           <colgroup>
             <col className="w-28" /> {/* Data - ridotta leggermente */}
@@ -104,7 +104,7 @@ export default function StoricoTable({
         key={`giorno-${giorno.giorno}`}
         className={`
           h-11 border-b border-gray-300/50 text-base
-          ${isWeekendDay ? 'bg-gray-200' : 'bg-gray-50'}
+          ${isWeekendDay ? 'bg-gray-300' : 'bg-gray-200'}
           ${giorno.ore === 0 ? 'opacity-60' : ''}
           hover:bg-gray-100 transition-colors
         `}
@@ -177,7 +177,7 @@ export default function StoricoTable({
     return (
       <tr
         key={`${giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`}
-        className="h-11 border-b border-gray-300/30 text-sm bg-gray-50"
+        className="h-11 border-b border-gray-300/30 text-sm bg-gray-200"
       >
         {/* Data - vuota */}
         <td className="px-4 text-left align-middle border-r border-gray-300/30"></td>
