@@ -167,3 +167,49 @@
 .bn-actions-lg svg:hover { 
   background: transparent !important; 
 }
+
+/* Densità più alta (righe più alte) per Archivio */
+.bn-row-tall { 
+  padding-block: 16px; 
+  line-height: 1.4; 
+}
+
+/* Tabella Archivio: testi più grandi (ma NON le icone azioni) */
+.bn-archivio th,
+.bn-archivio td { 
+  font-size: 1.0625rem; /* 17px */ 
+}
+
+/* Icona "storico" più grande e verde chiaro */
+.icon-storico { 
+  width: 20px; 
+  height: 20px; 
+  color: #7CFF7A; 
+}
+
+/* Azioni: mantieni dimensione attuale delle icone azioni */
+.bn-actions .icon-action { 
+  width: 18px; 
+  height: 18px; 
+}
+
+/* Matita (modifica) bianca */
+.bn-actions .icon-action.edit { 
+  color: #fff; 
+}
+.bn-actions .icon-action.edit:hover { 
+  color: rgba(255,255,255,0.9); 
+}
+
+/* Disattiva highlight riga su hover (totale) e soprattutto quando si passa sui pulsanti */
+.bn-nohover .bn-row:hover { 
+  background: var(--card) !important; 
+}
+.bn-nohover .bn-row *:hover { 
+  background-color: transparent !important; 
+}
+.bn-nohover .bn-actions button:hover,
+.bn-nohover .bn-actions a:hover,
+.bn-nohover .bn-actions svg:hover { 
+  background: transparent !important; 
+}

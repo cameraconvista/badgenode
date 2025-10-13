@@ -154,7 +154,7 @@ export default function ArchivioDipendenti() {
               <Button
                 variant="outline"
                 onClick={handleExDipendenti}
-                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-yellow-500 hover:text-yellow-400 hover:bg-violet-50 hover:shadow-md transition-all"
+                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-yellow-600 hover:text-yellow-500 hover:bg-violet-50 hover:shadow-md transition-all"
               >
                 <Archive className="w-4 h-4 text-current" />
                 Ex-Dipendenti

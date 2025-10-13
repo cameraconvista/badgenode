@@ -41,7 +41,7 @@ export default function ArchivioActions({
   };
 
   return (
-    <div className="bn-actions-lg flex items-center justify-center gap-3">
+    <>
       {/* Matita bianca (edit) */}
       <Button
         variant="ghost"
@@ -50,7 +50,7 @@ export default function ArchivioActions({
         className="p-1"
         title="Modifica dipendente"
       >
-        <Edit className="icon text-white hover:text-white/90" />
+        <Edit className="icon-action edit" />
       </Button>
 
       {/* Archivio giallo tenue */}
@@ -61,7 +61,7 @@ export default function ArchivioActions({
         className="p-1"
         title="Archivia dipendente"
       >
-        <Archive className="icon text-yellow-400/90 hover:text-yellow-300" />
+        <Archive className="icon-action archive text-yellow-400/90 hover:text-yellow-300" />
       </Button>
 
       {/* Cestino rosso */}
@@ -72,7 +72,7 @@ export default function ArchivioActions({
         className="p-1"
         title="Elimina dipendente"
       >
-        <Trash2 className="icon text-red-400 hover:text-red-300" />
+        <Trash2 className="icon-action trash text-red-400 hover:text-red-300" />
       </Button>
 
       {/* Dialogo archiviazione */}
@@ -83,6 +83,6 @@ export default function ArchivioActions({
         onConfirm={handleArchivia}
         isLoading={isLoading}
       />
-    </div>
+    </>
   );
 }

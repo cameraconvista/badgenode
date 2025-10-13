@@ -20,7 +20,7 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/archivio-dipendenti" component={ArchivioDipendenti} />
       <Route path="/storico-timbrature/:pin">
-        {(params) => <StoricoWrapper />}
+        {(_params) => { void _params; return <StoricoWrapper />; }}
       </Route>
       <Route path="/storico-timbrature" component={StoricoWrapper} />
       <Route path="/" component={Home} />
