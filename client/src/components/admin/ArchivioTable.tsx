@@ -55,7 +55,7 @@ export default function ArchivioTable({
       {/* Tabella TableKit Standard */}
       <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50 flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
-          <table className="w-full table-fixed border-collapse">
+          <table className="w-full table-fixed border-collapse bn-archivio">
             <colgroup>
               <col style={{width: '72px'}} />    {/* Storico (icona grafico) */}
               <col style={{width: '96px'}} />    {/* PIN */}
@@ -63,9 +63,9 @@ export default function ArchivioTable({
               <col />                            {/* Cognome (auto) */}
               <col style={{width: '140px'}} />   {/* Azioni */}
             </colgroup>
-            <thead className="sticky top-0 z-10 bg-[rgba(255,255,255,0.06)] h-[44px]">
+            <thead className="sticky top-0 z-10 bg-[rgba(255,255,255,0.06)] h-[48px]">
               <tr>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Storico</th>
+                <th className="px-4 text-left align-middle text-sm font-semibold text-white/90">Storico</th>
                 <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">
                   <button
                     onClick={toggleSortOrder}
@@ -77,8 +77,8 @@ export default function ArchivioTable({
                     />
                   </button>
                 </th>
-                <th className="px-4 text-left align-middle text-sm font-semibold text-white/90">Nome</th>
-                <th className="px-4 text-left align-middle text-sm font-semibold text-white/90">Cognome</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Nome</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Cognome</th>
                 <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Azioni</th>
               </tr>
             </thead>
@@ -93,7 +93,7 @@ export default function ArchivioTable({
                 sortedUtenti.map((utente) => (
                   <tr
                     key={utente.id || `pin-${utente.pin}`}
-                    className="bn-row bn-row-dense align-middle"
+                    className="bn-row bn-row-medium align-middle"
                   >
                     <td className="bn-cell px-4 text-center">
                       <Button
@@ -111,10 +111,10 @@ export default function ArchivioTable({
                         {utente.pin.toString().padStart(2, '0')}
                       </span>
                     </td>
-                    <td className="bn-cell px-4 text-left">
+                    <td className="bn-cell px-4 text-center">
                       <span className="font-medium text-base text-white">{utente.nome}</span>
                     </td>
-                    <td className="bn-cell px-4 text-left">
+                    <td className="bn-cell px-4 text-center">
                       <span className="font-medium text-base text-white">{utente.cognome}</span>
                     </td>
                     <td className="bn-cell px-4">

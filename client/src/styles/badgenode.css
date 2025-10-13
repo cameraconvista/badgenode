@@ -137,3 +137,33 @@
   padding: 8px 14px;
   font-weight: 700;
 }
+
+/* Archivio Dipendenti: densità medium */
+.bn-row-medium { 
+  padding-block: 14px; 
+  line-height: 1.35; 
+}
+
+/* Font più grande per questa tabella */
+.bn-archivio th,
+.bn-archivio td { 
+  font-size: 1rem; /* 16px */ 
+}
+
+/* Icone azioni più grandi */
+.bn-actions-lg .icon { 
+  height: 20px; 
+  width: 20px; 
+}
+
+/* Blocca qualsiasi highlight di riga dovuto a hover dei figli */
+.bn-row *:hover { 
+  background-color: transparent !important; 
+}
+
+/* Pulsanti/icone in cella azioni senza bg-hover */
+.bn-actions-lg button:hover,
+.bn-actions-lg a:hover,
+.bn-actions-lg svg:hover { 
+  background: transparent !important; 
+}

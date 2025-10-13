@@ -127,9 +127,9 @@ export default function ArchivioDipendenti() {
           </div>
           <div className="text-center mb-4">
             <h1 className="text-2xl font-bold text-white mb-2">Archivio Dipendenti</h1>
-            <div className="text-sm text-gray-400">
-              <strong className="text-violet-400">{utenti.length}</strong> dipendenti attivi
-            </div>
+            <p className="text-yellow-300 text-base md:text-lg font-medium">
+              {utenti.length} dipendenti attivi
+            </p>
           </div>
           <div className="flex-1 overflow-hidden mb-4">
             <ArchivioTable
@@ -154,9 +154,9 @@ export default function ArchivioDipendenti() {
               <Button
                 variant="outline"
                 onClick={handleExDipendenti}
-                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-yellow-500 hover:text-yellow-400 hover:bg-violet-50 hover:shadow-md transition-all"
               >
-                <Archive className="w-4 h-4" />
+                <Archive className="w-4 h-4 text-current" />
                 Ex-Dipendenti
               </Button>
               <Button
