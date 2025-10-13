@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabaseClient';
-import type { Session, User } from '@supabase/supabase-js';
+import type { Session } from '@supabase/supabase-js';
+// User type reserved for future auth features
 
 export interface AuthUser {
   id: string;
@@ -34,7 +35,7 @@ export class AuthService {
     if (error) throw error;
   }
 
-  static async getSession() {
+  static async getCurrentUser(): Promise<unknown | null> {
     const {
       data: { session },
     } = await supabase.auth.getSession();

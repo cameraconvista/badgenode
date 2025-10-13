@@ -1,6 +1,7 @@
 import type { Express } from 'express';
 import { createServer, type Server } from 'http';
-import { storage } from './storage';
+import { createClient } from '@supabase/supabase-js';
+// import { storage } from './storage'; // Unused - commented out
 import { supabaseAdmin } from './supabase';
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -66,7 +67,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const supabase = createClient(url, anon);
 
       // Test lettura
-      const { data: readData, error: readError } = await supabase
+      const { error: readError } = await supabase
         .from('utenti')
         .select('pin, nome, cognome')
         .limit(1);
@@ -114,7 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // STEP 1: Elimina tutte le timbrature dell'utente (CASCADE)
       console.log('🗑️ [API] Eliminazione timbrature per PIN:', pin);
-      const { error: timbratureError } = await supabaseAdmin
+      const { error: timbratureError } = await (supabaseAdmin as ReturnType<typeof createClient>)
         .from('timbrature')
         .delete()
         .eq('pin', pin);
@@ -131,7 +132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('✅ [API] Timbrature eliminate per PIN:', pin);
 
       // STEP 2: Elimina l'utente
-      const { data, error } = await supabaseAdmin.from('utenti').delete().eq('pin', pin).select();
+      const { data, error } = await (supabaseAdmin as ReturnType<typeof createClient>).from('utenti').delete().eq('pin', pin).select();
 
       if (error) {
         console.error('❌ [API] Error deleting utente:', error);

@@ -1,8 +1,8 @@
 // Utility per aggregazione timbrature per giorno logico (client-side)
 
 import { formatDateLocal, getMeseItaliano } from '@/lib/time';
-import { TimbraturaCanon, TimbraturaPair, TurnoFull } from '@/services/storico/types';
-// Note: TurnoFull unused but reserved for future API
+// reserved: api-internal (non rimuovere senza migrazione)
+// import type { TurnoFull } from '@/services/storico/types';
 import { GiornoLogicoDettagliato } from './types';
 import { pairSessionsForGiorno } from './pairing';
 

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { loadTurniFull, buildStoricoDataset, StoricoDatasetV5 } from '@/services/storico.service';
 import { GiornoLogicoDettagliato } from '@/lib/storico/types';
@@ -41,7 +41,7 @@ export function useStoricoTimbrature(pin: number) {
     }, 250);
 
     const unsubscribe = subscribeTimbrature({
-      onChange: (payload) => {
+      onChange: (_data: any) => {
         debouncedInvalidate();
       },
     });
@@ -157,6 +157,10 @@ export function useStoricoTimbrature(pin: number) {
   const { updateMutation, deleteMutation } = useStoricoMutations(timbratureGiorno, () =>
     setSelectedGiorno(null)
   );
+
+  const handleRealtimeChange = useCallback((newFilters: { dal: string; al: string }) => {
+    setFilters((prev) => ({ ...prev, ...newFilters }));
+  }, []);
 
   const handleFiltersChange = (newFilters: { dal: string; al: string }) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));

@@ -2,8 +2,10 @@
 // Usa SOLO le nuove colonne: giorno_logico, data_locale, ora_locale
 
 import { supabase } from '@/lib/supabaseClient';
+import { expandDaysRange } from '@/lib/time';
 import type { Timbratura, StoricoParams } from '@/types/timbrature';
-import type { TurnoFull, StoricoDatasetV5, SessioneV5 } from './storico/types';
+import type { TurnoFull, StoricoDatasetV5 } from './storico/types';
+// SessioneV5 reserved for future API
 
 /**
  * Lettura storico timbrature per PIN con filtri opzionali
@@ -120,8 +122,7 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
 export async function buildStoricoDataset(params: StoricoParams): Promise<StoricoDatasetV5[]> {
   const { from, to } = params;
   
-  // Importa la funzione per espandere i giorni
-  const { expandDaysRange } = await import('@/lib/time');
+  // Usa la funzione importata staticamente
   
   // Ottieni tutti i giorni del range
   const tuttiIGiorni = expandDaysRange(from!, to!);

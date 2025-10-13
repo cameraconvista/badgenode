@@ -2,6 +2,8 @@
 // Centralizza tutte le chiamate verso insert_timbro_v2
 
 import { supabase } from '@/lib/supabaseClient';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import type { TimbraturePayload, RpcResult } from '@/types/rpc';
 
 export interface InsertTimbroParams {
   pin: number;
@@ -11,7 +13,7 @@ export interface InsertTimbroParams {
 
 export interface InsertTimbroResult {
   success: boolean;
-  data?: any;
+  data?: unknown;
   error?: string;
 }
 

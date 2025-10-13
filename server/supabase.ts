@@ -7,7 +7,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 // Log diagnostico all'avvio
 console.log(`[Supabase Admin] hasUrl=${!!supabaseUrl} hasServiceRole=${!!supabaseServiceKey}`);
 
-let supabaseAdmin: any = null;
+let supabaseAdmin: unknown = null;
 
 if (!supabaseUrl || !supabaseServiceKey) {
   console.warn('⚠️ [Supabase Admin] Variabili ambiente mancanti - API admin disabilitate');

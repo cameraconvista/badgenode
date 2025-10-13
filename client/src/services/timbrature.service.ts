@@ -4,6 +4,8 @@
 import type { Timbratura } from '@/types/timbrature';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
 import { supabase } from '@/lib/supabaseClient';
+import { callInsertTimbro } from './timbratureRpc';
+import { asError } from '@/lib/safeError';
 import type { TimbraturaCanon, TimbratureRangeParams } from '../../../shared/types/timbrature';
 
 export interface TimbratureFilters {
@@ -112,7 +114,7 @@ export class TimbratureService {
     throw new Error('updateTimbratura not implemented - use Supabase RPC functions');
   }
 
-  static async deleteTimbratura(id: string): Promise<void> {
+  static async deleteById(_id: number, _input: unknown): Promise<void> {
     throw new Error('deleteTimbratura not implemented - use Supabase RPC functions');
   }
 
@@ -147,35 +149,28 @@ export class TimbratureService {
           giorno_logico: t.giorno_logico,
           created_at: t.created_at,
         }));
-    } catch (error) {
+    } catch (e) {
+      const err = asError(e);
+      console.error('[BadgeNode] Error loading timbrature:', err.message);
       return [];
     }
   }
 
   // REFACTOR: Usa RPC unico centralizzato
   static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<number> {
-    const { callInsertTimbro } = await import('./timbratureRpc');
     const result = await callInsertTimbro({ pin, tipo });
     return result.success ? 1 : 0; // 1 = successo, 0 = errore
   }
 
   // Funzione per refresh storico dopo timbratura - SEMPLIFICATO: tabella diretta
-  static async getTimbratureByPin(pin: number): Promise<any[]> {
+  static async getById(_id: number): Promise<Timbratura | null> {
     try {
-      const timbrature = await this.getTimbratureByRange({ pin });
+      const timbrature = await this.getTimbratureByRange({});
 
       // Ordina per created_at desc per compatibilità
       return timbrature
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .map((t) => ({
-          id: t.id,
-          pin: t.pin,
-          tipo: t.tipo,
-          data_locale: t.data_locale,
-          ora_locale: t.ora_locale,
-          giorno_logico: t.giorno_logico,
-          created_at: t.created_at,
-        }));
+        .find((t) => t.id === _id) || null;
     } catch (error) {
       throw error;
     }

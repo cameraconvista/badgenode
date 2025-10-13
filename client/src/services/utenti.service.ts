@@ -2,6 +2,7 @@
 // Integrato con Supabase
 
 import { supabase } from '@/lib/supabaseClient';
+import { asError } from '@/lib/safeError';
 import { createClient } from '@supabase/supabase-js';
 
 export interface Utente {
@@ -215,9 +216,10 @@ export class UtentiService {
         .eq('pin', pin);
 
       if (utenteError) {
-        throw new Error(`Errore eliminazione utente: ${utenteError.message}`);
+        const err = asError(utenteError);
+        console.error('[BadgeNode] Errore eliminazione utente:', err.message);
+        throw err;
       }
-
     } catch (error) {
       throw error;
     }
@@ -239,8 +241,9 @@ export class UtentiService {
       
       const pinEsistente = (count ?? 0) > 0;
       return { available: !pinEsistente };
-    } catch (error) {
-      // Errore generico - stato neutro, non bloccare
+    } catch (e) {
+      const err = asError(e);
+      console.error('[BadgeNode] Errore caricamento utenti:', err.message);
       return { available: true, error: 'Errore di connessione' };
     }
   }

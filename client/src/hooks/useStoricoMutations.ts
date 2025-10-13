@@ -54,7 +54,7 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
   const deleteMutation = useMutation({
     mutationFn: async () => {
       for (const timbratura of timbratureGiorno) {
-        await TimbratureService.deleteTimbratura(timbratura.id.toString());
+        await TimbratureService.deleteById(timbratura.id, {});
       }
     },
     onSuccess: () => {

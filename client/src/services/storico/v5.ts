@@ -2,7 +2,10 @@
 import { TimbratureService } from '../timbrature.service';
 import { pairTimbrature, buildDailyTotals } from '../../utils/timbrature-pairing';
 import { TotaleGiornoV5, SessioneV5, StoricoDatasetV5 } from './types';
-import type { TimbraturaCanon, TimbraturaPair } from '../../../../shared/types/timbrature';
+import { asError } from '@/lib/safeError';
+// reserved: api-internal (non rimuovere senza migrazione)
+// import { TurnoGiornaliero } from './types';
+// TimbraturaCanon, TimbraturaPair reserved for future API
 
 /**
  * Genera range di date complete (YYYY-MM-DD) per periodo specificato.
@@ -57,7 +60,9 @@ export async function loadTotaliGiornoLogico({
       sessioni_chiuse: 0, // TODO(BUSINESS): calcolare se necessario
       sessioni_totali: 0, // TODO(BUSINESS): calcolare se necessario
     }));
-  } catch (error) {
+  } catch (e) {
+    const err = asError(e);
+    console.error('[BadgeNode] Error loading totali:', err.message);
     return [];
   }
 }
@@ -97,7 +102,9 @@ export async function loadSessioniGiornoLogico({
     });
 
     return sessioni;
-  } catch (error) {
+  } catch (e) {
+    const err = asError(e);
+    console.error('[BadgeNode] Error loading totali:', err.message);
     return [];
   }
 }
@@ -155,7 +162,9 @@ export async function buildStoricoDataset({
         sessioni: sessioniGiorno,
       };
     });
-  } catch (error) {
+  } catch (e) {
+    const err = asError(e);
+    console.error('[BadgeNode] Error loading totali:', err.message);
     return [];
   }
 }

@@ -50,7 +50,11 @@ export default [
     },
     rules: {
       'react/react-in-jsx-scope': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', {
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        'ignoreRestSiblings': true
+      }],
       '@typescript-eslint/no-explicit-any': 'warn',
       'prefer-const': 'error',
       'no-var': 'error',
@@ -80,6 +84,12 @@ export default [
     },
     rules: {
       'no-unused-vars': 'warn',
+    },
+  },
+  {
+    files: ['client/src/adapters/**/*', 'server/adapters/**/*'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {

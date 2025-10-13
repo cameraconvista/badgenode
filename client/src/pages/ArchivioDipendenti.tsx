@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Archive, Plus } from 'lucide-react';
@@ -51,6 +51,9 @@ export default function ArchivioDipendenti() {
   const handleStorico = (pin: number) => {
     setLocation(`/storico-timbrature/${pin}`);
   };
+  const onEditClick: (_id: number) => void = (_id) => {
+    setLocation(`/storico-timbrature/${_id}`);
+  };
   const handleModifica = (utente: Utente) => {
     setUtenteSelezionato(utente);
     setShowModaleModifica(true);
@@ -96,6 +99,7 @@ export default function ArchivioDipendenti() {
     }
   };
   const handleBackToLogin = () => setLocation('/');
+  const handleRealtimeChange = useCallback((_payload: unknown) => {}, []);
   const handleExDipendenti = () => {};
 
   return (

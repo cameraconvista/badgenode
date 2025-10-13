@@ -33,7 +33,8 @@
     "clean:demo-users": "tsx scripts/clean-demo-users.ts",
     "check:ci": "bash scripts/ci/checks.sh",
     "icons:generate": "npx tsx scripts/generate-pwa-icons.ts",
-    "smoke:runtime": "tsx scripts/ci/smoke-runtime.ts"
+    "smoke:runtime": "tsx scripts/ci/smoke-runtime.ts",
+    "g:commit": "node scripts/git-commit.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
