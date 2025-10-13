@@ -9,6 +9,7 @@ import {
 } from '@/services/storico.service';
 import { StoricoRowData, GiornoLogicoDettagliato, SessioneTimbratura } from '@/lib/storico/types';
 import StoricoTotalsBar from './StoricoTotalsBar';
+import ColGroupStorico from './ColGroupStorico';
 
 interface StoricoTableProps {
   timbrature: GiornoLogicoDettagliato[]; // Legacy (per compatibilità)
@@ -45,31 +46,23 @@ export default function StoricoTable({
   }
 
   return (
-    <div className="bg-gray-800/50 rounded-lg flex flex-col h-full overflow-hidden">
+    <div className="bn-table__container">
       {/* Tabella HTML Standard */}
-      <div className="flex-1 overflow-y-auto">
-        <table className="table-fixed w-full border-collapse">
-          {/* Definizione larghezze colonne */}
-          <colgroup>
-            <col className="w-28" /> {/* Data - ridotta leggermente */}
-            <col className="w-28" /> {/* Mese - aumentata per equilibrio */}
-            <col className="w-20" /> {/* Entrata */}
-            <col className="w-20" /> {/* Uscita */}
-            <col className="w-16" /> {/* Ore */}
-            <col className="w-16" /> {/* Extra */}
-            <col className="w-12" /> {/* Modifica - più stretta */}
-          </colgroup>
+      <div className="bn-table__scroll-area">
+        <table className="bn-table__table">
+          {/* Definizione larghezze colonne - unica fonte di verità */}
+          <ColGroupStorico />
           
           {/* Header fisso */}
-          <thead className="bg-gray-700 border-b border-gray-600 sticky top-0 z-10">
-            <tr className="h-11">
-              <th className="px-4 text-left text-white font-semibold text-base align-middle border-r border-gray-600/30">Data</th>
-              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Mese</th>
-              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Entrata</th>
-              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30">Uscita</th>
-              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30 tabular-nums">Ore</th>
-              <th className="px-4 text-center text-white font-semibold text-base align-middle border-r border-gray-600/30 tabular-nums">Extra</th>
-              <th className="px-4 text-center text-white font-semibold text-base align-middle">Modifica</th>
+          <thead className="bn-table__header">
+            <tr>
+              <th className="bn-table__header-cell bn-table__header-cell--left">Data</th>
+              <th className="bn-table__header-cell">Mese</th>
+              <th className="bn-table__header-cell">Entrata</th>
+              <th className="bn-table__header-cell">Uscita</th>
+              <th className="bn-table__header-cell tabular-nums">Ore</th>
+              <th className="bn-table__header-cell tabular-nums">Extra</th>
+              <th className="bn-table__header-cell">Modifica</th>
             </tr>
           </thead>
 
@@ -97,55 +90,57 @@ export default function StoricoTable({
 
   // Funzione render riga giorno (convertita a HTML table)
   function renderRigaGiorno(giorno: GiornoLogicoDettagliato, index: number) {
-    const isWeekendDay = isWeekend(giorno.giorno);
+    // Determina se è weekend (sabato=6, domenica=0)
+    const date = new Date(giorno.giorno);
+    const weekday = date.getDay();
+    const isWeekendDay = weekday === 6 || weekday === 0; // sab=6, dom=0
     
     return (
       <tr
         key={`giorno-${giorno.giorno}`}
         className={`
-          h-11 border-b border-gray-600/50 text-base
-          ${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'}
+          ${isWeekendDay ? 'bn-row bn-row--weekend' : 'bn-row'}
           ${giorno.ore === 0 ? 'opacity-60' : ''}
-          hover:bg-gray-600/30 transition-colors
+          text-base
         `}
       >
         {/* Data */}
-        <td className="px-4 text-left align-middle border-r border-gray-600/30 text-sm">
+        <td className="bn-table__cell bn-table__cell--left text-sm">
           <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
             {formatDataEstesa(giorno.giorno)}
           </span>
         </td>
 
         {/* Mese */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
+        <td className="bn-table__cell text-sm">
           <span className={`font-medium ${giorno.ore === 0 ? "text-gray-500" : "text-white/90"}`}>
             {getMeseItaliano(giorno.giorno)}
           </span>
         </td>
 
         {/* Entrata */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
+        <td className="bn-table__cell text-sm">
           <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
             {formatTimeOrDash(giorno.entrata)}
           </span>
         </td>
 
         {/* Uscita */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm">
+        <td className="bn-table__cell text-sm">
           <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
             {formatTimeOrDash(giorno.uscita)}
           </span>
         </td>
 
         {/* Ore Lavorate */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm tabular-nums">
+        <td className="bn-table__cell text-sm tabular-nums">
           <span className={giorno.ore === 0 ? "text-gray-500" : "text-white/90 font-medium"}>
             {formatOre(giorno.ore)}
           </span>
         </td>
 
         {/* Ore Extra */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-sm tabular-nums">
+        <td className="bn-table__cell text-sm tabular-nums">
           {giorno.extra > 0 ? (
             <span className="text-yellow-400 font-bold">{formatOre(giorno.extra)}</span>
           ) : (
@@ -154,7 +149,7 @@ export default function StoricoTable({
         </td>
 
         {/* Modifica */}
-        <td className="px-2 text-center align-middle">
+        <td className="bn-table__cell">
           {giorno.ore > 0 ? (
             <Button
               variant="ghost"
@@ -177,40 +172,40 @@ export default function StoricoTable({
     return (
       <tr
         key={`${giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`}
-        className="h-11 border-b border-gray-600/30 text-sm bg-gray-800/20"
+        className="bn-table__row--session text-sm"
       >
         {/* Data - vuota */}
-        <td className="px-4 text-left align-middle border-r border-gray-600/30"></td>
+        <td className="bn-table__cell bn-table__cell--left"></td>
 
         {/* Mese - indicatore sessione (solo dalla #2 in poi) */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 text-xs">
+        <td className="bn-table__cell text-xs">
           <span className="text-gray-400">
             {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
           </span>
         </td>
 
         {/* Entrata sessione */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30">
+        <td className="bn-table__cell">
           <span className="text-white/70">{formatTimeOrDash(sessione.entrata)}</span>
         </td>
 
         {/* Uscita sessione */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30">
+        <td className="bn-table__cell">
           <span className="text-white/70">
             {sessione.isAperta ? '—' : formatTimeOrDash(sessione.uscita)}
           </span>
         </td>
 
         {/* Ore sessione */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30 tabular-nums">
+        <td className="bn-table__cell tabular-nums">
           <span className="text-white/70">{formatOre(sessione.ore)}</span>
         </td>
 
         {/* Extra - vuoto per sessioni */}
-        <td className="px-4 text-center align-middle border-r border-gray-600/30"></td>
+        <td className="bn-table__cell"></td>
 
         {/* Modifica - vuoto per sessioni */}
-        <td className="px-4 text-center align-middle"></td>
+        <td className="bn-table__cell"></td>
       </tr>
     );
   }
