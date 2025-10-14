@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { FileSpreadsheet, FileText, ArrowLeft } from 'lucide-react';
 import { useLocation } from 'wouter';
 
@@ -27,34 +26,29 @@ export default function StoricoHeader({
     <div className="bg-gray-800/50 rounded-lg p-6 flex-shrink-0 relative">
       {/* Pulsante TORNA in alto a sinistra */}
       <div className="absolute top-4 left-4">
-        <Button
-          variant="outline"
+        <button 
           onClick={handleTorna}
-          className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+          className="bn-back rounded-xl px-4 py-2 flex items-center gap-2"
         >
-          <ArrowLeft className="w-4 h-4" />
-          TORNA
-        </Button>
+          <ArrowLeft className="w-4 h-4 text-white" />
+          <span className="text-white font-medium">TORNA</span>
+        </button>
       </div>
 
       {/* Pulsanti in alto a destra */}
       <div className="absolute top-4 right-4 flex gap-3">
-        <Button
-          variant="outline"
+        <button 
           onClick={onExportPDF}
-          className="border-gray-600 hover:bg-gray-700 p-3"
-          size="lg"
+          className="bn-export-btn border border-white/10"
         >
-          <FileText className="w-20 h-20 text-red-500" />
-        </Button>
-        <Button
-          variant="outline"
+          <FileText className="bn-export-icon text-red-400" aria-label="Esporta PDF" />
+        </button>
+        <button 
           onClick={onExportXLS}
-          className="border-gray-600 hover:bg-gray-700 p-3"
-          size="lg"
+          className="bn-export-btn border border-white/10"
         >
-          <FileSpreadsheet className="w-20 h-20 text-green-500" />
-        </Button>
+          <FileSpreadsheet className="bn-export-icon text-green-400" aria-label="Esporta Excel" />
+        </button>
       </div>
 
       {/* Logo centrato */}

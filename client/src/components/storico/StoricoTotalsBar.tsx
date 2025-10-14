@@ -13,7 +13,7 @@ export default function StoricoTotalsBar({
   giorniLavorati,
 }: StoricoTotalsBarProps) {
   return (
-    <div className="bn-footer bn-panel-strong w-full rounded-b-2xl">
+    <div className="bn-footer bn-totals-solid bn-border w-full rounded-b-2xl">
       <div className="bn-footer-inner">
         {/* Mini tabella con stesso colgroup per allineamento perfetto */}
         <table className="bn-table__table">

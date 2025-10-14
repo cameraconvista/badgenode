@@ -242,6 +242,26 @@
   background: transparent !important; 
 }
 
+/* Header/totals bar 100% opachi: niente blur/trasparenze */
+.bn-solid-surface { background-color: #363246 !important; }   /* grigio solido */
+.bn-solid-surface-2 { background-color: #2b2740 !important; } /* variante più scura */
+.bn-border { border: 1px solid rgba(255,255,255,0.08); }
+
+/* Sticky header tabella: livello alto e truly-solid */
+.bn-sticky-head { position: sticky; top: 0; z-index: 30; background-color: #363246 !important; backdrop-filter: none !important; }
+.bn-sticky-head th { background-color: #363246 !important; }
+
+/* Totals bar solida */
+.bn-totals-solid { background-color: #363246 !important; }
+
+/* Export buttons: 50% più grandi */
+.bn-export-btn { padding: 0.75rem !important; border-radius: 0.75rem; } /* p-3 */
+.bn-export-icon { width: 24px; height: 24px; } /* da 16 → 24px (~+50%) */
+
+/* Back button dark */
+.bn-back { background-color: #1d1730 !important; color: #fff !important; }
+.bn-back:hover { background-color: #251d3f !important; color: #fff !important; }
+
 /* Variabili CSS per superfici grigie come i filtri */
 :root {
   --bn-surface: rgba(255,255,255,0.06);
