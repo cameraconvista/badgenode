@@ -19,18 +19,14 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
       const entrate = timbratureGiorno.filter((t) => t.tipo === 'entrata');
       const uscite = timbratureGiorno.filter((t) => t.tipo === 'uscita');
 
+      // Per ora aggiorniamo solo la prima entrata (semplificazione)
       if (entrate.length > 0) {
-        await TimbratureService.updateTimbratura(entrate[0].id.toString(), {
-          data: updates.dataEntrata,
-          ore: updates.oraEntrata + ':00',
-        });
-      }
-
-      if (uscite.length > 0) {
-        await TimbratureService.updateTimbratura(uscite[0].id.toString(), {
-          data: updates.dataUscita,
-          ore: updates.oraUscita + ':00',
+        await TimbratureService.updateTimbratura({
+          id: entrate[0].id,
           dataEntrata: updates.dataEntrata,
+          oraEntrata: updates.oraEntrata,
+          dataUscita: updates.dataUscita,
+          oraUscita: updates.oraUscita,
         });
       }
     },

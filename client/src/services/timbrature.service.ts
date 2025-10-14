@@ -4,7 +4,7 @@
 import type { Timbratura } from '@/types/timbrature';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
 import { supabase } from '@/lib/supabaseClient';
-import { callInsertTimbro } from './timbratureRpc';
+import { callInsertTimbro, callUpdateTimbro, UpdateTimbroParams } from './timbratureRpc';
 import { asError } from '@/lib/safeError';
 import type { TimbraturaCanon, TimbratureRangeParams } from '../../../shared/types/timbrature';
 
@@ -107,12 +107,11 @@ export class TimbratureService {
   }
 
   // CRUD operations
-  static async updateTimbratura(
-    _id: string,
-    _input: { data: string; ore: string; dataEntrata?: string }
-  ): Promise<Timbratura> {
-    void _id; void _input;
-    throw new Error('updateTimbratura not implemented - use Supabase RPC functions');
+  static async updateTimbratura(params: UpdateTimbroParams): Promise<void> {
+    const result = await callUpdateTimbro(params);
+    if (!result.success) {
+      throw new Error(result.error || 'Errore durante aggiornamento timbratura');
+    }
   }
 
   static async deleteById(_id: number, _input: unknown): Promise<void> {
