@@ -7,16 +7,12 @@ export default function ModaleTimbrature(props: ModaleTimbratureProps) {
     formData,
     setFormData,
     errors,
-    showDeleteConfirm,
-    setShowDeleteConfirm,
     handleSave,
-    handleDelete,
   } = useModaleTimbrature(
     props.isOpen,
     props.timbrature,
     props.giornologico,
     props.onSave,
-    props.onDelete,
     props.onClose
   );
 
@@ -26,10 +22,7 @@ export default function ModaleTimbrature(props: ModaleTimbratureProps) {
       formData={formData}
       setFormData={setFormData}
       errors={errors}
-      showDeleteConfirm={showDeleteConfirm}
-      setShowDeleteConfirm={setShowDeleteConfirm}
       handleSave={handleSave}
-      handleDelete={handleDelete}
     />
   );
 }

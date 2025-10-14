@@ -9,7 +9,6 @@ export function useModaleTimbrature(
   timbrature: Timbratura[],
   giornologico: string,
   onSave: (updates: FormData) => Promise<void>,
-  onDelete: () => Promise<void>,
   onClose: () => void
 ) {
   const [formData, setFormData] = useState<FormData>({
@@ -19,7 +18,6 @@ export function useModaleTimbrature(
     oraUscita: '',
   });
   const [errors, setErrors] = useState<string[]>([]);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Inizializza form quando si apre il modale
   useEffect(() => {
@@ -34,7 +32,6 @@ export function useModaleTimbrature(
         oraUscita: uscita?.ora_locale?.substring(0, 5) || '',
       });
       setErrors([]);
-      setShowDeleteConfirm(false);
     }
   }, [isOpen, timbrature]);
 
@@ -97,22 +94,10 @@ export function useModaleTimbrature(
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      await onDelete();
-      onClose();
-    } catch (error) {
-      setErrors([error instanceof Error ? error.message : "Errore durante l'eliminazione"]);
-    }
-  };
-
   return {
     formData,
     setFormData,
     errors,
-    showDeleteConfirm,
-    setShowDeleteConfirm,
     handleSave,
-    handleDelete,
   };
 }

@@ -20,6 +20,5 @@ export interface ModaleTimbratureProps {
     dataUscita: string;
     oraUscita: string;
   }) => Promise<void>;
-  onDelete: () => Promise<void>;
   isLoading?: boolean;
 }
