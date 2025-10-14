@@ -10,6 +10,7 @@ type ModalKitProps = {
   children: React.ReactNode;
   footer?: React.ReactNode;
   className?: string; // per body
+  contentClassName?: string; // per content container
 };
 
 export default function ModalKit({ 
@@ -19,13 +20,14 @@ export default function ModalKit({
   description, 
   children, 
   footer, 
-  className 
+  className,
+  contentClassName
 }: ModalKitProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="bn-overlay bn-z-modal fixed inset-0" />
-        <Dialog.Content className="bn-modal bn-z-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[96vw] max-w-[880px] max-h-[80vh] overflow-hidden focus:outline-none">
+        <Dialog.Content className={cn("bn-modal bn-z-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[96vw] max-w-[880px] max-h-[80vh] overflow-hidden focus:outline-none", contentClassName)}>
           <div className="bn-modal-header pr-12">
             {title && <Dialog.Title className="text-white text-xl font-semibold">{title}</Dialog.Title>}
             {description && <Dialog.Description className="text-white/70 mt-1">{description}</Dialog.Description>}
