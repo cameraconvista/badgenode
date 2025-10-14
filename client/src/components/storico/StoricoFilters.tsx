@@ -128,14 +128,14 @@ export default function StoricoFilters({
             </SelectTrigger>
             <SelectContent
               position="popper"
-              className="bn-dropdown z-50 rounded-lg"
+              className="bn-pop bn-z-pop"
               sideOffset={8}
               align="start"
             >
-              <SelectItem className="bn-dropdown-item" value="corrente">Mese corrente</SelectItem>
-              <SelectItem className="bn-dropdown-item" value="precedente">Mese precedente</SelectItem>
-              <SelectItem className="bn-dropdown-item" value="due_mesi_fa">2 mesi fa</SelectItem>
-              <SelectItem className="bn-dropdown-item" value="personalizzato">Personalizzato</SelectItem>
+              <SelectItem className="bn-pop-item" value="corrente">Mese corrente</SelectItem>
+              <SelectItem className="bn-pop-item" value="precedente">Mese precedente</SelectItem>
+              <SelectItem className="bn-pop-item" value="due_mesi_fa">2 mesi fa</SelectItem>
+              <SelectItem className="bn-pop-item" value="personalizzato">Personalizzato</SelectItem>
             </SelectContent>
           </Select>
         </div>

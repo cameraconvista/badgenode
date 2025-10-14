@@ -275,9 +275,11 @@
 
 /* Variabili CSS per superfici grigie come i filtri */
 :root {
-  --bn-surface: rgba(255,255,255,0.06);
-  --bn-surface-strong: rgba(255,255,255,0.10);
-  --bn-border: rgba(255,255,255,0.10);
+  --bn-surface: #2f2a3f;
+  --bn-surface-strong: #3a354e;
+  --bn-border: rgba(255,255,255,.10);
+  --bn-shadow: 0 20px 60px rgba(0,0,0,.45);
+  --bn-radius: 14px;
 }
 
 /* Superficie come i box filtro (opaca e leggibile) */
@@ -285,6 +287,29 @@
 .bn-surface-strong { background: var(--bn-surface-strong); }
 .bn-panel { background: var(--bn-surface); border: 1px solid var(--bn-border); }
 .bn-panel-strong { background: var(--bn-surface-strong); border: 1px solid var(--bn-border); }
+
+.bn-card        { background: var(--bn-surface); border: 1px solid var(--bn-border); border-radius: var(--bn-radius); box-shadow: var(--bn-shadow); }
+.bn-card-strong { background: var(--bn-surface-strong); border: 1px solid var(--bn-border); border-radius: var(--bn-radius); box-shadow: var(--bn-shadow); }
+
+.bn-pop         { background: var(--bn-surface-strong) !important; border: 1px solid var(--bn-border) !important; border-radius: 12px !important; box-shadow: var(--bn-shadow) !important; color:#fff; }
+.bn-pop-item    { padding: 10px 12px; line-height: 1.25; }
+.bn-pop-item[aria-selected="true"],
+.bn-pop-item[data-state="checked"] { background: rgba(255,255,255,.10); }
+.bn-pop * { background: transparent; } /* niente layer trasparenti interni */
+
+.bn-modal       { background: var(--bn-surface) !important; border: 1px solid var(--bn-border) !important; border-radius: 18px !important; box-shadow: var(--bn-shadow) !important; color:#fff; }
+.bn-modal-header{ padding: 18px 22px; border-bottom: 1px solid var(--bn-border); }
+.bn-modal-body  { padding: 18px 22px; }
+.bn-modal-footer{ padding: 16px 22px; border-top: 1px solid var(--bn-border); display:flex; gap:12px; justify-content:flex-end; }
+.bn-overlay     { background: rgba(8,6,15,.55) !important; backdrop-filter: blur(6px); }
+
+.bn-toast       { background: var(--bn-surface-strong) !important; color:#fff !important; border: 1px solid var(--bn-border) !important; border-radius: 12px !important; box-shadow: var(--bn-shadow) !important; }
+.bn-toast-title { color:#fff; font-weight: 700; }
+.bn-toast-desc  { color: rgba(255,255,255,.85); }
+
+/* z-index affidabili sopra table/header */
+.bn-z-pop       { z-index: 60 !important; }
+.bn-z-modal     { z-index: 70 !important; }
 
 /* Dropdown: stesso grigio dei box filtro */
 .bn-dropdown { 

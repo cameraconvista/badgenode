@@ -1,0 +1,17 @@
+/* shadcn/sonner compat: selettori difensivi */
+[data-sonner-toast], .toast, .sonner-toast { 
+  border-radius: 12px !important;
+  background: var(--bn-surface-strong) !important;
+  border: 1px solid var(--bn-border) !important;
+  color: #fff !important;
+  box-shadow: var(--bn-shadow) !important;
+}
+
+[data-sonner-title], .toast-title { 
+  color: #fff !important; 
+  font-weight: 700; 
+}
+
+[data-sonner-description], .toast-description { 
+  color: rgba(255,255,255,.85) !important; 
+}

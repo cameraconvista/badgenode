@@ -3,7 +3,6 @@
 // import { useState } from 'react';
 // import { useToast } from '@/hooks/use-toast';
 import { useToast } from './use-toast';
-import { GiornoLogicoDettagliato } from '@/lib/storico/types';
 import { Utente } from '@/services/utenti.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -61,7 +60,7 @@ export function useStoricoExport({ dipendente, timbrature, filters: _filters }: 
       const totaleExtra = timbrature.reduce((sum, t) => sum + (t.extra || 0), 0);
       const giorniLavorati = timbrature.filter(t => (t.ore || 0) > 0).length;
       
-      let y = (doc as any).lastAutoTable.finalY + 24;
+      const y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 24;
       doc.setFontSize(12);
       doc.text(`Giorni lavorati: ${giorniLavorati}`, 40, y);
       doc.text(`Totale: ${totaleOre.toFixed(2)}`, 240, y);
@@ -73,7 +72,7 @@ export function useStoricoExport({ dipendente, timbrature, filters: _filters }: 
         title: 'PDF Esportato',
         description: 'Il file è stato scaricato con successo',
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Errore Export',
         description: 'Impossibile generare il PDF',
@@ -124,7 +123,7 @@ export function useStoricoExport({ dipendente, timbrature, filters: _filters }: 
         title: 'Excel Esportato',
         description: 'Il file è stato scaricato con successo',
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Errore Export',
         description: 'Impossibile generare il file Excel',

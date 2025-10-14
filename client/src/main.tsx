@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
+import './components/ui/ToastKit.css';
 
 // PWA Service Worker registration (only in production)
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
