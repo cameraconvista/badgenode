@@ -14,7 +14,7 @@ export default function StoricoTotalsBar({
 }: StoricoTotalsBarProps) {
   return (
     <div className="bn-footer bn-totals-solid bn-border w-full rounded-b-2xl">
-      <div className="bn-footer-inner">
+      <div className="bn-footer-inner bn-totals-compact">
         {/* Mini tabella con stesso colgroup per allineamento perfetto */}
         <table className="bn-table__table">
         {/* Stesso colgroup della tabella principale - unica fonte di verità */}
@@ -24,8 +24,10 @@ export default function StoricoTotalsBar({
           <tr>
             {/* td[1] Data - Giorni lavorati */}
             <td className="bn-table__cell bn-table__cell--left bn-cell">
-              <div className="text-violet-300 font-semibold text-sm mb-1">Giorni lavorati</div>
-              <div className="text-white font-bold text-base">{giorniLavorati}</div>
+              <div className="flex items-baseline">
+                <span className="bn-totals-label text-violet-300">Giorni lavorati</span>
+                <span className="bn-totals-value text-white">{giorniLavorati}</span>
+              </div>
             </td>
 
             {/* td[2] Mese - vuoto */}

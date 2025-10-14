@@ -262,6 +262,17 @@
 .bn-back { background-color: #1d1730 !important; color: #fff !important; }
 .bn-back:hover { background-color: #251d3f !important; color: #fff !important; }
 
+/* Totals bar density: -15% vs stato attuale */
+.bn-totals-compact { padding-block: 12px !important; }
+
+/* "Giorni lavorati 5" inline, valore più grande */
+.bn-totals-label { font-weight: 600; }
+.bn-totals-value { font-size: 1.125rem; font-weight: 700; margin-left: .5rem; }
+
+/* Viola chiaro "BadgeNode" */
+.bn-accent-light { background-color: #bd4aff !important; color: #fff !important; }
+.bn-accent-light:hover { background-color: #a744f0 !important; color:#fff !important; }
+
 /* Variabili CSS per superfici grigie come i filtri */
 :root {
   --bn-surface: rgba(255,255,255,0.06);
