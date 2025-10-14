@@ -311,6 +311,24 @@
 .bn-z-pop       { z-index: 60 !important; }
 .bn-z-modal     { z-index: 70 !important; }
 
+/* Modale form fields */
+.bn-modal-section-title { color: #4ade80; font-weight: 600; margin-bottom: 12px; font-size: 1rem; }
+.bn-modal-field { display: flex; flex-direction: column; gap: 6px; }
+.bn-modal-field label { color: rgba(255,255,255,0.8); font-size: 0.875rem; font-weight: 500; }
+.bn-input { 
+  background: rgba(255,255,255,0.05); 
+  border: 1px solid rgba(255,255,255,0.15); 
+  border-radius: 8px; 
+  padding: 10px 12px; 
+  color: #fff; 
+  font-size: 0.875rem;
+}
+.bn-input:focus { 
+  outline: none; 
+  border-color: #bd4aff; 
+  box-shadow: 0 0 0 2px rgba(189,74,255,0.2); 
+}
+
 /* Dropdown: stesso grigio dei box filtro */
 .bn-dropdown { 
   background: #374151 !important; /* bg-gray-700 - stesso dei box filtro */

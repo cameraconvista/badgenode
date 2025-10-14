@@ -58,8 +58,8 @@ export default function StoricoHeader({
 
       <div className="flex flex-col items-center gap-4">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-white mb-3">Storico Timbrature</h1>
-          <p className="text-violet-300 text-2xl font-semibold">
+          <h1 className="text-lg font-normal text-white mb-3">Storico Timbrature</h1>
+          <p className="text-violet-300 text-3xl font-semibold">
             {dipendente.nome} {dipendente.cognome}
           </p>
         </div>

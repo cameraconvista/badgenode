@@ -22,26 +22,26 @@ export default function ModaleTimbratureForm({
   isLoading,
 }: ModaleTimbratureFormProps) {
   return (
-    <div className="space-y-6">
+    <div className="grid gap-5 md:grid-cols-2">
       {/* ENTRATA */}
       <section>
-        <div className="bn-modal-section-title">Entrata</div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <p className="text-green-400 font-semibold mb-2">Entrata</p>
+        <div className="grid grid-cols-2 gap-3">
           <div className="bn-modal-field">
-            <label>Data</label>
+            <label className="block text-sm text-white/80 mb-1">Data</label>
             <input 
               type="date" 
-              className="bn-input w-full" 
+              className="bn-input w-full text-white" 
               value={formData.dataEntrata} 
               onChange={(e) => onInputChange('dataEntrata', e.target.value)}
               disabled={isLoading}
             />
           </div>
           <div className="bn-modal-field">
-            <label>Ora</label>
+            <label className="block text-sm text-white/80 mb-1">Ora</label>
             <input 
               type="time" 
-              className="bn-input w-full" 
+              className="bn-input w-full text-white" 
               value={formData.oraEntrata} 
               onChange={(e) => onInputChange('oraEntrata', e.target.value)}
               disabled={isLoading}
@@ -52,23 +52,23 @@ export default function ModaleTimbratureForm({
 
       {/* USCITA */}
       <section>
-        <div className="bn-modal-section-title" style={{color:"#ffb3b3"}}>Uscita</div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <p className="text-red-400 font-semibold mb-2">Uscita</p>
+        <div className="grid grid-cols-2 gap-3">
           <div className="bn-modal-field">
-            <label>Data</label>
+            <label className="block text-sm text-white/80 mb-1">Data</label>
             <input 
               type="date" 
-              className="bn-input w-full" 
+              className="bn-input w-full text-white" 
               value={formData.dataUscita} 
               onChange={(e) => onInputChange('dataUscita', e.target.value)}
               disabled={isLoading}
             />
           </div>
           <div className="bn-modal-field">
-            <label>Ora</label>
+            <label className="block text-sm text-white/80 mb-1">Ora</label>
             <input 
               type="time" 
-              className="bn-input w-full" 
+              className="bn-input w-full text-white" 
               value={formData.oraUscita} 
               onChange={(e) => onInputChange('oraUscita', e.target.value)}
               disabled={isLoading}
