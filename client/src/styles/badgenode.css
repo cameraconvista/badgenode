@@ -193,10 +193,10 @@
   font-weight: 500; /* medium weight per migliore leggibilità */
 }
 
-/* Icona "storico" stessa dimensione delle azioni e verde chiaro */
+/* Icona "storico" +30% più grande delle azioni e verde chiaro */
 .icon-storico { 
-  width: 22px; 
-  height: 22px; 
+  width: 28px; 
+  height: 28px; 
   color: #7CFF7A; /* verde chiaro come richiesto */
 }
 
@@ -240,4 +240,32 @@
 .bn-nohover button:hover,
 .bn-nohover .bn-actions button:hover { 
   background: transparent !important; 
+}
+
+/* Variabili CSS per superfici grigie come i filtri */
+:root {
+  --bn-surface: rgba(255,255,255,0.06);
+  --bn-surface-strong: rgba(255,255,255,0.10);
+  --bn-border: rgba(255,255,255,0.10);
+}
+
+/* Superficie come i box filtro (opaca e leggibile) */
+.bn-surface { background: var(--bn-surface); }
+.bn-surface-strong { background: var(--bn-surface-strong); }
+.bn-panel { background: var(--bn-surface); border: 1px solid var(--bn-border); }
+.bn-panel-strong { background: var(--bn-surface-strong); border: 1px solid var(--bn-border); }
+
+/* Dropdown: niente trasparenze e testo leggibile */
+.bn-dropdown { 
+  background: var(--bn-surface-strong) !important; 
+  border: 1px solid var(--bn-border); 
+  color: #fff; 
+  backdrop-filter: blur(6px); 
+  box-shadow: 0 12px 40px rgba(0,0,0,.45); 
+}
+.bn-dropdown-item { 
+  padding: 8px 12px; 
+}
+.bn-dropdown-item[aria-selected="true"] { 
+  background: rgba(255,255,255,0.12); 
 }

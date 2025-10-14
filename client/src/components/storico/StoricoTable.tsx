@@ -49,7 +49,7 @@ export default function StoricoTable({
     <div className="bn-table__container">
       {/* Tabella HTML Standard */}
       <div className="bn-table__scroll-area">
-        <table className="bn-table__table">
+        <table className="bn-table__table bn-nohover">
           {/* Definizione larghezze colonne - unica fonte di verità */}
           <ColGroupStorico />
           

@@ -13,9 +13,10 @@ export default function StoricoTotalsBar({
   giorniLavorati,
 }: StoricoTotalsBarProps) {
   return (
-    <div className="bn-table__totals bn-footer">
-      {/* Mini tabella con stesso colgroup per allineamento perfetto */}
-      <table className="bn-table__table">
+    <div className="bn-footer bn-panel-strong w-full rounded-b-2xl">
+      <div className="bn-footer-inner">
+        {/* Mini tabella con stesso colgroup per allineamento perfetto */}
+        <table className="bn-table__table">
         {/* Stesso colgroup della tabella principale - unica fonte di verità */}
         <ColGroupStorico />
         
@@ -56,7 +57,8 @@ export default function StoricoTotalsBar({
             <td className="bn-table__cell bn-cell"></td>
           </tr>
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   );
 }

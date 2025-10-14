@@ -113,7 +113,7 @@ export default function StoricoFilters({
   // const ranges = getDateRanges(); // Commentato per evitare warning unused
 
   return (
-    <div className="bg-gray-800/50 rounded-lg p-6 space-y-4">
+    <div className="bn-panel rounded-xl px-4 md:px-6 py-3 md:py-4 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Periodo Rapido */}
         <div className="space-y-2">
@@ -126,11 +126,16 @@ export default function StoricoFilters({
             >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="corrente">Mese corrente</SelectItem>
-              <SelectItem value="precedente">Mese precedente</SelectItem>
-              <SelectItem value="due_mesi_fa">2 mesi fa</SelectItem>
-              <SelectItem value="personalizzato">Personalizzato</SelectItem>
+            <SelectContent
+              position="popper"
+              className="bn-dropdown z-50 rounded-lg"
+              sideOffset={8}
+              align="start"
+            >
+              <SelectItem className="bn-dropdown-item" value="corrente">Mese corrente</SelectItem>
+              <SelectItem className="bn-dropdown-item" value="precedente">Mese precedente</SelectItem>
+              <SelectItem className="bn-dropdown-item" value="due_mesi_fa">2 mesi fa</SelectItem>
+              <SelectItem className="bn-dropdown-item" value="personalizzato">Personalizzato</SelectItem>
             </SelectContent>
           </Select>
         </div>
