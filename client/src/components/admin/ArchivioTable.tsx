@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { BarChart2 } from 'lucide-react';
+import { History } from 'lucide-react';
 import { Utente } from '@/services/utenti.service';
 import ArchivioActions from './ArchivioActions';
 import EmptyState from './EmptyState';
@@ -98,7 +98,7 @@ export default function ArchivioTable({
                         className="p-2"
                         title={`Storico di ${utente.nome} ${utente.cognome}`}
                       >
-                        <BarChart2 className="icon-storico" aria-label="Storico" />
+                        <History className="icon-storico" aria-label="Storico" />
                       </Button>
                     </td>
                     <td className="bn-cell px-4 text-center tabular-nums">

@@ -170,8 +170,15 @@
 
 /* Densità più alta (righe più alte) per Archivio - aumentate del 25% */
 .bn-row-tall { 
-  padding-block: 20px; 
-  line-height: 1.5; 
+  line-height: 1.5 !important; 
+}
+
+/* Celle più alte per Archivio - forza altezza sulle TD */
+.bn-archivio .bn-row-tall .bn-cell {
+  min-height: 70px !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  vertical-align: middle !important;
 }
 
 /* Tabella Archivio: testi più grandi (ma NON le icone azioni) */
@@ -180,17 +187,17 @@
   font-size: 1.0625rem; /* 17px */ 
 }
 
-/* Icona "storico" più grande e verde chiaro */
+/* Icona "storico" più grande e blu/viola per History */
 .icon-storico { 
-  width: 20px; 
-  height: 20px; 
-  color: #7CFF7A; 
+  width: 24px; 
+  height: 24px; 
+  color: #8B5CF6; /* violet-500 - più appropriato per History */
 }
 
-/* Azioni: mantieni dimensione attuale delle icone azioni */
+/* Azioni: icone più grandi */
 .bn-actions .icon-action { 
-  width: 18px; 
-  height: 18px; 
+  width: 22px; 
+  height: 22px; 
 }
 
 /* Matita (modifica) bianca */
