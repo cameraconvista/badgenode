@@ -181,17 +181,23 @@
   vertical-align: middle !important;
 }
 
-/* Tabella Archivio: testi più grandi (ma NON le icone azioni) */
+/* Tabella Archivio: testi più grandi */
 .bn-archivio th,
 .bn-archivio td { 
-  font-size: 1.0625rem; /* 17px */ 
+  font-size: 1.125rem; /* 18px - aumentato da 17px */ 
 }
 
-/* Icona "storico" più grande e blu/viola per History */
+/* Testi specifici nella tabella ancora più grandi */
+.bn-archivio .bn-cell span {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 500; /* medium weight per migliore leggibilità */
+}
+
+/* Icona "storico" stessa dimensione delle azioni e verde chiaro */
 .icon-storico { 
-  width: 24px; 
-  height: 24px; 
-  color: #8B5CF6; /* violet-500 - più appropriato per History */
+  width: 22px; 
+  height: 22px; 
+  color: #7CFF7A; /* verde chiaro come richiesto */
 }
 
 /* Azioni: icone più grandi */
