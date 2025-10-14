@@ -168,10 +168,10 @@
   background: transparent !important; 
 }
 
-/* Densità più alta (righe più alte) per Archivio */
+/* Densità più alta (righe più alte) per Archivio - aumentate del 25% */
 .bn-row-tall { 
-  padding-block: 16px; 
-  line-height: 1.4; 
+  padding-block: 20px; 
+  line-height: 1.5; 
 }
 
 /* Tabella Archivio: testi più grandi (ma NON le icone azioni) */
@@ -201,15 +201,30 @@
   color: rgba(255,255,255,0.9); 
 }
 
-/* Disattiva highlight riga su hover (totale) e soprattutto quando si passa sui pulsanti */
-.bn-nohover .bn-row:hover { 
+/* Disattiva completamente highlight riga su hover */
+.bn-nohover .bn-row:hover,
+.bn-nohover .bn-row:focus,
+.bn-nohover .bn-row:focus-within { 
   background: var(--card) !important; 
 }
-.bn-nohover .bn-row *:hover { 
+.bn-nohover .bn-row *:hover,
+.bn-nohover .bn-row *:focus,
+.bn-nohover .bn-row *:focus-within { 
   background-color: transparent !important; 
 }
 .bn-nohover .bn-actions button:hover,
 .bn-nohover .bn-actions a:hover,
-.bn-nohover .bn-actions svg:hover { 
+.bn-nohover .bn-actions svg:hover,
+.bn-nohover button:hover,
+.bn-nohover a:hover { 
+  background: transparent !important; 
+}
+/* Forza nessun background su tutti i pulsanti nella tabella */
+.bn-nohover button,
+.bn-nohover .bn-actions button { 
+  background: transparent !important; 
+}
+.bn-nohover button:hover,
+.bn-nohover .bn-actions button:hover { 
   background: transparent !important; 
 }

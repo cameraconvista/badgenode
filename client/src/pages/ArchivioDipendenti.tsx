@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Archive, Plus } from 'lucide-react';
-import LogoHeader from '@/components/home/LogoHeader';
 import ArchivioTable from '@/components/admin/ArchivioTable';
 import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
 import ModaleModificaDipendente from '@/components/admin/ModaleModificaDipendente';
@@ -121,9 +120,9 @@ export default function ArchivioDipendenti() {
             boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
           }}
         >
-          {/* Header con logo centrato e toggle tema */}
-          <div className="flex items-center justify-center mb-4">
-            <LogoHeader />
+          {/* Header con logo centrato */}
+          <div className="flex justify-center mb-4">
+            <img src="/logo2_app.png" alt="BADGENODE" className="h-10 w-auto" />
           </div>
           <div className="text-center mb-4">
             <h1 className="text-2xl font-bold text-white mb-2">Archivio Dipendenti</h1>
@@ -154,7 +153,7 @@ export default function ArchivioDipendenti() {
               <Button
                 variant="outline"
                 onClick={handleExDipendenti}
-                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-yellow-600 hover:text-yellow-500 hover:bg-violet-50 hover:shadow-md transition-all"
+                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-yellow-700 hover:text-yellow-600 hover:bg-violet-50 hover:shadow-md transition-all"
               >
                 <Archive className="w-4 h-4 text-current" />
                 Ex-Dipendenti
