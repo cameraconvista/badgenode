@@ -45,7 +45,7 @@ export default function StoricoHeader({
           className="border-gray-600 hover:bg-gray-700 p-3"
           size="lg"
         >
-          <FileText className="w-12 h-12 text-red-500" />
+          <FileText className="w-18 h-18 text-red-500" />
         </Button>
         <Button
           variant="outline"
@@ -53,7 +53,7 @@ export default function StoricoHeader({
           className="border-gray-600 hover:bg-gray-700 p-3"
           size="lg"
         >
-          <FileSpreadsheet className="w-12 h-12 text-green-500" />
+          <FileSpreadsheet className="w-18 h-18 text-green-500" />
         </Button>
       </div>
 

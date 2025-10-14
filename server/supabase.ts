@@ -9,15 +9,18 @@ console.log(`[Supabase Admin] hasUrl=${!!supabaseUrl} hasServiceRole=${!!supabas
 
 let supabaseAdmin: unknown = null;
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.warn('⚠️ [Supabase Admin] Variabili ambiente mancanti - API admin disabilitate');
-  console.warn('   SUPABASE_URL:', !!process.env.SUPABASE_URL);
-  console.warn('   VITE_SUPABASE_URL:', !!process.env.VITE_SUPABASE_URL);
-  console.warn('   SUPABASE_SERVICE_ROLE_KEY:', !!supabaseServiceKey);
+const hasUrl = !!process.env.SUPABASE_URL;
+const hasServiceRole = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!hasUrl || !hasServiceRole) {
+  if (process.env.NODE_ENV === 'development') {
+    console.info('[Supabase Admin] disabilitato in dev: variabili mancanti');
+  }
+  // non inizializzare l'admin client
   supabaseAdmin = null;
 } else {
   // Client Supabase server-side con SERVICE_ROLE_KEY per operazioni admin
-  supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  supabaseAdmin = createClient(supabaseUrl!, supabaseServiceKey!, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,

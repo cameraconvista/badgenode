@@ -54,7 +54,7 @@ export default function StoricoTable({
           <ColGroupStorico />
           
           {/* Header fisso */}
-          <thead className="bn-table__header">
+          <thead className="bn-table__header bn-panel-strong">
             <tr>
               <th className="bn-table__header-cell bn-table__header-cell--left">Data</th>
               <th className="bn-table__header-cell">Mese</th>

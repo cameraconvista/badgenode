@@ -255,13 +255,13 @@
 .bn-panel { background: var(--bn-surface); border: 1px solid var(--bn-border); }
 .bn-panel-strong { background: var(--bn-surface-strong); border: 1px solid var(--bn-border); }
 
-/* Dropdown: niente trasparenze e testo leggibile */
+/* Dropdown: stesso grigio dei box filtro */
 .bn-dropdown { 
-  background: var(--bn-surface-strong) !important; 
-  border: 1px solid var(--bn-border); 
-  color: #fff; 
-  backdrop-filter: blur(6px); 
-  box-shadow: 0 12px 40px rgba(0,0,0,.45); 
+  background: #374151 !important; /* bg-gray-700 - stesso dei box filtro */
+  border: 1px solid #4b5563 !important; /* border-gray-600 */
+  color: #fff !important; 
+  backdrop-filter: none; 
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
 }
 .bn-dropdown-item { 
   padding: 8px 12px; 
