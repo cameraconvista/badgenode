@@ -14,9 +14,9 @@
   overflow: hidden;
 }
 
-/* Header sticky - colore pieno */
+/* Header sticky - completamente opaco */
 .bn-table__header {
-  background-color: #510357; /* Viola primario BadgeNode - colore pieno, NO trasparenza */
+  background-color: #510357; /* Viola primario BadgeNode - completamente opaco */
   border-bottom: 1px solid rgba(231, 116, 240, 0.3);
   position: sticky;
   top: 0;

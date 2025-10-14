@@ -193,11 +193,11 @@
   font-weight: 500; /* medium weight per migliore leggibilità */
 }
 
-/* Icona "storico" +30% più grande delle azioni e verde chiaro */
+/* Icona "storico" leggermente più grande delle azioni e verde chiaro */
 .icon-storico { 
-  width: 28px; 
-  height: 28px; 
-  color: #7CFF7A; /* verde chiaro come richiesto */
+  width: 24px !important; 
+  height: 24px !important; 
+  color: #7CFF7A !important; /* verde chiaro come richiesto */
 }
 
 /* Azioni: icone più grandi */

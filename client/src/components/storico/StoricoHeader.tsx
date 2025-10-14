@@ -28,9 +28,9 @@ export default function StoricoHeader({
       {/* Pulsante TORNA in alto a sinistra */}
       <div className="absolute top-4 left-4">
         <Button
-          variant="ghost"
+          variant="outline"
           onClick={handleTorna}
-          className="text-white/80 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+          className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           TORNA
@@ -45,7 +45,7 @@ export default function StoricoHeader({
           className="border-gray-600 hover:bg-gray-700 p-3"
           size="lg"
         >
-          <FileText className="w-18 h-18 text-red-500" />
+          <FileText className="w-20 h-20 text-red-500" />
         </Button>
         <Button
           variant="outline"
@@ -53,7 +53,7 @@ export default function StoricoHeader({
           className="border-gray-600 hover:bg-gray-700 p-3"
           size="lg"
         >
-          <FileSpreadsheet className="w-18 h-18 text-green-500" />
+          <FileSpreadsheet className="w-20 h-20 text-green-500" />
         </Button>
       </div>
 

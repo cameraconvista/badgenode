@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Archive, Plus } from 'lucide-react';
+import { ArrowLeft, Archive, Plus, Download } from 'lucide-react';
 import ArchivioTable from '@/components/admin/ArchivioTable';
 import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
 import ModaleModificaDipendente from '@/components/admin/ModaleModificaDipendente';
@@ -101,7 +101,14 @@ export default function ArchivioDipendenti() {
   };
   const handleBackToLogin = () => setLocation('/');
   const _handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
-  const handleExDipendenti = () => {};
+  const handleExDipendenti = () => {
+    console.log('Navigazione a Ex-Dipendenti');
+  };
+
+  const handleEsportaTutto = () => {
+    console.log('Esporta tutti i dipendenti');
+    // TODO: Implementare export completo
+  };
 
   return (
     <div
@@ -147,9 +154,17 @@ export default function ArchivioDipendenti() {
               className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
-              Login Utenti
+              Badge
             </Button>
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleEsportaTutto}
+                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-blue-600 hover:text-blue-500 hover:bg-violet-50 hover:shadow-md transition-all"
+              >
+                <Download className="w-4 h-4 text-current" />
+                Esporta Tutto
+              </Button>
               <Button
                 variant="outline"
                 onClick={handleExDipendenti}
