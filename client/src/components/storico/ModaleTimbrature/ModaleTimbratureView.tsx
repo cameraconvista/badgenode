@@ -47,7 +47,7 @@ export default function ModaleTimbratureView({
       >
         Elimina
       </button>
-      <div className="flex items-center gap-3">
+      <div className="bn-modal-actions-right">
         <button 
           type="button" 
           className="bn-btn-large bn-btn-neutral" 
@@ -111,7 +111,7 @@ export default function ModaleTimbratureView({
               <TimeSelect
                 value={formData.oraEntrata}
                 onChange={(value) => setFormData({ ...formData, oraEntrata: value })}
-                className="bn-entrata-field"
+                className=""
                 disabled={isLoading}
               />
             </div>
@@ -137,7 +137,7 @@ export default function ModaleTimbratureView({
               <TimeSelect
                 value={formData.oraUscita}
                 onChange={(value) => setFormData({ ...formData, oraUscita: value })}
-                className="bn-uscita-field"
+                className=""
                 disabled={isLoading}
               />
             </div>

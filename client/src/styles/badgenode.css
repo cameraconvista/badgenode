@@ -333,7 +333,7 @@
 /* Griglia timbrature perfettamente allineata */
 .bn-timbrature-grid { 
   display: grid; 
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 1fr; 
   gap: 24px;
   margin-bottom: 20px;
 }
@@ -393,11 +393,18 @@
 /* Footer azioni separate */
 .bn-modal-actions { 
   display: flex; 
-  justify-content: space-between; 
+  justify-content: flex-start; 
   align-items: center;
+  gap: 12px;
   padding: 20px 0 0 0;
   border-top: 1px solid var(--bn-border);
   margin-top: 20px;
+}
+
+.bn-modal-actions-right {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
 }
 
 .bn-btn-large { 
