@@ -38,16 +38,21 @@ export default function ModaleTimbratureView({
   const description = `Dipendente ${nomeCompleto} (PIN: ${entrata?.pin || uscita?.pin})`;
 
   const footer = (
-    <div className="bn-modal-actions">
-      <button
-        type="button"
-        className="bn-btn-large bn-btn-danger"
-        onClick={() => setShowDeleteConfirm(true)}
-        disabled={isLoading || showDeleteConfirm}
-      >
-        Elimina
-      </button>
-      <div className="flex gap-3">
+    <div className="bn-modal-footer-custom">
+      {/* Pulsante Elimina allineato a sinistra */}
+      <div className="bn-elimina-left">
+        <button
+          type="button"
+          className="bn-btn-large bn-btn-danger"
+          onClick={() => setShowDeleteConfirm(true)}
+          disabled={isLoading || showDeleteConfirm}
+        >
+          Elimina
+        </button>
+      </div>
+      
+      {/* Pulsanti Annulla/Salva allineati a destra */}
+      <div className="bn-actions-right">
         <button 
           type="button" 
           className="bn-btn-large bn-btn-neutral" 

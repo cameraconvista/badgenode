@@ -391,12 +391,21 @@
 }
 
 /* Footer azioni separate */
-.bn-modal-actions { 
-  display: flex; 
-  justify-content: space-between;
-  align-items: center;
+.bn-modal-footer-custom { 
   padding: 20px 0 0 0;
   margin-top: 20px;
+}
+
+.bn-elimina-left {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+
+.bn-actions-right {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .bn-btn-large { 
