@@ -400,6 +400,11 @@
   display: flex;
   justify-content: flex-start;
   margin-bottom: 12px;
+  width: 100%;
+}
+
+.bn-elimina-left button {
+  margin-right: auto;
 }
 
 .bn-actions-right {

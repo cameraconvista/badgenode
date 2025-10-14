@@ -168,12 +168,14 @@ export function formatOre(n?: number | null): string {
  */
 export function formatDataItaliana(data: string): string {
   const d = new Date(data + 'T00:00:00');
-  return d.toLocaleDateString('it-IT', {
+  const formatted = d.toLocaleDateString('it-IT', {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
     year: 'numeric',
   });
+  // Capitalizza prima lettera del giorno della settimana
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
 /**

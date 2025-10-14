@@ -32,7 +32,7 @@ export default function ModaleTimbratureView({
   const entrata = timbrature.find((t) => t.tipo === 'entrata');
   const uscita = timbrature.find((t) => t.tipo === 'uscita');
   const nomeCompleto =
-    entrata?.nome && entrata?.cognome ? `${entrata.nome} ${entrata.cognome}` : 'Dipendente';
+    entrata?.nome && entrata?.cognome ? `${entrata.nome} ${entrata.cognome}` : 'Sconosciuto';
 
   const title = `Modifica Timbrature — ${formatDataItaliana(giornologico)}`;
   const description = `Dipendente ${nomeCompleto} (PIN: ${entrata?.pin || uscita?.pin})`;
