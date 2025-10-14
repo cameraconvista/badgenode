@@ -20,6 +20,7 @@ export default function ModaleTimbratureView({
   onClose,
   giornologico,
   timbrature,
+  dipendente,
   isLoading,
   formData,
   setFormData,
@@ -31,11 +32,16 @@ export default function ModaleTimbratureView({
 }: ModaleTimbratureViewProps) {
   const entrata = timbrature.find((t) => t.tipo === 'entrata');
   const uscita = timbrature.find((t) => t.tipo === 'uscita');
-  const nomeCompleto =
-    entrata?.nome && entrata?.cognome ? `${entrata.nome} ${entrata.cognome}` : 'Sconosciuto';
+  
+  // Usa dipendente passato come prop, fallback su timbrature, poi "Sconosciuto"
+  const fullName = dipendente?.nome && dipendente?.cognome 
+    ? `${dipendente.nome} ${dipendente.cognome}`
+    : entrata?.nome && entrata?.cognome 
+    ? `${entrata.nome} ${entrata.cognome}` 
+    : 'Sconosciuto';
 
   const title = `Modifica Timbrature — ${formatDataItaliana(giornologico)}`;
-  const description = `Dipendente ${nomeCompleto} (PIN: ${entrata?.pin || uscita?.pin})`;
+  const description = `Dipendente ${fullName} (PIN: ${dipendente?.pin || entrata?.pin || uscita?.pin})`;
 
   const footer = (
     <div className="bn-modal-footer-custom">

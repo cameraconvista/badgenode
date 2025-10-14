@@ -1,4 +1,5 @@
 import type { Timbratura } from '@/types/timbrature';
+import type { Utente } from '@/services/utenti.service';
 
 export interface FormData {
   dataEntrata: string;
@@ -12,6 +13,7 @@ export interface ModaleTimbratureProps {
   onClose: () => void;
   giornologico: string;
   timbrature: Timbratura[];
+  dipendente?: Utente;
   onSave: (updates: {
     dataEntrata: string;
     oraEntrata: string;

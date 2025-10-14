@@ -109,6 +109,7 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
             onClose={() => setSelectedGiorno(null)}
             giornologico={selectedGiorno || ''}
             timbrature={timbratureGiorno}
+            dipendente={dipendente}
             onSave={(updates) => updateMutation.mutateAsync(updates)}
             onDelete={() => deleteMutation.mutateAsync()}
             isLoading={updateMutation.isPending || deleteMutation.isPending}

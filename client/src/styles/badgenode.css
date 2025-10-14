@@ -390,8 +390,11 @@
   background: rgba(255,255,255,0.1);
 }
 
-/* Footer azioni separate */
+/* Footer azioni separate - layout a due blocchi */
 .bn-modal-footer-custom { 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 20px 0 0 0;
   margin-top: 20px;
 }
@@ -399,12 +402,6 @@
 .bn-elimina-left {
   display: flex;
   justify-content: flex-start;
-  margin-bottom: 12px;
-  width: 100%;
-}
-
-.bn-elimina-left button {
-  margin-right: auto;
 }
 
 .bn-actions-right {
