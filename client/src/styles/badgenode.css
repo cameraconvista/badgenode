@@ -319,9 +319,9 @@
 
 /* Modale quadrato responsive */
 .bn-modal-square { 
-  width: min(88vw, var(--modal-max)) !important; 
+  width: min(88vw, 600px) !important; 
   height: auto !important;
-  max-width: var(--modal-max) !important;
+  max-width: 600px !important;
   max-height: var(--modal-max) !important;
 }
 
@@ -393,18 +393,10 @@
 /* Footer azioni separate */
 .bn-modal-actions { 
   display: flex; 
-  justify-content: flex-start; 
+  justify-content: space-between;
   align-items: center;
-  gap: 12px;
   padding: 20px 0 0 0;
-  border-top: 1px solid var(--bn-border);
   margin-top: 20px;
-}
-
-.bn-modal-actions-right {
-  margin-left: auto;
-  display: flex;
-  gap: 12px;
 }
 
 .bn-btn-large { 

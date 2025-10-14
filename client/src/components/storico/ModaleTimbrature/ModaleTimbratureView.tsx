@@ -35,7 +35,7 @@ export default function ModaleTimbratureView({
     entrata?.nome && entrata?.cognome ? `${entrata.nome} ${entrata.cognome}` : 'Dipendente';
 
   const title = `Modifica Timbrature — ${formatDataItaliana(giornologico)}`;
-  const description = `${nomeCompleto} (PIN: ${entrata?.pin || uscita?.pin})`;
+  const description = `Dipendente ${nomeCompleto} (PIN: ${entrata?.pin || uscita?.pin})`;
 
   const footer = (
     <div className="bn-modal-actions">
@@ -47,7 +47,7 @@ export default function ModaleTimbratureView({
       >
         Elimina
       </button>
-      <div className="bn-modal-actions-right">
+      <div className="flex gap-3">
         <button 
           type="button" 
           className="bn-btn-large bn-btn-neutral" 
