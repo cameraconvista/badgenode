@@ -9,7 +9,10 @@ interface ModaleTimbratureViewProps extends ModaleTimbratureProps {
   formData: FormData;
   setFormData: (data: FormData) => void;
   errors: string[];
+  showDeleteConfirm: boolean;
+  setShowDeleteConfirm: (show: boolean) => void;
   handleSave: () => Promise<void>;
+  handleDelete: () => Promise<void>;
 }
 
 export default function ModaleTimbratureView({
@@ -22,7 +25,10 @@ export default function ModaleTimbratureView({
   formData,
   setFormData,
   errors,
+  showDeleteConfirm,
+  setShowDeleteConfirm,
   handleSave,
+  handleDelete,
 }: ModaleTimbratureViewProps) {
   const entrata = timbrature.find((t) => t.tipo === 'entrata');
   const uscita = timbrature.find((t) => t.tipo === 'uscita');
@@ -136,6 +142,43 @@ export default function ModaleTimbratureView({
           </div>
         </section>
       </div>
+
+      {/* Pulsante Elimina separato - angolo sinistro */}
+      <div className="mt-6">
+        <button
+          type="button"
+          className="bn-btn-large bn-btn-danger h-11 px-4 rounded-lg"
+          onClick={() => setShowDeleteConfirm(true)}
+          disabled={isLoading || showDeleteConfirm}
+        >
+          Elimina
+        </button>
+      </div>
+
+      {showDeleteConfirm && (
+        <Alert variant="destructive" className="mt-4">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Sei sicuro di voler eliminare tutte le timbrature di questo giorno?
+            <div className="flex gap-3 mt-3">
+              <button 
+                className="bn-btn-large bn-btn-danger" 
+                onClick={handleDelete} 
+                disabled={isLoading}
+              >
+                Elimina
+              </button>
+              <button
+                className="bn-btn-large bn-btn-neutral"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isLoading}
+              >
+                Annulla
+              </button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
 
     </ModalKit>
   );
