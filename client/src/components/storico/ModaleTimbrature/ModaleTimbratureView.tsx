@@ -43,28 +43,7 @@ export default function ModaleTimbratureView({
   const title = `Modifica Timbrature — ${formatDataItaliana(giornologico)}`;
   const description = `Dipendente ${fullName} (PIN: ${dipendente?.pin || entrata?.pin || uscita?.pin})`;
 
-  const footer = (
-    <div className="flex items-center justify-end gap-3 px-5 py-4">
-      <button 
-        type="button" 
-        aria-label="Annulla"
-        className="bn-btn-large bn-btn-neutral h-11 px-4 rounded-lg" 
-        onClick={onClose} 
-        disabled={isLoading}
-      >
-        Annulla
-      </button>
-      <button 
-        type="button" 
-        aria-label="Salva"
-        className="bn-btn-large bn-btn-success h-11 px-5 rounded-lg" 
-        onClick={handleSave} 
-        disabled={isLoading}
-      >
-        Salva
-      </button>
-    </div>
-  );
+  // Footer rimosso - pulsanti ora nel body
 
   return (
     <ModalKit 
@@ -72,7 +51,6 @@ export default function ModaleTimbratureView({
       onOpenChange={onClose}
       title={title}
       description={description}
-      footer={footer}
       contentClassName="bn-modal-square"
       className="bn-modal-body-scroll"
     >
@@ -143,8 +121,8 @@ export default function ModaleTimbratureView({
         </section>
       </div>
 
-      {/* Pulsante Elimina separato - angolo sinistro */}
-      <div className="mt-6">
+      {/* Tutti i pulsanti sulla stessa riga */}
+      <div className="flex items-center justify-between mt-6">
         <button
           type="button"
           className="bn-btn-large bn-btn-danger h-11 px-4 rounded-lg"
@@ -153,6 +131,27 @@ export default function ModaleTimbratureView({
         >
           Elimina
         </button>
+        
+        <div className="flex items-center gap-3">
+          <button 
+            type="button" 
+            aria-label="Annulla"
+            className="bn-btn-large bn-btn-neutral h-11 px-4 rounded-lg" 
+            onClick={onClose} 
+            disabled={isLoading}
+          >
+            Annulla
+          </button>
+          <button 
+            type="button" 
+            aria-label="Salva"
+            className="bn-btn-large bn-btn-success h-11 px-5 rounded-lg" 
+            onClick={handleSave} 
+            disabled={isLoading}
+          >
+            Salva
+          </button>
+        </div>
       </div>
 
       {showDeleteConfirm && (
