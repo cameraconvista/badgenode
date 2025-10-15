@@ -22,6 +22,10 @@ export interface UpdateTimbroParams {
   updateData: {
     data_locale?: string;
     ora_locale?: string;
+    // Supporto per schema alternativo
+    data?: string;
+    ore?: string;
+    [key: string]: any; // Per adattamento dinamico
   };
 }
 
@@ -87,6 +91,48 @@ export async function callUpdateTimbro({
       };
     }
 
+    // Prima verifica schema e record esistente
+    const checkUrl = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}&select=*`;
+    const checkHeaders = {
+      apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+    };
+
+    const checkRes = await fetch(checkUrl, { headers: checkHeaders });
+    const existingData = await checkRes.json().catch(() => []);
+    console.info('[SERVICE] SCHEMA CHECK →', { 
+      id, 
+      exists: existingData?.length > 0, 
+      schema: existingData?.[0] ? Object.keys(existingData[0]) : [],
+      record: existingData?.[0]
+    });
+
+    if (!existingData || existingData.length === 0) {
+      throw new Error(`Record id=${id} non trovato nella tabella timbrature`);
+    }
+
+    // Adatta updateData ai campi reali della tabella
+    const record = existingData[0];
+    let adaptedUpdateData = { ...updateData };
+    
+    // Se la tabella usa 'data' invece di 'data_locale'
+    if ('data' in record && !('data_locale' in record)) {
+      if (updateData.data_locale) {
+        adaptedUpdateData = { ...adaptedUpdateData, data: updateData.data_locale };
+        delete adaptedUpdateData.data_locale;
+      }
+    }
+    
+    // Se la tabella usa 'ore' invece di 'ora_locale'
+    if ('ore' in record && !('ora_locale' in record)) {
+      if (updateData.ora_locale) {
+        adaptedUpdateData = { ...adaptedUpdateData, ore: updateData.ora_locale };
+        delete adaptedUpdateData.ora_locale;
+      }
+    }
+
+    console.info('[SERVICE] ADAPTED updateData →', { original: updateData, adapted: adaptedUpdateData });
+
     // PATCH REST diretta verso Supabase
     const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}`;
     const headers = {
@@ -99,7 +145,7 @@ export async function callUpdateTimbro({
     const res = await fetch(url, {
       method: 'PATCH',
       headers,
-      body: JSON.stringify(updateData),
+      body: JSON.stringify(adaptedUpdateData),
     });
 
     const data = await res.json().catch(() => []);
