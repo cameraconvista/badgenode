@@ -110,7 +110,11 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
             giorno_logico={selectedGiorno || ''}
             timbrature={timbratureGiorno}
             dipendente={dipendente}
-            onSave={(updates) => updateMutation.mutateAsync(updates)}
+            onSave={async (updates) => {
+              console.log('[PAGE] onSave called, awaiting mutation');
+              await updateMutation.mutateAsync(updates);
+              console.log('[PAGE] mutation completed');
+            }}
             onDelete={() => deleteMutation.mutateAsync()}
             isLoading={updateMutation.isPending || deleteMutation.isPending}
           />

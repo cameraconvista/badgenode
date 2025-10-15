@@ -13,7 +13,23 @@ interface UpdateData {
 
 export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: () => void) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
+  
+  // Pin per refetch specifici
+  const pin = timbratureGiorno[0]?.pin;
+
+  // Refetch obbligato di tutte le query attive
+  const refetchAll = async () => {
+    console.log('[HOOK] refetchAll started →', { pin });
+    await Promise.all([
+      qc.refetchQueries({ queryKey: ['storico'], type: 'active' }),
+      qc.refetchQueries({ queryKey: ['timbrature'], type: 'active' }),
+      qc.refetchQueries({ queryKey: ['turni-completi-legacy'], type: 'active' }),
+      pin ? qc.refetchQueries({ queryKey: ['storico', pin], type: 'active' }) : Promise.resolve(),
+      pin ? qc.refetchQueries({ queryKey: ['timbrature', pin], type: 'active' }) : Promise.resolve(),
+    ]);
+    console.log('[HOOK] refetchAll completed');
+  };
 
   const updateMutation = useMutation({
     mutationFn: async (updates: UpdateData) => {
@@ -61,25 +77,18 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
 
       return results;
     },
-    onSuccess: (results, variables) => {
+    onSuccess: async (results) => {
+      console.log('[HOOK] mutation success, starting refetch');
+      
+      // Refetch obbligato di tutte le query attive
+      await refetchAll();
+      
       toast({
         title: 'Timbrature aggiornate',
         description: 'Le modifiche sono state salvate con successo',
       });
       
-      // Invalida tutte le query rilevanti per aggiornare la UI
-      queryClient.invalidateQueries({ queryKey: ['storico'] });
-      queryClient.invalidateQueries({ queryKey: ['timbrature'] });
-      queryClient.invalidateQueries({ queryKey: ['turni-completi-legacy'] });
-      
-      // Invalida query specifiche per PIN se disponibile
-      const pin = timbratureGiorno[0]?.pin;
-      if (pin) {
-        queryClient.invalidateQueries({ queryKey: ['storico', pin] });
-        queryClient.invalidateQueries({ queryKey: ['timbrature', pin] });
-      }
-      
-      console.log('[HOOK] cache invalidated, calling onSuccess');
+      console.log('[HOOK] refetch completed, calling onSuccess');
       onSuccess();
     },
     onError: (error) => {
@@ -102,7 +111,7 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
         title: 'Timbrature eliminate',
         description: 'Le timbrature del giorno sono state eliminate',
       });
-      queryClient.invalidateQueries({ queryKey: ['timbrature'] });
+      qc.invalidateQueries({ queryKey: ['timbrature'] });
       onSuccess();
     },
     onError: (error) => {
