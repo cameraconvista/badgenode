@@ -157,6 +157,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Router timbrature con SERVICE_ROLE_KEY (import dinamico dopo env load)
+  const { default: timbratureRouter } = await import('./routes/timbrature.js');
+  app.use('/api/timbrature', timbratureRouter);
+
   const httpServer = createServer(app);
 
   return httpServer;
