@@ -11,7 +11,7 @@ export interface FormData {
 export interface ModaleTimbratureProps {
   isOpen: boolean;
   onClose: () => void;
-  giornologico: string;
+  giorno_logico: string;
   timbrature: Timbratura[];
   dipendente?: Utente;
   onSave: (updates: {

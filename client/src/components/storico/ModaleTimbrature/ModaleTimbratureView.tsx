@@ -18,7 +18,7 @@ interface ModaleTimbratureViewProps extends ModaleTimbratureProps {
 export default function ModaleTimbratureView({
   isOpen,
   onClose,
-  giornologico,
+  giorno_logico,
   timbrature,
   dipendente,
   isLoading,
@@ -40,7 +40,7 @@ export default function ModaleTimbratureView({
     ? `${entrata.nome} ${entrata.cognome}` 
     : 'Sconosciuto';
 
-  const title = `Modifica Timbrature — ${formatDataItaliana(giornologico)}`;
+  const title = `Modifica Timbrature — ${formatDataItaliana(giorno_logico)}`;
   const description = `Dipendente ${fullName} (PIN: ${dipendente?.pin || entrata?.pin || uscita?.pin})`;
 
   // Footer rimosso - pulsanti ora nel body

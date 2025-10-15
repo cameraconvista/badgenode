@@ -10,7 +10,7 @@ interface TimbratureRaw {
   pin: number;
   tipo: 'entrata' | 'uscita';
   ore: string;
-  giornologico: string;
+  giorno_logico: string;
   created_at: string;
   nome?: string;
   cognome?: string;
@@ -34,10 +34,10 @@ export function aggregateTimbratureByGiornoLogico(
   pin: number,
   oreContrattuali: number = 8
 ): GiornoLogicoDettagliato[] {
-  // Group by giornologico
+  // Group by giorno_logico
   const grouped = timbrature.reduce(
     (acc, t) => {
-      const key = t.giornologico;
+      const key = t.giorno_logico;
       if (!acc[key]) {
         acc[key] = { entrate: [], uscite: [] };
       }

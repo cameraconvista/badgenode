@@ -14,7 +14,7 @@ export default function ModaleTimbrature(props: ModaleTimbratureProps) {
   } = useModaleTimbrature(
     props.isOpen,
     props.timbrature,
-    props.giornologico,
+    props.giorno_logico,
     props.onSave,
     props.onDelete,
     props.onClose

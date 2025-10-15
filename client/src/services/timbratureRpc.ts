@@ -153,7 +153,7 @@ export async function callUpdateTimbro({
 
     // Adatta updateData ai campi reali della tabella
     const record = existingData[0];
-    let adaptedUpdateData: any = {};
+    const adaptedUpdateData: any = {};
     
     console.info('[SERVICE] ADAPTATION LOGIC →', {
       originalUpdateData: updateData,
@@ -199,7 +199,7 @@ export async function callUpdateTimbro({
     }
 
     // TENTATIVO 1: PATCH normale per ID
-    let url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}`;
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}`;
     const headers = {
       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,

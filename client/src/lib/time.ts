@@ -22,7 +22,7 @@ export function computeGiornoLogico(params: {
   ora: string;
   tipo: 'entrata' | 'uscita';
   dataEntrata?: string; // Per uscite, data dell'entrata corrispondente
-}): { giornologico: string; dataReale: string } {
+}): { giorno_logico: string; dataReale: string } {
   const { data, ora, tipo, dataEntrata } = params;
   const [ore] = ora.split(':').map(Number);
 
@@ -32,12 +32,12 @@ export function computeGiornoLogico(params: {
       const d = new Date(data + 'T00:00:00');
       d.setDate(d.getDate() - 1);
       return {
-        giornologico: formatDateLocal(d),
+        giorno_logico: formatDateLocal(d),
         dataReale: data,
       };
     }
     return {
-      giornologico: data,
+      giorno_logico: data,
       dataReale: data,
     };
   } else {
@@ -53,13 +53,13 @@ export function computeGiornoLogico(params: {
         const d = new Date(data + 'T00:00:00');
         d.setDate(d.getDate() + 1); // Data reale: giorno successivo
         return {
-          giornologico: dataEntrata, // Stesso giorno logico dell'entrata
+          giorno_logico: dataEntrata, // Stesso giorno logico dell'entrata
           dataReale: formatDateLocal(d),
         };
       }
     }
     return {
-      giornologico: data,
+      giorno_logico: data,
       dataReale: data,
     };
   }

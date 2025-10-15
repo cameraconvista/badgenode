@@ -7,7 +7,7 @@ import type { FormData } from './types';
 export function useModaleTimbrature(
   isOpen: boolean,
   timbrature: Timbratura[],
-  giornologico: string,
+  giorno_logico: string,
   onSave: (updates: FormData) => Promise<void>,
   onDelete: () => Promise<void>,
   onClose: () => void
@@ -54,7 +54,7 @@ export function useModaleTimbrature(
         pin: timbrature[0]?.pin || 0,
         tipo: 'entrata',
         ts_order: new Date().toISOString(),
-        giorno_logico: giornologico,
+        giorno_logico: giorno_logico,
         data_locale: formData.dataEntrata,
         ora_locale: formData.oraEntrata + ':00',
         nome: timbrature[0]?.nome || '',
@@ -67,7 +67,7 @@ export function useModaleTimbrature(
         pin: timbrature[0]?.pin || 0,
         tipo: 'uscita',
         ts_order: new Date().toISOString(),
-        giorno_logico: giornologico,
+        giorno_logico: giorno_logico,
         data_locale: formData.dataUscita,
         ora_locale: formData.oraUscita + ':00',
         nome: timbrature[0]?.nome || '',

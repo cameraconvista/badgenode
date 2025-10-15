@@ -16,7 +16,7 @@ interface StoricoTableProps {
   storicoDatasetV5: StoricoDatasetV5[]; // NUOVO: Dataset v5 per totali
   filters: { dal: string; al: string };
   oreContrattuali: number;
-  onEditTimbrature: (giornologico: string) => void;
+  onEditTimbrature: (giorno_logico: string) => void;
   isLoading?: boolean;
 }
 

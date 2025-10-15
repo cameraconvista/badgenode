@@ -107,7 +107,7 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
           <ModaleTimbrature
             isOpen={!!selectedGiorno}
             onClose={() => setSelectedGiorno(null)}
-            giornologico={selectedGiorno || ''}
+            giorno_logico={selectedGiorno || ''}
             timbrature={timbratureGiorno}
             dipendente={dipendente}
             onSave={(updates) => updateMutation.mutateAsync(updates)}

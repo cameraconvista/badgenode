@@ -6,7 +6,7 @@ interface TimbratureRaw {
   pin: number;
   tipo: 'entrata' | 'uscita';
   ore: string;
-  giornologico: string;
+  giorno_logico: string;
   created_at: string;
   nome?: string;
   cognome?: string;
@@ -48,7 +48,7 @@ export function pairSessionsForGiorno(timbrature: TimbratureRaw[]): SessioneTimb
     const isAperta = !uscita;
 
     if (uscita) {
-      ore = calculateSessionHours(entrata.ore, uscita.ore, entrata.giornologico);
+      ore = calculateSessionHours(entrata.ore, uscita.ore, entrata.giorno_logico);
     }
 
     sessioni.push({
