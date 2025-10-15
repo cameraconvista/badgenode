@@ -68,15 +68,15 @@ export async function callInsertTimbro({
 }
 
 /**
- * Aggiorna timbratura esistente via fallback diretto
- * Usa update diretto su tabella timbrature (no RPC per ora)
+ * Aggiorna timbratura esistente via PATCH REST diretta (FORCED TEST)
+ * Bypassa il wrapper Supabase per verifica finale
  */
 export async function callUpdateTimbro({
   id,
   updateData,
 }: UpdateTimbroParams): Promise<UpdateTimbroResult> {
   try {
-    console.log('[SERVICE] callUpdateTimbro →', { id, updateData });
+    console.info('[SERVICE] callUpdateTimbro (FORCED PATCH) →', { id, updateData });
     
     // Verifica che ci siano campi da aggiornare
     if (!updateData || Object.keys(updateData).length === 0) {
@@ -87,19 +87,32 @@ export async function callUpdateTimbro({
       };
     }
 
-    // Fallback diretto su tabella timbrature
-    const { data, error } = await supabase
-      .from('timbrature')
-      .update(updateData)
-      .eq('id', id)
-      .select();
+    // PATCH REST diretta verso Supabase
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}`;
+    const headers = {
+      apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation',
+    };
 
-    if (error) {
-      console.log('[SERVICE] update ERR →', { id, error: error.message });
-      return {
-        success: false,
-        error: error.message,
-      };
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(updateData),
+    });
+
+    const data = await res.json().catch(() => []);
+    console.info('[SERVICE] PATCH response →', { status: res.status, rows: data?.length || 0, data });
+
+    if (!res.ok) {
+      console.log('[SERVICE] update ERR →', { id, error: `PATCH Supabase (${res.status})` });
+      throw new Error(`Errore PATCH Supabase (${res.status})`);
+    }
+    
+    if (!data || data.length === 0) {
+      console.log('[SERVICE] update ERR →', { id, error: `nessuna riga aggiornata (id=${id})` });
+      throw new Error(`Update fallito: nessuna riga aggiornata (id=${id})`);
     }
 
     console.log('[SERVICE] update OK →', { id, rows: data?.length });
