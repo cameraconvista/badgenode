@@ -100,13 +100,36 @@ export async function callUpdateTimbro({
 
     const checkRes = await fetch(checkUrl, { headers: checkHeaders });
     const existingData = await checkRes.json().catch(() => []);
+    
+    // VERIFICA CRITICA: Il record esiste davvero?
     console.info('[SERVICE] SCHEMA CHECK →', { 
       id, 
       exists: existingData?.length > 0, 
       schema: existingData?.[0] ? Object.keys(existingData[0]) : [],
       record: existingData?.[0],
-      fullResponse: existingData
+      fullResponse: existingData,
+      checkUrl,
+      checkStatus: checkRes.status
     });
+
+    // Se il record non esiste nel GET, non esisterà nemmeno nel PATCH!
+    if (!existingData || existingData.length === 0) {
+      console.error('[SERVICE] RECORD NON TROVATO →', { 
+        id, 
+        checkUrl, 
+        status: checkRes.status,
+        message: 'Record inesistente o non accessibile con credenziali attuali'
+      });
+      
+      // Verifica se esistono altri record nella tabella
+      const allUrl = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?limit=5&select=id,tipo,data_locale,ora_locale`;
+      const allRes = await fetch(allUrl, { headers: checkHeaders });
+      const allData = await allRes.json().catch(() => []);
+      console.info('[SERVICE] ALTRI RECORD →', { 
+        count: allData?.length || 0, 
+        records: allData?.map((r: any) => ({ id: r.id, tipo: r.tipo })) || []
+      });
+    }
     
     // Log dettagliato per debug
     if (existingData?.[0]) {
@@ -175,8 +198,8 @@ export async function callUpdateTimbro({
       throw new Error(`Nessun campo valido da aggiornare per id=${id}. Schema mismatch?`);
     }
 
-    // PATCH REST diretta verso Supabase
-    const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}`;
+    // TENTATIVO 1: PATCH normale per ID
+    let url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}`;
     const headers = {
       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -184,14 +207,43 @@ export async function callUpdateTimbro({
       Prefer: 'return=representation',
     };
 
-    const res = await fetch(url, {
+    console.info('[SERVICE] PATCH REQUEST (TENTATIVO 1) →', {
+      url,
+      method: 'PATCH',
+      body: adaptedUpdateData,
+      headers: { ...headers, Authorization: '[HIDDEN]' },
+      recordIdFromGet: existingData?.[0]?.id,
+      idMatch: existingData?.[0]?.id === id
+    });
+
+    let res = await fetch(url, {
       method: 'PATCH',
       headers,
       body: JSON.stringify(adaptedUpdateData),
     });
 
-    const data = await res.json().catch(() => []);
-    console.info('[SERVICE] PATCH response →', { status: res.status, rows: data?.length || 0, data });
+    let data = await res.json().catch(() => []);
+    console.info('[SERVICE] PATCH response (TENTATIVO 1) →', { status: res.status, rows: data?.length || 0, data });
+
+    // Se TENTATIVO 1 fallisce (rows=0), prova TENTATIVO 2 con filtri multipli
+    if (res.ok && (!data || data.length === 0)) {
+      const record = existingData[0];
+      const multiFilterUrl = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}&tipo=eq.${record.tipo}&pin=eq.${record.pin}`;
+      
+      console.info('[SERVICE] PATCH REQUEST (TENTATIVO 2 - filtri multipli) →', {
+        url: multiFilterUrl,
+        filters: { id, tipo: record.tipo, pin: record.pin }
+      });
+
+      res = await fetch(multiFilterUrl, {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify(adaptedUpdateData),
+      });
+
+      data = await res.json().catch(() => []);
+      console.info('[SERVICE] PATCH response (TENTATIVO 2) →', { status: res.status, rows: data?.length || 0, data });
+    }
 
     if (!res.ok) {
       console.log('[SERVICE] update ERR →', { id, error: `PATCH Supabase (${res.status})` });
