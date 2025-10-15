@@ -19,10 +19,10 @@ export interface InsertTimbroResult {
 
 export interface UpdateTimbroParams {
   id: number;
-  dataEntrata: string;
-  oraEntrata: string;
-  dataUscita: string;
-  oraUscita: string;
+  updateData: {
+    data_locale?: string;
+    ora_locale?: string;
+  };
 }
 
 export interface UpdateTimbroResult {
@@ -73,36 +73,43 @@ export async function callInsertTimbro({
  */
 export async function callUpdateTimbro({
   id,
-  dataEntrata,
-  oraEntrata,
-  dataUscita,
-  oraUscita,
+  updateData,
 }: UpdateTimbroParams): Promise<UpdateTimbroResult> {
   try {
+    console.log('[SERVICE] callUpdateTimbro →', { id, updateData });
+    
+    // Verifica che ci siano campi da aggiornare
+    if (!updateData || Object.keys(updateData).length === 0) {
+      console.log('[SERVICE] update SKIP → updateData vuoto');
+      return {
+        success: true,
+        data: [],
+      };
+    }
+
     // Fallback diretto su tabella timbrature
     const { data, error } = await supabase
       .from('timbrature')
-      .update({
-        data_locale: dataEntrata,
-        ora_locale: oraEntrata,
-        // Per ora aggiorniamo solo entrata - TODO: gestire uscita separata
-      })
+      .update(updateData)
       .eq('id', id)
       .select();
 
     if (error) {
+      console.log('[SERVICE] update ERR →', { id, error: error.message });
       return {
         success: false,
         error: error.message,
       };
     }
 
+    console.log('[SERVICE] update OK →', { id, rows: data?.length });
     return {
       success: true,
       data,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Errore sconosciuto';
+    console.log('[SERVICE] update ERR →', { id, error: message });
     return {
       success: false,
       error: message,

@@ -16,17 +16,41 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
 
   const updateMutation = useMutation({
     mutationFn: async (updates: UpdateData) => {
+      console.log('[MODALE] onSave →', updates);
+      
       const entrate = timbratureGiorno.filter((t) => t.tipo === 'entrata');
       const uscite = timbratureGiorno.filter((t) => t.tipo === 'uscita');
 
-      // Per ora aggiorniamo solo la prima entrata (semplificazione)
-      if (entrate.length > 0) {
+      const idEntrata = entrate[0]?.id;
+      const idUscita = uscite[0]?.id;
+      
+      console.log('[SERVICE] ids →', { idEntrata, idUscita });
+
+      // Aggiorna entrata se esiste
+      if (idEntrata) {
+        const updateDataEntrata = {
+          data_locale: updates.dataEntrata,
+          ora_locale: updates.oraEntrata + ':00'
+        };
+        console.log('[SERVICE] payloads → updateDataEntrata:', updateDataEntrata);
+        
         await TimbratureService.updateTimbratura({
-          id: entrate[0].id,
-          dataEntrata: updates.dataEntrata,
-          oraEntrata: updates.oraEntrata,
-          dataUscita: updates.dataUscita,
-          oraUscita: updates.oraUscita,
+          id: idEntrata,
+          updateData: updateDataEntrata,
+        });
+      }
+
+      // Aggiorna uscita se esiste
+      if (idUscita) {
+        const updateDataUscita = {
+          data_locale: updates.dataUscita,
+          ora_locale: updates.oraUscita + ':00'
+        };
+        console.log('[SERVICE] payloads → updateDataUscita:', updateDataUscita);
+        
+        await TimbratureService.updateTimbratura({
+          id: idUscita,
+          updateData: updateDataUscita,
         });
       }
     },

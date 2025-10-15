@@ -1,8 +1,15 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
+
+// Carica esplicitamente .env.local
+config({ path: '.env.local' });
 
 const url = process.env.VITE_SUPABASE_URL!;
 const anon = process.env.VITE_SUPABASE_ANON_KEY!;
+
+console.log('🔍 Testing Supabase connection...');
+console.log('URL:', url?.slice(0, 30) + '...');
+console.log('Key:', anon?.slice(0, 20) + '...');
 
 async function main() {
   const supabase = createClient(url, anon, { auth: { persistSession: false } });

@@ -102,12 +102,11 @@ export default function ArchivioDipendenti() {
   const handleBackToLogin = () => setLocation('/');
   const _handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
   const handleExDipendenti = () => {
-    console.log('Navigazione a Ex-Dipendenti');
+    // TODO(BUSINESS): Implementare navigazione a Ex-Dipendenti
   };
 
   const handleEsportaTutto = () => {
-    console.log('Esporta tutti i dipendenti');
-    // TODO: Implementare export completo
+    // TODO(BUSINESS): Implementare export completo dipendenti
   };
 
   return (
