@@ -152,7 +152,7 @@ export async function buildStoricoDataset({
     });
 
     // 4. Costruisci dataset finale ordinato
-    return allDays.map((day) => {
+    const result = allDays.map((day) => {
       const totale = totaliMap.get(day);
       const sessioniGiorno = sessioniMap.get(day) || [];
 
@@ -162,6 +162,15 @@ export async function buildStoricoDataset({
         sessioni: sessioniGiorno,
       };
     });
+    
+    // TEST: Clone profondo per evitare structural sharing (solo per diagnosi)
+    console.log('[SERVICE] buildStoricoDataset result:', { 
+      length: result.length, 
+      timestamp: new Date().toISOString() 
+    });
+    
+    // Clonazione profonda per test structural sharing
+    return JSON.parse(JSON.stringify(result));
   } catch (e) {
     const err = asError(e);
     console.error('[BadgeNode] Error loading totali:', err.message);

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { callUpdateTimbro } from '@/services/timbratureRpc';
 import { TimbratureService } from '@/services/timbrature.service';
+import { logStoricoQueries, logActiveQueries } from '@/lib/debugQuery';
 import type { Timbratura } from '@/types/timbrature';
 
 interface UpdateData {
@@ -21,13 +22,39 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
   // Refetch obbligato di tutte le query attive
   const refetchAll = async () => {
     console.log('[HOOK] refetchAll started →', { pin });
+    
+    // Log stato PRIMA del refetch
+    logActiveQueries(qc, 'BEFORE refetch');
+    logStoricoQueries(qc, 'BEFORE refetch');
+    
+    // Refetch con chiavi specifiche e generiche
     await Promise.all([
+      // Refetch generici
       qc.refetchQueries({ queryKey: ['storico'], type: 'active' }),
       qc.refetchQueries({ queryKey: ['timbrature'], type: 'active' }),
       qc.refetchQueries({ queryKey: ['turni-completi-legacy'], type: 'active' }),
+      qc.refetchQueries({ queryKey: ['storico-dataset-v5'], type: 'active' }),
+      
+      // Refetch con PIN specifico
       pin ? qc.refetchQueries({ queryKey: ['storico', pin], type: 'active' }) : Promise.resolve(),
       pin ? qc.refetchQueries({ queryKey: ['timbrature', pin], type: 'active' }) : Promise.resolve(),
+      
+      // Refetch con filtri (pattern più probabile)
+      qc.refetchQueries({ 
+        predicate: (query) => {
+          const key = query.queryKey;
+          return Boolean(
+            (key[0] === 'storico-dataset-v5' && key[1] && typeof key[1] === 'object') ||
+            (key[0] === 'turni-completi-legacy' && key[1] && typeof key[1] === 'object')
+          );
+        }
+      }),
     ]);
+    
+    // Log stato DOPO il refetch
+    logActiveQueries(qc, 'AFTER refetch');
+    logStoricoQueries(qc, 'AFTER refetch');
+    
     console.log('[HOOK] refetchAll completed');
   };
 

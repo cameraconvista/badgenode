@@ -63,15 +63,28 @@ export function useStoricoTimbrature(pin: number) {
   }
 
   // Query per dataset v5 (include tutti i giorni del range)
+  const storicoQueryKey = ['storico-dataset-v5', filters];
   const {
     data: storicoDatasetV5 = [],
     isLoading: isLoadingTimbrature,
     error: storicoError,
   } = useQuery({
-    queryKey: ['storico-dataset-v5', filters],
-    queryFn: () => buildStoricoDataset({ pin: filters.pin, from: filters.dal, to: filters.al }),
+    queryKey: storicoQueryKey,
+    queryFn: () => {
+      console.log('[STORICO][QUERY] dataset-v5 key=', storicoQueryKey, 'params=', filters, 't=', new Date().toISOString());
+      return buildStoricoDataset({ pin: filters.pin, from: filters.dal, to: filters.al });
+    },
     enabled: !!dipendente,
   }) as { data: StoricoDatasetV5[]; isLoading: boolean; error: unknown };
+  
+  // Log quando i dati cambiano
+  useEffect(() => {
+    console.log('[STORICO][DATA] dataset-v5 updated:', { 
+      length: storicoDatasetV5.length, 
+      filters, 
+      timestamp: new Date().toISOString() 
+    });
+  }, [storicoDatasetV5, filters]);
 
   if (storicoError) {
   }
