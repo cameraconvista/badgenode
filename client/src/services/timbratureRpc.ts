@@ -104,8 +104,25 @@ export async function callUpdateTimbro({
       id, 
       exists: existingData?.length > 0, 
       schema: existingData?.[0] ? Object.keys(existingData[0]) : [],
-      record: existingData?.[0]
+      record: existingData?.[0],
+      fullResponse: existingData
     });
+    
+    // Log dettagliato per debug
+    if (existingData?.[0]) {
+      const record = existingData[0];
+      console.info('[SERVICE] RECORD FIELDS →', {
+        hasDataLocale: 'data_locale' in record,
+        hasData: 'data' in record,
+        hasOraLocale: 'ora_locale' in record,
+        hasOre: 'ore' in record,
+        dataLocaleValue: record.data_locale,
+        dataValue: record.data,
+        oraLocaleValue: record.ora_locale,
+        oreValue: record.ore,
+        allFields: Object.keys(record)
+      });
+    }
 
     if (!existingData || existingData.length === 0) {
       throw new Error(`Record id=${id} non trovato nella tabella timbrature`);
@@ -113,25 +130,50 @@ export async function callUpdateTimbro({
 
     // Adatta updateData ai campi reali della tabella
     const record = existingData[0];
-    let adaptedUpdateData = { ...updateData };
+    let adaptedUpdateData: any = {};
     
-    // Se la tabella usa 'data' invece di 'data_locale'
-    if ('data' in record && !('data_locale' in record)) {
-      if (updateData.data_locale) {
-        adaptedUpdateData = { ...adaptedUpdateData, data: updateData.data_locale };
-        delete adaptedUpdateData.data_locale;
+    console.info('[SERVICE] ADAPTATION LOGIC →', {
+      originalUpdateData: updateData,
+      recordHasDataLocale: 'data_locale' in record,
+      recordHasData: 'data' in record,
+      recordHasOraLocale: 'ora_locale' in record,
+      recordHasOre: 'ore' in record
+    });
+    
+    // Mappa data_locale → data se necessario
+    if (updateData.data_locale) {
+      if ('data_locale' in record) {
+        adaptedUpdateData.data_locale = updateData.data_locale;
+        console.info('[SERVICE] MAPPING → data_locale (field exists)');
+      } else if ('data' in record) {
+        adaptedUpdateData.data = updateData.data_locale;
+        console.info('[SERVICE] MAPPING → data_locale → data');
       }
     }
     
-    // Se la tabella usa 'ore' invece di 'ora_locale'
-    if ('ore' in record && !('ora_locale' in record)) {
-      if (updateData.ora_locale) {
-        adaptedUpdateData = { ...adaptedUpdateData, ore: updateData.ora_locale };
-        delete adaptedUpdateData.ora_locale;
+    // Mappa ora_locale → ore se necessario  
+    if (updateData.ora_locale) {
+      if ('ora_locale' in record) {
+        adaptedUpdateData.ora_locale = updateData.ora_locale;
+        console.info('[SERVICE] MAPPING → ora_locale (field exists)');
+      } else if ('ore' in record) {
+        adaptedUpdateData.ore = updateData.ora_locale;
+        console.info('[SERVICE] MAPPING → ora_locale → ore');
       }
     }
 
-    console.info('[SERVICE] ADAPTED updateData →', { original: updateData, adapted: adaptedUpdateData });
+    console.info('[SERVICE] ADAPTED updateData →', { 
+      original: updateData, 
+      adapted: adaptedUpdateData,
+      adaptedKeys: Object.keys(adaptedUpdateData),
+      isEmpty: Object.keys(adaptedUpdateData).length === 0
+    });
+
+    // Verifica che ci siano campi da aggiornare dopo adattamento
+    if (Object.keys(adaptedUpdateData).length === 0) {
+      console.log('[SERVICE] update SKIP → adaptedUpdateData vuoto dopo mapping');
+      throw new Error(`Nessun campo valido da aggiornare per id=${id}. Schema mismatch?`);
+    }
 
     // PATCH REST diretta verso Supabase
     const url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/timbrature?id=eq.${id}`;
