@@ -19,14 +19,7 @@ export interface InsertTimbroResult {
 
 export interface UpdateTimbroParams {
   id: number;
-  updateData: {
-    data_locale?: string;
-    ora_locale?: string;
-    // Supporto per schema alternativo
-    data?: string;
-    ore?: string;
-    [key: string]: any; // Per adattamento dinamico
-  };
+  updateData: Record<string, any>;
 }
 
 export interface UpdateTimbroResult {
@@ -75,67 +68,23 @@ export async function callInsertTimbro({
  * Aggiorna timbratura esistente via endpoint server
  * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
  */
-export async function callUpdateTimbro({
-  id,
-  updateData,
-}: UpdateTimbroParams): Promise<UpdateTimbroResult> {
-  try {
-    console.info('[SERVICE] callUpdateTimbro (SERVER ENDPOINT) →', { id, updateData });
-    
-    // Verifica che ci siano campi da aggiornare
-    if (!updateData || Object.keys(updateData).length === 0) {
-      console.log('[SERVICE] update SKIP → updateData vuoto');
-      return {
-        success: true,
-        data: [],
-      };
-    }
-
-    // Chiama endpoint server con SERVICE_ROLE_KEY
-    const url = `/api/timbrature/${id}`;
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-
-    console.info('[SERVICE] SERVER REQUEST →', {
-      url,
-      method: 'PATCH',
-      body: updateData,
-    });
-
-    const res = await fetch(url, {
-      method: 'PATCH',
-      headers,
-      body: JSON.stringify(updateData),
-    });
-
-    const result = await res.json().catch(() => ({ success: false, error: 'Invalid JSON response' }));
-    
-    console.info('[SERVICE] SERVER RESPONSE →', { 
-      status: res.status, 
-      success: result.success,
-      data: result.data,
-      error: result.error
-    });
-
-    if (!res.ok || !result.success) {
-      const errorMsg = result.error || `Server error (${res.status})`;
-      console.log('[SERVICE] update ERR →', { id, error: errorMsg });
-      throw new Error(errorMsg);
-    }
-
-    console.log('[SERVICE] update OK →', { id, updated: !!result.data });
-    return {
-      success: true,
-      data: result.data ? [result.data] : [],
-    };
-    
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Errore sconosciuto';
-    console.log('[SERVICE] update ERR →', { id, error: message });
-    return {
-      success: false,
-      error: message,
-    };
+export async function callUpdateTimbro({ id, updateData }: { id: number; updateData: Record<string, any> }) {
+  console.info('[SERVICE] callUpdateTimbro (ENDPOINT) →', { id, updateData });
+  
+  const res = await fetch(`/api/timbrature/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updateData),
+  });
+  
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const errorMsg = err?.error ?? `PATCH /api/timbrature/${id} failed (${res.status})`;
+    console.error('[SERVICE] update ERR →', { id, error: errorMsg });
+    throw new Error(errorMsg);
   }
+  
+  const result = await res.json();
+  console.info('[SERVICE] update OK →', { id, success: result.success });
+  return result; // { success: true, data: { ... } }
 }

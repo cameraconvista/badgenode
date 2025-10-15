@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
+import { callUpdateTimbro } from '@/services/timbratureRpc';
 import { TimbratureService } from '@/services/timbrature.service';
 import type { Timbratura } from '@/types/timbrature';
 
@@ -24,7 +25,9 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
       const idEntrata = entrate[0]?.id;
       const idUscita = uscite[0]?.id;
       
-      console.log('[SERVICE] ids →', { idEntrata, idUscita });
+      console.log('[HOOK] ids →', { idEntrata, idUscita });
+
+      const results = [];
 
       // Aggiorna entrata se esiste
       if (idEntrata) {
@@ -32,12 +35,13 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
           data_locale: updates.dataEntrata,
           ora_locale: updates.oraEntrata + ':00'
         };
-        console.log('[SERVICE] payloads → updateDataEntrata:', updateDataEntrata);
+        console.log('[HOOK] updating entrata →', { id: idEntrata, updateDataEntrata });
         
-        await TimbratureService.updateTimbratura({
+        const result = await callUpdateTimbro({
           id: idEntrata,
           updateData: updateDataEntrata,
         });
+        results.push(result.data);
       }
 
       // Aggiorna uscita se esiste
@@ -46,20 +50,36 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
           data_locale: updates.dataUscita,
           ora_locale: updates.oraUscita + ':00'
         };
-        console.log('[SERVICE] payloads → updateDataUscita:', updateDataUscita);
+        console.log('[HOOK] updating uscita →', { id: idUscita, updateDataUscita });
         
-        await TimbratureService.updateTimbratura({
+        const result = await callUpdateTimbro({
           id: idUscita,
           updateData: updateDataUscita,
         });
+        results.push(result.data);
       }
+
+      return results;
     },
-    onSuccess: () => {
+    onSuccess: (results, variables) => {
       toast({
         title: 'Timbrature aggiornate',
         description: 'Le modifiche sono state salvate con successo',
       });
+      
+      // Invalida tutte le query rilevanti per aggiornare la UI
+      queryClient.invalidateQueries({ queryKey: ['storico'] });
       queryClient.invalidateQueries({ queryKey: ['timbrature'] });
+      queryClient.invalidateQueries({ queryKey: ['turni-completi-legacy'] });
+      
+      // Invalida query specifiche per PIN se disponibile
+      const pin = timbratureGiorno[0]?.pin;
+      if (pin) {
+        queryClient.invalidateQueries({ queryKey: ['storico', pin] });
+        queryClient.invalidateQueries({ queryKey: ['timbrature', pin] });
+      }
+      
+      console.log('[HOOK] cache invalidated, calling onSuccess');
       onSuccess();
     },
     onError: (error) => {
