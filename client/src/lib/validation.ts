@@ -34,9 +34,10 @@ export function validateTimbratura(
   // Calcola ore
   const ore = calcolaOreLavorateTraDue(entrata, uscita);
 
-  // Minimo 30 minuti
-  if (ore < 0.5) {
-    errors.push('Turno minimo 30 minuti');
+  // LIMITE MINIMO RIMOSSO - Permette qualsiasi durata > 0
+  // (Precedentemente: minimo 30 minuti)
+  if (ore <= 0) {
+    errors.push('Uscita deve essere successiva all\'entrata');
   }
 
   // Massimo 24 ore
