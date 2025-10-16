@@ -3,6 +3,7 @@
 
 import { Router } from 'express';
 import { createClient } from '@supabase/supabase-js';
+import { computeGiornoLogico } from '../shared/time/computeGiornoLogico';
 
 const router = Router();
 
@@ -30,6 +31,161 @@ if (!supabaseUrl || !serviceRoleKey) {
     },
   });
   console.log('✅ [TIMBRATURE] Supabase admin client inizializzato');
+}
+
+// Tipi per errori codificati
+interface ValidationError {
+  success: false;
+  error: string;
+  code: string;
+}
+
+interface ValidationSuccess {
+  success: true;
+  anchorEntry?: {
+    id: string;
+    giorno_logico: string;
+    data_locale: string;
+    ora_locale: string;
+  };
+}
+
+type ValidationResult = ValidationError | ValidationSuccess;
+
+/**
+ * Valida alternanza con logica di ancoraggio per turni notturni
+ */
+async function validateAlternanza(
+  pin: number,
+  tipo: 'entrata' | 'uscita',
+  data: string,
+  ora: string,
+  anchorDate?: string
+): Promise<ValidationResult> {
+  if (!supabaseAdmin) {
+    return {
+      success: false,
+      error: 'Supabase admin client non disponibile',
+      code: 'INTERNAL_ERROR'
+    };
+  }
+
+  // Calcola giorno logico usando la funzione unificata
+  const { giorno_logico } = computeGiornoLogico({
+    data,
+    ora,
+    tipo,
+    dataEntrata: anchorDate
+  });
+
+  // Trova ultimo timbro sul giorno logico ancorato
+  const { data: lastTimbros, error: queryError } = await supabaseAdmin
+    .from('timbrature')
+    .select('tipo, data_locale, ora_locale')
+    .eq('pin', pin)
+    .eq('giorno_logico', giorno_logico)
+    .order('ts_order', { ascending: false })
+    .limit(1);
+
+  if (queryError) {
+    console.warn('[VALIDATION] Query error:', queryError.message);
+    return {
+      success: false,
+      error: 'Errore durante validazione alternanza',
+      code: 'QUERY_ERROR'
+    };
+  }
+
+  const lastTimbro = lastTimbros && lastTimbros.length > 0 ? lastTimbros[0] as { tipo: string; data_locale: string; ora_locale: string } : null;
+
+  if (tipo === 'entrata') {
+    // ENTRATA: verifica che ultimo timbro ancorato non sia ENTRATA
+    if (lastTimbro?.tipo === 'entrata') {
+      return {
+        success: false,
+        error: 'Alternanza violata: entrata consecutiva nello stesso giorno logico',
+        code: 'ALTERNANZA_DUPLICATA'
+      };
+    }
+    return { success: true };
+  } else {
+    // USCITA: cerca entrata di ancoraggio
+    let anchorEntry = null;
+
+    // 1) Prova su ancora corrente
+    const { data: currentEntries } = await supabaseAdmin
+      .from('timbrature')
+      .select('id, giorno_logico, data_locale, ora_locale')
+      .eq('pin', pin)
+      .eq('tipo', 'entrata')
+      .eq('giorno_logico', giorno_logico)
+      .order('ts_order', { ascending: false })
+      .limit(1);
+
+    if (currentEntries && currentEntries.length > 0) {
+      anchorEntry = currentEntries[0];
+    } else {
+      // 2) Fallback: giorno precedente entro 20h
+      const prevDate = new Date(giorno_logico + 'T00:00:00');
+      prevDate.setDate(prevDate.getDate() - 1);
+      const giornoPrev = prevDate.toISOString().split('T')[0];
+
+      const { data: prevEntries } = await supabaseAdmin
+        .from('timbrature')
+        .select('id, giorno_logico, data_locale, ora_locale')
+        .eq('pin', pin)
+        .eq('tipo', 'entrata')
+        .eq('giorno_logico', giornoPrev)
+        .order('ts_order', { ascending: false })
+        .limit(1);
+
+      if (prevEntries && prevEntries.length > 0) {
+        // Nessun limite di durata: accetta qualsiasi entrata aperta nel giorno precedente
+        anchorEntry = prevEntries[0] as { id: string; giorno_logico: string; data_locale: string; ora_locale: string };
+      }
+    }
+
+    // 3) Override esplicito con anchorDate
+    if (!anchorEntry && anchorDate) {
+      const { data: explicitEntries } = await supabaseAdmin
+        .from('timbrature')
+        .select('id, giorno_logico, data_locale, ora_locale')
+        .eq('pin', pin)
+        .eq('tipo', 'entrata')
+        .eq('giorno_logico', anchorDate)
+        .order('ts_order', { ascending: false })
+        .limit(1);
+
+      if (explicitEntries && explicitEntries.length > 0) {
+        anchorEntry = explicitEntries[0];
+      }
+    }
+
+    // Verifica se trovata entrata di ancoraggio
+    if (!anchorEntry) {
+      return {
+        success: false,
+        error: 'Manca ENTRATA di ancoraggio per questa uscita',
+        code: 'MISSING_ANCHOR_ENTRY'
+      };
+    }
+
+    // Nessun controllo durata turno: rimosso limite 20h per richiesta business
+
+    // Ultima difesa: alternanza consecutiva
+    if (lastTimbro?.tipo === 'uscita') {
+      return {
+        success: false,
+        error: 'Alternanza violata: uscita consecutiva nello stesso giorno logico',
+        code: 'ALTERNANZA_DUPLICATA'
+      };
+    }
+
+    return {
+      success: true,
+      anchorEntry
+    };
+  }
 }
 
 /**
@@ -104,58 +260,13 @@ router.post('/manual', async (req, res) => {
     const tsIso = date.toISOString();
     const tipoNormalized = tipo.toLowerCase();
     
-    // Calcolo intelligente giorno_logico per inserimenti manuali
-    let giorno_logico = giorno;
-    
-    if (H >= 0 && H < 5) {
-      // Orario notturno 00:00-04:59
-      if (tipoNormalized === 'uscita') {
-        // Per uscite notturne: cerca entrata aperta dello stesso PIN
-        const giornoPrec = new Date(date);
-        giornoPrec.setDate(giornoPrec.getDate() - 1);
-        const giornoPrecStr = giornoPrec.toISOString().split('T')[0];
-        
-        const { data: entrataAperta } = await supabaseAdmin
-          .from('timbrature')
-          .select('giorno_logico, data_locale, ora_locale')
-          .eq('pin', pinNum)
-          .eq('tipo', 'entrata')
-          .gte('giorno_logico', giornoPrecStr) // Cerca dal giorno precedente
-          .order('ts_order', { ascending: false })
-          .limit(1)
-          .single() as { data: { giorno_logico: string; data_locale: string; ora_locale: string } | null; error: any };
-
-        if (entrataAperta) {
-          // Verifica se l'entrata è dello stesso turno (differenza ≤ 1 giorno)
-          const entrataDate = new Date(entrataAperta.data_locale + 'T' + entrataAperta.ora_locale);
-          const diffGiorni = (date.getTime() - entrataDate.getTime()) / (1000 * 60 * 60 * 24);
-          
-          if (diffGiorni <= 1) {
-            // Uscita appartiene allo stesso turno dell'entrata
-            giorno_logico = entrataAperta.giorno_logico;
-            console.info('[SERVER] Manual uscita notturna: stesso turno entrata →', { 
-              entrataGiornoLogico: entrataAperta.giorno_logico,
-              diffGiorni: Math.round(diffGiorni * 100) / 100
-            });
-          } else {
-            // Uscita troppo distante, usa giorno precedente
-            const yesterday = new Date(date);
-            yesterday.setDate(yesterday.getDate() - 1);
-            giorno_logico = yesterday.toISOString().split('T')[0];
-          }
-        } else {
-          // Nessuna entrata trovata, usa giorno precedente
-          const yesterday = new Date(date);
-          yesterday.setDate(yesterday.getDate() - 1);
-          giorno_logico = yesterday.toISOString().split('T')[0];
-        }
-      } else {
-        // Per entrate notturne: sempre giorno precedente
-        const yesterday = new Date(date);
-        yesterday.setDate(yesterday.getDate() - 1);
-        giorno_logico = yesterday.toISOString().split('T')[0];
-      }
-    }
+    // Calcolo giorno logico unificato
+    const { giorno_logico } = computeGiornoLogico({
+      data: giorno,
+      ora: `${String(H).padStart(2, '0')}:${String(M).padStart(2, '0')}:00`,
+      tipo: tipoNormalized as 'entrata' | 'uscita',
+      dataEntrata: req.body.anchorDate // Parametro opzionale per ancoraggio
+    });
     
     const data_locale = giorno;
     const ora_locale = `${String(H).padStart(2, '0')}:${String(M).padStart(2, '0')}:00`;
@@ -168,52 +279,37 @@ router.post('/manual', async (req, res) => {
       ora_locale 
     });
 
-    // VALIDAZIONE ALTERNANZA PRIMA DELL'INSERT (bypassa trigger)
-    const { data: lastTimbros, error: queryError } = await supabaseAdmin
-      .from('timbrature')
-      .select('tipo')
-      .eq('pin', pinNum)
-      .eq('giorno_logico', giorno_logico)
-      .order('ts_order', { ascending: false })
-      .limit(1);
+    // VALIDAZIONE ALTERNANZA CON ANCORAGGIO (STEP A)
+    const validationResult = await validateAlternanza(
+      pinNum,
+      tipoNormalized as 'entrata' | 'uscita',
+      giorno,
+      ora_locale,
+      req.body.anchorDate
+    );
 
-    // Gestisci errori di query
-    if (queryError) {
-      console.error('[SERVER] Errore validazione alternanza:', queryError.message);
-      return res.status(500).json({
+    if (!validationResult.success) {
+      console.warn('[SERVER] Validazione alternanza fallita (manual):', {
+        pin: pinNum,
+        tipo: tipoNormalized,
+        giorno_logico,
+        code: validationResult.code,
+        error: validationResult.error
+      });
+      
+      return res.status(400).json({
         success: false,
-        error: 'Errore interno durante validazione',
+        error: validationResult.error,
+        code: validationResult.code
       });
     }
 
-    const lastTimbro = lastTimbros && lastTimbros.length > 0 ? lastTimbros[0] as { tipo: string } : null;
-
-    // VALIDAZIONE ALTERNANZA TEMPORANEAMENTE DISABILITATA
-    // TODO: Implementare logica corretta per turni notturni
-    console.log('[SERVER] Validazione alternanza DISABILITATA temporaneamente (manual)', {
-      lastTimbro: lastTimbro?.tipo,
-      nuovoTipo: tipoNormalized,
-      giornoLogico: giorno_logico
+    console.info('[SERVER] Validazione alternanza OK (manual):', {
+      pin: pinNum,
+      tipo: tipoNormalized,
+      giorno_logico,
+      anchorEntry: validationResult.anchorEntry?.id || null
     });
-    
-    /* VALIDAZIONE ORIGINALE - DA RIATTIVARE DOPO FIX
-    if (lastTimbro) {
-      if (lastTimbro.tipo === tipoNormalized) {
-        return res.status(400).json({
-          success: false,
-          error: `Alternanza violata: timbro uguale al precedente nello stesso giorno_logico`,
-        });
-      }
-    } else {
-      // Primo timbro del giorno: deve essere ENTRATA
-      if (tipoNormalized !== 'entrata') {
-        return res.status(400).json({
-          success: false,
-          error: 'Alternanza violata: il primo timbro del giorno deve essere ENTRATA',
-        });
-      }
-    }
-    */
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
     const insertResult = await (supabaseAdmin as any)
@@ -314,121 +410,56 @@ router.post('/', async (req, res) => {
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
     
-    // Giorno logico: logica cut-off 05:00 con controllo turni aperti
-    let giornoLogico = `${yyyy}-${mm}-${dd}`;
-    
-    if (now.getHours() >= 0 && now.getHours() < 5) {
-      // Orario notturno: verifica se è continuazione di un turno
-      if (tipo === 'uscita') {
-        // Per uscite notturne, cerca entrata aperta dello stesso PIN
-        const { data: entrataAperta } = await supabaseAdmin
-          .from('timbrature')
-          .select('giorno_logico, data_locale, ora_locale')
-          .eq('pin', pinNum)
-          .eq('tipo', 'entrata')
-          .gte('giorno_logico', `${yyyy}-${mm}-${String(Number(dd) - 1).padStart(2, '0')}`) // Cerca dal giorno prima
-          .order('ts_order', { ascending: false })
-          .limit(1)
-          .single() as { data: { giorno_logico: string; data_locale: string; ora_locale: string } | null; error: any };
-
-        if (entrataAperta) {
-          // Verifica se l'entrata è dello stesso turno (differenza ≤ 1 giorno)
-          const entrataDate = new Date(entrataAperta.data_locale + 'T' + entrataAperta.ora_locale);
-          const diffGiorni = (now.getTime() - entrataDate.getTime()) / (1000 * 60 * 60 * 24);
-          
-          if (diffGiorni <= 1) {
-            // Uscita appartiene allo stesso turno dell'entrata
-            giornoLogico = entrataAperta.giorno_logico;
-            console.info('[SERVER] Uscita notturna: stesso turno dell\'entrata →', { 
-              entrataGiornoLogico: entrataAperta.giorno_logico,
-              diffGiorni: Math.round(diffGiorni * 100) / 100
-            });
-          } else {
-            // Uscita troppo distante, usa giorno precedente
-            const yesterday = new Date(now);
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yyyyPrev = yesterday.getFullYear();
-            const mmPrev = String(yesterday.getMonth() + 1).padStart(2, '0');
-            const ddPrev = String(yesterday.getDate()).padStart(2, '0');
-            giornoLogico = `${yyyyPrev}-${mmPrev}-${ddPrev}`;
-          }
-        } else {
-          // Nessuna entrata trovata, usa giorno precedente
-          const yesterday = new Date(now);
-          yesterday.setDate(yesterday.getDate() - 1);
-          const yyyyPrev = yesterday.getFullYear();
-          const mmPrev = String(yesterday.getMonth() + 1).padStart(2, '0');
-          const ddPrev = String(yesterday.getDate()).padStart(2, '0');
-          giornoLogico = `${yyyyPrev}-${mmPrev}-${ddPrev}`;
-        }
-      } else {
-        // Per entrate notturne, sempre giorno precedente
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yyyyPrev = yesterday.getFullYear();
-        const mmPrev = String(yesterday.getMonth() + 1).padStart(2, '0');
-        const ddPrev = String(yesterday.getDate()).padStart(2, '0');
-        giornoLogico = `${yyyyPrev}-${mmPrev}-${ddPrev}`;
-      }
-    }
-    
     const dataLocale = `${yyyy}-${mm}-${dd}`;
     const oraLocale = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+    
+    // Calcolo giorno logico unificato
+    const { giorno_logico } = computeGiornoLogico({
+      data: dataLocale,
+      ora: oraLocale,
+      tipo,
+      dataEntrata: (req.body as any).anchorDate // Parametro opzionale per ancoraggio
+    });
 
     console.info('[SERVER] INSERT params validated →', { 
       pin: pinNum, 
       tipo, 
-      giornoLogico, 
+      giorno_logico, 
       dataLocale, 
       oraLocale 
     });
 
-    // VALIDAZIONE ALTERNANZA PRIMA DELL'INSERT (bypassa trigger)
-    const { data: lastTimbros, error: queryError } = await supabaseAdmin
-      .from('timbrature')
-      .select('tipo')
-      .eq('pin', pinNum)
-      .eq('giorno_logico', giornoLogico)
-      .order('ts_order', { ascending: false })
-      .limit(1);
+    // VALIDAZIONE ALTERNANZA CON ANCORAGGIO (STEP A)
+    const validationResult = await validateAlternanza(
+      pinNum,
+      tipo,
+      dataLocale,
+      oraLocale,
+      (req.body as any).anchorDate
+    );
 
-    // Gestisci errori di query
-    if (queryError) {
-      console.error('[SERVER] Errore validazione alternanza:', queryError.message);
-      return res.status(500).json({
+    if (!validationResult.success) {
+      console.warn('[SERVER] Validazione alternanza fallita:', {
+        pin: pinNum,
+        tipo,
+        giorno_logico,
+        code: validationResult.code,
+        error: validationResult.error
+      });
+      
+      return res.status(400).json({
         success: false,
-        error: 'Errore interno durante validazione',
+        error: validationResult.error,
+        code: validationResult.code
       });
     }
 
-    const lastTimbro = lastTimbros && lastTimbros.length > 0 ? lastTimbros[0] as { tipo: string } : null;
-
-    // VALIDAZIONE ALTERNANZA TEMPORANEAMENTE DISABILITATA
-    // TODO: Implementare logica corretta per turni notturni
-    console.log('[SERVER] Validazione alternanza DISABILITATA temporaneamente', {
-      lastTimbro: lastTimbro?.tipo,
-      nuovoTipo: tipo,
-      giornoLogico
+    console.info('[SERVER] Validazione alternanza OK:', {
+      pin: pinNum,
+      tipo,
+      giorno_logico,
+      anchorEntry: validationResult.anchorEntry?.id || null
     });
-    
-    /* VALIDAZIONE ORIGINALE - DA RIATTIVARE DOPO FIX
-    if (lastTimbro) {
-      if (lastTimbro.tipo === tipo) {
-        return res.status(400).json({
-          success: false,
-          error: `Alternanza violata: timbro uguale al precedente nello stesso giorno_logico`,
-        });
-      }
-    } else {
-      // Primo timbro del giorno: deve essere ENTRATA
-      if (tipo !== 'entrata') {
-        return res.status(400).json({
-          success: false,
-          error: 'Alternanza violata: il primo timbro del giorno deve essere ENTRATA',
-        });
-      }
-    }
-    */
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
     const insertResult = await (supabaseAdmin as any)
@@ -438,7 +469,7 @@ router.post('/', async (req, res) => {
         tipo,
         ts_order: now.toISOString(),
         created_at: now.toISOString(),
-        giorno_logico: giornoLogico,
+        giorno_logico: giorno_logico,
         data_locale: dataLocale,
         ora_locale: oraLocale,
       }])
@@ -459,7 +490,7 @@ router.post('/', async (req, res) => {
       id: data?.id, 
       pin: pinNum, 
       tipo, 
-      giornoLogico 
+      giorno_logico 
     });
 
     res.json({

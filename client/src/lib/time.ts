@@ -2,6 +2,11 @@
 // Timezone: Europe/Rome (+2)
 
 import type { Timbratura } from '@/types/timbrature';
+import { 
+  computeGiornoLogico as computeGiornoLogicoShared,
+  type ComputeGiornoLogicoParams,
+  type ComputeGiornoLogicoResult 
+} from '@shared/time/computeGiornoLogico';
 
 export interface TimbratureGiorno {
   giorno_logico: string;
@@ -13,9 +18,9 @@ export interface TimbratureGiorno {
 
 /**
  * Calcola il giorno logico per una timbratura
- * REGOLE:
- * - Entrate 00:00-04:59 → giorno precedente
- * - Uscite 00:00-04:59 con diff ≤ 1 giorno → stesso giorno logico dell'entrata
+ * WRAPPER per la funzione shared unificata
+ * 
+ * @deprecated Usa direttamente computeGiornoLogicoShared per nuovi sviluppi
  */
 export function computeGiornoLogico(params: {
   data: string;
@@ -23,46 +28,8 @@ export function computeGiornoLogico(params: {
   tipo: 'entrata' | 'uscita';
   dataEntrata?: string; // Per uscite, data dell'entrata corrispondente
 }): { giorno_logico: string; dataReale: string } {
-  const { data, ora, tipo, dataEntrata } = params;
-  const [ore] = ora.split(':').map(Number);
-
-  if (tipo === 'entrata') {
-    // ENTRATA: Solo orari notturni (00-04) → giorno precedente
-    if (ore >= 0 && ore < 5) {
-      const d = new Date(data + 'T00:00:00');
-      d.setDate(d.getDate() - 1);
-      return {
-        giorno_logico: formatDateLocal(d),
-        dataReale: data,
-      };
-    }
-    return {
-      giorno_logico: data,
-      dataReale: data,
-    };
-  } else {
-    // USCITA: Logica più complessa per turni notturni
-    if (ore >= 0 && ore < 5 && dataEntrata) {
-      const dataEntrataObj = new Date(dataEntrata);
-      const dataUscitaObj = new Date(data);
-      const diffGiorni =
-        (dataUscitaObj.getTime() - dataEntrataObj.getTime()) / (1000 * 60 * 60 * 24);
-
-      // Se diff ≤ 1 giorno, appartiene allo stesso turno
-      if (diffGiorni <= 1) {
-        const d = new Date(data + 'T00:00:00');
-        d.setDate(d.getDate() + 1); // Data reale: giorno successivo
-        return {
-          giorno_logico: dataEntrata, // Stesso giorno logico dell'entrata
-          dataReale: formatDateLocal(d),
-        };
-      }
-    }
-    return {
-      giorno_logico: data,
-      dataReale: data,
-    };
-  }
+  // Delega alla funzione shared unificata
+  return computeGiornoLogicoShared(params);
 }
 
 /**

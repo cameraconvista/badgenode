@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => {
       alias: [
         // alias assoluti su filesystem
         { find: '@', replacement: path.resolve(__dirname, 'client/src') },
-        { find: '@shared', replacement: path.resolve(__dirname, 'shared') },
+        { find: '@shared', replacement: path.resolve(__dirname, 'server/shared') },
       ],
     },
     root: path.resolve(__dirname, 'client'),
