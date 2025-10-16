@@ -38,6 +38,9 @@ if (!supabaseUrl || !serviceRoleKey) {
  */
 router.post('/manual', async (req, res) => {
   try {
+    // Garantisci sempre Content-Type JSON
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     // Verifica che il client Supabase sia inizializzato
     if (!supabaseAdmin) {
       console.error('[SERVER] Supabase admin client non disponibile');
@@ -164,6 +167,9 @@ router.post('/manual', async (req, res) => {
  */
 router.post('/', async (req, res) => {
   try {
+    // Garantisci sempre Content-Type JSON
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     // Verifica che il client Supabase sia inizializzato
     if (!supabaseAdmin) {
       console.error('[SERVER] Supabase admin client non disponibile');
@@ -281,6 +287,9 @@ router.post('/', async (req, res) => {
  */
 router.delete('/day', async (req, res) => {
   try {
+    // Garantisci sempre Content-Type JSON
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     // Verifica che il client Supabase sia inizializzato
     if (!supabaseAdmin) {
       console.error('[SERVER] Supabase admin client non disponibile');
@@ -369,6 +378,9 @@ router.delete('/day', async (req, res) => {
  */
 router.patch('/:id', async (req, res) => {
   try {
+    // Garantisci sempre Content-Type JSON
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
     // Verifica che il client Supabase sia inizializzato
     if (!supabaseAdmin) {
       console.error('[SERVER] Supabase admin client non disponibile');

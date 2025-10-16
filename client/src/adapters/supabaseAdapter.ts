@@ -54,13 +54,27 @@ export function setupProdDiagnostics() {
       const { count: utentiCount, error: utentiError } = await supabase
         .from('utenti')
         .select('*', { count: 'exact', head: true });
-        
-      const { data: _rpcData } = await supabase.rpc('ping_test');
       
-      console.info('✅ PROD Data Access:', {
-        utenti: utentiError ? `Error: ${utentiError.message}` : `${utentiCount} records`,
-        rpc: 'ping_test OK'
-      });
+      // Disabilita ping_test in produzione (evita 404 rumorosi)
+      if (process.env.NODE_ENV !== 'production') {
+        try {
+          const { data: _rpcData } = await supabase.rpc('ping_test');
+          console.info('✅ DEV Data Access:', {
+            utenti: utentiError ? `Error: ${utentiError.message}` : `${utentiCount} records`,
+            rpc: 'ping_test OK'
+          });
+        } catch (rpcError) {
+          console.info('✅ PROD Data Access:', {
+            utenti: utentiError ? `Error: ${utentiError.message}` : `${utentiCount} records`,
+            rpc: 'ping_test not available (expected in prod)'
+          });
+        }
+      } else {
+        console.info('✅ PROD Data Access:', {
+          utenti: utentiError ? `Error: ${utentiError.message}` : `${utentiCount} records`,
+          rpc: 'ping_test skipped (production mode)'
+        });
+      }
     } catch (e) {
       console.warn('⚠️ PROD Probe failed:', e);
     }
