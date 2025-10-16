@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { callUpdateTimbro, deleteTimbratureGiornata, createTimbroManual } from '@/services/timbratureRpc';
 import { logStoricoQueries, logActiveQueries } from '@/lib/debugQuery';
+import { computeGiornoLogico } from '@/lib/time';
 
 interface UpdateData {
   dataEntrata: string;
@@ -75,12 +76,18 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       if (vars.dataEntrata && vars.oraEntrata) {
         if (vars.idEntrata) {
           console.log('[HOOK] updating entrata →', { id: vars.idEntrata });
+          const giornoLogicoEntrata = computeGiornoLogico({
+            data: vars.dataEntrata,
+            ora: vars.oraEntrata,
+            tipo: 'entrata'
+          }).giorno_logico;
+          
           ops.push(callUpdateTimbro({ 
             id: vars.idEntrata, 
             updateData: {
               data_locale: vars.dataEntrata, 
               ora_locale: `${vars.oraEntrata}:00`, 
-              giorno_logico: vars.dataEntrata
+              giorno_logico: giornoLogicoEntrata
             }
           }));
         } else {
@@ -98,12 +105,19 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       if (vars.dataUscita && vars.oraUscita) {
         if (vars.idUscita) {
           console.log('[HOOK] updating uscita →', { id: vars.idUscita });
+          const giornoLogicoUscita = computeGiornoLogico({
+            data: vars.dataUscita,
+            ora: vars.oraUscita,
+            tipo: 'uscita',
+            dataEntrata: vars.dataEntrata // Passa data entrata per uscite notturne
+          }).giorno_logico;
+          
           ops.push(callUpdateTimbro({ 
             id: vars.idUscita, 
             updateData: {
               data_locale: vars.dataUscita, 
               ora_locale: `${vars.oraUscita}:00`, 
-              giorno_logico: vars.dataUscita
+              giorno_logico: giornoLogicoUscita
             }
           }));
         } else {
