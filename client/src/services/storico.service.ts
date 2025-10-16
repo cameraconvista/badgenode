@@ -101,7 +101,8 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
       let uscita = new Date(`${giorno}T${uscitaTime}`);
       
       // Se l'uscita è prima dell'entrata (turno notturno), aggiungi 1 giorno all'uscita
-      if (uscita <= entrata) {
+      // NOTA: uscita === entrata (stesso orario) = 0 ore, NON turno notturno
+      if (uscita < entrata) {
         uscita = new Date(`${giorno}T${uscitaTime}`);
         uscita.setDate(uscita.getDate() + 1);
       }

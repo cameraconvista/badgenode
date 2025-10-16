@@ -9,6 +9,7 @@ function calcolaOreLavorateTraDue(entrata: Timbratura, uscita: Timbratura): numb
   const dataUscita = new Date(`${uscita.data_locale}T${uscita.ora_locale}`);
 
   // Se uscita < entrata, aggiungi 24 ore (turno notturno)
+  // NOTA: uscita === entrata (stesso orario) = 0 ore, NON turno notturno
   if (dataUscita < dataEntrata) {
     dataUscita.setDate(dataUscita.getDate() + 1);
   }
