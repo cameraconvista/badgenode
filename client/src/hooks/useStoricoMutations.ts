@@ -1,9 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { callUpdateTimbro, deleteTimbratureGiornata, createTimbroManual } from '@/services/timbratureRpc';
-import { TimbratureService } from '@/services/timbrature.service';
 import { logStoricoQueries, logActiveQueries } from '@/lib/debugQuery';
-import type { Timbratura } from '@/types/timbrature';
 
 interface UpdateData {
   dataEntrata: string;
@@ -17,15 +15,16 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
   const qc = useQueryClient();
   
   // Parametri per refetch specifici
-  const { pin, dal, al } = params;
+  const { pin } = params;
 
   // Refetch obbligato di tutte le query attive
   const refetchAll = async () => {
-    console.log('[HOOK] refetchAll started →', { pin });
+    const DEBUG = process.env.NODE_ENV !== 'production';
+    DEBUG && console.log('[HOOK] refetchAll started →', { pin });
     
     // Log stato PRIMA del refetch
-    logActiveQueries(qc, 'BEFORE refetch');
-    logStoricoQueries(qc, 'BEFORE refetch');
+    DEBUG && logActiveQueries(qc, 'BEFORE refetch');
+    DEBUG && logStoricoQueries(qc, 'BEFORE refetch');
     
     // Refetch con chiavi specifiche e generiche
     await Promise.all([
@@ -52,10 +51,10 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
     ]);
     
     // Log stato DOPO il refetch
-    logActiveQueries(qc, 'AFTER refetch');
-    logStoricoQueries(qc, 'AFTER refetch');
+    DEBUG && logActiveQueries(qc, 'AFTER refetch');
+    DEBUG && logStoricoQueries(qc, 'AFTER refetch');
     
-    console.log('[HOOK] refetchAll completed');
+    DEBUG && console.log('[HOOK] refetchAll completed');
   };
 
   // Mutazione unificata per CREATE/UPDATE dal Modale
@@ -124,7 +123,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
 
       return Promise.all(ops);
     },
-    onSuccess: async (results) => {
+    onSuccess: async (_results) => {
       console.log('[HOOK] saveFromModal success, starting refetch');
       
       await refetchAll();
@@ -186,7 +185,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
 
       return results;
     },
-    onSuccess: async (results) => {
+    onSuccess: async (_results) => {
       console.log('[HOOK] mutation success, starting refetch');
       
       await refetchAll();

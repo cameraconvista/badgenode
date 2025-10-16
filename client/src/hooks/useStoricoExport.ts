@@ -4,8 +4,9 @@
 // import { useToast } from '@/hooks/use-toast';
 import { useToast } from './use-toast';
 import { Utente } from '@/services/utenti.service';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// Lazy import per ridurre bundle size
+// import jsPDF from 'jspdf';
+// import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import type { TurnoFull } from '@/services/storico/types';
 // reserved: api-internal (non rimuovere senza migrazione)
@@ -24,14 +25,19 @@ interface UseStoricoExportProps {
   filters: { pin: number; dal: string; al: string };
 }
 
-export function useStoricoExport({ dipendente, timbrature, filters: _filters }: UseStoricoExportProps) {
-  void _filters;
+export function useStoricoExport({ dipendente, timbrature, filters }: UseStoricoExportProps) {
   const { toast } = useToast();
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     try {
+      // Lazy load jsPDF per ridurre bundle size
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable')
+      ]);
+      
       const doc = new jsPDF({ unit: "pt", format: "a4" });
-      const periodo = `${_filters.dal} - ${_filters.al}`;
+      const periodo = `${filters.dal} - ${filters.al}`;
       
       doc.setFont("helvetica", "normal");
       doc.setFontSize(14);
@@ -72,7 +78,7 @@ export function useStoricoExport({ dipendente, timbrature, filters: _filters }: 
         title: 'PDF Esportato',
         description: 'Il file è stato scaricato con successo',
       });
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Errore Export',
         description: 'Impossibile generare il PDF',
@@ -83,7 +89,7 @@ export function useStoricoExport({ dipendente, timbrature, filters: _filters }: 
 
   const handleExportXLS = async () => {
     try {
-      const periodo = `${_filters.dal} - ${_filters.al}`;
+      const periodo = `${filters.dal} - ${filters.al}`;
       const header = ["Data","Mese","Entrata","Uscita","Ore","Extra"];
       const data = timbrature.map(t => [
         t.giorno,
@@ -123,7 +129,7 @@ export function useStoricoExport({ dipendente, timbrature, filters: _filters }: 
         title: 'Excel Esportato',
         description: 'Il file è stato scaricato con successo',
       });
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Errore Export',
         description: 'Impossibile generare il file Excel',

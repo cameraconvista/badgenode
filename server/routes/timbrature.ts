@@ -16,7 +16,7 @@ console.log('[TIMBRATURE] Env check →', {
   supabaseUrl: supabaseUrl?.substring(0, 30) + '...',
 });
 
-let supabaseAdmin: any = null;
+let supabaseAdmin: ReturnType<typeof createClient> | null = null;
 
 if (!supabaseUrl || !serviceRoleKey) {
   console.error('❌ Mancano variabili ambiente per endpoint timbrature');

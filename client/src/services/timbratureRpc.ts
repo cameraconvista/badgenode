@@ -1,7 +1,6 @@
 // Service RPC unico per timbrature BadgeNode
 // Centralizza tutte le chiamate verso insert_timbro_v2
 
-import { supabase } from '@/lib/supabaseClient';
 // reserved: api-internal (non rimuovere senza migrazione)
 // import type { TimbraturePayload, RpcResult } from '@/types/rpc';
 

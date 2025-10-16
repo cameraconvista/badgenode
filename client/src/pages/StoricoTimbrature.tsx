@@ -43,7 +43,7 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
     setSelectedGiorno,
   } = useStoricoTimbrature(pin);
 
-  const { updateMutation, deleteMutation, saveFromModal } = useStoricoMutations({
+  const { deleteMutation, saveFromModal } = useStoricoMutations({
     pin: pin,
     dal: filters.dal,
     al: filters.al,
