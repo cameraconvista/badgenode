@@ -168,7 +168,35 @@ router.post('/manual', async (req, res) => {
       ora_locale 
     });
 
-    // INSERT con SERVICE_ROLE_KEY (bypassa RLS)
+    // VALIDAZIONE ALTERNANZA PRIMA DELL'INSERT (bypassa trigger)
+    const { data: lastTimbro } = await supabaseAdmin
+      .from('timbrature')
+      .select('tipo')
+      .eq('pin', pinNum)
+      .eq('giorno_logico', giorno_logico)
+      .order('ts_order', { ascending: false })
+      .limit(1)
+      .single();
+
+    // Valida alternanza
+    if (lastTimbro) {
+      if (lastTimbro.tipo === tipoNormalized) {
+        return res.status(400).json({
+          success: false,
+          error: `Alternanza violata: timbro uguale al precedente nello stesso giorno_logico`,
+        });
+      }
+    } else {
+      // Primo timbro del giorno: deve essere ENTRATA
+      if (tipoNormalized !== 'entrata') {
+        return res.status(400).json({
+          success: false,
+          error: 'Alternanza violata: il primo timbro del giorno deve essere ENTRATA',
+        });
+      }
+    }
+
+    // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
     const { data, error } = await supabaseAdmin
       .from('timbrature')
       .insert([{
@@ -334,7 +362,35 @@ router.post('/', async (req, res) => {
       oraLocale 
     });
 
-    // INSERT con SERVICE_ROLE_KEY (bypassa RLS)
+    // VALIDAZIONE ALTERNANZA PRIMA DELL'INSERT (bypassa trigger)
+    const { data: lastTimbro } = await supabaseAdmin
+      .from('timbrature')
+      .select('tipo')
+      .eq('pin', pinNum)
+      .eq('giorno_logico', giornoLogico)
+      .order('ts_order', { ascending: false })
+      .limit(1)
+      .single();
+
+    // Valida alternanza
+    if (lastTimbro) {
+      if (lastTimbro.tipo === tipo) {
+        return res.status(400).json({
+          success: false,
+          error: `Alternanza violata: timbro uguale al precedente nello stesso giorno_logico`,
+        });
+      }
+    } else {
+      // Primo timbro del giorno: deve essere ENTRATA
+      if (tipo !== 'entrata') {
+        return res.status(400).json({
+          success: false,
+          error: 'Alternanza violata: il primo timbro del giorno deve essere ENTRATA',
+        });
+      }
+    }
+
+    // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
     const { data, error } = await supabaseAdmin
       .from('timbrature')
       .insert([{
