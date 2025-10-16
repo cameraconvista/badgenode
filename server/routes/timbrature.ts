@@ -212,16 +212,62 @@ router.post('/', async (req, res) => {
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
     
-    // Giorno logico: logica cut-off 05:00 (come nel resto dell'app)
+    // Giorno logico: logica cut-off 05:00 con controllo turni aperti
     let giornoLogico = `${yyyy}-${mm}-${dd}`;
+    
     if (now.getHours() >= 0 && now.getHours() < 5) {
-      // Orario notturno: appartiene al giorno precedente
-      const yesterday = new Date(now);
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yyyyPrev = yesterday.getFullYear();
-      const mmPrev = String(yesterday.getMonth() + 1).padStart(2, '0');
-      const ddPrev = String(yesterday.getDate()).padStart(2, '0');
-      giornoLogico = `${yyyyPrev}-${mmPrev}-${ddPrev}`;
+      // Orario notturno: verifica se è continuazione di un turno
+      if (tipo === 'uscita') {
+        // Per uscite notturne, cerca entrata aperta dello stesso PIN
+        const { data: entrataAperta } = await supabaseAdmin
+          .from('timbrature')
+          .select('giorno_logico, data_locale, ora_locale')
+          .eq('pin', pinNum)
+          .eq('tipo', 'entrata')
+          .gte('giorno_logico', `${yyyy}-${mm}-${String(Number(dd) - 1).padStart(2, '0')}`) // Cerca dal giorno prima
+          .order('ts_order', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (entrataAperta) {
+          // Verifica se l'entrata è dello stesso turno (differenza ≤ 1 giorno)
+          const entrataDate = new Date(entrataAperta.data_locale + 'T' + entrataAperta.ora_locale);
+          const diffGiorni = (now.getTime() - entrataDate.getTime()) / (1000 * 60 * 60 * 24);
+          
+          if (diffGiorni <= 1) {
+            // Uscita appartiene allo stesso turno dell'entrata
+            giornoLogico = entrataAperta.giorno_logico;
+            console.info('[SERVER] Uscita notturna: stesso turno dell\'entrata →', { 
+              entrataGiornoLogico: entrataAperta.giorno_logico,
+              diffGiorni: Math.round(diffGiorni * 100) / 100
+            });
+          } else {
+            // Uscita troppo distante, usa giorno precedente
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yyyyPrev = yesterday.getFullYear();
+            const mmPrev = String(yesterday.getMonth() + 1).padStart(2, '0');
+            const ddPrev = String(yesterday.getDate()).padStart(2, '0');
+            giornoLogico = `${yyyyPrev}-${mmPrev}-${ddPrev}`;
+          }
+        } else {
+          // Nessuna entrata trovata, usa giorno precedente
+          const yesterday = new Date(now);
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yyyyPrev = yesterday.getFullYear();
+          const mmPrev = String(yesterday.getMonth() + 1).padStart(2, '0');
+          const ddPrev = String(yesterday.getDate()).padStart(2, '0');
+          giornoLogico = `${yyyyPrev}-${mmPrev}-${ddPrev}`;
+        }
+      } else {
+        // Per entrate notturne, sempre giorno precedente
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yyyyPrev = yesterday.getFullYear();
+        const mmPrev = String(yesterday.getMonth() + 1).padStart(2, '0');
+        const ddPrev = String(yesterday.getDate()).padStart(2, '0');
+        giornoLogico = `${yyyyPrev}-${mmPrev}-${ddPrev}`;
+      }
     }
     
     const dataLocale = `${yyyy}-${mm}-${dd}`;
