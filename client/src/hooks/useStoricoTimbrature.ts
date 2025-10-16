@@ -5,7 +5,6 @@ import { GiornoLogicoDettagliato } from '@/lib/storico/types';
 import { UtentiService } from '@/services/utenti.service';
 import { TimbratureService } from '@/services/timbrature.service';
 import { useStoricoExport } from '@/hooks/useStoricoExport';
-import { useStoricoMutations } from '@/hooks/useStoricoMutations';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeTimbrature } from '@/lib/realtime';
 import {

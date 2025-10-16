@@ -72,7 +72,7 @@ export function useStoricoExport({ dipendente, timbrature, filters: _filters }: 
         title: 'PDF Esportato',
         description: 'Il file è stato scaricato con successo',
       });
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Errore Export',
         description: 'Impossibile generare il PDF',
@@ -123,7 +123,7 @@ export function useStoricoExport({ dipendente, timbrature, filters: _filters }: 
         title: 'Excel Esportato',
         description: 'Il file è stato scaricato con successo',
       });
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Errore Export',
         description: 'Impossibile generare il file Excel',
