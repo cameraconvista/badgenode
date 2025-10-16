@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { callUpdateTimbro } from '@/services/timbratureRpc';
+import { callUpdateTimbro, deleteTimbratureGiornata } from '@/services/timbratureRpc';
 import { TimbratureService } from '@/services/timbrature.service';
 import { logStoricoQueries, logActiveQueries } from '@/lib/debugQuery';
 import type { Timbratura } from '@/types/timbrature';
@@ -128,20 +128,35 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async () => {
-      for (const timbratura of timbratureGiorno) {
-        await TimbratureService.deleteById(timbratura.id, {});
-      }
+    mutationFn: async ({ giorno }: { giorno: string }) => {
+      console.log('[HOOK] deleteMutation started →', { pin, giorno });
+      
+      const result = await deleteTimbratureGiornata({ pin, giorno });
+      
+      console.log('[HOOK] deleteMutation completed →', { 
+        pin, 
+        giorno, 
+        deletedCount: result.deleted_count 
+      });
+      
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: async (result) => {
+      console.log('[HOOK] delete success, starting refetch');
+      
+      // Refetch obbligato di tutte le query attive
+      await refetchAll();
+      
       toast({
         title: 'Timbrature eliminate',
-        description: 'Le timbrature del giorno sono state eliminate',
+        description: `${result.deleted_count} timbrature eliminate con successo`,
       });
-      qc.invalidateQueries({ queryKey: ['timbrature'] });
+      
+      console.log('[HOOK] delete refetch completed, calling onSuccess');
       onSuccess();
     },
     onError: (error) => {
+      console.error('[HOOK] delete error →', error);
       toast({
         title: 'Errore',
         description: error instanceof Error ? error.message : "Errore durante l'eliminazione",

@@ -65,6 +65,32 @@ export async function callInsertTimbro({
 }
 
 /**
+ * Elimina tutte le timbrature di un giorno logico via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
+ */
+export async function deleteTimbratureGiornata({ pin, giorno }: { pin: number; giorno: string }) {
+  console.info('[SERVICE] deleteTimbratureGiornata →', { pin, giorno });
+  
+  const url = `/api/timbrature/day?pin=${encodeURIComponent(pin)}&giorno=${encodeURIComponent(giorno)}`;
+  const res = await fetch(url, { method: 'DELETE' });
+  
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const errorMsg = err?.error ?? `DELETE ${url} failed (${res.status})`;
+    console.error('[SERVICE] deleteTimbratureGiornata ERR →', { pin, giorno, error: errorMsg });
+    throw new Error(errorMsg);
+  }
+  
+  const result = await res.json();
+  console.info('[SERVICE] deleteTimbratureGiornata OK →', { 
+    pin, 
+    giorno, 
+    deletedCount: result.deleted_count 
+  });
+  return result; // { success, deleted_count, ids, deleted_records }
+}
+
+/**
  * Aggiorna timbratura esistente via endpoint server
  * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
  */

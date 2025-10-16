@@ -115,7 +115,11 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
               await updateMutation.mutateAsync(updates);
               console.log('[PAGE] mutation completed');
             }}
-            onDelete={() => deleteMutation.mutateAsync()}
+            onDelete={async (params) => {
+              console.log('[PAGE] onDelete called, awaiting mutation');
+              await deleteMutation.mutateAsync(params);
+              console.log('[PAGE] delete mutation completed');
+            }}
             isLoading={updateMutation.isPending || deleteMutation.isPending}
           />
         </div>

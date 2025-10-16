@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { formatDataItaliana } from '@/lib/time';
+import { toInputDate } from '@/lib/dateFmt';
 import type { Timbratura } from '@/types/timbrature';
 import { validateTimbratura } from '@/lib/validation';
 import type { FormData } from './types';
@@ -9,7 +10,7 @@ export function useModaleTimbrature(
   timbrature: Timbratura[],
   giorno_logico: string,
   onSave: (updates: FormData) => Promise<void>,
-  onDelete: () => Promise<void>,
+  onDelete: (params: { giorno: string }) => Promise<void>,
   onClose: () => void
 ) {
   const [formData, setFormData] = useState<FormData>({
@@ -99,9 +100,19 @@ export function useModaleTimbrature(
 
   const handleDelete = async () => {
     try {
-      await onDelete();
+      // Usa giorno_logico oppure la data dal form come fallback
+      const giornoLogico = giorno_logico || toInputDate(formData.dataEntrata) || toInputDate(formData.dataUscita);
+      
+      if (!giornoLogico) {
+        setErrors(['Impossibile determinare il giorno da eliminare']);
+        return;
+      }
+      
+      console.log('[MODALE] handleDelete →', { giornoLogico });
+      await onDelete({ giorno: giornoLogico });
       onClose();
     } catch (error) {
+      console.error('[MODALE] delete error →', error);
       setErrors([error instanceof Error ? error.message : "Errore durante l'eliminazione"]);
     }
   };

@@ -2,6 +2,7 @@ import ModalKit from '@/components/ui/ModalKit';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
 import { formatDataItaliana } from '@/lib/time';
+import { toInputDate } from '@/lib/dateFmt';
 import TimeSelect from './TimeSelect';
 import type { FormData, ModaleTimbratureProps } from './types';
 
@@ -76,8 +77,8 @@ export default function ModaleTimbratureView({
               <label className="block text-sm text-white/80 mb-2 font-medium">Data</label>
               <input
                 type="date"
-                value={formData.dataEntrata}
-                onChange={(e) => setFormData({ ...formData, dataEntrata: e.target.value })}
+                value={toInputDate(formData.dataEntrata)}
+                onChange={(e) => setFormData({ ...formData, dataEntrata: e.target.value || '' })}
                 className="bn-field-input bn-entrata-field w-full"
                 disabled={isLoading}
               />
@@ -102,8 +103,8 @@ export default function ModaleTimbratureView({
               <label className="block text-sm text-white/80 mb-2 font-medium">Data</label>
               <input
                 type="date"
-                value={formData.dataUscita}
-                onChange={(e) => setFormData({ ...formData, dataUscita: e.target.value })}
+                value={toInputDate(formData.dataUscita)}
+                onChange={(e) => setFormData({ ...formData, dataUscita: e.target.value || '' })}
                 className="bn-field-input bn-uscita-field w-full"
                 disabled={isLoading}
               />
