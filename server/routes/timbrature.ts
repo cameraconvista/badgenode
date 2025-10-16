@@ -33,6 +33,132 @@ if (!supabaseUrl || !serviceRoleKey) {
 }
 
 /**
+ * POST /api/timbrature/manual - Inserisce nuova timbratura manuale dal Modale
+ * Bypassa RLS usando SERVICE_ROLE_KEY
+ */
+router.post('/manual', async (req, res) => {
+  try {
+    // Verifica che il client Supabase sia inizializzato
+    if (!supabaseAdmin) {
+      console.error('[SERVER] Supabase admin client non disponibile');
+      return res.status(500).json({
+        success: false,
+        error: 'Configurazione server non completa - variabili ambiente mancanti',
+      });
+    }
+
+    const { pin, tipo, giorno, ora } = req.body ?? {};
+
+    console.info('[SERVER] INSERT manual timbratura →', { pin, tipo, giorno, ora });
+
+    // Validazioni nette
+    if (!pin || !tipo || !giorno || !ora) {
+      return res.status(400).json({
+        success: false,
+        error: 'Parametri mancanti: pin, tipo, giorno, ora',
+      });
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(giorno)) {
+      return res.status(400).json({
+        success: false,
+        error: 'giorno deve essere YYYY-MM-DD',
+      });
+    }
+
+    if (!/^\d{2}:\d{2}$/.test(ora)) {
+      return res.status(400).json({
+        success: false,
+        error: 'ora deve essere HH:mm',
+      });
+    }
+
+    const pinNum = Number(pin);
+    if (!Number.isInteger(pinNum) || pinNum <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'PIN non valido',
+      });
+    }
+
+    if (!['ENTRATA', 'USCITA', 'entrata', 'uscita'].includes(tipo)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Tipo non valido (ENTRATA|USCITA)',
+      });
+    }
+
+    const [H, M] = ora.split(':').map(Number);
+    const date = new Date(`${giorno}T${String(H).padStart(2, '0')}:${String(M).padStart(2, '0')}:00.000Z`);
+    
+    if (Number.isNaN(date.getTime())) {
+      return res.status(400).json({
+        success: false,
+        error: 'Data/ora non valide',
+      });
+    }
+
+    const tsIso = date.toISOString();
+    const giorno_logico = giorno; // se hai cut-off (es. 05:00), applicalo qui
+    const data_locale = giorno_logico;
+    const ora_locale = `${String(H).padStart(2, '0')}:${String(M).padStart(2, '0')}:00`;
+    const tipoNormalized = tipo.toLowerCase();
+
+    console.info('[SERVER] INSERT manual params validated →', { 
+      pin: pinNum, 
+      tipo: tipoNormalized, 
+      giorno_logico, 
+      data_locale, 
+      ora_locale 
+    });
+
+    // INSERT con SERVICE_ROLE_KEY (bypassa RLS)
+    const { data, error } = await supabaseAdmin
+      .from('timbrature')
+      .insert([{
+        pin: pinNum,
+        tipo: tipoNormalized,
+        ts_order: tsIso,
+        created_at: tsIso,
+        giorno_logico,
+        data_locale,
+        ora_locale,
+      }])
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('[SERVER] INSERT manual fallito →', { error: error.message });
+      return res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
+
+    console.info('[SERVER] INSERT manual success →', { 
+      id: data.id, 
+      pin: pinNum, 
+      tipo: tipoNormalized, 
+      giorno_logico 
+    });
+
+    res.json({
+      success: true,
+      data,
+    });
+
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Errore sconosciuto';
+    console.error('[SERVER] INSERT manual error →', { error: message });
+    
+    res.status(500).json({
+      success: false,
+      error: message,
+    });
+  }
+});
+
+/**
  * POST /api/timbrature - Inserisce nuova timbratura
  * Bypassa RLS usando SERVICE_ROLE_KEY
  */

@@ -91,9 +91,26 @@ export function useModaleTimbrature(
     if (!validateForm()) return;
 
     try {
-      await onSave(formData);
+      // Identifica ID delle timbrature esistenti
+      const entrata = timbrature.find((t) => t.tipo === 'entrata');
+      const uscita = timbrature.find((t) => t.tipo === 'uscita');
+
+      // Prepara dati per saveFromModal (CREATE/UPDATE unificato)
+      const saveData = {
+        idEntrata: entrata?.id,
+        idUscita: uscita?.id,
+        dataEntrata: formData.dataEntrata,
+        oraEntrata: formData.oraEntrata,
+        dataUscita: formData.dataUscita,
+        oraUscita: formData.oraUscita,
+      };
+
+      console.log('[MODALE] handleSave →', { saveData, hasEntrata: !!entrata, hasUscita: !!uscita });
+
+      await onSave(saveData);
       onClose();
     } catch (error) {
+      console.error('[MODALE] save error →', error);
       setErrors([error instanceof Error ? error.message : 'Errore durante il salvataggio']);
     }
   };

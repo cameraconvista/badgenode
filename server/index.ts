@@ -17,6 +17,18 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Middleware diagnosi 502: log tutte le richieste
+app.use((req, res, next) => {
+  console.log('[REQ]', req.method, req.url);
+  next();
+});
+
+// Error handler per diagnosi 502
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('[SERVER ERROR]', req.method, req.url, err);
+  res.status(500).json({ success: false, error: err?.message ?? 'Server error' });
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;

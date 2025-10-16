@@ -168,10 +168,8 @@ export function useStoricoTimbrature(pin: number) {
     filters,
   });
 
-  // Hook per mutations
-  const { updateMutation, deleteMutation } = useStoricoMutations(timbratureGiorno, () =>
-    setSelectedGiorno(null)
-  );
+  // Hook per mutations (deprecato - ora gestito direttamente in StoricoTimbrature)
+  // const { updateMutation, deleteMutation } = useStoricoMutations(...);
 
   const _handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
 
@@ -196,8 +194,6 @@ export function useStoricoTimbrature(pin: number) {
     handleEditTimbrature,
     handleExportPDF,
     handleExportXLS,
-    updateMutation,
-    deleteMutation,
     setSelectedGiorno,
   };
 }

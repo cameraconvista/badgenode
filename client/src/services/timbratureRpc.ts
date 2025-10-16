@@ -62,6 +62,42 @@ export async function callInsertTimbro({
 }
 
 /**
+ * Crea nuova timbratura manuale dal Modale via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
+ */
+export async function createTimbroManual({ pin, tipo, giorno, ora }: {
+  pin: number; 
+  tipo: 'ENTRATA'|'USCITA'; 
+  giorno: string; 
+  ora: string;
+}) {
+  console.info('[SERVICE] createTimbroManual →', { pin, tipo, giorno, ora });
+  
+  const res = await fetch('/api/timbrature/manual', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pin, tipo, giorno, ora }),
+  });
+  
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const errorMsg = err?.error ?? `POST /api/timbrature/manual failed (${res.status})`;
+    console.error('[SERVICE] createTimbroManual ERR →', { pin, tipo, giorno, ora, error: errorMsg });
+    throw new Error(errorMsg);
+  }
+  
+  const result = await res.json();
+  console.info('[SERVICE] createTimbroManual OK →', { 
+    pin, 
+    tipo, 
+    giorno, 
+    ora,
+    id: result.data?.id 
+  });
+  return result; // { success, data }
+}
+
+/**
  * Inserisce nuova timbratura via endpoint server
  * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
  */

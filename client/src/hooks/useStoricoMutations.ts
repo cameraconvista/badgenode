@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { callUpdateTimbro, deleteTimbratureGiornata } from '@/services/timbratureRpc';
+import { callUpdateTimbro, deleteTimbratureGiornata, createTimbroManual } from '@/services/timbratureRpc';
 import { TimbratureService } from '@/services/timbrature.service';
 import { logStoricoQueries, logActiveQueries } from '@/lib/debugQuery';
 import type { Timbratura } from '@/types/timbrature';
@@ -12,12 +12,12 @@ interface UpdateData {
   oraUscita: string;
 }
 
-export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: () => void) {
+export function useStoricoMutations(params: { pin: number; dal: string; al: string }, onSuccess?: () => void) {
   const { toast } = useToast();
   const qc = useQueryClient();
   
-  // Pin per refetch specifici
-  const pin = timbratureGiorno[0]?.pin;
+  // Parametri per refetch specifici
+  const { pin, dal, al } = params;
 
   // Refetch obbligato di tutte le query attive
   const refetchAll = async () => {
@@ -58,48 +58,130 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
     console.log('[HOOK] refetchAll completed');
   };
 
+  // Mutazione unificata per CREATE/UPDATE dal Modale
+  const saveFromModal = useMutation({
+    mutationFn: async (vars: {
+      idEntrata?: number; 
+      idUscita?: number;
+      dataEntrata?: string; 
+      oraEntrata?: string;
+      dataUscita?: string;  
+      oraUscita?: string;
+    }) => {
+      console.log('[HOOK] saveFromModal →', vars);
+      
+      const ops: Promise<any>[] = [];
+
+      // ENTRATA: create o update
+      if (vars.dataEntrata && vars.oraEntrata) {
+        if (vars.idEntrata) {
+          console.log('[HOOK] updating entrata →', { id: vars.idEntrata });
+          ops.push(callUpdateTimbro({ 
+            id: vars.idEntrata, 
+            updateData: {
+              data_locale: vars.dataEntrata, 
+              ora_locale: `${vars.oraEntrata}:00`, 
+              giorno_logico: vars.dataEntrata
+            }
+          }));
+        } else {
+          console.log('[HOOK] creating entrata →', { pin, giorno: vars.dataEntrata, ora: vars.oraEntrata });
+          ops.push(createTimbroManual({ 
+            pin, 
+            tipo: 'ENTRATA', 
+            giorno: vars.dataEntrata, 
+            ora: vars.oraEntrata 
+          }));
+        }
+      }
+
+      // USCITA: create o update
+      if (vars.dataUscita && vars.oraUscita) {
+        if (vars.idUscita) {
+          console.log('[HOOK] updating uscita →', { id: vars.idUscita });
+          ops.push(callUpdateTimbro({ 
+            id: vars.idUscita, 
+            updateData: {
+              data_locale: vars.dataUscita, 
+              ora_locale: `${vars.oraUscita}:00`, 
+              giorno_logico: vars.dataUscita
+            }
+          }));
+        } else {
+          console.log('[HOOK] creating uscita →', { pin, giorno: vars.dataUscita, ora: vars.oraUscita });
+          ops.push(createTimbroManual({ 
+            pin, 
+            tipo: 'USCITA', 
+            giorno: vars.dataUscita, 
+            ora: vars.oraUscita 
+          }));
+        }
+      }
+
+      if (ops.length === 0) {
+        throw new Error('Nessun dato valido da salvare');
+      }
+
+      return Promise.all(ops);
+    },
+    onSuccess: async (results) => {
+      console.log('[HOOK] saveFromModal success, starting refetch');
+      
+      await refetchAll();
+      
+      toast({
+        title: 'Timbrature salvate',
+        description: 'Le modifiche sono state salvate con successo',
+      });
+      
+      console.log('[HOOK] refetch completed, calling onSuccess');
+      onSuccess?.();
+    },
+    onError: (error) => {
+      console.error('[HOOK] saveFromModal error →', error);
+      toast({
+        title: 'Errore',
+        description: error instanceof Error ? error.message : "Errore durante il salvataggio",
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Mantieni updateMutation per compatibilità (deprecato)
   const updateMutation = useMutation({
     mutationFn: async (updates: UpdateData) => {
-      console.log('[MODALE] onSave →', updates);
+      console.log('[MODALE] onSave (LEGACY) →', updates);
       
-      const entrate = timbratureGiorno.filter((t) => t.tipo === 'entrata');
-      const uscite = timbratureGiorno.filter((t) => t.tipo === 'uscita');
-
-      const idEntrata = entrate[0]?.id;
-      const idUscita = uscite[0]?.id;
-      
-      console.log('[HOOK] ids →', { idEntrata, idUscita });
+      // Legacy: non più usato, rimosso per compatibilità
+      const entrate: any[] = [];
+      const uscite: any[] = [];
 
       const results = [];
 
-      // Aggiorna entrata se esiste
-      if (idEntrata) {
-        const updateDataEntrata = {
+      // Aggiorna entrata se presente
+      if (entrate.length > 0) {
+        const entrata = entrate[0];
+        const entrataUpdate = {
           data_locale: updates.dataEntrata,
-          ora_locale: updates.oraEntrata + ':00'
+          ora_locale: `${updates.oraEntrata}:00`,
+          giorno_logico: updates.dataEntrata,
         };
-        console.log('[HOOK] updating entrata →', { id: idEntrata, updateDataEntrata });
-        
-        const result = await callUpdateTimbro({
-          id: idEntrata,
-          updateData: updateDataEntrata,
-        });
-        results.push(result.data);
+        console.log('[HOOK] updating entrata →', { id: entrata.id, update: entrataUpdate });
+        const result = await callUpdateTimbro({ id: entrata.id, updateData: entrataUpdate });
+        results.push(result);
       }
 
-      // Aggiorna uscita se esiste
-      if (idUscita) {
-        const updateDataUscita = {
+      // Aggiorna uscita se presente
+      if (uscite.length > 0) {
+        const uscita = uscite[0];
+        const uscitaUpdate = {
           data_locale: updates.dataUscita,
-          ora_locale: updates.oraUscita + ':00'
+          ora_locale: `${updates.oraUscita}:00`,
+          giorno_logico: updates.dataUscita,
         };
-        console.log('[HOOK] updating uscita →', { id: idUscita, updateDataUscita });
-        
-        const result = await callUpdateTimbro({
-          id: idUscita,
-          updateData: updateDataUscita,
-        });
-        results.push(result.data);
+        console.log('[HOOK] updating uscita →', { id: uscita.id, update: uscitaUpdate });
+        const result = await callUpdateTimbro({ id: uscita.id, updateData: uscitaUpdate });
+        results.push(result);
       }
 
       return results;
@@ -107,7 +189,6 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
     onSuccess: async (results) => {
       console.log('[HOOK] mutation success, starting refetch');
       
-      // Refetch obbligato di tutte le query attive
       await refetchAll();
       
       toast({
@@ -116,7 +197,7 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
       });
       
       console.log('[HOOK] refetch completed, calling onSuccess');
-      onSuccess();
+      onSuccess?.();
     },
     onError: (error) => {
       toast({
@@ -153,7 +234,7 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
       });
       
       console.log('[HOOK] delete refetch completed, calling onSuccess');
-      onSuccess();
+      onSuccess?.();
     },
     onError: (error) => {
       console.error('[HOOK] delete error →', error);
@@ -165,5 +246,5 @@ export function useStoricoMutations(timbratureGiorno: Timbratura[], onSuccess: (
     },
   });
 
-  return { updateMutation, deleteMutation };
+  return { updateMutation, deleteMutation, saveFromModal };
 }

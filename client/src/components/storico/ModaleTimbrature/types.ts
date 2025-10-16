@@ -15,6 +15,8 @@ export interface ModaleTimbratureProps {
   timbrature: Timbratura[];
   dipendente?: Utente;
   onSave: (updates: {
+    idEntrata?: number;
+    idUscita?: number;
     dataEntrata: string;
     oraEntrata: string;
     dataUscita: string;

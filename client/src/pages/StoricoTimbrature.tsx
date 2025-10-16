@@ -5,6 +5,7 @@ import StoricoFilters from '@/components/storico/StoricoFilters';
 import StoricoTable from '@/components/storico/StoricoTable';
 import ModaleTimbrature from '@/components/storico/ModaleTimbrature';
 import { useStoricoTimbrature } from '@/hooks/useStoricoTimbrature';
+import { useStoricoMutations } from '@/hooks/useStoricoMutations';
 
 interface StoricoTimbratureProps {
   pin?: number; // PIN del dipendente da visualizzare
@@ -39,10 +40,16 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
     handleEditTimbrature,
     handleExportPDF,
     handleExportXLS,
-    updateMutation,
-    deleteMutation,
     setSelectedGiorno,
   } = useStoricoTimbrature(pin);
+
+  const { updateMutation, deleteMutation, saveFromModal } = useStoricoMutations({
+    pin: pin,
+    dal: filters.dal,
+    al: filters.al,
+  }, () => {
+    setSelectedGiorno(null);
+  });
 
   if (!dipendente) {
     return (
@@ -111,16 +118,16 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
             timbrature={timbratureGiorno}
             dipendente={dipendente}
             onSave={async (updates) => {
-              console.log('[PAGE] onSave called, awaiting mutation');
-              await updateMutation.mutateAsync(updates);
-              console.log('[PAGE] mutation completed');
+              console.log('[PAGE] onSave called, awaiting saveFromModal');
+              await saveFromModal.mutateAsync(updates);
+              console.log('[PAGE] saveFromModal completed');
             }}
             onDelete={async (params) => {
               console.log('[PAGE] onDelete called, awaiting mutation');
               await deleteMutation.mutateAsync(params);
               console.log('[PAGE] delete mutation completed');
             }}
-            isLoading={updateMutation.isPending || deleteMutation.isPending}
+            isLoading={saveFromModal.isPending || deleteMutation.isPending}
           />
         </div>
       </div>
