@@ -29,7 +29,8 @@ export function useModaleTimbrature(
       const uscita = timbrature.find((t) => t.tipo === 'uscita');
 
       // USA SEMPRE giorno_logico come data di default (giorno selezionato)
-      const dataDefault = formatDataItaliana(giorno_logico + 'T00:00:00.000Z');
+      // giorno_logico è già in formato YYYY-MM-DD, perfetto per input date
+      const dataDefault = giorno_logico;
 
       setFormData({
         dataEntrata: entrata?.data_locale || dataDefault,
