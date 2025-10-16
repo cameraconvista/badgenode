@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 });
 
 // Error handler per diagnosi 502
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   console.error('[SERVER ERROR]', req.method, req.url, err);
   res.status(500).json({ success: false, error: err?.message ?? 'Server error' });
 });
