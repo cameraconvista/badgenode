@@ -70,9 +70,10 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
     }) => {
       console.log('[HOOK] saveFromModal →', vars);
       
-      const ops: Promise<any>[] = [];
+      const entrataOps: Promise<any>[] = [];
+      const uscitaOps: Promise<any>[] = [];
 
-      // ENTRATA: create o update
+      // ENTRATA: create o update (sempre PRIMA)
       if (vars.dataEntrata && vars.oraEntrata) {
         if (vars.idEntrata) {
           console.log('[HOOK] updating entrata →', { id: vars.idEntrata });
@@ -82,7 +83,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
             tipo: 'entrata'
           }).giorno_logico;
           
-          ops.push(callUpdateTimbro({ 
+          entrataOps.push(callUpdateTimbro({ 
             id: vars.idEntrata, 
             updateData: {
               data_locale: vars.dataEntrata, 
@@ -92,7 +93,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
           }));
         } else {
           console.log('[HOOK] creating entrata →', { pin, giorno: vars.dataEntrata, ora: vars.oraEntrata });
-          ops.push(createTimbroManual({ 
+          entrataOps.push(createTimbroManual({ 
             pin, 
             tipo: 'ENTRATA', 
             giorno: vars.dataEntrata, 
@@ -112,7 +113,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
             dataEntrata: vars.dataEntrata // Passa data entrata per uscite notturne
           }).giorno_logico;
           
-          ops.push(callUpdateTimbro({ 
+          uscitaOps.push(callUpdateTimbro({ 
             id: vars.idUscita, 
             updateData: {
               data_locale: vars.dataUscita, 
@@ -122,7 +123,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
           }));
         } else {
           console.log('[HOOK] creating uscita →', { pin, giorno: vars.dataUscita, ora: vars.oraUscita });
-          ops.push(createTimbroManual({ 
+          uscitaOps.push(createTimbroManual({ 
             pin, 
             tipo: 'USCITA', 
             giorno: vars.dataUscita, 
@@ -131,11 +132,27 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
         }
       }
 
-      if (ops.length === 0) {
+      const totalOps = entrataOps.length + uscitaOps.length;
+      if (totalOps === 0) {
         throw new Error('Nessun dato valido da salvare');
       }
 
-      return Promise.all(ops);
+      // Esecuzione SEQUENZIALE: PRIMA entrate, POI uscite
+      const results = [];
+      
+      // 1. Esegui tutte le operazioni ENTRATA
+      for (const op of entrataOps) {
+        const result = await op;
+        results.push(result);
+      }
+      
+      // 2. Esegui tutte le operazioni USCITA
+      for (const op of uscitaOps) {
+        const result = await op;
+        results.push(result);
+      }
+      
+      return results;
     },
     onSuccess: async (_results) => {
       console.log('[HOOK] saveFromModal success, starting refetch');
