@@ -102,10 +102,59 @@ router.post('/manual', async (req, res) => {
     }
 
     const tsIso = date.toISOString();
-    const giorno_logico = giorno; // se hai cut-off (es. 05:00), applicalo qui
-    const data_locale = giorno_logico;
-    const ora_locale = `${String(H).padStart(2, '0')}:${String(M).padStart(2, '0')}:00`;
     const tipoNormalized = tipo.toLowerCase();
+    
+    // Calcolo intelligente giorno_logico per inserimenti manuali
+    let giorno_logico = giorno;
+    
+    if (H >= 0 && H < 5) {
+      // Orario notturno 00:00-04:59
+      if (tipoNormalized === 'uscita') {
+        // Per uscite notturne: cerca entrata aperta dello stesso PIN
+        const { data: entrataAperta } = await supabaseAdmin
+          .from('timbrature')
+          .select('giorno_logico, data_locale, ora_locale')
+          .eq('pin', pinNum)
+          .eq('tipo', 'entrata')
+          .gte('giorno_logico', giorno) // Cerca dal giorno stesso e precedente
+          .order('ts_order', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (entrataAperta) {
+          // Verifica se l'entrata è dello stesso turno (differenza ≤ 1 giorno)
+          const entrataDate = new Date(entrataAperta.data_locale + 'T' + entrataAperta.ora_locale);
+          const diffGiorni = (date.getTime() - entrataDate.getTime()) / (1000 * 60 * 60 * 24);
+          
+          if (diffGiorni <= 1) {
+            // Uscita appartiene allo stesso turno dell'entrata
+            giorno_logico = entrataAperta.giorno_logico;
+            console.info('[SERVER] Manual uscita notturna: stesso turno entrata →', { 
+              entrataGiornoLogico: entrataAperta.giorno_logico,
+              diffGiorni: Math.round(diffGiorni * 100) / 100
+            });
+          } else {
+            // Uscita troppo distante, usa giorno precedente
+            const yesterday = new Date(date);
+            yesterday.setDate(yesterday.getDate() - 1);
+            giorno_logico = yesterday.toISOString().split('T')[0];
+          }
+        } else {
+          // Nessuna entrata trovata, usa giorno precedente
+          const yesterday = new Date(date);
+          yesterday.setDate(yesterday.getDate() - 1);
+          giorno_logico = yesterday.toISOString().split('T')[0];
+        }
+      } else {
+        // Per entrate notturne: sempre giorno precedente
+        const yesterday = new Date(date);
+        yesterday.setDate(yesterday.getDate() - 1);
+        giorno_logico = yesterday.toISOString().split('T')[0];
+      }
+    }
+    
+    const data_locale = giorno;
+    const ora_locale = `${String(H).padStart(2, '0')}:${String(M).padStart(2, '0')}:00`;
 
     console.info('[SERVER] INSERT manual params validated →', { 
       pin: pinNum, 
