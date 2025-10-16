@@ -29,8 +29,8 @@ export interface UpdateTimbroResult {
 }
 
 /**
- * Chiamata RPC unica per inserimento timbrature
- * Usa la RPC insert_timbro_v2 con validazione PIN e logica business completa
+ * Chiamata per inserimento timbrature via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS (risolve 401 Unauthorized)
  */
 export async function callInsertTimbro({
   pin,
@@ -38,30 +38,56 @@ export async function callInsertTimbro({
   client_event_id,
 }: InsertTimbroParams): Promise<InsertTimbroResult> {
   try {
-    const { data, error } = await supabase.rpc('insert_timbro_v2', {
-      p_pin: pin,
-      p_tipo: tipo,
-      p_client_event_id: client_event_id,
+    console.log('[SERVICE] callInsertTimbro (SERVER ENDPOINT) →', { pin, tipo, client_event_id });
+    
+    // Usa il nuovo endpoint server invece della RPC diretta
+    const result = await insertTimbroServer({ 
+      pin, 
+      tipo: tipo.toLowerCase() as 'entrata'|'uscita' 
     });
 
-    if (error) {
-      return {
-        success: false,
-        error: error.message,
-      };
-    }
-
+    console.log('[SERVICE] insert OK →', { pin, tipo, id: result.data?.id });
     return {
       success: true,
-      data,
+      data: result.data,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Errore sconosciuto';
+    console.log('[SERVICE] insert ERR →', { pin, tipo, error: message });
     return {
       success: false,
       error: message,
     };
   }
+}
+
+/**
+ * Inserisce nuova timbratura via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
+ */
+export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo: 'entrata'|'uscita'; ts?: string }) {
+  console.info('[SERVICE] insertTimbroServer →', { pin, tipo, ts });
+  
+  const res = await fetch('/api/timbrature', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pin, tipo, ts }),
+  });
+  
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const errorMsg = err?.error ?? `POST /api/timbrature failed (${res.status})`;
+    console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg });
+    throw new Error(errorMsg);
+  }
+  
+  const result = await res.json();
+  console.info('[SERVICE] insertTimbroServer OK →', { 
+    pin, 
+    tipo, 
+    id: result.data?.id 
+  });
+  return result; // { success, data }
 }
 
 /**

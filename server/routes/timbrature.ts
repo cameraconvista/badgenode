@@ -33,6 +33,123 @@ if (!supabaseUrl || !serviceRoleKey) {
 }
 
 /**
+ * POST /api/timbrature - Inserisce nuova timbratura
+ * Bypassa RLS usando SERVICE_ROLE_KEY
+ */
+router.post('/', async (req, res) => {
+  try {
+    // Verifica che il client Supabase sia inizializzato
+    if (!supabaseAdmin) {
+      console.error('[SERVER] Supabase admin client non disponibile');
+      return res.status(500).json({
+        success: false,
+        error: 'Configurazione server non completa - variabili ambiente mancanti',
+      });
+    }
+
+    const { pin, tipo, ts } = req.body as { pin?: number; tipo?: 'entrata'|'uscita'; ts?: string };
+
+    console.info('[SERVER] INSERT timbratura →', { pin, tipo, ts });
+
+    // Validazione parametri
+    if (!pin || !tipo) {
+      return res.status(400).json({
+        success: false,
+        error: 'Parametri mancanti: pin, tipo',
+      });
+    }
+
+    if (!['entrata', 'uscita'].includes(tipo)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Tipo non valido (entrata|uscita)',
+      });
+    }
+
+    const pinNum = Number(pin);
+    if (!Number.isInteger(pinNum) || pinNum <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'PIN non valido',
+      });
+    }
+
+    // Timestamp server se non fornito
+    const now = ts ? new Date(ts) : new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    
+    // Giorno logico: logica cut-off 05:00 (come nel resto dell'app)
+    let giornoLogico = `${yyyy}-${mm}-${dd}`;
+    if (now.getHours() >= 0 && now.getHours() < 5) {
+      // Orario notturno: appartiene al giorno precedente
+      const yesterday = new Date(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yyyyPrev = yesterday.getFullYear();
+      const mmPrev = String(yesterday.getMonth() + 1).padStart(2, '0');
+      const ddPrev = String(yesterday.getDate()).padStart(2, '0');
+      giornoLogico = `${yyyyPrev}-${mmPrev}-${ddPrev}`;
+    }
+    
+    const dataLocale = `${yyyy}-${mm}-${dd}`;
+    const oraLocale = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+
+    console.info('[SERVER] INSERT params validated →', { 
+      pin: pinNum, 
+      tipo, 
+      giornoLogico, 
+      dataLocale, 
+      oraLocale 
+    });
+
+    // INSERT con SERVICE_ROLE_KEY (bypassa RLS)
+    const { data, error } = await supabaseAdmin
+      .from('timbrature')
+      .insert([{
+        pin: pinNum,
+        tipo,
+        ts_order: now.toISOString(),
+        created_at: now.toISOString(),
+        giorno_logico: giornoLogico,
+        data_locale: dataLocale,
+        ora_locale: oraLocale,
+      }])
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('[SERVER] INSERT fallito →', { error: error.message });
+      return res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
+
+    console.info('[SERVER] INSERT success →', { 
+      id: data.id, 
+      pin: pinNum, 
+      tipo, 
+      giornoLogico 
+    });
+
+    res.json({
+      success: true,
+      data,
+    });
+
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Errore sconosciuto';
+    console.error('[SERVER] INSERT error →', { error: message });
+    
+    res.status(500).json({
+      success: false,
+      error: message,
+    });
+  }
+});
+
+/**
  * DELETE /api/timbrature/day - Elimina tutte le timbrature di un giorno logico
  * Bypassa RLS usando SERVICE_ROLE_KEY
  */
