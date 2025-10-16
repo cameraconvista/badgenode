@@ -123,7 +123,7 @@ router.post('/manual', async (req, res) => {
           .gte('giorno_logico', giornoPrecStr) // Cerca dal giorno precedente
           .order('ts_order', { ascending: false })
           .limit(1)
-          .single();
+          .single() as { data: { giorno_logico: string; data_locale: string; ora_locale: string } | null; error: any };
 
         if (entrataAperta) {
           // Verifica se l'entrata è dello stesso turno (differenza ≤ 1 giorno)
@@ -176,7 +176,7 @@ router.post('/manual', async (req, res) => {
       .eq('giorno_logico', giorno_logico)
       .order('ts_order', { ascending: false })
       .limit(1)
-      .single();
+      .single() as { data: { tipo: string } | null; error: any };
 
     // Valida alternanza
     if (lastTimbro) {
@@ -197,7 +197,7 @@ router.post('/manual', async (req, res) => {
     }
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
-    const { data, error } = await supabaseAdmin
+    const insertResult = await (supabaseAdmin as any)
       .from('timbrature')
       .insert([{
         pin: pinNum,
@@ -210,6 +210,8 @@ router.post('/manual', async (req, res) => {
       }])
       .select('*')
       .single();
+    
+    const { data, error } = insertResult;
 
     if (error) {
       console.error('[SERVER] INSERT manual fallito →', { error: error.message });
@@ -220,7 +222,7 @@ router.post('/manual', async (req, res) => {
     }
 
     console.info('[SERVER] INSERT manual success →', { 
-      id: data.id, 
+      id: data?.id, 
       pin: pinNum, 
       tipo: tipoNormalized, 
       giorno_logico 
@@ -308,7 +310,7 @@ router.post('/', async (req, res) => {
           .gte('giorno_logico', `${yyyy}-${mm}-${String(Number(dd) - 1).padStart(2, '0')}`) // Cerca dal giorno prima
           .order('ts_order', { ascending: false })
           .limit(1)
-          .single();
+          .single() as { data: { giorno_logico: string; data_locale: string; ora_locale: string } | null; error: any };
 
         if (entrataAperta) {
           // Verifica se l'entrata è dello stesso turno (differenza ≤ 1 giorno)
@@ -370,7 +372,7 @@ router.post('/', async (req, res) => {
       .eq('giorno_logico', giornoLogico)
       .order('ts_order', { ascending: false })
       .limit(1)
-      .single();
+      .single() as { data: { tipo: string } | null; error: any };
 
     // Valida alternanza
     if (lastTimbro) {
@@ -391,7 +393,7 @@ router.post('/', async (req, res) => {
     }
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
-    const { data, error } = await supabaseAdmin
+    const insertResult = await (supabaseAdmin as any)
       .from('timbrature')
       .insert([{
         pin: pinNum,
@@ -404,6 +406,8 @@ router.post('/', async (req, res) => {
       }])
       .select('*')
       .single();
+    
+    const { data, error } = insertResult;
 
     if (error) {
       console.error('[SERVER] INSERT fallito →', { error: error.message });
@@ -414,7 +418,7 @@ router.post('/', async (req, res) => {
     }
 
     console.info('[SERVER] INSERT success →', { 
-      id: data.id, 
+      id: data?.id, 
       pin: pinNum, 
       tipo, 
       giornoLogico 
@@ -576,11 +580,13 @@ router.patch('/:id', async (req, res) => {
     console.info('[SERVER] Record esistente →', existing);
 
     // Esegui UPDATE con SERVICE_ROLE_KEY (bypassa RLS)
-    const { data, error } = await supabaseAdmin
+    const updateResult = await (supabaseAdmin as any)
       .from('timbrature')
       .update(updateData)
       .eq('id', id)
       .select();
+    
+    const { data, error } = updateResult;
 
     if (error) {
       console.error('[SERVER] UPDATE fallito →', { id, error: error.message });
