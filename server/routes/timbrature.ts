@@ -111,12 +111,16 @@ router.post('/manual', async (req, res) => {
       // Orario notturno 00:00-04:59
       if (tipoNormalized === 'uscita') {
         // Per uscite notturne: cerca entrata aperta dello stesso PIN
+        const giornoPrec = new Date(date);
+        giornoPrec.setDate(giornoPrec.getDate() - 1);
+        const giornoPrecStr = giornoPrec.toISOString().split('T')[0];
+        
         const { data: entrataAperta } = await supabaseAdmin
           .from('timbrature')
           .select('giorno_logico, data_locale, ora_locale')
           .eq('pin', pinNum)
           .eq('tipo', 'entrata')
-          .gte('giorno_logico', giorno) // Cerca dal giorno stesso e precedente
+          .gte('giorno_logico', giornoPrecStr) // Cerca dal giorno precedente
           .order('ts_order', { ascending: false })
           .limit(1)
           .single();
