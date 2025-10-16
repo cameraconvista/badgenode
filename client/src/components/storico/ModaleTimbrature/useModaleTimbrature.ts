@@ -24,20 +24,23 @@ export function useModaleTimbrature(
 
   // Inizializza form quando si apre il modale
   useEffect(() => {
-    if (isOpen && timbrature.length > 0) {
+    if (isOpen) {
       const entrata = timbrature.find((t) => t.tipo === 'entrata');
       const uscita = timbrature.find((t) => t.tipo === 'uscita');
 
+      // USA SEMPRE giorno_logico come data di default (giorno selezionato)
+      const dataDefault = formatDataItaliana(giorno_logico + 'T00:00:00.000Z');
+
       setFormData({
-        dataEntrata: entrata?.data_locale || formatDataItaliana(new Date().toISOString()),
+        dataEntrata: entrata?.data_locale || dataDefault,
         oraEntrata: entrata?.ora_locale?.substring(0, 5) || '',
-        dataUscita: uscita?.data_locale || formatDataItaliana(new Date().toISOString()),
+        dataUscita: uscita?.data_locale || dataDefault,
         oraUscita: uscita?.ora_locale?.substring(0, 5) || '',
       });
       setErrors([]);
       setShowDeleteConfirm(false);
     }
-  }, [isOpen, timbrature]);
+  }, [isOpen, timbrature, giorno_logico]);
 
   const validateForm = (): boolean => {
     const newErrors: string[] = [];
