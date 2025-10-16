@@ -188,7 +188,15 @@ router.post('/manual', async (req, res) => {
 
     const lastTimbro = lastTimbros && lastTimbros.length > 0 ? lastTimbros[0] as { tipo: string } : null;
 
-    // Valida alternanza
+    // VALIDAZIONE ALTERNANZA TEMPORANEAMENTE DISABILITATA
+    // TODO: Implementare logica corretta per turni notturni
+    console.log('[SERVER] Validazione alternanza DISABILITATA temporaneamente (manual)', {
+      lastTimbro: lastTimbro?.tipo,
+      nuovoTipo: tipoNormalized,
+      giornoLogico: giorno_logico
+    });
+    
+    /* VALIDAZIONE ORIGINALE - DA RIATTIVARE DOPO FIX
     if (lastTimbro) {
       if (lastTimbro.tipo === tipoNormalized) {
         return res.status(400).json({
@@ -205,6 +213,7 @@ router.post('/manual', async (req, res) => {
         });
       }
     }
+    */
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
     const insertResult = await (supabaseAdmin as any)
@@ -394,7 +403,15 @@ router.post('/', async (req, res) => {
 
     const lastTimbro = lastTimbros && lastTimbros.length > 0 ? lastTimbros[0] as { tipo: string } : null;
 
-    // Valida alternanza
+    // VALIDAZIONE ALTERNANZA TEMPORANEAMENTE DISABILITATA
+    // TODO: Implementare logica corretta per turni notturni
+    console.log('[SERVER] Validazione alternanza DISABILITATA temporaneamente', {
+      lastTimbro: lastTimbro?.tipo,
+      nuovoTipo: tipo,
+      giornoLogico
+    });
+    
+    /* VALIDAZIONE ORIGINALE - DA RIATTIVARE DOPO FIX
     if (lastTimbro) {
       if (lastTimbro.tipo === tipo) {
         return res.status(400).json({
@@ -411,6 +428,7 @@ router.post('/', async (req, res) => {
         });
       }
     }
+    */
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
     const insertResult = await (supabaseAdmin as any)
