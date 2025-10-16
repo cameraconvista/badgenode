@@ -96,9 +96,16 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
       const entrataTime = primaEntrata.ora_locale.substring(0, 5) + ':00'; // HH:MM:00
       const uscitaTime = ultimaUscita.ora_locale.substring(0, 5) + ':00';   // HH:MM:00
       
-      const entrata = new Date(`${primaEntrata.data_locale}T${entrataTime}`);
-      const uscita = new Date(`${ultimaUscita.data_locale}T${uscitaTime}`);
-      if (uscita < entrata) uscita.setDate(uscita.getDate() + 1);
+      // FIX: Per turni notturni, usa giorno_logico come base per entrambe le date
+      const entrata = new Date(`${giorno}T${entrataTime}`);
+      let uscita = new Date(`${giorno}T${uscitaTime}`);
+      
+      // Se l'uscita è prima dell'entrata (turno notturno), aggiungi 1 giorno all'uscita
+      if (uscita <= entrata) {
+        uscita = new Date(`${giorno}T${uscitaTime}`);
+        uscita.setDate(uscita.getDate() + 1);
+      }
+      
       ore = (uscita.getTime() - entrata.getTime()) / (1000 * 60 * 60);
     }
 

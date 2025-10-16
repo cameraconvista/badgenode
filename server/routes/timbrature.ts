@@ -169,14 +169,24 @@ router.post('/manual', async (req, res) => {
     });
 
     // VALIDAZIONE ALTERNANZA PRIMA DELL'INSERT (bypassa trigger)
-    const { data: lastTimbro } = await supabaseAdmin
+    const { data: lastTimbros, error: queryError } = await supabaseAdmin
       .from('timbrature')
       .select('tipo')
       .eq('pin', pinNum)
       .eq('giorno_logico', giorno_logico)
       .order('ts_order', { ascending: false })
-      .limit(1)
-      .single() as { data: { tipo: string } | null; error: any };
+      .limit(1);
+
+    // Gestisci errori di query
+    if (queryError) {
+      console.error('[SERVER] Errore validazione alternanza:', queryError.message);
+      return res.status(500).json({
+        success: false,
+        error: 'Errore interno durante validazione',
+      });
+    }
+
+    const lastTimbro = lastTimbros && lastTimbros.length > 0 ? lastTimbros[0] as { tipo: string } : null;
 
     // Valida alternanza
     if (lastTimbro) {
@@ -365,14 +375,24 @@ router.post('/', async (req, res) => {
     });
 
     // VALIDAZIONE ALTERNANZA PRIMA DELL'INSERT (bypassa trigger)
-    const { data: lastTimbro } = await supabaseAdmin
+    const { data: lastTimbros, error: queryError } = await supabaseAdmin
       .from('timbrature')
       .select('tipo')
       .eq('pin', pinNum)
       .eq('giorno_logico', giornoLogico)
       .order('ts_order', { ascending: false })
-      .limit(1)
-      .single() as { data: { tipo: string } | null; error: any };
+      .limit(1);
+
+    // Gestisci errori di query
+    if (queryError) {
+      console.error('[SERVER] Errore validazione alternanza:', queryError.message);
+      return res.status(500).json({
+        success: false,
+        error: 'Errore interno durante validazione',
+      });
+    }
+
+    const lastTimbro = lastTimbros && lastTimbros.length > 0 ? lastTimbros[0] as { tipo: string } : null;
 
     // Valida alternanza
     if (lastTimbro) {
