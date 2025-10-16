@@ -19,11 +19,12 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
 
   // Refetch obbligato di tutte le query attive
   const refetchAll = async () => {
-    console.log('[HOOK] refetchAll started →', { pin });
+    const DEBUG = process.env.NODE_ENV !== 'production';
+    DEBUG && console.log('[HOOK] refetchAll started →', { pin });
     
     // Log stato PRIMA del refetch
-    logActiveQueries(qc, 'BEFORE refetch');
-    logStoricoQueries(qc, 'BEFORE refetch');
+    DEBUG && logActiveQueries(qc, 'BEFORE refetch');
+    DEBUG && logStoricoQueries(qc, 'BEFORE refetch');
     
     // Refetch con chiavi specifiche e generiche
     await Promise.all([
@@ -50,10 +51,10 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
     ]);
     
     // Log stato DOPO il refetch
-    logActiveQueries(qc, 'AFTER refetch');
-    logStoricoQueries(qc, 'AFTER refetch');
+    DEBUG && logActiveQueries(qc, 'AFTER refetch');
+    DEBUG && logStoricoQueries(qc, 'AFTER refetch');
     
-    console.log('[HOOK] refetchAll completed');
+    DEBUG && console.log('[HOOK] refetchAll completed');
   };
 
   // Mutazione unificata per CREATE/UPDATE dal Modale
