@@ -59,12 +59,20 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mb-6">
+        <form onSubmit={handleSubmit} autoComplete="off" className="mb-6">
           <label className="block text-white text-sm font-medium mb-3 text-center">
             Inserisci PIN
           </label>
           <input
             type="password"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            name="one-time-code"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            pattern="\d*"
+            aria-label="PIN amministratore"
             value={pin}
             onChange={(e) => setPin(e.target.value)}
             onKeyDown={handleKeyDown}

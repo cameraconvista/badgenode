@@ -14,8 +14,11 @@
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" href="/favicon.ico" />
     
-    <!-- Apple/Safari PWA meta tags -->
+    <!-- PWA meta tags -->
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180x180.png" sizes="180x180">
+    <!-- Generico: risolve warning Chrome -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Apple: manteniamo per compatibilità iOS PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>BadgeNode</title>
