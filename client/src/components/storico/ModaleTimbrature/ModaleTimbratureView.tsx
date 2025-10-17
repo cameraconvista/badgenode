@@ -1,6 +1,7 @@
 import ModalKit from '@/components/ui/ModalKit';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import ConfirmFullscreen from '@/components/ui/ConfirmFullscreen';
 import { formatDataItaliana } from '@/lib/time';
 import { toInputDate } from '@/lib/dateFmt';
 import TimeSelect from './TimeSelect';
@@ -54,6 +55,7 @@ export default function ModaleTimbratureView({
       description={description}
       contentClassName="bn-modal-square"
       className="bn-modal-body-scroll"
+      preventDismiss
     >
       {errors.length > 0 && (
         <Alert variant="destructive" className="mb-6">
@@ -156,28 +158,16 @@ export default function ModaleTimbratureView({
       </div>
 
       {showDeleteConfirm && (
-        <Alert variant="destructive" className="mt-4">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Sei sicuro di voler eliminare tutte le timbrature di questo giorno?
-            <div className="flex gap-3 mt-3">
-              <button 
-                className="bn-btn-large bn-btn-danger" 
-                onClick={handleDelete} 
-                disabled={isLoading}
-              >
-                Elimina
-              </button>
-              <button
-                className="bn-btn-large bn-btn-neutral"
-                onClick={() => setShowDeleteConfirm(false)}
-                disabled={isLoading}
-              >
-                Annulla
-              </button>
-            </div>
-          </AlertDescription>
-        </Alert>
+        <ConfirmFullscreen
+          open={showDeleteConfirm}
+          title="Eliminare tutte le timbrature di questo giorno?"
+          description={`Dipendente: ${fullName} (PIN: ${dipendente?.pin || entrata?.pin || uscita?.pin}) • Giorno logico: ${giorno_logico}`}
+          onCancel={() => setShowDeleteConfirm(false)}
+          onConfirm={async () => {
+            await handleDelete();
+            setShowDeleteConfirm(false);
+          }}
+        />
       )}
 
     </ModalKit>
