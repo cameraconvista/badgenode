@@ -50,22 +50,17 @@ BadgeNode/
 
 ```
 DOCS/
-├── 01_database_api.md          # Schema DB e API endpoints
+├── 00_REPORT_CONSOLIDATO.txt   # Executive summary
+├── 01_database_api.md          # Schema DB, viste, trigger, RPC
 ├── 02_struttura_progetto.md    # Questo file
 ├── 03_scripts_utilita.md       # Manuale scripts automazione
-├── 04_config_sviluppo.md       # Setup locale e convenzioni
+├── 04_config_sviluppo.md       # Toolchain e configurazioni
 ├── 05_setup_sviluppo.md        # Onboarding rapido
-├── 06_icons_guide.md           # Guida unplugin-icons
-├── 07_logica_giorno_logico.md  # Logica business timbrature
+├── 06_icons_guide.md           # Guida icone/PWA
+├── 07_logica_giorno_logico.md  # Regole giorno logico
 ├── 08_ui_home_keypad.md        # Specifiche UI tastierino
-├── README_PROGETTO.md          # Documentazione completa progetto
-├── REPORT_VALIDAZIONE.md       # Report validazione automatica
-├── REPORT_REFACTOR_FINALE.md   # Report consolidamento finale
-├── REPORT_DIAGNOSI_COMPLETA.md # Diagnosi codebase
-└── DOC IMPORTANTI/             # Documentazione critica
-    ├── BADGENODE_DOCUMENTAZIONE_MASTER.md
-    ├── BADGENODE_REPORTS_STORICI.md
-    └── BADGENODE_SQL_REFERENCE.md
+├── ARCHIVIO_REPORTS.md         # Timeline sintetica storica
+└── README_PROGETTO.md          # README unificato
 ```
 
 ### **ARCHIVE/** - Archiviazione

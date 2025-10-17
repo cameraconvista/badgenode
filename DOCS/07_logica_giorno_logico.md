@@ -141,7 +141,7 @@ Un dipendente può **entrare/uscire più volte** nello stesso giorno logico. Ogn
 ## 🗂️ Collocazione documento
 
 Percorso consigliato nel repo: `DOCS/07_logica_giorno_logico.md`  
-(Accettato anche `DOCS/REPORT_GENERICI/REPORT_LOGICA_GIORNO_LOGICO_{YYYYMMDD}.md` nella serie “report”).
+
 
 ---
 

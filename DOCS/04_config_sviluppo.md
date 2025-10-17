@@ -57,9 +57,9 @@ curl -I https://registry.npmjs.org/
 ### **.env.sample** - Template Semplificato (NUOVO)
 
 ```bash
-VITE_SUPABASE_URL=https://tutllgsjrbxkmrwseogz.supabase.co
-VITE_SUPABASE_ANON_KEY=***INCOLLA_ANON_KEY***
-SUPABASE_SERVICE_ROLE_KEY=***INCOLLA_SERVICE_ROLE_KEY***
+VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
 ```
 
 > **Nota v4.1:** Service role key necessaria per gestione utenti (bypassa RLS)
@@ -68,11 +68,11 @@ SUPABASE_SERVICE_ROLE_KEY=***INCOLLA_SERVICE_ROLE_KEY***
 
 ```bash
 # === SUPABASE CONFIGURATION ===
-VITE_SUPABASE_URL=https://tutllgsjrbxkmrwseogz.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key_here
+VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
 
 # === SERVER CONFIGURATION (Admin only) ===
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
 
 # === DEVELOPMENT SETTINGS ===
 NODE_ENV=development
