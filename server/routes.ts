@@ -2,15 +2,33 @@ import type { Express } from 'express';
 import { createServer, type Server } from 'http';
 import { createClient } from '@supabase/supabase-js';
 // import { storage } from './storage'; // Unused - commented out
-import { supabaseAdmin } from './supabase';
+import { supabaseAdmin, getAdminDiagnostics } from './lib/supabaseAdmin';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint - SEMPRE disponibile, no DB required
   app.get('/api/health', (_req, res) => {
+    const startTime = process.hrtime.bigint();
+    const uptime = process.uptime();
+    
     res.json({
-      status: 'ok',
-      timestamp: new Date().toISOString(),
+      ok: true,
+      status: 'healthy',
       service: 'BadgeNode',
+      version: '1.0.0',
+      uptime: Math.floor(uptime),
+      timestamp: new Date().toISOString(),
+      responseTime: Number(process.hrtime.bigint() - startTime) / 1000000 // ms
+    });
+  });
+
+  // Health check admin configuration - STEP B.1 + B.2
+  app.get('/api/health/admin', (_req, res) => {
+    const diagnostics = getAdminDiagnostics();
+    
+    res.json({
+      ok: diagnostics.hasUrl && diagnostics.hasServiceKey,
+      ...diagnostics,
+      urlSource: process.env.SUPABASE_URL ? 'SUPABASE_URL' : (process.env.VITE_SUPABASE_URL ? 'VITE_SUPABASE_URL' : 'none')
     });
   });
 
@@ -24,7 +42,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       NODE_ENV: process.env.NODE_ENV,
       hasViteSupabaseUrl: !!process.env.VITE_SUPABASE_URL,
       hasViteSupabaseKey: !!process.env.VITE_SUPABASE_ANON_KEY,
-      viteUrl: process.env.VITE_SUPABASE_URL?.substring(0, 30) + '...',
+      hasSupabaseUrl: !!process.env.SUPABASE_URL,
+      hasServiceRoleKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      viteUrl: process.env.VITE_SUPABASE_URL?.slice(0, 30) + '...',
       timestamp: new Date().toISOString(),
     });
   });
@@ -51,6 +71,272 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ===== UTENTI API ROUTES =====
+
+  // GET /api/utenti - Lista utenti attivi
+  app.get('/api/utenti', async (req, res) => {
+    try {
+      if (!supabaseAdmin) {
+        return res.status(503).json({
+          success: false,
+          error: 'Servizio admin non disponibile - configurazione Supabase mancante',
+          code: 'SERVICE_UNAVAILABLE'
+        });
+      }
+
+      const { data, error } = await supabaseAdmin
+        .from('utenti')
+        .select('*')
+        .order('pin');
+
+      if (error) {
+        console.warn('[API] Error fetching utenti:', error.message);
+        return res.status(500).json({
+          success: false,
+          error: 'Errore durante il recupero degli utenti',
+          code: 'QUERY_ERROR'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: data || []
+      });
+    } catch (error) {
+      console.error('[API] Errore utenti:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Errore interno',
+        code: 'INTERNAL_ERROR'
+      });
+    }
+  });
+
+  // GET /api/utenti/pin/:pin - Verifica esistenza PIN
+  app.get('/api/utenti/pin/:pin', async (req, res) => {
+    try {
+      if (!supabaseAdmin) {
+        return res.status(503).json({
+          success: false,
+          error: 'Servizio admin non disponibile',
+          code: 'SERVICE_UNAVAILABLE'
+        });
+      }
+
+      const pin = parseInt(req.params.pin);
+      if (isNaN(pin)) {
+        return res.status(400).json({
+          success: false,
+          error: 'PIN deve essere un numero valido',
+          code: 'INVALID_PIN'
+        });
+      }
+
+      const { count, error } = await supabaseAdmin
+        .from('utenti')
+        .select('pin', { count: 'exact' })
+        .eq('pin', pin)
+        .limit(1);
+
+      if (error) {
+        console.warn('[API] Error checking PIN:', error.message);
+        return res.status(500).json({
+          success: false,
+          error: 'Errore durante verifica PIN',
+          code: 'QUERY_ERROR'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: { exists: (count || 0) > 0, pin }
+      });
+    } catch (error) {
+      console.error('[API] Errore verifica PIN:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Errore interno',
+        code: 'INTERNAL_ERROR'
+      });
+    }
+  });
+
+  // POST /api/utenti - Crea nuovo utente
+  app.post('/api/utenti', async (req, res) => {
+    try {
+      if (!supabaseAdmin) {
+        return res.status(503).json({
+          success: false,
+          error: 'Servizio admin non disponibile',
+          code: 'SERVICE_UNAVAILABLE'
+        });
+      }
+
+      const { pin, nome, cognome, ore_contrattuali } = req.body;
+
+      // Validazioni
+      if (!pin || !nome || !cognome) {
+        return res.status(400).json({
+          success: false,
+          error: 'Parametri mancanti: pin, nome, cognome',
+          code: 'MISSING_PARAMS'
+        });
+      }
+
+      const pinNum = Number(pin);
+      if (!Number.isInteger(pinNum) || pinNum <= 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'PIN non valido',
+          code: 'INVALID_PIN'
+        });
+      }
+
+      const payload = {
+        pin: pinNum,
+        nome: nome.trim(),
+        cognome: cognome.trim(),
+        ore_contrattuali: ore_contrattuali || 8.0,
+        created_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabaseAdmin
+        .from('utenti')
+        .upsert([payload], { onConflict: 'pin' })
+        .select('pin,nome,cognome,created_at')
+        .single();
+
+      if (error) {
+        console.warn('[API] Error creating utente:', error.message);
+        return res.status(400).json({
+          success: false,
+          error: error.message,
+          code: 'CREATE_ERROR'
+        });
+      }
+
+      console.info('[API] Utente creato:', { pin: pinNum, nome, cognome });
+      res.json({
+        success: true,
+        data
+      });
+    } catch (error) {
+      console.error('[API] Errore creazione utente:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Errore interno',
+        code: 'INTERNAL_ERROR'
+      });
+    }
+  });
+
+  // GET /api/ex-dipendenti - Lista ex dipendenti
+  app.get('/api/ex-dipendenti', async (req, res) => {
+    try {
+      if (!supabaseAdmin) {
+        return res.status(503).json({
+          success: false,
+          error: 'Servizio admin non disponibile',
+          code: 'SERVICE_UNAVAILABLE'
+        });
+      }
+
+      const { data, error } = await supabaseAdmin
+        .from('ex_dipendenti')
+        .select('*')
+        .order('archiviato_at', { ascending: false });
+
+      if (error) {
+        console.warn('[API] Error fetching ex-dipendenti:', error.message);
+        return res.status(500).json({
+          success: false,
+          error: 'Errore durante il recupero degli ex dipendenti',
+          code: 'QUERY_ERROR'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: data || []
+      });
+    } catch (error) {
+      console.error('[API] Errore ex-dipendenti:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Errore interno',
+        code: 'INTERNAL_ERROR'
+      });
+    }
+  });
+
+  // GET /api/storico - Storico timbrature con filtri
+  app.get('/api/storico', async (req, res) => {
+    try {
+      if (!supabaseAdmin) {
+        return res.status(503).json({
+          success: false,
+          error: 'Servizio admin non disponibile',
+          code: 'SERVICE_UNAVAILABLE'
+        });
+      }
+
+      const { pin, dal, al } = req.query;
+
+      if (!pin) {
+        return res.status(400).json({
+          success: false,
+          error: 'Parametro pin obbligatorio',
+          code: 'MISSING_PIN'
+        });
+      }
+
+      const pinNum = Number(pin);
+      if (!Number.isInteger(pinNum) || pinNum <= 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'PIN non valido',
+          code: 'INVALID_PIN'
+        });
+      }
+
+      let query = supabaseAdmin
+        .from('timbrature')
+        .select('id,pin,tipo,ts_order,giorno_logico,data_locale,ora_locale,client_event_id')
+        .eq('pin', pinNum)
+        .order('giorno_logico', { ascending: true })
+        .order('ts_order', { ascending: true });
+
+      // Filtri opzionali
+      if (dal && typeof dal === 'string') {
+        query = query.gte('giorno_logico', dal);
+      }
+      if (al && typeof al === 'string') {
+        query = query.lte('giorno_logico', al);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.warn('[API] Error fetching storico:', error.message);
+        return res.status(500).json({
+          success: false,
+          error: 'Errore durante il recupero dello storico',
+          code: 'QUERY_ERROR'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: data || []
+      });
+    } catch (error) {
+      console.error('[API] Errore storico:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Errore interno',
+        code: 'INTERNAL_ERROR'
+      });
+    }
+  });
 
   // TEST /api/utenti/test-permissions - Testa permessi Supabase
   app.get('/api/utenti/test-permissions', async (req, res) => {

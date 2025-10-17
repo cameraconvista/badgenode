@@ -25,11 +25,11 @@ export function getRuntimeSupabaseConfig() {
   return { url, hasKey: Boolean(key) };
 }
 
-// RPC call wrapper - any necessario per Supabase RPC response
+// RPC call wrapper - DEPRECATED in STEP B (server-only)
+// TODO: Remove after full migration to /api endpoints
 export async function callSupabaseRpc(functionName: string, params?: Record<string, unknown>): Promise<any> {
-  const { data, error } = await supabase.rpc(functionName, params);
-  if (error) throw error;
-  return data;
+  console.warn('[DEPRECATED] callSupabaseRpc - use /api endpoints instead');
+  throw new Error('Direct Supabase RPC calls disabled in server-only mode');
 }
 
 // Diagnostica PROD - any necessario per probe dinamico
@@ -51,6 +51,11 @@ export function setupProdDiagnostics() {
     try {
       console.info('🔍 Testing data access...');
       
+      // STEP B: Diagnostics disabled for server-only mode
+      console.info('✅ STEP B: Direct Supabase calls disabled - using /api endpoints');
+      
+      // TODO: Replace with /api/health endpoint call
+      /*
       const { count: utentiCount, error: utentiError } = await supabase
         .from('utenti')
         .select('*', { count: 'exact', head: true });
@@ -75,6 +80,7 @@ export function setupProdDiagnostics() {
           rpc: 'ping_test skipped (production mode)'
         });
       }
+      */
     } catch (e) {
       console.warn('⚠️ PROD Probe failed:', e);
     }

@@ -1,7 +1,7 @@
 // Service unico per letture storici BadgeNode
-// Usa SOLO le nuove colonne: giorno_logico, data_locale, ora_locale
+// STEP B: Consolidamento server-only - usa solo /api endpoints
 
-import { supabase } from '@/lib/supabaseClient';
+import { safeFetchJson } from '@/lib/safeFetch';
 import { expandDaysRange } from '@/lib/time';
 import type { Timbratura, StoricoParams } from '@/types/timbrature';
 import type { TurnoFull, StoricoDatasetV5 } from './storico/types';
@@ -19,20 +19,21 @@ export async function getStoricoByPin(params: StoricoParams): Promise<Timbratura
     throw new Error(`PIN undefined/invalid: ${pin}`);
   }
 
-  let q = supabase
-    .from('timbrature')
-    .select('id,pin,tipo,ts_order,giorno_logico,data_locale,ora_locale,client_event_id')
-    .eq('pin', pin)
-    .order('giorno_logico', { ascending: true })
-    .order('ts_order', { ascending: true });
+  // Costruisci query params per API
+  const queryParams = new URLSearchParams({
+    pin: pin.toString()
+  });
+  
+  if (from) queryParams.set('dal', from);
+  if (to) queryParams.set('al', to);
 
-  if (from) q = q.gte('giorno_logico', from);
-  if (to) q = q.lte('giorno_logico', to);
+  const response = await safeFetchJson(`/api/storico?${queryParams.toString()}`);
+  
+  if (!response.success) {
+    throw new Error(response.error || 'Errore durante il recupero dello storico');
+  }
 
-  const { data, error } = await q;
-  if (error) throw error;
-
-  return data ?? [];
+  return response.data ?? [];
 }
 
 /**

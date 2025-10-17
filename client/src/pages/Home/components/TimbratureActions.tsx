@@ -1,6 +1,6 @@
 import { TimbratureService } from '@/services/timbrature.service';
 import { invalidateAfterTimbratura } from '@/state/timbrature.cache';
-import { supabase } from '@/lib/supabaseClient';
+import { UtentiService } from '@/services/utenti.service';
 
 interface TimbratureActionsProps {
   pin: string;
@@ -15,20 +15,13 @@ export function useTimbratureActions({
   setLoading,
   setFeedback,
 }: TimbratureActionsProps) {
-  // Validazione PIN locale - verifica esistenza in tabella utenti
+  // Validazione PIN locale - verifica esistenza tramite servizio
   const validatePIN = async (pinNumber: number): Promise<boolean> => {
     try {
-      const { data, error } = await supabase
-        .from('utenti')
-        .select('pin')
-        .eq('pin', pinNumber)
-        .single();
-
-      if (error || !data) {
-        return false;
-      }
-
-      return true;
+      const result = await UtentiService.isPinAvailable(pinNumber);
+      // isPinAvailable restituisce true se il PIN è disponibile (non esiste)
+      // Noi vogliamo true se il PIN esiste, quindi invertiamo
+      return !result.available;
     } catch (_error) {
       void _error;
       return false;

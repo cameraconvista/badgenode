@@ -1,37 +1,11 @@
 // Endpoint dedicato per UPDATE timbrature
-// Usa SERVICE_ROLE_KEY per bypassare RLS
+// STEP B.2: Usa singleton supabaseAdmin
 
 import { Router } from 'express';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '../lib/supabaseAdmin';
 import { computeGiornoLogico } from '../shared/time/computeGiornoLogico';
 
 const router = Router();
-
-// Client Supabase con SERVICE_ROLE_KEY (bypassa RLS)
-const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-console.log('[TIMBRATURE] Env check →', {
-  hasSupabaseUrl: !!supabaseUrl,
-  hasServiceRoleKey: !!serviceRoleKey,
-  supabaseUrl: supabaseUrl?.substring(0, 30) + '...',
-});
-
-let supabaseAdmin: ReturnType<typeof createClient> | null = null;
-
-if (!supabaseUrl || !serviceRoleKey) {
-  console.error('❌ Mancano variabili ambiente per endpoint timbrature');
-  console.error('   SUPABASE_URL:', !!supabaseUrl);
-  console.error('   SUPABASE_SERVICE_ROLE_KEY:', !!serviceRoleKey);
-} else {
-  supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
-  console.log('✅ [TIMBRATURE] Supabase admin client inizializzato');
-}
 
 // Tipi per errori codificati
 interface ValidationError {
