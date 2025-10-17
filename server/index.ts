@@ -4,10 +4,21 @@ import './bootstrap/env';
 import express, { type Request, Response, NextFunction } from 'express';
 import { registerRoutes } from './routes';
 import { setupVite, serveStatic, log } from './vite';
+// STEP D: Middleware osservabilità e read-only mode
+import { requestIdMiddleware } from './middleware/requestId';
+import { readOnlyGuard } from './middleware/readOnlyGuard';
+import { healthRouter } from './routes/health';
+import { versionRouter } from './routes/version';
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// STEP D: Request ID middleware (primo per tracking)
+app.use(requestIdMiddleware);
+
+// STEP D: Read-Only Mode guard (prima delle route mutanti)
+app.use(readOnlyGuard);
 
 // Middleware diagnosi 502: log tutte le richieste
 app.use((req, res, next) => {
@@ -51,16 +62,27 @@ app.use((req, res, next) => {
   next();
 });
 
+  // STEP D: Nuove route osservabilità
+  app.use('/api', healthRouter);
+  app.use('/api', versionRouter);
+
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
     // Type narrowing for error object
-    const errorObj = err as { status?: number; statusCode?: number; message?: string };
+    const errorObj = err as { status?: number; statusCode?: number; message?: string; code?: string };
     const status = errorObj.status || errorObj.statusCode || 500;
     const message = errorObj.message || 'Internal Server Error';
+    const code = errorObj.code || 'INTERNAL_ERROR';
+    const requestId = req.context?.requestId || 'unknown';
 
-    res.status(status).json({ message });
+    res.status(status).json({ 
+      success: false,
+      code,
+      error: message,
+      requestId
+    });
     throw err;
   });
 
