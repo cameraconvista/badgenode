@@ -47,6 +47,16 @@ export default function StoricoTable({
   const { totaleOre: totaleMensileOre, totaleExtra: totaleMensileExtra } = calcolaTotaliV5(list);
   const giorniLavorati = list.filter(d => d.ore_totali_chiuse > 0).length;
 
+  // Evidenziazione riga: considera presenza di QUALSIASI timbratura o valori
+  function hasTimbratureGiorno(g: GiornoLogicoDettagliato): boolean {
+    return Boolean(
+      (g.entrata && g.entrata !== '-') ||
+      (g.uscita && g.uscita !== '-') ||
+      (typeof g.ore === 'number' && g.ore > 0) ||
+      (typeof g.extra === 'number' && g.extra > 0)
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="bg-gray-800/50 rounded-lg p-8">
@@ -108,13 +118,14 @@ export default function StoricoTable({
     const weekday = date.getDay();
     const isWeekendDay = weekday === 6 || weekday === 0; // sab=6, dom=0
     
+    const hasTimbri = hasTimbratureGiorno(giorno);
     return (
       <tr
         key={`giorno-${giorno.giorno}`}
         className={`
           ${isWeekendDay ? 'bn-row bn-row--weekend bn-row-dense' : 'bn-row bn-row-dense'}
-          ${giorno.ore > 0 ? 'has-timbrature' : ''}
-          ${giorno.ore === 0 ? 'opacity-60' : ''}
+          ${hasTimbri ? 'has-timbrature' : ''}
+          ${hasTimbri ? '' : 'opacity-60'}
           text-base
         `}
       >

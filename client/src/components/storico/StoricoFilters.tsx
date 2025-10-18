@@ -120,22 +120,42 @@ export default function StoricoFilters({
           <Label className="text-gray-200 text-base">Periodo</Label>
           <Select value={selectedPeriod} onValueChange={handlePeriodChange} disabled={isLoading}>
             <SelectTrigger
-              className={`bg-gray-700/50 border-gray-600 text-base ${
-                selectedPeriod === 'personalizzato' ? 'text-yellow-400' : 'text-white'
-              }`}
+              className={
+                `bg-gray-700/50 border border-gray-600 text-white rounded-xl h-9 px-3 pr-8 text-base focus:border-violet-400`
+              }
             >
-              <SelectValue />
+              <SelectValue placeholder="Periodo" />
             </SelectTrigger>
             <SelectContent
               position="popper"
-              className="bn-pop bn-z-pop"
+              className="z-50 bg-[#1a1228] border border-violet-800 rounded-xl shadow-lg text-white"
               sideOffset={8}
               align="start"
             >
-              <SelectItem className="bn-pop-item" value="corrente">Mese corrente</SelectItem>
-              <SelectItem className="bn-pop-item" value="precedente">Mese precedente</SelectItem>
-              <SelectItem className="bn-pop-item" value="due_mesi_fa">2 mesi fa</SelectItem>
-              <SelectItem className="bn-pop-item" value="personalizzato">Personalizzato</SelectItem>
+              <SelectItem
+                className="text-white data-[highlighted]:bg-violet-600/30 data-[highlighted]:text-white data-[state=checked]:bg-violet-700/50 data-[state=checked]:text-white cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
+                value="corrente"
+              >
+                Mese corrente
+              </SelectItem>
+              <SelectItem
+                className="text-white data-[highlighted]:bg-violet-600/30 data-[highlighted]:text-white data-[state=checked]:bg-violet-700/50 data-[state=checked]:text-white cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
+                value="precedente"
+              >
+                Mese precedente
+              </SelectItem>
+              <SelectItem
+                className="text-white data-[highlighted]:bg-violet-600/30 data-[highlighted]:text-white data-[state=checked]:bg-violet-700/50 data-[state=checked]:text-white cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
+                value="due_mesi_fa"
+              >
+                2 mesi fa
+              </SelectItem>
+              <SelectItem
+                className="text-white data-[highlighted]:bg-violet-600/30 data-[highlighted]:text-white data-[state=checked]:bg-violet-700/50 data-[state=checked]:text-white cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
+                value="personalizzato"
+              >
+                Personalizzato
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
