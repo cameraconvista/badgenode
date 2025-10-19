@@ -12,6 +12,8 @@ interface HomeContainerProps {
   lastPin?: string;
   feedback: { type: 'success' | 'error' | null; message: string };
   loading: boolean;
+  disabledEntrata?: boolean;
+  disabledUscita?: boolean;
   onKeyPress: (key: string) => void;
   onClear: () => void;
   onSettings: () => void;
@@ -26,6 +28,8 @@ export default function HomeContainer({
   lastPin,
   feedback,
   loading,
+  disabledEntrata,
+  disabledUscita,
   onKeyPress,
   onClear,
   onSettings,
@@ -106,11 +110,18 @@ export default function HomeContainer({
             onClose={onFeedbackClose}
             inline
             showClose={false}
+            hideTimestamp={feedback.type === 'error' && /PIN non registrato nel sistema/i.test(feedback.message)}
           />
 
           <Keypad onKeyPress={onKeyPress} onClear={onClear} onSettings={onSettings} />
           <DateTimeLive />
-          <ActionButtons onEntrata={onEntrata} onUscita={onUscita} disabled={loading} />
+          <ActionButtons 
+            onEntrata={onEntrata} 
+            onUscita={onUscita} 
+            disabled={loading} 
+            disabledEntrata={disabledEntrata}
+            disabledUscita={disabledUscita}
+          />
         </div>
       </div>
 

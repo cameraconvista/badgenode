@@ -12,9 +12,10 @@ type ToastCardProps = {
   onClose: () => void;
   inline?: boolean; // se true, il toast è in flow (non absolute)
   showClose?: boolean; // mostra/nasconde la X
+  hideTimestamp?: boolean; // nasconde la terza riga
 };
 
-export default function ToastCard({ open, variant, nome, cognome, timestampText, messageOverride, onClose, inline = false, showClose = true }: ToastCardProps) {
+export default function ToastCard({ open, variant, nome, cognome, timestampText, messageOverride, onClose, inline = false, showClose = true, hideTimestamp = false }: ToastCardProps) {
   if (!open) return null;
 
   const isError = variant === 'error';
@@ -54,7 +55,7 @@ export default function ToastCard({ open, variant, nome, cognome, timestampText,
         <div className="text-sm tracking-wide font-extrabold">
           {line2}
         </div>
-        {timestampText && (
+        {timestampText && !hideTimestamp && (
           <div className="text-xs opacity-90">
             {timestampText}
           </div>

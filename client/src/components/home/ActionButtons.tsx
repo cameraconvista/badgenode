@@ -1,7 +1,9 @@
 interface ActionButtonsProps {
   onEntrata: () => void;
   onUscita: () => void;
-  disabled?: boolean;
+  disabled?: boolean; // disable both
+  disabledEntrata?: boolean; // disable only Entrata
+  disabledUscita?: boolean; // disable only Uscita
   className?: string;
 }
 
@@ -9,6 +11,8 @@ export default function ActionButtons({
   onEntrata,
   onUscita,
   disabled = false,
+  disabledEntrata = false,
+  disabledUscita = false,
   className = '',
 }: ActionButtonsProps) {
   return (
@@ -17,7 +21,7 @@ export default function ActionButtons({
         <button
           data-testid="button-entrata"
           onClick={onEntrata}
-          disabled={disabled}
+          disabled={disabled || disabledEntrata}
           className="
             min-h-[56px] px-6
             rounded-full
@@ -35,7 +39,7 @@ export default function ActionButtons({
         <button
           data-testid="button-uscita"
           onClick={onUscita}
-          disabled={disabled}
+          disabled={disabled || disabledUscita}
           className="
             min-h-[56px] px-6
             rounded-full
