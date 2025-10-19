@@ -169,7 +169,7 @@ git push origin main
 1. ESLint check (0 errori richiesti)
 2. Prettier formatting
 3. TypeScript compilation
-4. File length guard (≤200 righe)
+4. File length: ≤220 righe hard limit, ≥180 warning
 5. Test suite (se presente)
 
 # Bypass solo in emergenza

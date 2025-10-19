@@ -235,6 +235,8 @@ Policies principali:
 - timbrature: lettura pubblica, inserimento tutti, modifica admin
 - ex_dipendenti: solo admin
 
+Nota: in ambienti con RLS attivo, le operazioni di scrittura devono transitare dal server utilizzando la `SUPABASE_SERVICE_ROLE_KEY` (server-only). Le richieste dal client con `VITE_SUPABASE_ANON_KEY` potrebbero ricevere `42501` (violazione RLS) quando una RPC o endpoint comporta write; questo indica che le policy sono applicate correttamente.
+
 Ruoli:
 - anon: timbrature base, lettura utenti
 - authenticated: stesso di anon

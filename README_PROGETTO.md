@@ -34,7 +34,7 @@ Dettagli completi: `DOCS/05_setup_sviluppo.md`.
 
 ## 📚 Documentazione canonica
 
-- 00 — Executive summary: `DOCS/00_REPORT_CONSOLIDATO.txt`
+- 00 — Executive summary: `DOCS/ARCHIVIO_REPORTS.md`
 - 01 — Database & API: `DOCS/01_database_api.md`
 - 02 — Struttura progetto: `DOCS/02_struttura_progetto.md`
 - 03 — Script utilità: `DOCS/03_scripts_utilita.md`
