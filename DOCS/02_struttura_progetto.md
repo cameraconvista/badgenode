@@ -73,6 +73,8 @@ ARCHIVE/
 └── orphaned_files/             # File orfani identificati
 ```
 
+Nota: nel repository è presente anche una cartella nested `badgenode/badgenode/` utilizzata come archivio temporaneo di documenti/report. Non è referenziata né utilizzata dal runtime dell'applicazione.
+
 ### **Backup_Automatico/** - Sistema Backup
 
 ```

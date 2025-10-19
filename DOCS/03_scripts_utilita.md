@@ -91,6 +91,8 @@ Tempo esecuzione: ~0.5 secondi
 Output: "OK smoke runtime" se successo
 ```
 
+Nota: in ambienti con RLS attivo e uso di `VITE_SUPABASE_ANON_KEY`, una RPC che comporti scritture può restituire errore `42501` (violazione RLS). Questo è atteso se non si utilizza la service role key lato server ed è indice di policy correttamente applicate, non di malfunzionamento dell'applicazione.
+
 ---
 
 ## 💾 Sistema Backup
