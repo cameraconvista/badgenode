@@ -1,13 +1,15 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import LogoHeader from '@/components/home/LogoHeader';
 import PinDisplay from '@/components/home/PinDisplay';
 import Keypad from '@/components/home/Keypad';
 import DateTimeLive from '@/components/home/DateTimeLive';
 import ActionButtons from '@/components/home/ActionButtons';
-import FeedbackBanner from '@/components/FeedbackBanner';
+import ToastCard from '@/components/ui/ToastCard';
+import { UtentiService } from '@/services/utenti.service';
 
 interface HomeContainerProps {
   pin: string;
+  lastPin?: string;
   feedback: { type: 'success' | 'error' | null; message: string };
   loading: boolean;
   onKeyPress: (key: string) => void;
@@ -21,6 +23,7 @@ interface HomeContainerProps {
 
 export default function HomeContainer({
   pin,
+  lastPin,
   feedback,
   loading,
   onKeyPress,
@@ -31,6 +34,44 @@ export default function HomeContainer({
   onFeedbackClose,
   children,
 }: HomeContainerProps) {
+  const [nome, setNome] = useState<string | undefined>(undefined);
+  const [cognome, setCognome] = useState<string | undefined>(undefined);
+
+  // Fetch nominativo per mostrare Nome Cognome nel toast quando c'è un successo
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (feedback.type === 'success' && lastPin && /^\d+$/.test(lastPin)) {
+        const u = await UtentiService.getUtenteByPin(Number(lastPin));
+        if (!cancelled) {
+          setNome(u?.nome || undefined);
+          setCognome(u?.cognome || undefined);
+        }
+      } else {
+        if (!cancelled) {
+          setNome(undefined);
+          setCognome(undefined);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [feedback.type, lastPin]);
+  const variant = feedback.type === 'success'
+    ? (feedback.message?.toLowerCase().includes('uscita') ? 'success-uscita' : 'success-entrata')
+    : feedback.type === 'error'
+    ? 'error'
+    : undefined;
+
+  const timestampText = feedback.type
+    ? (() => {
+        const d = new Date();
+        const hh = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', hour12: false });
+        const day = d.toLocaleString('it-IT', { day: '2-digit' });
+        const month = d.toLocaleString('it-IT', { month: 'long' });
+        return `alle ore ${hh} del ${day} ${month}`;
+      })()
+    : undefined;
+
   return (
     <div
       className="h-screen w-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
@@ -54,11 +95,17 @@ export default function HomeContainer({
 
           <PinDisplay pin={pin} />
 
-          {/* Messaggio feedback sotto il PIN */}
-          <FeedbackBanner
-            type={feedback.type}
-            message={feedback.message}
+          {/* Messaggio elegante sotto il PIN (UI-only) */}
+          <ToastCard
+            open={Boolean(feedback.type)}
+            variant={(variant as any) || 'error'}
+            timestampText={timestampText}
+            messageOverride={feedback.type === 'success' ? (feedback.message?.toLowerCase().includes('uscita') ? 'USCITA Registrata!' : 'ENTRATA Registrata!') : feedback.message}
+            nome={nome}
+            cognome={cognome}
             onClose={onFeedbackClose}
+            inline
+            showClose={false}
           />
 
           <Keypad onKeyPress={onKeyPress} onClear={onClear} onSettings={onSettings} />

@@ -8,6 +8,7 @@ import HomeContainer from './components/HomeContainer';
 
 export default function Home() {
   const [pin, setPin] = useState('');
+  const [lastPinToast, setLastPinToast] = useState<string>('');
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | null; message: string }>({
     type: null,
@@ -63,13 +64,14 @@ export default function Home() {
   return (
     <HomeContainer
       pin={pin}
+      lastPin={lastPinToast}
       feedback={feedback}
       loading={loading}
       onKeyPress={handleKeyPress}
       onClear={handleClear}
       onSettings={handleSettings}
-      onEntrata={handleEntrata}
-      onUscita={handleUscita}
+      onEntrata={async () => { setLastPinToast(pin); await handleEntrata(); }}
+      onUscita={async () => { setLastPinToast(pin); await handleUscita(); }}
       onFeedbackClose={() => setFeedback({ type: null, message: '' })}
     >
       <SettingsModal
