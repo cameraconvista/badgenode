@@ -171,32 +171,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const { pin, nome, cognome, ore_contrattuali } = req.body;
+      // Strict DTO & validation (consente solo pin,nome,cognome)
+      const issues: string[] = [];
+      const dto = {
+        pin: Number(req.body?.pin),
+        nome: String(req.body?.nome ?? '').trim(),
+        cognome: String(req.body?.cognome ?? '').trim(),
+      };
 
-      // Validazioni
-      if (!pin || !nome || !cognome) {
+      if (!Number.isInteger(dto.pin) || dto.pin < 1 || dto.pin > 99) {
+        issues.push('PIN deve essere un numero tra 1 e 99');
+      }
+      if (!dto.nome) issues.push('Nome obbligatorio');
+      if (!dto.cognome) issues.push('Cognome obbligatorio');
+
+      if (issues.length > 0) {
         return res.status(400).json({
           success: false,
-          error: 'Parametri mancanti: pin, nome, cognome',
-          code: 'MISSING_PARAMS'
+          code: 'VALIDATION_ERROR',
+          message: 'Dati mancanti o non validi',
+          issues,
         });
       }
 
-      const pinNum = Number(pin);
-      if (!Number.isInteger(pinNum) || pinNum <= 0) {
-        return res.status(400).json({
-          success: false,
-          error: 'PIN non valido',
-          code: 'INVALID_PIN'
-        });
-      }
-
+      // Costruisci payload sicuro (ignora campi extra)
       const payload = {
-        pin: pinNum,
-        nome: nome.trim(),
-        cognome: cognome.trim(),
-        ore_contrattuali: ore_contrattuali || 8.0,
-        created_at: new Date().toISOString()
+        pin: dto.pin,
+        nome: dto.nome,
+        cognome: dto.cognome,
+        created_at: new Date().toISOString(),
       };
 
       const { data, error } = await supabaseAdmin
@@ -209,12 +212,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn('[API] Error creating utente:', error.message);
         return res.status(400).json({
           success: false,
-          error: error.message,
-          code: 'CREATE_ERROR'
+          code: 'SUPABASE_ERROR',
+          message: error.message,
         });
       }
 
-      console.info('[API] Utente creato:', { pin: pinNum, nome, cognome });
+      console.info('[API] Utente creato:', { pin: dto.pin, nome: dto.nome, cognome: dto.cognome });
       res.json({
         success: true,
         data

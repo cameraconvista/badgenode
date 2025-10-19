@@ -15,12 +15,26 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
     let errBody: any = null;
     try {
       errBody = contentType.includes('application/json') ? await res.json() : await res.text();
-    } catch { 
+    } catch {
       // body vuoto o non parsabile
     }
-    
+
+    // Se il server fornisce struttura { code, message, issues }, propagala
+    if (errBody && typeof errBody === 'object' && (errBody.code || errBody.message)) {
+      const structured = {
+        code: errBody.code,
+        message: errBody.message || errBody.error || `HTTP ${res.status}`,
+        issues: errBody.issues,
+        status: res.status,
+      } as const;
+      // lanciando un oggetto plain, il chiamante può leggere code/message
+      throw structured as any;
+    }
+
     const msg = typeof errBody === 'string' ? errBody : (errBody?.error || `HTTP ${res.status}`);
-    throw new Error(msg);
+    const e: any = new Error(msg);
+    e.status = res.status;
+    throw e;
   }
   
   // 204 o body vuoto → torna oggetto minimo
