@@ -3,6 +3,7 @@ import { createServer, type Server } from 'http';
 import { createClient } from '@supabase/supabase-js';
 // import { storage } from './storage'; // Unused - commented out
 import { supabaseAdmin, getAdminDiagnostics } from './lib/supabaseAdmin';
+import type { UtenteInsert } from './types/utenti';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint - SEMPRE disponibile, no DB required
@@ -195,7 +196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Costruisci payload sicuro (ignora campi extra)
-      const payload = {
+      const payload: UtenteInsert = {
         pin: dto.pin,
         nome: dto.nome,
         cognome: dto.cognome,
@@ -204,7 +205,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { data, error } = await supabaseAdmin
         .from('utenti')
-        .upsert([payload], { onConflict: 'pin' })
+        .upsert(payload as any, { onConflict: 'pin' })
         .select('pin,nome,cognome,created_at')
         .single();
 

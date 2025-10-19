@@ -102,8 +102,19 @@ export default function ModaleNuovoDipendente({
       await onSave(formData);
       onClose();
     } catch (_error) {
-      void _error;
-      setErrors({ general: 'Errore durante il salvataggio' });
+      const err: any = _error as any;
+      let msg = 'Errore durante il salvataggio';
+      if (err && typeof err === 'object') {
+        if (err.code === 'READ_ONLY_MODE_ACTIVE') {
+          msg = 'Modalità sola lettura attiva';
+        } else if (err.code === 'VALIDATION_ERROR') {
+          const firstIssue = Array.isArray(err.issues) && err.issues.length > 0 ? String(err.issues[0]) : '';
+          msg = firstIssue || err.message || msg;
+        } else if (typeof err.message === 'string' && err.message) {
+          msg = err.message;
+        }
+      }
+      setErrors({ general: msg });
     } finally {
       setIsLoading(false);
     }
