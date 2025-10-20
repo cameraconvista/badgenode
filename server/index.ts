@@ -66,8 +66,16 @@ app.use((req, res, next) => {
   app.use('/api', healthRouter);
   app.use('/api', versionRouter);
 
+  // Ready endpoint - minimal health check without DB
+  app.get('/api/ready', (_req, res) => {
+    res.json({ ok: true, status: 'ready' });
+  });
+
 (async () => {
   const server = await registerRoutes(app);
+  
+  // Log that API routes are mounted
+  console.log('[ROUTES] /api mounted');
 
   app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
     // Type narrowing for error object
