@@ -43,6 +43,8 @@
     "icons:generate": "npx tsx scripts/generate-pwa-icons.ts",
     "smoke:runtime": "tsx scripts/ci/smoke-runtime.ts",
     "g:commit": "node scripts/git-commit.mjs",
+    "seed:dev": "tsx scripts/seed_dev_supabase.ts",
+    "seed:dev:clean": "tsx scripts/seed_dev_cleanup.ts",
     "postbuild": "mkdir -p dist/public && cp -f client/public/_redirects dist/public/_redirects"
   },
   "dependencies": {

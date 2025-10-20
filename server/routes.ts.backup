@@ -84,83 +84,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Development mode: return mock data if Supabase connection fails
-      if (process.env.NODE_ENV === 'development') {
-        try {
-          const { data, error } = await supabaseAdmin
-            .from('utenti')
-            .select('*')
-            .order('pin');
+      const { data, error } = await supabaseAdmin
+        .from('utenti')
+        .select('*')
+        .order('pin');
 
-          if (error && error.message.includes('Invalid API key')) {
-            console.warn('[API] Development mode: using mock data for utenti');
-            const mockUtenti = [
-              {
-                id: 'mock-uuid-1',
-                pin: 1,
-                nome: 'Mario',
-                cognome: 'Rossi',
-                ore_contrattuali: 8.0,
-                email: 'mario.rossi@test.dev',
-                telefono: '123-456-7890',
-                created_at: new Date().toISOString(),
-                note: 'mock_dev_data'
-              },
-              {
-                id: 'mock-uuid-2', 
-                pin: 2,
-                nome: 'Luigi',
-                cognome: 'Verdi',
-                ore_contrattuali: 8.0,
-                email: 'luigi.verdi@test.dev',
-                telefono: '098-765-4321',
-                created_at: new Date().toISOString(),
-                note: 'mock_dev_data'
-              }
-            ];
-            return res.json({
-              success: true,
-              data: mockUtenti
-            });
-          }
-
-          if (error) {
-            throw error;
-          }
-
-          res.json({
+      if (error) {
+        console.warn('[API] Error fetching utenti:', error.message);
+        // In development, return empty array for invalid API key instead of 500
+        if (error.message.includes('Invalid API key') && process.env.NODE_ENV === 'development') {
+          console.warn('[API] Development mode: returning empty utenti array');
+          return res.json({
             success: true,
-            data: data || []
-          });
-        } catch (devError) {
-          console.error('[API] Development error:', devError);
-          return res.status(500).json({
-            success: false,
-            error: 'Errore durante il recupero degli utenti',
-            code: 'QUERY_ERROR'
+            data: []
           });
         }
-      } else {
-        // Production mode: strict Supabase connection
-        const { data, error } = await supabaseAdmin
-          .from('utenti')
-          .select('*')
-          .order('pin');
-
-        if (error) {
-          console.warn('[API] Error fetching utenti:', error.message);
-          return res.status(500).json({
-            success: false,
-            error: 'Errore durante il recupero degli utenti',
-            code: 'QUERY_ERROR'
-          });
-        }
-
-        res.json({
-          success: true,
-          data: data || []
+        return res.status(500).json({
+          success: false,
+          error: 'Errore durante il recupero degli utenti',
+          code: 'QUERY_ERROR'
         });
       }
+
+      res.json({
+        success: true,
+        data: data || []
+      });
     } catch (error) {
       console.error('[API] Errore utenti:', error);
       res.status(500).json({

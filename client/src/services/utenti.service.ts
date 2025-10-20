@@ -45,11 +45,11 @@ export class UtentiService {
       // Trasformo i dati per compatibilità con l'interfaccia Utente
       const utentiCompleti: Utente[] = (response.data || []).map((utente: any) => ({
         ...utente,
-        id: utente.pin?.toString() || '', // Uso PIN come ID
-        email: '', // Campo non presente nel DB
-        telefono: '', // Campo non presente nel DB
-        descrizione_contratto: '', // Campo non presente nel DB
-        updated_at: utente.created_at, // Uso created_at come fallback
+        id: utente.id || utente.pin?.toString() || '', // Usa ID esistente o PIN come fallback
+        email: utente.email || '', // Mantieni email se presente
+        telefono: utente.telefono || '', // Mantieni telefono se presente
+        descrizione_contratto: utente.descrizione_contratto || '', // Campo opzionale
+        updated_at: utente.updated_at || utente.created_at, // Usa updated_at se presente
       }));
 
       return utentiCompleti;
