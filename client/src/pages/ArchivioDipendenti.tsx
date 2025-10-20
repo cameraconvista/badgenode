@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Archive, Plus, Download } from 'lucide-react';
+import { ArrowLeft, Archive, Plus } from 'lucide-react';
 import ArchivioTable from '@/components/admin/ArchivioTable';
 import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
 import ModaleModificaDipendente from '@/components/admin/ModaleModificaDipendente';
@@ -82,7 +82,7 @@ export default function ArchivioDipendenti() {
   const handleSalvaModifica = async (datiUtente: UtenteInput) => {
     if (!utenteSelezionato) return;
     try {
-      await UtentiService.updateUtente(utenteSelezionato.id, datiUtente);
+      await UtentiService.updateUtente(utenteSelezionato.pin, datiUtente);
       await loadUtenti();
       setShowModaleModifica(false);
       setUtenteSelezionato(null);
@@ -105,9 +105,7 @@ export default function ArchivioDipendenti() {
     // TODO(BUSINESS): Implementare navigazione a Ex-Dipendenti
   };
 
-  const handleEsportaTutto = () => {
-    // TODO(BUSINESS): Implementare export completo dipendenti
-  };
+  
 
   return (
     <div
@@ -156,14 +154,6 @@ export default function ArchivioDipendenti() {
               Badge
             </Button>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={handleEsportaTutto}
-                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-blue-600 hover:text-blue-500 hover:bg-violet-50 hover:shadow-md transition-all"
-              >
-                <Download className="w-4 h-4 text-current" />
-                Esporta Tutto
-              </Button>
               <Button
                 variant="outline"
                 onClick={handleExDipendenti}
