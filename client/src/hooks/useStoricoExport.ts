@@ -7,7 +7,7 @@ import { Utente } from '@/services/utenti.service';
 // Lazy import per ridurre bundle size
 // import jsPDF from 'jspdf';
 // import autoTable from 'jspdf-autotable';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import type { TurnoFull } from '@/services/storico/types';
 // reserved: api-internal (non rimuovere senza migrazione)
 // import { TimbratureService } from '@/services/timbrature.service';
@@ -104,26 +104,51 @@ export function useStoricoExport({ dipendente, timbrature, filters }: UseStorico
       const totaleExtra = timbrature.reduce((sum, t) => sum + (t.extra || 0), 0);
       const giorniLavorati = timbrature.filter(t => (t.ore || 0) > 0).length;
       
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet([
-        [`Storico Timbrature — ${dipendente?.nome} ${dipendente?.cognome} (${periodo})`],
-        [],
-        header,
-        ...data,
-        [],
-        ["Giorni lavorati", giorniLavorati, "", "", "Totale", totaleOre],
-        ["", "", "", "", "Totale Extra", totaleExtra]
-      ]);
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Storico');
       
-      XLSX.utils.book_append_sheet(wb, ws, "Storico");
+      // Titolo
+      worksheet.addRow([`Storico Timbrature — ${dipendente?.nome} ${dipendente?.cognome} (${periodo})`]);
+      worksheet.addRow([]);
       
-      // auto width
-      const colW = header.map((h, i) => ({ 
-        wch: Math.max(h.length, ...data.map(r => String(r[i] ?? "").length)) + 2 
-      }));
-      ws["!cols"] = colW;
+      // Header
+      const headerRow = worksheet.addRow(header);
+      headerRow.font = { bold: true };
+      headerRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF363246' }
+      };
+      headerRow.font = { color: { argb: 'FFFFFFFF' }, bold: true };
       
-      XLSX.writeFile(wb, `storico_${dipendente?.nome}_${periodo.replace(/\//g, '-')}.xlsx`);
+      // Data rows
+      data.forEach(row => {
+        worksheet.addRow(row);
+      });
+      
+      // Totali
+      worksheet.addRow([]);
+      worksheet.addRow(["Giorni lavorati", giorniLavorati, "", "", "Totale", totaleOre]);
+      worksheet.addRow(["", "", "", "", "Totale Extra", totaleExtra]);
+      
+      // Auto width
+      header.forEach((_, i) => {
+        const maxLength = Math.max(
+          header[i].length,
+          ...data.map(r => String(r[i] ?? "").length)
+        ) + 2;
+        worksheet.getColumn(i + 1).width = maxLength;
+      });
+      
+      // Download
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `storico_${dipendente?.nome}_${periodo.replace(/\//g, '-')}.xlsx`;
+      link.click();
+      window.URL.revokeObjectURL(url);
       
       toast({
         title: 'Excel Esportato',
