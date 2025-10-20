@@ -41,7 +41,8 @@
     "check:ci": "bash scripts/ci/checks.sh",
     "icons:generate": "npx tsx scripts/generate-pwa-icons.ts",
     "smoke:runtime": "tsx scripts/ci/smoke-runtime.ts",
-    "g:commit": "node scripts/git-commit.mjs"
+    "g:commit": "node scripts/git-commit.mjs",
+    "postbuild": "mkdir -p dist/public && cp -f client/public/_redirects dist/public/_redirects"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
