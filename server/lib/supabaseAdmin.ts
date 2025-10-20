@@ -14,17 +14,21 @@ const ADMIN_INSTANCE_SYMBOL = Symbol.for('badgenode.supabase.admin');
 function createAdminProxy() {
   return new Proxy({} as any, {
     get(_target, prop) {
+      // Permetti controlli di esistenza senza lanciare errore
+      if (prop === Symbol.toPrimitive || prop === 'valueOf' || prop === 'toString') {
+        return () => null;
+      }
       throw new Error(`Supabase Admin non disponibile: configurazione mancante (tentativo di accesso a '${String(prop)}')`);
     }
   });
 }
 
 // Crea istanza singleton
-let adminInstance: ReturnType<typeof createClient>;
+let adminInstance: ReturnType<typeof createClient> | null;
 
 if (!supabaseUrl || !serviceRoleKey) {
   console.warn('[Supabase Admin] Variabili mancanti - creando proxy di errore');
-  adminInstance = createAdminProxy();
+  adminInstance = null; // Usa null invece del proxy per controlli più semplici
 } else {
   adminInstance = createClient(supabaseUrl, serviceRoleKey, {
     auth: {

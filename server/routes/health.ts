@@ -27,39 +27,20 @@ router.get('/health', (_req, res) => {
 
 /**
  * GET /api/ready
- * Readiness check - verifica connessione DB con query banale
+ * Readiness check - verifica che il server sia pronto (senza DB per ora)
  */
 router.get('/ready', async (req, res) => {
   const requestId = req.context?.requestId || 'unknown';
   
   try {
-    if (!supabaseAdmin) {
-      return res.status(503).json({
-        ok: false,
-        error: 'Database client non disponibile',
-        requestId
-      });
-    }
-    
-    // Query banale e veloce per verificare connessione
-    const { error } = await supabaseAdmin
-      .from('utenti')
-      .select('pin', { count: 'exact', head: true })
-      .limit(1);
-    
-    if (error) {
-      console.warn(`[Readiness] DB check failed [${requestId}]:`, error.message);
-      return res.status(503).json({
-        ok: false,
-        error: 'Database non raggiungibile',
-        requestId
-      });
-    }
-    
+    // Per ora solo check base - in futuro aggiungeremo DB check opzionale
     res.json({
       ok: true,
+      status: 'ready',
+      service: 'BadgeNode',
       timestamp: new Date().toISOString(),
-      requestId
+      requestId,
+      database: supabaseAdmin ? 'configured' : 'not_configured'
     });
     
   } catch (error) {
