@@ -6,7 +6,7 @@ import {
   computeGiornoLogico as computeGiornoLogicoShared,
   type ComputeGiornoLogicoParams,
   type ComputeGiornoLogicoResult 
-} from '@shared/time/computeGiornoLogico';
+} from '../../../server/shared/time/computeGiornoLogico';
 
 export interface TimbratureGiorno {
   giorno_logico: string;

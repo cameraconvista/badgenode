@@ -63,7 +63,7 @@ async function runSmokeTest(): Promise<void> {
   ];
 
   let passed = 0;
-  let total = tests.length;
+  const total = tests.length;
 
   for (const test of tests) {
     const success = await testEndpoint(test.name, test.url, test.method, test.body);
