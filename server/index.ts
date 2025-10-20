@@ -3,7 +3,7 @@ import './bootstrap/env';
 
 import express, { type Request, Response, NextFunction } from 'express';
 import { registerRoutes } from './routes';
-import { setupVite, serveStatic, log } from './vite';
+import path from 'path';
 // STEP D: Middleware osservabilità e read-only mode
 import { requestIdMiddleware } from './middleware/requestId';
 import { readOnlyGuard } from './middleware/readOnlyGuard';
@@ -55,7 +55,7 @@ app.use((req, res, next) => {
         logLine = logLine.slice(0, 79) + '…';
       }
 
-      log(logLine);
+      console.log(logLine);
     }
   });
 
@@ -86,13 +86,18 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // In sviluppo attiva Vite come middleware via import dinamico.
+  // In produzione serve gli asset statici da dist/public senza importare Vite.
   if (app.get('env') === 'development') {
+    const { setupVite } = await import('./vite.ts');
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    const distPath = path.resolve(process.cwd(), 'dist', 'public');
+    app.use(express.static(distPath, { maxAge: '1h' }));
+    app.use('*', (req, res, next) => {
+      if (req.path.startsWith('/api/')) return next();
+      res.sendFile(path.resolve(distPath, 'index.html'));
+    });
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
@@ -101,6 +106,6 @@ app.use((req, res, next) => {
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '3001', 10);
   server.listen(port, '0.0.0.0', () => {
-    log(`serving on port ${port}`);
+    console.log(`serving on port ${port}`);
   });
 })();
