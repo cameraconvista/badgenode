@@ -75,6 +75,13 @@ export default defineConfig(({ mode }) => {
         strict: true,
         deny: ['**/.*'],
       },
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+          secure: false,
+        },
+      },
     },
     define: {
       // Explicitly define env vars for client

@@ -91,6 +91,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (error) {
         console.warn('[API] Error fetching utenti:', error.message);
+        // In development, return empty array for invalid API key instead of 500
+        if (error.message.includes('Invalid API key') && process.env.NODE_ENV === 'development') {
+          console.warn('[API] Development mode: returning empty utenti array');
+          return res.json({
+            success: true,
+            data: []
+          });
+        }
         return res.status(500).json({
           success: false,
           error: 'Errore durante il recupero degli utenti',
