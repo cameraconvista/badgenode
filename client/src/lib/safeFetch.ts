@@ -5,9 +5,14 @@
  * - Errori HTTP con parsing intelligente del body
  * - Prevenzione "Unexpected end of JSON input"
  */
+import { getApiBaseUrl } from './apiBase';
 
 export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit) {
-  const res = await fetch(input, init);
+  let finalInput = input as any;
+  if (typeof input === 'string' && input.startsWith('/api/')) {
+    finalInput = `${getApiBaseUrl()}${input}`;
+  }
+  const res = await fetch(finalInput, { credentials: 'include', ...(init || {}) });
   const contentType = res.headers.get('content-type') || '';
   
   // Se non ok, tenta di leggere JSON, altrimenti testo
@@ -60,7 +65,8 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
  * Wrapper per POST JSON con headers automatici
  */
 export async function safeFetchJsonPost(url: string, body: any, options?: RequestInit) {
-  return safeFetchJson(url, {
+  const fullUrl = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
+  return safeFetchJson(fullUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -75,7 +81,8 @@ export async function safeFetchJsonPost(url: string, body: any, options?: Reques
  * Wrapper per PATCH JSON con headers automatici
  */
 export async function safeFetchJsonPatch(url: string, body: any, options?: RequestInit) {
-  return safeFetchJson(url, {
+  const fullUrl = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
+  return safeFetchJson(fullUrl, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -90,7 +97,8 @@ export async function safeFetchJsonPatch(url: string, body: any, options?: Reque
  * Wrapper per DELETE con query params
  */
 export async function safeFetchJsonDelete(url: string, params?: Record<string, string>, options?: RequestInit) {
-  const urlWithParams = params ? `${url}?${new URLSearchParams(params).toString()}` : url;
+  const base = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
+  const urlWithParams = params ? `${base}?${new URLSearchParams(params).toString()}` : base;
   return safeFetchJson(urlWithParams, {
     method: 'DELETE',
     ...options,
