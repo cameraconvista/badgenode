@@ -46,12 +46,9 @@ export async function callInsertTimbro({
       pin: pin, 
       tipo: tipo.toLowerCase() as 'entrata'|'uscita' 
     });
-    if (isError(result)) {
-      throw new Error(result.error);
-    }
     return {
       success: true,
-      data: result.data,
+      data: result,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Errore sconosciuto';
@@ -100,7 +97,7 @@ export async function createTimbroManual({ pin, tipo, giorno, ora }: {
  * Inserisce nuova timbratura via endpoint server
  * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
  */
-export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo: 'entrata'|'uscita'; ts?: string }) {
+export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo: 'entrata'|'uscita'; ts?: string }): Promise<{ id: number }> {
   console.info('[SERVICE] insertTimbroServer →', { pin, tipo, ts });
   
   try {
@@ -115,7 +112,7 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
       tipo, 
       id: result.data?.id 
     });
-    return result; // { success, data }
+    return result.data; // Solo i dati, non l'ApiResponse wrapper
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
     console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg });

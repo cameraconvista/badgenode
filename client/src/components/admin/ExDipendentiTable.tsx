@@ -1,21 +1,13 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { History, Download, Users } from 'lucide-react';
+import { History, Download, Users, AlertCircle } from 'lucide-react';
 import EmptyState from './EmptyState';
-
-// Tipo placeholder per ex-dipendente
-interface ExDipendente {
-  id: string;
-  pin: number;
-  nome: string;
-  cognome: string;
-  dataArchiviazione: string;
-  motivoArchiviazione?: string;
-}
+import { ExDipendente } from '@/services/utenti.service';
 
 interface ExDipendentiTableProps {
   exDipendenti: ExDipendente[];
   isLoading: boolean;
+  isError?: boolean;
   onStorico: (pin: number) => void;
   onEsporta: (exDipendente: ExDipendente) => void;
 }
@@ -23,6 +15,7 @@ interface ExDipendentiTableProps {
 export default function ExDipendentiTable({
   exDipendenti,
   isLoading,
+  isError,
   onStorico,
   onEsporta,
 }: ExDipendentiTableProps) {
@@ -31,8 +24,8 @@ export default function ExDipendentiTable({
   // Ordina ex-dipendenti per data archiviazione
   const sortedExDipendenti = useMemo(() => {
     return [...exDipendenti].sort((a, b) => {
-      const dateA = new Date(a.dataArchiviazione).getTime();
-      const dateB = new Date(b.dataArchiviazione).getTime();
+      const dateA = new Date(a.archiviato_at).getTime();
+      const dateB = new Date(b.archiviato_at).getTime();
       
       if (sortOrder === 'asc') {
         return dateA - dateB;
@@ -53,6 +46,22 @@ export default function ExDipendentiTable({
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-400 mx-auto mb-4"></div>
           <p className="text-gray-300">Caricamento ex-dipendenti...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 mx-auto mb-3 text-red-400" />
+          <h3 className="text-lg font-medium text-gray-300 mb-2">
+            Errore di caricamento
+          </h3>
+          <p className="text-gray-400 text-sm">
+            Impossibile caricare gli ex-dipendenti
+          </p>
         </div>
       </div>
     );
@@ -119,8 +128,8 @@ export default function ExDipendentiTable({
                       </Button>
                     </td>
                     <td className="bn-cell px-4 text-center tabular-nums">
-                      <span className="font-mono font-medium text-base text-violet-400">
-                        {exDipendente.pin.toString().padStart(2, '0')}
+                      <span className="font-mono font-medium text-base text-gray-400">
+                        ••••
                       </span>
                     </td>
                     <td className="bn-cell px-4 text-center">
@@ -131,7 +140,7 @@ export default function ExDipendentiTable({
                     </td>
                     <td className="bn-cell px-4 text-center">
                       <span className="font-medium text-sm text-gray-300">
-                        {new Date(exDipendente.dataArchiviazione).toLocaleDateString('it-IT')}
+                        {new Date(exDipendente.archiviato_at).toLocaleDateString('it-IT')}
                       </span>
                     </td>
                     <td className="bn-cell px-4">

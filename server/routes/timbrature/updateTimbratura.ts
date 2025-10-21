@@ -58,7 +58,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
     // TODO(ts): replace with exact Supabase types
     const updateResult = await supabaseAdmin!
       .from('timbrature')
-      .update(patch as any)
+      .update(patch as unknown as TimbratureUpdateClean)
       .eq('id', id)
       .select();
     

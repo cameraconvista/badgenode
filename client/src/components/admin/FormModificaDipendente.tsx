@@ -71,7 +71,7 @@ export default function FormModificaDipendente({
             <Input
               id="email"
               type="email"
-              value={formData.email}
+              value={formData.email ?? ''}
               onChange={(e) => onInputChange('email', e.target.value)}
               className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
                 errors.email ? 'border-red-500' : 'focus:border-violet-400'
@@ -88,7 +88,7 @@ export default function FormModificaDipendente({
             <Input
               id="telefono"
               type="tel"
-              value={formData.telefono}
+              value={formData.telefono ?? ''}
               onChange={(e) => onInputChange('telefono', e.target.value)}
               placeholder="Non disponibile"
               className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-violet-400"

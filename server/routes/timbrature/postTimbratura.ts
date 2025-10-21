@@ -131,7 +131,7 @@ router.post('/', async (req: Request, res: Response) => {
     // TODO(ts): replace with exact Supabase types
     const insertResult = await supabaseAdmin!
       .from('timbrature')
-      .insert([dto as any])
+      .insert([dto as unknown as TimbratureInsertClean])
       .select('*')
       .single();
     

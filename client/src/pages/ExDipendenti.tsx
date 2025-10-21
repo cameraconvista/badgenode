@@ -1,30 +1,16 @@
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Users } from 'lucide-react';
 import ExDipendentiTable from '@/components/admin/ExDipendentiTable';
 import { useAuth } from '@/contexts/AuthContext';
-
-// Tipo placeholder per ex-dipendente
-interface ExDipendente {
-  id: string;
-  pin: number;
-  nome: string;
-  cognome: string;
-  dataArchiviazione: string;
-  motivoArchiviazione?: string;
-}
+import { useExDipendentiQuery } from '@/hooks/useExDipendenti';
 
 export default function ExDipendenti() {
   const [, setLocation] = useLocation();
-  const [exDipendenti] = useState<ExDipendente[]>([]); // Placeholder vuoto
-  const [isLoading, setIsLoading] = useState(false); // Nessun caricamento per ora
   const { isAdmin } = useAuth();
-
-  useEffect(() => {
-    if (!isAdmin) return;
-    // TODO(BUSINESS): Implementare caricamento ex-dipendenti
-  }, [isAdmin]);
+  
+  // Query ex-dipendenti con hook dedicato
+  const { data: exDipendenti = [], isLoading, isError } = useExDipendentiQuery();
 
   const handleBackToArchivio = () => {
     setLocation('/archivio-dipendenti');
@@ -35,7 +21,7 @@ export default function ExDipendenti() {
     console.log('Storico ex-dipendente PIN:', pin);
   };
 
-  const handleEsporta = (exDipendente: ExDipendente) => {
+  const handleEsporta = (exDipendente: any) => {
     // TODO(BUSINESS): Implementare esportazione dati ex-dipendente
     console.log('Esporta ex-dipendente:', exDipendente);
   };
@@ -73,6 +59,7 @@ export default function ExDipendenti() {
             <ExDipendentiTable
               exDipendenti={exDipendenti}
               isLoading={isLoading}
+              isError={isError}
               onStorico={handleStorico}
               onEsporta={handleEsporta}
             />
