@@ -102,7 +102,7 @@ export default function ArchivioDipendenti() {
   const handleBackToLogin = () => setLocation('/');
   const _handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
   const handleExDipendenti = () => {
-    // TODO(BUSINESS): Implementare navigazione a Ex-Dipendenti
+    setLocation('/admin/ex-dipendenti');
   };
 
   
