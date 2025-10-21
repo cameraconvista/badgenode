@@ -1,7 +1,7 @@
 # 03 🔧 SCRIPTS UTILITÀ - BadgeNode
 
 **Manuale completo degli script di automazione e manutenzione**  
-**Versione**: 4.0 • **Data**: 2025-10-12
+**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
 
 ---
 
@@ -386,8 +386,8 @@ AUTO_START_BROWSER=false      # Auto-apri browser in dev
 
 # Development
 NODE_ENV=development          # Environment mode
-PORT=3001                     # Dev server port
-VITE_DEV_SERVER=true         # Abilita Vite dev server
+PORT=10000                    # Dev server port
+VITE_DEV_SERVER=true          # Abilita Vite dev server
 ```
 
 ### **File Configurazione**

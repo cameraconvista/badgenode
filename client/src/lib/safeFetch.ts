@@ -53,11 +53,20 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
         issues: errBody.issues,
         status: res.status,
       };
-      // lanciando un oggetto plain, il chiamante può leggere code/message
+      // 4xx → warning (DEV) e ritorno strutturato senza eccezione (non bloccare tabelle)
+      if (res.status >= 400 && res.status < 500) {
+        if (import.meta.env.DEV) console.warn('[safeFetchJson] 4xx:', structured);
+        return { success: false, ...structured } as unknown as ApiResponse;
+      }
+      // 5xx → errore bloccante
       throw structured;
     }
 
     const msg = typeof errBody === 'string' ? errBody : (errBody as ErrorResponse)?.error || `HTTP ${res.status}`;
+    if (res.status >= 400 && res.status < 500) {
+      if (import.meta.env.DEV) console.warn('[safeFetchJson] 4xx(text):', msg);
+      return { success: false, message: msg, status: res.status } as unknown as ApiResponse;
+    }
     const e = new Error(msg) as Error & { status: number };
     e.status = res.status;
     throw e;

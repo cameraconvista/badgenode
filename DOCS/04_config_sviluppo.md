@@ -1,7 +1,7 @@
 # 04 ⚙️ CONFIG SVILUPPO - BadgeNode
 
 **Setup locale e convenzioni di sviluppo**  
-**Versione**: 4.0 • **Data**: 2025-10-12
+**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
 
 ---
 
@@ -445,3 +445,8 @@ grep -r "registerSW" client/src/
 ---
 
 **Nota**: Questa configurazione è ottimizzata per sviluppo locale efficiente. Per production, consultare la documentazione di deploy specifica.
+
+---
+
+> **Documento aggiornato alla baseline Enterprise Stable (v1.0.0 — 2025-10-21)**  
+> Autore: BadgeNode / Cascade AI

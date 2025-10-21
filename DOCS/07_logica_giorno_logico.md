@@ -1,7 +1,7 @@
 # 📅 LOGICA GIORNO LOGICO — BadgeNode
 
-**Data aggiornamento**: 2025-10-13
-**Versione documento**: v5.0 (fix giorno logico cutoff 05:00 + formato ore.minuti + tutti i giorni)
+**Data aggiornamento**: 2025-10-21
+**Versione documento**: v5.0 (fix giorno logico cutoff 05:00 + formato ore.minuti + tutti i giorni) • **Stato**: Enterprise Stable
 **Autore**: BadgeNode • Revisione tecnica Cascade
 
 ---
@@ -151,3 +151,8 @@ Percorso consigliato nel repo: `DOCS/07_logica_giorno_logico.md`
 - **v2.1 — 2025-10-10**: Hotfix sotto-righe solo dalla #2 sessione; chiarimenti algoritmo pairing e test performance.
 - **v2.0 — 2025-10-09**: Aggiunta **gestione multi‑sessione** e regole di visualizzazione delle sotto‑righe; chiariti edge cases e test obbligatori.
 - **v1.x — storico**: Definizione base del giorno logico con riepilogo per giorno (prima entrata/ultima uscita) e calcolo ore.
+
+---
+
+> **Documento aggiornato alla baseline Enterprise Stable (v1.0.0 — 2025-10-21)**  
+> Autore: BadgeNode / Cascade AI

@@ -1,6 +1,6 @@
 import { TimbratureService } from '@/services/timbrature.service';
 import { invalidateAfterTimbratura } from '@/state/timbrature.cache';
-import { UtentiService } from '@/services/utenti.service';
+import { safeFetchJson } from '@/lib/safeFetch';
 
 interface TimbratureActionsProps {
   pin: string;
@@ -15,16 +15,18 @@ export function useTimbratureActions({
   setLoading,
   setFeedback,
 }: TimbratureActionsProps) {
-  // Validazione PIN locale - verifica esistenza tramite servizio
+  // Validazione PIN online tramite API; offline → consenti per non bloccare
   const validatePIN = async (pinNumber: number): Promise<boolean> => {
     try {
-      const result = await UtentiService.isPinAvailable(pinNumber);
-      // isPinAvailable restituisce true se il PIN è disponibile (non esiste)
-      // Noi vogliamo true se il PIN esiste, quindi invertiamo
-      return !result.available;
-    } catch (_error) {
-      void _error;
-      return false;
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) return true;
+      const resp = await safeFetchJson(`/api/pin/validate?pin=${encodeURIComponent(pinNumber)}`);
+      if ((resp as any)?.success === true && (resp as any)?.ok === true) return true;
+      if ((resp as any)?.success === false && (resp as any)?.status === 404) return false;
+      // In caso di 4xx diverso/5xx → fallback conservativo: non bloccare, lascia a TimbratureService l'esito
+      return true;
+    } catch {
+      // Errori di rete → non bloccare il flusso (TimbratureService gestirà offline/queue)
+      return true;
     }
   };
 

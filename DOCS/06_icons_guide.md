@@ -1,7 +1,7 @@
 # 06 🎨 ICONS GUIDE - BadgeNode
 
 **Guida completa all'uso di unplugin-icons con collezioni Lucide e Tabler**  
-**Versione**: 4.0 • **Data**: 2025-10-12
+**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
 
 ---
 
@@ -433,3 +433,8 @@ DOM nodes: 1 SVG per icona
 ---
 
 **Nota**: Non sostituire icone esistenti senza necessità. Il sistema attuale è ottimizzato per performance e consistenza visiva.
+
+---
+
+> **Documento aggiornato alla baseline Enterprise Stable (v1.0.0 — 2025-10-21)**  
+> Autore: BadgeNode / Cascade AI

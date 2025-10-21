@@ -12,6 +12,33 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   });
 }
 
+// Offline diagnostics (Step 1): optional, DEV only, guarded by feature flag
+if (import.meta.env.DEV) {
+  (async () => {
+    try {
+      const [{ isOfflineEnabled }, { getDeviceId }] = await Promise.all([
+        import('./offline/gating'),
+        import('./lib/deviceId'),
+      ]);
+      const enabled = isOfflineEnabled(getDeviceId());
+      if (enabled) {
+        // Load diagnostics and sync triggers lazily
+        void import('./offline/diagnostic').then((m) => m.installOfflineDiagnostics());
+        void import('./offline/syncRunner').then((m) => m.installSyncTriggers());
+        // Badge is optional and mounted after a tick to avoid boot blocking
+        const { isOfflineBadgeEnabled } = await import('./config/featureFlags');
+        if (isOfflineBadgeEnabled()) {
+          setTimeout(() => {
+            void import('./offline/OfflineBadge').then((m) => m.mountOfflineBadge());
+          }, 0);
+        }
+      }
+    } catch (e) {
+      console.debug('[offline:bootstrap] skipped:', (e as Error)?.message);
+    }
+  })();
+}
+
 try {
   const root = document.getElementById('root');
   if (!root) {

@@ -1,7 +1,7 @@
 # 01 📊 DATABASE API - BadgeNode
 
 **Descrizione concettuale del modello dati e API endpoints**  
-**Versione**: 4.0 • **Data**: 2025-10-12
+**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
 
 ---
 
@@ -304,3 +304,8 @@ Metriche chiave:
 ---
 
 **Note**: Questo documento descrive il modello concettuale. L'implementazione effettiva può variare in base ai requisiti specifici e alle limitazioni tecniche.
+
+---
+
+> **Documento aggiornato alla baseline Enterprise Stable (v1.0.0 — 2025-10-21)**  
+> Autore: BadgeNode / Cascade AI

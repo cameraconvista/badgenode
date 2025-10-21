@@ -64,7 +64,31 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
   // Validazione PIN (delegata a getStoricoByPin)
   const timbrature = await getStoricoByPin(params);
 
-  // Raggruppa per giorno_logico
+  // Caso 1: API aggregata dal server (giorno_logico + entrata/uscita/ore)
+  const looksAggregated = Array.isArray(timbrature) && timbrature.length > 0 &&
+    Object.prototype.hasOwnProperty.call(timbrature[0], 'entrata') &&
+    Object.prototype.hasOwnProperty.call(timbrature[0], 'uscita') &&
+    Object.prototype.hasOwnProperty.call(timbrature[0], 'ore');
+
+  if (looksAggregated) {
+    const turni: TurnoFull[] = (timbrature as unknown as Array<{
+      giorno_logico: string;
+      entrata: string | null;
+      uscita: string | null;
+      ore: number;
+    }>).map((row) => ({
+      pin: params.pin,
+      giorno: row.giorno_logico,
+      mese_label: new Date(row.giorno_logico).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }),
+      entrata: row.entrata || null,
+      uscita: row.uscita || null,
+      ore: Math.round((row.ore || 0) * 100) / 100,
+      extra: Math.max(0, (row.ore || 0) - 8),
+    }));
+    return turni;
+  }
+
+  // Caso 2: Legacy — timbrature raw con tipo/data/ora
   const byDay = new Map<string, Timbratura[]>();
   for (const t of timbrature) {
     if (!byDay.has(t.giorno_logico)) {
@@ -73,41 +97,30 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
     byDay.get(t.giorno_logico)!.push(t);
   }
 
-  // Converti a TurnoFull
   const turni: TurnoFull[] = [];
   for (const [giorno, timbraturesGiorno] of Array.from(byDay.entries())) {
-    const entrate = timbraturesGiorno.filter((t: Timbratura) => t.tipo === 'entrata');
-    const uscite = timbraturesGiorno.filter((t: Timbratura) => t.tipo === 'uscita');
+    const entrate = timbraturesGiorno.filter((t: Timbratura) => (t as any).tipo === 'entrata');
+    const uscite = timbraturesGiorno.filter((t: Timbratura) => (t as any).tipo === 'uscita');
 
     const primaEntrata = entrate.sort((a: Timbratura, b: Timbratura) =>
-      (a.ora_locale || '').localeCompare(b.ora_locale || '')
+      ((a as any).ora_locale || '').localeCompare((b as any).ora_locale || '')
     )[0];
     const ultimaUscita = uscite.sort((a: Timbratura, b: Timbratura) =>
-      (b.ora_locale || '').localeCompare(a.ora_locale || '')
+      ((b as any).ora_locale || '').localeCompare((a as any).ora_locale || '')
     )[0];
 
     let ore = 0;
     if (
-      primaEntrata?.ora_locale &&
-      ultimaUscita?.ora_locale &&
-      primaEntrata.data_locale &&
-      ultimaUscita.data_locale
+      (primaEntrata as any)?.ora_locale &&
+      (ultimaUscita as any)?.ora_locale
     ) {
-      // Arrotonda al minuto per calcolo più user-friendly
-      const entrataTime = primaEntrata.ora_locale.substring(0, 5) + ':00'; // HH:MM:00
-      const uscitaTime = ultimaUscita.ora_locale.substring(0, 5) + ':00';   // HH:MM:00
-      
-      // FIX: Per turni notturni, usa giorno_logico come base per entrambe le date
+      const entrataTime = String((primaEntrata as any).ora_locale).substring(0, 5) + ':00';
+      const uscitaTime = String((ultimaUscita as any).ora_locale).substring(0, 5) + ':00';
       const entrata = new Date(`${giorno}T${entrataTime}`);
       let uscita = new Date(`${giorno}T${uscitaTime}`);
-      
-      // Se l'uscita è prima dell'entrata (turno notturno), aggiungi 1 giorno all'uscita
-      // NOTA: uscita === entrata (stesso orario) = 0 ore, NON turno notturno
       if (uscita < entrata) {
-        uscita = new Date(`${giorno}T${uscitaTime}`);
         uscita.setDate(uscita.getDate() + 1);
       }
-      
       ore = (uscita.getTime() - entrata.getTime()) / (1000 * 60 * 60);
     }
 
@@ -115,10 +128,10 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
       pin: params.pin,
       giorno,
       mese_label: new Date(giorno).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }),
-      entrata: primaEntrata?.ora_locale || null,
-      uscita: ultimaUscita?.ora_locale || null,
+      entrata: (primaEntrata as any)?.ora_locale || null,
+      uscita: (ultimaUscita as any)?.ora_locale || null,
       ore: Math.round(ore * 100) / 100,
-      extra: Math.max(0, ore - 8), // Assumo 8 ore standard
+      extra: Math.max(0, ore - 8),
     });
   }
 
@@ -152,7 +165,7 @@ export async function buildStoricoDataset(params: StoricoParams): Promise<Storic
         sessioni: [
           {
             entrata_id: 1,
-            entrata_ore: turno.entrata || '00:00:00',
+            entrata_ore: turno.entrata || null,
             uscita_id: turno.uscita ? 2 : null,
             uscita_ore: turno.uscita,
             ore_sessione: turno.ore,

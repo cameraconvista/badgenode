@@ -1,7 +1,7 @@
 # 02 🏗️ STRUTTURA PROGETTO - BadgeNode
 
 **Mappa directory e responsabilità del repository**  
-**Versione**: 4.0 • **Data**: 2025-10-12
+**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
 
 ---
 
@@ -346,3 +346,8 @@ components.json       # Radix UI components config
 ---
 
 **Nota**: Questa struttura è ottimizzata per sviluppo team, manutenibilità e scalabilità. Ogni cartella ha responsabilità specifiche e regole di governance per mantenere il codice pulito e organizzato.
+
+---
+
+> **Documento aggiornato alla baseline Enterprise Stable (v1.0.0 — 2025-10-21)**  
+> Autore: BadgeNode / Cascade AI

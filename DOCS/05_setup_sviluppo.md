@@ -1,7 +1,7 @@
 # 05 🚀 SETUP SVILUPPO - BadgeNode
 
 **Onboarding rapido per sviluppatori**  
-**Versione**: 4.0 • **Data**: 2025-10-12
+**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
 
 ---
 
@@ -38,7 +38,7 @@ npm run check && npm run check:ci
 npm run dev
 
 # 6. Apri browser
-open http://localhost:3001
+open http://localhost:10000
 ```
 
 ### **Verifica Installazione**

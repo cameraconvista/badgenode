@@ -1,7 +1,7 @@
 # 08 🎨 UI HOME KEYPAD - BadgeNode
 
 **Storico e specifiche finali della Home Tastierino**  
-**Versione**: 4.0 • **Data**: 2025-10-12
+**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
 
 ---
 
@@ -609,3 +609,8 @@ pages/Home/
 ---
 
 **Nota**: Questo design è ottimizzato per usabilità mobile e accessibilità. La struttura modulare garantisce manutenibilità e rispetto dei limiti di lunghezza file. Tutte le specifiche sono testate su dispositivi reali e rispettano gli standard WCAG AA.
+
+---
+
+> **Documento aggiornato alla baseline Enterprise Stable (v1.0.0 — 2025-10-21)**  
+> Autore: BadgeNode / Cascade AI

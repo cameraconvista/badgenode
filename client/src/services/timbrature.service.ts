@@ -5,7 +5,12 @@ import type { Timbratura } from '@/types/timbrature';
 import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.service';
 import { supabase } from '@/lib/supabaseClient';
 import { callInsertTimbro, callUpdateTimbro, UpdateTimbroParams } from './timbratureRpc';
+import { isOfflineEnabled } from '@/offline/gating';
+import { getDeviceId } from '@/lib/deviceId';
+import { buildBaseItem, enqueue } from '@/offline/queue';
+import { runSyncOnce } from '@/offline/syncRunner';
 import { asError } from '@/lib/safeError';
+import { safeFetchJson } from '@/lib/safeFetch';
 import type { TimbraturaCanon, TimbratureRangeParams } from '../../../shared/types/timbrature';
 
 export interface TimbratureFilters {
@@ -17,6 +22,28 @@ export interface TimbratureFilters {
 // Interface moved to timbrature-stats.service.ts
 
 export class TimbratureService {
+  private static _lastSubmitMs = 0;
+  private static async validatePinApi(pin: number): Promise<boolean> {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        // Offline: non bloccare la coda offline
+        return true;
+      }
+      const resp = await safeFetchJson(`/api/pin/validate?pin=${encodeURIComponent(pin)}`);
+      // 4xx: safeFetchJson returns { success:false, status, message }
+      if ((resp as any)?.success === false) {
+        if ((resp as any)?.status === 404 && import.meta.env.DEV) {
+          console.debug('[pin] PIN non registrato');
+        }
+        return false;
+      }
+      return (resp as any)?.success === true && (resp as any)?.ok === true;
+    } catch (e) {
+      // network/5xx → considerare non valido per ora (non bloccare crash UI)
+      if (import.meta.env.DEV) console.debug('[pin] validate error', (e as Error).message);
+      return false;
+    }
+  }
   // SEMPLIFICATO - Lettura diretta da tabella public.timbrature
   static async getTimbratureByRange(params: TimbratureRangeParams): Promise<TimbraturaCanon[]> {
     try {
@@ -160,8 +187,52 @@ export class TimbratureService {
 
   // REFACTOR: Usa RPC unico centralizzato
   static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<number> {
-    const result = await callInsertTimbro({ pin, tipo });
-    return result.success ? 1 : 0; // 1 = successo, 0 = errore
+    // Pre-validazione PIN lato server senza toccare UI
+    const isValid = await TimbratureService.validatePinApi(pin);
+    if (!isValid) {
+      // PIN non registrato o errore 4xx → non procedere
+      return 0;
+    }
+    // Feature OFF → comportamento invariato
+    if (!isOfflineEnabled(getDeviceId())) {
+      const result = await callInsertTimbro({ pin, tipo });
+      return result.success ? 1 : 0;
+    }
+
+    // Debounce minimo per evitare doppio tap ravvicinato (solo con flag ON)
+    const now = Date.now();
+    if (now - TimbratureService._lastSubmitMs < 600) {
+      if (import.meta.env.DEV) console.debug('[offline:guard] debounce drop');
+      return 0;
+    }
+    TimbratureService._lastSubmitMs = now;
+
+    // Se siamo online, prova percorso attuale
+    if (navigator.onLine === true) {
+      try {
+        const result = await callInsertTimbro({ pin, tipo });
+        if (result.success) return 1;
+        // se fallisce per motivi non di rete, restituisci 0 (comportamento attuale)
+        return 0;
+      } catch (e) {
+        // errore fetch/timeout → fallback offline
+        if (import.meta.env.DEV) console.debug('[offline:fallback] network error → queue');
+      }
+    }
+
+    // Offline o errore rete → enqueue
+    try {
+      const base = buildBaseItem(pin, tipo);
+      await enqueue(base);
+      // Fire-and-forget: tenta una sync se torna la rete
+      void runSyncOnce();
+      if (import.meta.env.DEV) console.debug('[offline:enqueue] queued');
+      // Considera l'operazione accettata lato client
+      return 1;
+    } catch (e) {
+      if (import.meta.env.DEV) console.debug('[offline:enqueue] failed', (e as Error).message);
+      return 0;
+    }
   }
 
   // Funzione per refresh storico dopo timbratura - SEMPLIFICATO: tabella diretta

@@ -17,6 +17,12 @@ async function startServer() {
     // Setup static files (Vite dev o produzione) - passa server per HMR
     await setupStaticFiles(app, server);
     
+    // DEV diagnostics: Supabase URL prefix
+    if (process.env.NODE_ENV === 'development') {
+      const supaUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+      console.log(`[ENV][server] prefix: ${supaUrl.slice(0,20)} role: service`);
+    }
+
     server.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
