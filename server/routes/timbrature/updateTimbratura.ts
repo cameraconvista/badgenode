@@ -53,7 +53,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
     console.info('[SERVER] Record esistente →', existing);
 
     // Esegui UPDATE con SERVICE_ROLE_KEY (bypassa RLS)
-    const updateResult = await (supabaseAdmin as any)
+    const updateResult = await supabaseAdmin!
       .from('timbrature')
       .update(updateData)
       .eq('id', id)

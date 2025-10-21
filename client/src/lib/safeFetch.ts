@@ -7,8 +7,29 @@
  */
 import { getApiBaseUrl } from './apiBase';
 
-export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit) {
-  let finalInput = input as any;
+// Tipi per eliminare any types
+interface ErrorResponse {
+  code?: string;
+  message?: string;
+  error?: string;
+  issues?: unknown[];
+}
+
+interface StructuredError {
+  code?: string;
+  message: string;
+  issues?: unknown[];
+  status: number;
+}
+
+interface SuccessResponse {
+  success: true;
+}
+
+type ApiResponse = Record<string, unknown> | SuccessResponse;
+
+export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit): Promise<ApiResponse> {
+  let finalInput: RequestInfo | URL = input;
   if (typeof input === 'string' && input.startsWith('/api/')) {
     finalInput = `${getApiBaseUrl()}${input}`;
   }
@@ -17,7 +38,7 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
   
   // Se non ok, tenta di leggere JSON, altrimenti testo
   if (!res.ok) {
-    let errBody: any = null;
+    let errBody: ErrorResponse | string | null = null;
     try {
       errBody = contentType.includes('application/json') ? await res.json() : await res.text();
     } catch {
@@ -26,18 +47,18 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
 
     // Se il server fornisce struttura { code, message, issues }, propagala
     if (errBody && typeof errBody === 'object' && (errBody.code || errBody.message)) {
-      const structured = {
+      const structured: StructuredError = {
         code: errBody.code,
         message: errBody.message || errBody.error || `HTTP ${res.status}`,
         issues: errBody.issues,
         status: res.status,
-      } as const;
+      };
       // lanciando un oggetto plain, il chiamante può leggere code/message
-      throw structured as any;
+      throw structured;
     }
 
-    const msg = typeof errBody === 'string' ? errBody : (errBody?.error || `HTTP ${res.status}`);
-    const e: any = new Error(msg);
+    const msg = typeof errBody === 'string' ? errBody : (errBody as ErrorResponse)?.error || `HTTP ${res.status}`;
+    const e = new Error(msg) as Error & { status: number };
     e.status = res.status;
     throw e;
   }
@@ -64,7 +85,7 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
 /**
  * Wrapper per POST JSON con headers automatici
  */
-export async function safeFetchJsonPost(url: string, body: any, options?: RequestInit) {
+export async function safeFetchJsonPost(url: string, body: Record<string, unknown>, options?: RequestInit): Promise<ApiResponse> {
   const fullUrl = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
   return safeFetchJson(fullUrl, {
     method: 'POST',
@@ -80,7 +101,7 @@ export async function safeFetchJsonPost(url: string, body: any, options?: Reques
 /**
  * Wrapper per PATCH JSON con headers automatici
  */
-export async function safeFetchJsonPatch(url: string, body: any, options?: RequestInit) {
+export async function safeFetchJsonPatch(url: string, body: Record<string, unknown>, options?: RequestInit): Promise<ApiResponse> {
   const fullUrl = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
   return safeFetchJson(fullUrl, {
     method: 'PATCH',
@@ -96,7 +117,7 @@ export async function safeFetchJsonPatch(url: string, body: any, options?: Reque
 /**
  * Wrapper per DELETE con query params
  */
-export async function safeFetchJsonDelete(url: string, params?: Record<string, string>, options?: RequestInit) {
+export async function safeFetchJsonDelete(url: string, params?: Record<string, string>, options?: RequestInit): Promise<ApiResponse> {
   const base = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
   const urlWithParams = params ? `${base}?${new URLSearchParams(params).toString()}` : base;
   return safeFetchJson(urlWithParams, {

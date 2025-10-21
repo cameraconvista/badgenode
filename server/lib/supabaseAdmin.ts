@@ -11,8 +11,8 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ADMIN_INSTANCE_SYMBOL = Symbol.for('badgenode.supabase.admin');
 
 // Guard rail: se env mancano, crea proxy che lancia errore al primo uso
-function createAdminProxy() {
-  return new Proxy({} as any, {
+function createAdminProxy(): ReturnType<typeof createClient> {
+  return new Proxy({} as ReturnType<typeof createClient>, {
     get(_target, prop) {
       // Permetti controlli di esistenza senza lanciare errore
       if (prop === Symbol.toPrimitive || prop === 'valueOf' || prop === 'toString') {
@@ -40,14 +40,14 @@ if (!supabaseUrl || !serviceRoleKey) {
 }
 
 // Marca istanza per diagnostica
-(globalThis as any)[ADMIN_INSTANCE_SYMBOL] = true;
+(globalThis as Record<symbol, unknown>)[ADMIN_INSTANCE_SYMBOL] = true;
 
 // Named export (NON default export)
 export const supabaseAdmin = adminInstance;
 
 // Export per diagnostica health check
 export const getAdminDiagnostics = () => ({
-  singleInstance: !!(globalThis as any)[ADMIN_INSTANCE_SYMBOL],
+  singleInstance: !!(globalThis as Record<symbol, unknown>)[ADMIN_INSTANCE_SYMBOL],
   moduleType: 'named-const' as const,
   hasUrl: !!supabaseUrl,
   hasServiceKey: !!serviceRoleKey,

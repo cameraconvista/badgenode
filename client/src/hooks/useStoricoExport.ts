@@ -7,7 +7,8 @@ import { Utente } from '@/services/utenti.service';
 // Lazy import per ridurre bundle size
 // import jsPDF from 'jspdf';
 // import autoTable from 'jspdf-autotable';
-import ExcelJS from 'exceljs';
+// Lazy import per ridurre bundle size
+// import ExcelJS from 'exceljs';
 import type { TurnoFull } from '@/services/storico/types';
 // reserved: api-internal (non rimuovere senza migrazione)
 // import { TimbratureService } from '@/services/timbrature.service';
@@ -89,6 +90,9 @@ export function useStoricoExport({ dipendente, timbrature, filters }: UseStorico
 
   const handleExportXLS = async () => {
     try {
+      // Lazy load ExcelJS per ridurre bundle size
+      const { default: ExcelJS } = await import('exceljs');
+      
       const periodo = `${filters.dal} - ${filters.al}`;
       const header = ["Data","Mese","Entrata","Uscita","Ore","Extra"];
       const data = timbrature.map(t => [

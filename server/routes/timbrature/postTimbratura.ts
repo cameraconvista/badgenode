@@ -6,6 +6,14 @@ import { validateAlternanza } from './validation';
 
 const router = Router();
 
+// Tipi per eliminare any types
+interface TimbratureRequestBody {
+  pin?: number;
+  tipo?: 'entrata' | 'uscita';
+  ts?: string;
+  anchorDate?: string;
+}
+
 /**
  * POST /api/timbrature - Inserisce nuova timbratura
  * Bypassa RLS usando SERVICE_ROLE_KEY
@@ -24,7 +32,7 @@ router.post('/', async (req: Request, res: Response) => {
       });
     }
 
-    const { pin, tipo, ts } = req.body as { pin?: number; tipo?: 'entrata'|'uscita'; ts?: string };
+    const { pin, tipo, ts } = req.body as TimbratureRequestBody;
 
     console.info('[SERVER] INSERT timbratura →', { pin, tipo, ts });
 
@@ -65,7 +73,7 @@ router.post('/', async (req: Request, res: Response) => {
       data: dataLocale,
       ora: oraLocale,
       tipo,
-      dataEntrata: (req.body as any).anchorDate // Parametro opzionale per ancoraggio
+      dataEntrata: (req.body as TimbratureRequestBody).anchorDate // Parametro opzionale per ancoraggio
     });
 
     console.info('[SERVER] INSERT params validated →', { 
@@ -82,7 +90,7 @@ router.post('/', async (req: Request, res: Response) => {
       tipo,
       dataLocale,
       oraLocale,
-      (req.body as any).anchorDate
+      (req.body as TimbratureRequestBody).anchorDate
     );
 
     if (!validationResult.success) {
@@ -109,7 +117,7 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
-    const insertResult = await (supabaseAdmin as any)
+    const insertResult = await supabaseAdmin!
       .from('timbrature')
       .insert([{
         pin: pinNum,

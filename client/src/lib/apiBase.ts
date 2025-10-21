@@ -1,6 +1,14 @@
 // client/src/lib/apiBase.ts
+
+// Tipi per Vite env
+interface ViteEnv {
+  DEV?: boolean;
+  MODE?: string;
+  VITE_API_BASE_URL?: string;
+}
+
 export function getApiBaseUrl() {
-  const env: any = (import.meta as any).env || {};
+  const env = (import.meta as { env: ViteEnv }).env || {};
   // In dev con proxy Vite, usa same-origin per sfruttare il proxy
   // Il proxy Vite inoltra /api/* a http://localhost:3001
   if (env.DEV) {

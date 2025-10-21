@@ -130,7 +130,7 @@ router.post('/manual', async (req: Request, res: Response) => {
     });
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
-    const insertResult = await (supabaseAdmin as any)
+    const insertResult = await supabaseAdmin!
       .from('timbrature')
       .insert([{
         pin: pinNum,
