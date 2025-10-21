@@ -117,7 +117,7 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
       const entrataTime = String((primaEntrata as any).ora_locale).substring(0, 5) + ':00';
       const uscitaTime = String((ultimaUscita as any).ora_locale).substring(0, 5) + ':00';
       const entrata = new Date(`${giorno}T${entrataTime}`);
-      let uscita = new Date(`${giorno}T${uscitaTime}`);
+      const uscita = new Date(`${giorno}T${uscitaTime}`);
       if (uscita < entrata) {
         uscita.setDate(uscita.getDate() + 1);
       }

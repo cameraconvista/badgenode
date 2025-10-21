@@ -220,6 +220,19 @@ echo $VITE_SUPABASE_URL
 
 MIT License - vedi file LICENSE per dettagli.
 
+## 📊 Report e Monitoring
+
+```bash
+# Security audit
+npm run security:audit
+
+# Dipendenze obsolete
+npm run deps:outdated
+
+# Analisi bundle
+npm run analyze:bundle
+```
+
 ## 🆘 Supporto
 
 - **Documentazione**: [DOCS/](DOCS/)
