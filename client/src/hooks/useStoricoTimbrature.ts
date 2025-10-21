@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { loadTurniFull, buildStoricoDataset, StoricoDatasetV5 } from '@/services/storico.service';
 import { GiornoLogicoDettagliato } from '@/lib/storico/types';
+import type { TurnoFull } from '@/services/storico/types';
 import { UtentiService } from '@/services/utenti.service';
 import { TimbratureService } from '@/services/timbrature.service';
 import { useStoricoExport } from '@/hooks/useStoricoExport';
@@ -13,6 +14,14 @@ import {
   debounce,
 } from '@/state/timbrature.cache';
 import { formatDateLocal, getMeseItaliano } from '@/lib/time';
+
+// Funzione di mapping puro per compatibilità tipi
+function toGiornoLogicoDettagliato(rows: TurnoFull[]): GiornoLogicoDettagliato[] {
+  return rows.map(turno => ({
+    ...turno,
+    sessioni: [], // TurnoFull non ha sessioni, aggiungi array vuoto per compatibilità
+  }));
+}
 
 export function useStoricoTimbrature(pin: number) {
   const { isAdmin } = useAuth();
@@ -90,15 +99,15 @@ export function useStoricoTimbrature(pin: number) {
   }
 
   // Query per turni completi (legacy, per compatibilità componenti)
-  const {
-    data: turniGiornalieri = [],
-    isLoading: isLoadingLegacy,
-    error: turniError,
-  } = useQuery({
+  const turniQuery = useQuery({
     queryKey: ['turni-completi-legacy', filters],
     queryFn: () => loadTurniFull({ pin: filters.pin, from: filters.dal, to: filters.al }),
     enabled: !!dipendente,
-  }) as { data: GiornoLogicoDettagliato[]; isLoading: boolean; error: unknown };
+  });
+
+  const turniGiornalieri = toGiornoLogicoDettagliato(turniQuery.data ?? []);
+  const isLoadingLegacy = turniQuery.isLoading;
+  const turniError = turniQuery.error;
 
   if (turniError) {
   }

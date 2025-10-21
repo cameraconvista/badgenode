@@ -30,11 +30,11 @@ export interface ExDipendente extends Utente {
 export interface UtenteInput {
   nome: string;
   cognome: string;
-  email?: string;
-  telefono?: string;
+  email?: string | null;
+  telefono?: string | null;
   pin: number;
   ore_contrattuali: number;
-  descrizione_contratto?: string;
+  descrizione_contratto?: string | null;
 }
 
 export class UtentiService {
@@ -164,10 +164,10 @@ export class UtentiService {
       pin: input.pin ?? utenteCorrente.pin,
       nome: input.nome ?? utenteCorrente.nome,
       cognome: input.cognome ?? utenteCorrente.cognome,
-      email: input.email ?? utenteCorrente.email,
-      telefono: input.telefono ?? utenteCorrente.telefono,
+      email: input.email ?? utenteCorrente.email ?? null,
+      telefono: input.telefono ?? utenteCorrente.telefono ?? null,
       ore_contrattuali: input.ore_contrattuali ?? utenteCorrente.ore_contrattuali,
-      descrizione_contratto: input.descrizione_contratto ?? utenteCorrente.descrizione_contratto,
+      descrizione_contratto: input.descrizione_contratto ?? utenteCorrente.descrizione_contratto ?? null,
     };
 
     return await this.upsertUtente(inputCompleto);

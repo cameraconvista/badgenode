@@ -175,5 +175,9 @@ export type Timbratura = Tables<'timbrature'>['Row'];
 export type TimbratureInsert = Tables<'timbrature'>['Insert'];
 export type TimbratureUpdate = Tables<'timbrature'>['Update'];
 
+// Tipi locali per operazioni server (senza campi auto-generati)
+export type TimbratureInsertClean = Omit<Timbratura, 'id'>;
+export type TimbratureUpdateClean = Partial<Omit<Timbratura, 'id' | 'created_at'>>;
+
 export type ExDipendente = Tables<'ex_dipendenti'>['Row'];
 export type TurnoGiornaliero = Views<'v_turni_giornalieri'>['Row'];

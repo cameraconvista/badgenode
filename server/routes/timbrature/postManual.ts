@@ -2,7 +2,7 @@
 import { Router, Request, Response } from 'express';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
 import { computeGiornoLogico } from '../../shared/time/computeGiornoLogico';
-import type { TimbratureInsert, Timbratura } from '../../../shared/types/database';
+import type { TimbratureInsertClean, Timbratura } from '../../../shared/types/database';
 import { validateAlternanza } from './validation';
 
 const router = Router();
@@ -131,7 +131,7 @@ router.post('/manual', async (req: Request, res: Response) => {
     });
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
-    const dto: TimbratureInsert = {
+    const dto: TimbratureInsertClean = {
       pin: pinNum,
       tipo: tipoNormalized,
       ts_order: tsIso,
