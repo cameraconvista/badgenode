@@ -163,11 +163,7 @@ export async function buildStoricoDataset({
       };
     });
     
-    // TEST: Clone profondo per evitare structural sharing (solo per diagnosi)
-    console.log('[SERVICE] buildStoricoDataset result:', { 
-      length: result.length, 
-      timestamp: new Date().toISOString() 
-    });
+    // Clone profondo per evitare structural sharing
     
     // Clonazione profonda per test structural sharing
     return JSON.parse(JSON.stringify(result));

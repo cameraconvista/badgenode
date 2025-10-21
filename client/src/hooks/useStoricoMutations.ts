@@ -50,7 +50,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
   // Refetch obbligato di tutte le query attive
   const refetchAll = async () => {
     const DEBUG = process.env.NODE_ENV !== 'production';
-    DEBUG && console.log('[HOOK] refetchAll started →', { pin });
+    if (DEBUG) console.log('[HOOK] refetchAll started →', { pin });
     
     // Log stato PRIMA del refetch
     DEBUG && logActiveQueries(qc, 'BEFORE refetch');
@@ -84,7 +84,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
     DEBUG && logActiveQueries(qc, 'AFTER refetch');
     DEBUG && logStoricoQueries(qc, 'AFTER refetch');
     
-    DEBUG && console.log('[HOOK] refetchAll completed');
+    if (DEBUG) console.log('[HOOK] refetchAll completed');
   };
 
   // Mutazione unificata per CREATE/UPDATE dal Modale
@@ -97,7 +97,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       dataUscita?: string;  
       oraUscita?: string;
     }) => {
-      console.log('[HOOK] saveFromModal →', vars);
+      if (process.env.NODE_ENV === 'development') console.log('[HOOK] saveFromModal →', vars);
       
       const entrataOps: Promise<any>[] = [];
       const uscitaOps: Promise<any>[] = [];
@@ -105,7 +105,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       // ENTRATA: create o update (sempre PRIMA)
       if (vars.dataEntrata && vars.oraEntrata) {
         if (vars.idEntrata) {
-          console.log('[HOOK] updating entrata →', { id: vars.idEntrata });
+          if (process.env.NODE_ENV === 'development') console.log('[HOOK] updating entrata →', { id: vars.idEntrata });
           const giornoLogicoEntrata = computeGiornoLogico({
             data: vars.dataEntrata,
             ora: vars.oraEntrata,
@@ -121,7 +121,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
             }
           }));
         } else {
-          console.log('[HOOK] creating entrata →', { pin, giorno: vars.dataEntrata, ora: vars.oraEntrata });
+          if (process.env.NODE_ENV === 'development') console.log('[HOOK] creating entrata →', { pin, giorno: vars.dataEntrata, ora: vars.oraEntrata });
           entrataOps.push(createTimbroManual({ 
             pin, 
             tipo: 'ENTRATA', 
@@ -134,7 +134,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       // USCITA: create o update
       if (vars.dataUscita && vars.oraUscita) {
         if (vars.idUscita) {
-          console.log('[HOOK] updating uscita →', { id: vars.idUscita });
+          if (process.env.NODE_ENV === 'development') console.log('[HOOK] updating uscita →', { id: vars.idUscita });
           const giornoLogicoUscita = computeGiornoLogico({
             data: vars.dataUscita,
             ora: vars.oraUscita,
@@ -151,7 +151,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
             }
           }));
         } else {
-          console.log('[HOOK] creating uscita →', { pin, giorno: vars.dataUscita, ora: vars.oraUscita });
+          if (process.env.NODE_ENV === 'development') console.log('[HOOK] creating uscita →', { pin, giorno: vars.dataUscita, ora: vars.oraUscita });
           uscitaOps.push(createTimbroManual({ 
             pin, 
             tipo: 'USCITA', 
@@ -184,7 +184,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       return results;
     },
     onSuccess: async (_results) => {
-      console.log('[HOOK] saveFromModal success, starting refetch');
+      if (process.env.NODE_ENV === 'development') console.log('[HOOK] saveFromModal success, starting refetch');
       
       await refetchAll();
       
@@ -209,7 +209,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
   // Mantieni updateMutation per compatibilità (deprecato)
   const updateMutation = useMutation({
     mutationFn: async (updates: UpdateData) => {
-      console.log('[MODALE] onSave (LEGACY) →', updates);
+      if (process.env.NODE_ENV === 'development') console.log('[MODALE] onSave (LEGACY) →', updates);
       
       // Legacy: non più usato, rimosso per compatibilità
       const entrate: LegacyTimbratura[] = [];
@@ -225,7 +225,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
           ora_locale: `${updates.oraEntrata}:00`,
           giorno_logico: updates.dataEntrata,
         };
-        console.log('[HOOK] updating entrata →', { id: entrata.id, update: entrataUpdate });
+        if (process.env.NODE_ENV === 'development') console.log('[HOOK] updating entrata →', { id: entrata.id, update: entrataUpdate });
         const result = await callUpdateTimbro({ id: entrata.id, updateData: entrataUpdate });
         results.push(result);
       }
@@ -238,7 +238,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
           ora_locale: `${updates.oraUscita}:00`,
           giorno_logico: updates.dataUscita,
         };
-        console.log('[HOOK] updating uscita →', { id: uscita.id, update: uscitaUpdate });
+        if (process.env.NODE_ENV === 'development') console.log('[HOOK] updating uscita →', { id: uscita.id, update: uscitaUpdate });
         const result = await callUpdateTimbro({ id: uscita.id, updateData: uscitaUpdate });
         results.push(result);
       }
@@ -246,7 +246,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       return results;
     },
     onSuccess: async (_results) => {
-      console.log('[HOOK] mutation success, starting refetch');
+      if (process.env.NODE_ENV === 'development') console.log('[HOOK] mutation success, starting refetch');
       
       await refetchAll();
       
@@ -269,11 +269,11 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
 
   const deleteMutation = useMutation({
     mutationFn: async ({ giorno }: { giorno: string }) => {
-      console.log('[HOOK] deleteMutation started →', { pin, giorno });
+      if (process.env.NODE_ENV === 'development') console.log('[HOOK] deleteMutation started →', { pin, giorno });
       
       const result = await deleteTimbratureGiornata({ pin, giorno });
       
-      console.log('[HOOK] deleteMutation completed →', { 
+      if (process.env.NODE_ENV === 'development') console.log('[HOOK] deleteMutation completed →', { 
         pin, 
         giorno, 
         deletedCount: result.deleted_count 
@@ -282,7 +282,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       return result;
     },
     onSuccess: async (result) => {
-      console.log('[HOOK] delete success, starting refetch');
+      if (process.env.NODE_ENV === 'development') console.log('[HOOK] delete success, starting refetch');
       
       // Refetch obbligato di tutte le query attive
       await refetchAll();
@@ -292,7 +292,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
         description: `${result.deleted_count} timbrature eliminate con successo`,
       });
       
-      console.log('[HOOK] delete refetch completed, calling onSuccess');
+      if (process.env.NODE_ENV === 'development') console.log('[HOOK] delete refetch completed, calling onSuccess');
       onSuccess?.();
     },
     onError: (error) => {

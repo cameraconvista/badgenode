@@ -40,22 +40,17 @@ export async function callInsertTimbro({
   client_event_id,
 }: InsertTimbroParams): Promise<InsertTimbroResult> {
   try {
-    console.log('[SERVICE] callInsertTimbro (SERVER ENDPOINT) →', { pin, tipo, client_event_id });
-    
     // Usa il nuovo endpoint server invece della RPC diretta
     const result = await insertTimbroServer({ 
-      pin, 
+      pin: parseInt(pin), 
       tipo: tipo.toLowerCase() as 'entrata'|'uscita' 
     });
-
-    console.log('[SERVICE] insert OK →', { pin, tipo, id: result.data?.id });
     return {
       success: true,
       data: result.data,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Errore sconosciuto';
-    console.log('[SERVICE] insert ERR →', { pin, tipo, error: message });
     return {
       success: false,
       error: message,

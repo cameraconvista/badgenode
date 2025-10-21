@@ -70,19 +70,20 @@ export function useStoricoTimbrature(pin: number) {
   } = useQuery({
     queryKey: storicoQueryKey,
     queryFn: () => {
-      console.log('[STORICO][QUERY] dataset-v5 key=', storicoQueryKey, 'params=', filters, 't=', new Date().toISOString());
       return buildStoricoDataset({ pin: filters.pin, from: filters.dal, to: filters.al });
     },
     enabled: !!dipendente,
   }) as { data: StoricoDatasetV5[]; isLoading: boolean; error: unknown };
   
-  // Log quando i dati cambiano
+  // Effect per monitoraggio dati in development
   useEffect(() => {
-    console.log('[STORICO][DATA] dataset-v5 updated:', { 
-      length: storicoDatasetV5.length, 
-      filters, 
-      timestamp: new Date().toISOString() 
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[STORICO][DATA] dataset-v5 updated:', { 
+        length: storicoDatasetV5.length, 
+        filters, 
+        timestamp: new Date().toISOString() 
+      });
+    }
   }, [storicoDatasetV5, filters]);
 
   if (storicoError) {

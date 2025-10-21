@@ -2,6 +2,7 @@
 // STEP B: Consolidamento server-only - usa solo /api endpoints
 
 import { asError } from '@/lib/safeError';
+import { normalizeError } from '@/lib/normalizeError';
 import { safeFetchJson, safeFetchJsonPost, safeFetchJsonDelete } from '@/lib/safeFetch';
 import type { Utente as DbUtente } from '../../../shared/types/database';
 
@@ -40,7 +41,7 @@ export class UtentiService {
       const response = await safeFetchJson('/api/utenti');
 
       if (!response.success) {
-        throw new Error(response.error || 'Errore durante il recupero degli utenti');
+        throw new Error(normalizeError(response.error) || 'Errore durante il recupero degli utenti');
       }
 
       // Trasformo i dati per compatibilità con l'interfaccia Utente
@@ -66,7 +67,7 @@ export class UtentiService {
       const response = await safeFetchJson('/api/ex-dipendenti');
 
       if (!response.success) {
-        throw new Error(response.error || 'Errore durante il recupero degli ex dipendenti');
+        throw new Error(normalizeError(response.error) || 'Errore durante il recupero degli ex dipendenti');
       }
 
       return response.data || [];
@@ -110,7 +111,7 @@ export class UtentiService {
       const response = await safeFetchJsonPost('/api/utenti', payload);
 
       if (!response.success) {
-        throw new Error(response.error || 'Errore durante la creazione utente');
+        throw new Error(normalizeError(response.error) || 'Errore durante la creazione utente');
       }
 
       if (!response.data) {
@@ -174,7 +175,7 @@ export class UtentiService {
       const response = await safeFetchJsonDelete(`/api/utenti/${pin}`);
 
       if (!response.success) {
-        throw new Error(response.error || 'Errore durante eliminazione utente');
+        throw new Error(normalizeError(response.error) || 'Errore durante eliminazione utente');
       }
     } catch (error) {
       throw asError(error);

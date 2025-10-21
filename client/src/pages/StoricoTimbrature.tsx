@@ -118,14 +118,10 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
             timbrature={timbratureGiorno}
             dipendente={dipendente}
             onSave={async (updates) => {
-              console.log('[PAGE] onSave called, awaiting saveFromModal');
               await saveFromModal.mutateAsync(updates);
-              console.log('[PAGE] saveFromModal completed');
             }}
             onDelete={async (params) => {
-              console.log('[PAGE] onDelete called, awaiting mutation');
               await deleteMutation.mutateAsync(params);
-              console.log('[PAGE] delete mutation completed');
             }}
             isLoading={saveFromModal.isPending || deleteMutation.isPending}
           />

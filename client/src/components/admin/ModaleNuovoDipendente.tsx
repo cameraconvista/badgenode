@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { UtenteInput, UtentiService } from '@/services/utenti.service';
+import { normalizeUserError } from '@/lib/normalizeError';
 import FormNuovoDipendente from './FormNuovoDipendente';
 
 interface ModaleNuovoDipendenteProps {
@@ -109,18 +110,7 @@ export default function ModaleNuovoDipendente({
       await onSave(formData);
       onClose();
     } catch (_error) {
-      const err = _error as ApiError;
-      let msg = 'Errore durante il salvataggio';
-      if (err && typeof err === 'object') {
-        if (err.code === 'READ_ONLY_MODE_ACTIVE') {
-          msg = 'Modalità sola lettura attiva';
-        } else if (err.code === 'VALIDATION_ERROR') {
-          const firstIssue = Array.isArray(err.issues) && err.issues.length > 0 ? String(err.issues[0]) : '';
-          msg = firstIssue || err.message || msg;
-        } else if (typeof err.message === 'string' && err.message) {
-          msg = err.message;
-        }
-      }
+      const msg = normalizeUserError(_error);
       setErrors({ general: msg });
     } finally {
       setIsLoading(false);
@@ -149,9 +139,8 @@ export default function ModaleNuovoDipendente({
         setErrors((prev) => ({ ...prev, pin: `PIN ${pin} già in uso` }));
       }
     } catch (_error) {
-      void _error;
-      // Errore imprevisto - stato neutro
-      setErrors((prev) => ({ ...prev, pin: 'Impossibile verificare PIN' }));
+      const msg = normalizeUserError(_error);
+      setErrors((prev) => ({ ...prev, pin: msg }));
     }
   };
 

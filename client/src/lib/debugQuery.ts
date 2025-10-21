@@ -6,7 +6,8 @@ export function logStoricoQueries(qc: QueryClient, context = '') {
   const legacyEntries = qc.getQueriesData({ queryKey: ['turni-completi-legacy'] });
   const datasetEntries = qc.getQueriesData({ queryKey: ['storico-dataset-v5'] });
   
-  console.log(`[RQ-DEBUG] ${context} storico queries:`, {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[RQ-DEBUG] ${context} legacy queries:`, {
     storico: entries.map(([key, data]) => ({ 
       key, 
       hasData: !!data, 
@@ -23,7 +24,8 @@ export function logStoricoQueries(qc: QueryClient, context = '') {
       hasData: !!data, 
       len: Array.isArray(data) ? data.length : undefined 
     }))
-  });
+    });
+  }
 }
 
 export function logActiveQueries(qc: QueryClient, context = '') {
