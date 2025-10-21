@@ -10,6 +10,13 @@ interface ModaleNuovoDipendenteProps {
   onSave: (data: UtenteInput) => Promise<void>;
 }
 
+// Tipo per errori API (eliminare any)
+interface ApiError {
+  code?: string;
+  message?: string;
+  issues?: unknown[];
+}
+
 export default function ModaleNuovoDipendente({
   isOpen,
   onClose,
@@ -102,7 +109,7 @@ export default function ModaleNuovoDipendente({
       await onSave(formData);
       onClose();
     } catch (_error) {
-      const err: any = _error as any;
+      const err = _error as ApiError;
       let msg = 'Errore durante il salvataggio';
       if (err && typeof err === 'object') {
         if (err.code === 'READ_ONLY_MODE_ACTIVE') {

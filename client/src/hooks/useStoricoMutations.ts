@@ -3,12 +3,41 @@ import { useToast } from '@/hooks/use-toast';
 import { callUpdateTimbro, deleteTimbratureGiornata, createTimbroManual } from '@/services/timbratureRpc';
 import { logStoricoQueries, logActiveQueries } from '@/lib/debugQuery';
 import { computeGiornoLogico } from '@/lib/time';
+import type { Timbratura } from '../../../shared/types/database';
 
 interface UpdateData {
   dataEntrata: string;
   oraEntrata: string;
   dataUscita: string;
   oraUscita: string;
+}
+
+// Tipi per mutations (eliminare any types)
+interface UpsertTimbroInput {
+  pin: number;
+  tipo: 'entrata' | 'uscita';
+  giorno: string;
+  ora: string;
+  anchorDate?: string;
+}
+
+interface UpsertTimbroResult {
+  success: boolean;
+  data?: Timbratura;
+  error?: string;
+}
+
+interface DeleteTimbroInput {
+  pin: number;
+  giorno: string;
+}
+
+// Tipi legacy per compatibilità (deprecati)
+interface LegacyTimbratura {
+  id: number;
+  tipo: 'entrata' | 'uscita';
+  data_locale: string;
+  ora_locale: string;
 }
 
 export function useStoricoMutations(params: { pin: number; dal: string; al: string }, onSuccess?: () => void) {
@@ -183,8 +212,8 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       console.log('[MODALE] onSave (LEGACY) →', updates);
       
       // Legacy: non più usato, rimosso per compatibilità
-      const entrate: any[] = [];
-      const uscite: any[] = [];
+      const entrate: LegacyTimbratura[] = [];
+      const uscite: LegacyTimbratura[] = [];
 
       const results = [];
 
