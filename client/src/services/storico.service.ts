@@ -2,6 +2,7 @@
 // STEP B: Consolidamento server-only - usa solo /api endpoints
 
 import { safeFetchJson } from '@/lib/safeFetch';
+import { isError, isSuccess } from '@/types/api';
 import { expandDaysRange } from '@/lib/time';
 import type { Timbratura, StoricoParams } from '@/types/timbrature';
 import type { TurnoFull, StoricoDatasetV5 } from './storico/types';
@@ -27,9 +28,9 @@ export async function getStoricoByPin(params: StoricoParams): Promise<Timbratura
   if (from) queryParams.set('dal', from);
   if (to) queryParams.set('al', to);
 
-  const response = await safeFetchJson(`/api/storico?${queryParams.toString()}`);
+  const response = await safeFetchJson<Timbratura[]>(`/api/storico?${queryParams.toString()}`);
   
-  if (!response.success) {
+  if (isError(response)) {
     throw new Error(response.error || 'Errore durante il recupero dello storico');
   }
 

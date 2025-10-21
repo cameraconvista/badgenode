@@ -6,8 +6,9 @@
  * - Prevenzione "Unexpected end of JSON input"
  */
 import { getApiBaseUrl } from './apiBase';
+import type { ApiResponse } from '../types/api';
 
-// Tipi per eliminare any types
+// Tipi per eliminare any types (legacy - mantenuti per compatibilità interna)
 interface ErrorResponse {
   code?: string;
   message?: string;
@@ -26,9 +27,7 @@ interface SuccessResponse {
   success: true;
 }
 
-type ApiResponse = Record<string, unknown> | SuccessResponse;
-
-export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit): Promise<ApiResponse> {
+export async function safeFetchJson<T = unknown>(input: RequestInfo | URL, init?: RequestInit): Promise<ApiResponse<T>> {
   let finalInput: RequestInfo | URL = input;
   if (typeof input === 'string' && input.startsWith('/api/')) {
     finalInput = `${getApiBaseUrl()}${input}`;
@@ -56,7 +55,7 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
       // 4xx → warning (DEV) e ritorno strutturato senza eccezione (non bloccare tabelle)
       if (res.status >= 400 && res.status < 500) {
         if (import.meta.env.DEV) console.warn('[safeFetchJson] 4xx:', structured);
-        return { success: false, ...structured } as unknown as ApiResponse;
+        return { success: false, error: structured.message, code: structured.code } as ApiResponse<T>;
       }
       // 5xx → errore bloccante
       throw structured;
@@ -65,7 +64,7 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
     const msg = typeof errBody === 'string' ? errBody : (errBody as ErrorResponse)?.error || `HTTP ${res.status}`;
     if (res.status >= 400 && res.status < 500) {
       if (import.meta.env.DEV) console.warn('[safeFetchJson] 4xx(text):', msg);
-      return { success: false, message: msg, status: res.status } as unknown as ApiResponse;
+      return { success: false, error: msg, status: res.status } as ApiResponse<T>;
     }
     const e = new Error(msg) as Error & { status: number };
     e.status = res.status;
@@ -74,12 +73,12 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
   
   // 204 o body vuoto → torna oggetto minimo
   if (res.status === 204) {
-    return { success: true };
+    return { success: true, data: null as T };
   }
   
   // non JSON → non tentare parse
   if (!contentType.includes('application/json')) {
-    return { success: true };
+    return { success: true, data: null as T };
   }
   
   // JSON valido
@@ -87,16 +86,16 @@ export async function safeFetchJson(input: RequestInfo | URL, init?: RequestInit
     return await res.json(); 
   } catch { 
     // evita "Unexpected end of JSON input"
-    return { success: true }; 
+    return { success: true, data: null as T }; 
   }
 }
 
 /**
  * Wrapper per POST JSON con headers automatici
  */
-export async function safeFetchJsonPost(url: string, body: Record<string, unknown>, options?: RequestInit): Promise<ApiResponse> {
+export async function safeFetchJsonPost<T = unknown>(url: string, body: Record<string, unknown>, options?: RequestInit): Promise<ApiResponse<T>> {
   const fullUrl = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
-  return safeFetchJson(fullUrl, {
+  return safeFetchJson<T>(fullUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -110,9 +109,9 @@ export async function safeFetchJsonPost(url: string, body: Record<string, unknow
 /**
  * Wrapper per PATCH JSON con headers automatici
  */
-export async function safeFetchJsonPatch(url: string, body: Record<string, unknown>, options?: RequestInit): Promise<ApiResponse> {
+export async function safeFetchJsonPatch<T = unknown>(url: string, body: Record<string, unknown>, options?: RequestInit): Promise<ApiResponse<T>> {
   const fullUrl = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
-  return safeFetchJson(fullUrl, {
+  return safeFetchJson<T>(fullUrl, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -126,10 +125,10 @@ export async function safeFetchJsonPatch(url: string, body: Record<string, unkno
 /**
  * Wrapper per DELETE con query params
  */
-export async function safeFetchJsonDelete(url: string, params?: Record<string, string>, options?: RequestInit): Promise<ApiResponse> {
+export async function safeFetchJsonDelete<T = unknown>(url: string, params?: Record<string, string>, options?: RequestInit): Promise<ApiResponse<T>> {
   const base = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
   const urlWithParams = params ? `${base}?${new URLSearchParams(params).toString()}` : base;
-  return safeFetchJson(urlWithParams, {
+  return safeFetchJson<T>(urlWithParams, {
     method: 'DELETE',
     ...options,
   });

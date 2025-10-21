@@ -4,6 +4,7 @@
 import { asError } from '@/lib/safeError';
 import { normalizeError } from '@/lib/normalizeError';
 import { safeFetchJson, safeFetchJsonPost, safeFetchJsonDelete } from '@/lib/safeFetch';
+import { isError, isSuccess } from '@/types/api';
 import type { Utente as DbUtente } from '../../../shared/types/database';
 
 export interface Utente {
@@ -11,12 +12,14 @@ export interface Utente {
   pin: number;
   nome: string;
   cognome: string;
-  email?: string;
-  telefono?: string;
   ore_contrattuali: number;
-  descrizione_contratto?: string;
+  email: string | null;
+  telefono: string | null;
   created_at: string;
-  updated_at: string;
+  note: string | null;
+  // campi opzionali reali
+  descrizione_contratto?: string | null;
+  updated_at?: string;
 }
 
 export interface ExDipendente extends Utente {
@@ -38,9 +41,9 @@ export class UtentiService {
   // Ottieni lista utenti attivi
   static async getUtenti(): Promise<Utente[]> {
     try {
-      const response = await safeFetchJson('/api/utenti');
+      const response = await safeFetchJson<DbUtente[]>('/api/utenti');
 
-      if (!response.success) {
+      if (isError(response)) {
         throw new Error(normalizeError(response.error) || 'Errore durante il recupero degli utenti');
       }
 
@@ -50,8 +53,8 @@ export class UtentiService {
         id: utente.id || utente.pin?.toString() || '', // Usa ID esistente o PIN come fallback
         email: utente.email || '', // Mantieni email se presente
         telefono: utente.telefono || '', // Mantieni telefono se presente
-        descrizione_contratto: utente.descrizione_contratto || '', // Campo opzionale
-        updated_at: utente.updated_at || utente.created_at, // Usa updated_at se presente
+        descrizione_contratto: utente.descrizione_contratto ?? null, // Campo opzionale
+        updated_at: utente.updated_at ?? utente.created_at, // Usa updated_at se presente
       }));
 
       return utentiCompleti;
@@ -64,13 +67,17 @@ export class UtentiService {
   // Ottieni lista ex-dipendenti
   static async getExDipendenti(): Promise<ExDipendente[]> {
     try {
-      const response = await safeFetchJson('/api/ex-dipendenti');
+      const response = await safeFetchJson<ExDipendente[]>('/api/ex-dipendenti');
 
-      if (!response.success) {
+      if (isError(response)) {
         throw new Error(normalizeError(response.error) || 'Errore durante il recupero degli ex dipendenti');
       }
 
-      return response.data || [];
+      if (isSuccess(response)) {
+        return response.data;
+      }
+
+      return [];
     } catch (error) {
       throw asError(error);
     }
@@ -108,9 +115,9 @@ export class UtentiService {
         ore_contrattuali: input.ore_contrattuali || 8.0,
       };
 
-      const response = await safeFetchJsonPost('/api/utenti', payload);
+      const response = await safeFetchJsonPost<DbUtente>('/api/utenti', payload);
 
-      if (!response.success) {
+      if (isError(response)) {
         throw new Error(normalizeError(response.error) || 'Errore durante la creazione utente');
       }
 
@@ -124,10 +131,11 @@ export class UtentiService {
         pin: response.data.pin,
         nome: response.data.nome,
         cognome: response.data.cognome,
-        email: input.email || '',
-        telefono: input.telefono || '',
+        email: input.email || null,
+        telefono: input.telefono || null,
         ore_contrattuali: input.ore_contrattuali || 8,
-        descrizione_contratto: input.descrizione_contratto || '',
+        note: null,
+        descrizione_contratto: input.descrizione_contratto || null,
         created_at: response.data.created_at,
         updated_at: response.data.created_at,
       };
@@ -172,9 +180,9 @@ export class UtentiService {
         throw new Error('PIN non valido');
       }
 
-      const response = await safeFetchJsonDelete(`/api/utenti/${pin}`);
+      const response = await safeFetchJsonDelete<void>(`/api/utenti/${pin}`);
 
-      if (!response.success) {
+      if (isError(response)) {
         throw new Error(normalizeError(response.error) || 'Errore durante eliminazione utente');
       }
     } catch (error) {
@@ -184,10 +192,9 @@ export class UtentiService {
 
   static async isPinAvailable(pin: number): Promise<{ available: boolean; error?: string }> {
     try {
-      const response = await safeFetchJson(`/api/utenti/pin/${pin}`);
+      const response = await safeFetchJson<{ exists: boolean }>(`/api/utenti/pin/${pin}`);
       
-      if (!response.success) {
-        // Errore di rete/401 NON significa "PIN già in uso"
+      if (isError(response)) {
         return { available: true, error: 'Impossibile verificare PIN' };
       }
       

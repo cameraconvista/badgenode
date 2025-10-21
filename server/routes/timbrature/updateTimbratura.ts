@@ -1,6 +1,7 @@
 // PATCH /api/timbrature/:id - Aggiorna timbratura esistente
 import { Router, Request, Response } from 'express';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
+import type { TimbratureUpdate } from '../../../shared/types/database';
 
 const router = Router();
 
@@ -53,9 +54,11 @@ router.patch('/:id', async (req: Request, res: Response) => {
     console.info('[SERVER] Record esistente →', existing);
 
     // Esegui UPDATE con SERVICE_ROLE_KEY (bypassa RLS)
+    const patch: TimbratureUpdate = updateData as TimbratureUpdate;
+    // TODO(ts): replace with exact Supabase types
     const updateResult = await supabaseAdmin!
       .from('timbrature')
-      .update(updateData)
+      .update(patch as any)
       .eq('id', id)
       .select();
     

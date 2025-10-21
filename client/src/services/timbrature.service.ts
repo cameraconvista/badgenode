@@ -11,6 +11,7 @@ import { buildBaseItem, enqueue } from '@/offline/queue';
 import { runSyncOnce } from '@/offline/syncRunner';
 import { asError } from '@/lib/safeError';
 import { safeFetchJson } from '@/lib/safeFetch';
+import { isError } from '@/types/api';
 import type { TimbraturaCanon, TimbratureRangeParams } from '../../../shared/types/timbrature';
 
 export interface TimbratureFilters {
@@ -29,15 +30,15 @@ export class TimbratureService {
         // Offline: non bloccare la coda offline
         return true;
       }
-      const resp = await safeFetchJson(`/api/pin/validate?pin=${encodeURIComponent(pin)}`);
+      const resp = await safeFetchJson<{ ok: boolean }>(`/api/pin/validate?pin=${encodeURIComponent(pin)}`);
       // 4xx: safeFetchJson returns { success:false, status, message }
-      if ((resp as any)?.success === false) {
-        if ((resp as any)?.status === 404 && import.meta.env.DEV) {
+      if (isError(resp)) {
+        if (import.meta.env.DEV) {
           console.debug('[pin] PIN non registrato');
         }
         return false;
       }
-      return (resp as any)?.success === true && (resp as any)?.ok === true;
+      return resp.data?.ok === true;
     } catch (e) {
       // network/5xx → considerare non valido per ora (non bloccare crash UI)
       if (import.meta.env.DEV) console.debug('[pin] validate error', (e as Error).message);

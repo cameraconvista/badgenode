@@ -15,6 +15,9 @@ export interface Database {
           telefono: string | null;
           created_at: string; // timestamp
           note: string | null;
+          // campi opzionali per compatibilità
+          descrizione_contratto?: string | null;
+          updated_at?: string | null;
         };
         Insert: {
           id?: string;

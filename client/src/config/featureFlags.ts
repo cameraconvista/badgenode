@@ -18,6 +18,9 @@ export function isOfflineQueueEnabled(): boolean {
   return FEATURE_OFFLINE_QUEUE === true;
 }
 
+// Alias per compatibilità con OfflineBadge.tsx
+export const isOfflineEnabled = isOfflineQueueEnabled;
+
 export const FEATURE_FLAGS = {
   offlineQueue: FEATURE_OFFLINE_QUEUE,
   offlineBadge: FEATURE_OFFLINE_BADGE,

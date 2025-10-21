@@ -2,6 +2,7 @@
 import { Router, Request, Response } from 'express';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
 import { computeGiornoLogico } from '../../shared/time/computeGiornoLogico';
+import type { TimbratureInsert, Timbratura } from '../../../shared/types/database';
 import { validateAlternanza } from './validation';
 
 const router = Router();
@@ -117,17 +118,20 @@ router.post('/', async (req: Request, res: Response) => {
     });
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
+    const dto: TimbratureInsert = {
+      pin: pinNum,
+      tipo,
+      ts_order: now.toISOString(),
+      created_at: now.toISOString(),
+      giorno_logico: giorno_logico,
+      data_locale: dataLocale,
+      ora_locale: oraLocale,
+    };
+
+    // TODO(ts): replace with exact Supabase types
     const insertResult = await supabaseAdmin!
       .from('timbrature')
-      .insert([{
-        pin: pinNum,
-        tipo,
-        ts_order: now.toISOString(),
-        created_at: now.toISOString(),
-        giorno_logico: giorno_logico,
-        data_locale: dataLocale,
-        ora_locale: oraLocale,
-      }])
+      .insert([dto as any])
       .select('*')
       .single();
     
@@ -142,7 +146,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     console.info('[SERVER] INSERT success →', { 
-      id: data?.id, 
+      id: (data as Timbratura)?.id, 
       pin: pinNum, 
       tipo, 
       giorno_logico 

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
+import { isError } from '@/types/api';
 import { callUpdateTimbro, deleteTimbratureGiornata, createTimbroManual } from '@/services/timbratureRpc';
 import { logStoricoQueries, logActiveQueries } from '@/lib/debugQuery';
 import { computeGiornoLogico } from '@/lib/time';
@@ -276,7 +277,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       if (process.env.NODE_ENV === 'development') console.log('[HOOK] deleteMutation completed →', { 
         pin, 
         giorno, 
-        deletedCount: result.deleted_count 
+        deletedCount: isError(result) ? 0 : result.data.deleted_count 
       });
       
       return result;
@@ -289,7 +290,7 @@ export function useStoricoMutations(params: { pin: number; dal: string; al: stri
       
       toast({
         title: 'Timbrature eliminate',
-        description: `${result.deleted_count} timbrature eliminate con successo`,
+        description: `${isError(result) ? 0 : result.data.deleted_count} timbrature eliminate con successo`,
       });
       
       if (process.env.NODE_ENV === 'development') console.log('[HOOK] delete refetch completed, calling onSuccess');

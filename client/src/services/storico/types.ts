@@ -13,7 +13,7 @@ export type TurnoGiornaliero = {
 // Tipi per viste v5
 export type SessioneV5 = {
   entrata_id: number;
-  entrata_ore: string; // HH:MM:SS
+  entrata_ore: string | null; // HH:MM:SS o null per compatibilità
   uscita_id: number | null;
   uscita_ore: string | null;
   ore_sessione: number;
