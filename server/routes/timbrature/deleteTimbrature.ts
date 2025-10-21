@@ -1,6 +1,7 @@
 // DELETE /api/timbrature/day - Elimina tutte le timbrature di un giorno logico
 import { Router, Request, Response } from 'express';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
+import type { Timbratura } from '../../../shared/types/database';
 
 const router = Router();
 
@@ -68,7 +69,7 @@ router.delete('/day', async (req: Request, res: Response) => {
     }
 
     const deletedCount = data?.length || 0;
-    const deletedIds = data?.map((r: any) => r.id) || [];
+    const deletedIds = data?.map((r: Timbratura) => r.id) || [];
 
     console.info('[SERVER] DELETE success →', { 
       pin: pinNum, 

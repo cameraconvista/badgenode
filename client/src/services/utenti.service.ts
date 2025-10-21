@@ -3,6 +3,7 @@
 
 import { asError } from '@/lib/safeError';
 import { safeFetchJson, safeFetchJsonPost, safeFetchJsonDelete } from '@/lib/safeFetch';
+import type { Utente as DbUtente } from '../../../shared/types/database';
 
 export interface Utente {
   id: string;
@@ -43,7 +44,7 @@ export class UtentiService {
       }
 
       // Trasformo i dati per compatibilità con l'interfaccia Utente
-      const utentiCompleti: Utente[] = (response.data || []).map((utente: any) => ({
+      const utentiCompleti: Utente[] = (response.data || []).map((utente: DbUtente) => ({
         ...utente,
         id: utente.id || utente.pin?.toString() || '', // Usa ID esistente o PIN come fallback
         email: utente.email || '', // Mantieni email se presente

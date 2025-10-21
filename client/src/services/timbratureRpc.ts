@@ -2,6 +2,7 @@
 // Centralizza tutte le chiamate verso insert_timbro_v2
 
 import { safeFetchJsonPost, safeFetchJsonPatch, safeFetchJsonDelete } from '@/lib/safeFetch';
+import type { Timbratura, TimbratureUpdate } from '../../../shared/types/database';
 
 // reserved: api-internal (non rimuovere senza migrazione)
 // import type { TimbraturePayload, RpcResult } from '@/types/rpc';
@@ -20,7 +21,7 @@ export interface InsertTimbroResult {
 
 export interface UpdateTimbroParams {
   id: number;
-  updateData: Record<string, any>;
+  updateData: Partial<TimbratureUpdate>;
 }
 
 export interface UpdateTimbroResult {
@@ -145,7 +146,7 @@ export async function deleteTimbratureGiornata({ pin, giorno }: { pin: number; g
  * Aggiorna timbratura esistente via endpoint server
  * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
  */
-export async function callUpdateTimbro({ id, updateData }: { id: number; updateData: Record<string, any> }) {
+export async function callUpdateTimbro({ id, updateData }: { id: number; updateData: Partial<TimbratureUpdate> }) {
   console.info('[SERVICE] callUpdateTimbro (ENDPOINT) →', { id, updateData });
   
   try {
