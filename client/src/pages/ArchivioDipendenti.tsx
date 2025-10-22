@@ -10,6 +10,7 @@ import { UtentiService, Utente, UtenteInput } from '@/services/utenti.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeTimbrature } from '@/lib/realtime';
 import { invalidateUtenti, debounce } from '@/state/timbrature.cache';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ArchivioDipendenti() {
   const [, setLocation] = useLocation();
@@ -21,6 +22,7 @@ export default function ArchivioDipendenti() {
   const [utenteSelezionato, setUtenteSelezionato] = useState<Utente | null>(null);
   const [isEliminaLoading, setIsEliminaLoading] = useState(false);
   const { isAdmin } = useAuth();
+  const queryClient = useQueryClient();
   useEffect(() => {
     if (!isAdmin) return;
     const debouncedInvalidate = debounce(() => {
@@ -66,7 +68,9 @@ export default function ArchivioDipendenti() {
       if (result.success) {
         // Ricarica le liste utenti e ex-dipendenti
         await loadUtenti();
-        // TODO(BUSINESS): Invalidare anche query ex-dipendenti se necessario
+        
+        // Invalida cache ex-dipendenti per aggiornamento immediato
+        queryClient.invalidateQueries({ queryKey: ['ex-dipendenti'] });
         
         // Toast di successo
         console.log('Dipendente archiviato con successo');

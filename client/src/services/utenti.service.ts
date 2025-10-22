@@ -23,7 +23,7 @@ export interface Utente {
 }
 
 export interface ExDipendente extends Utente {
-  archiviato_at: string;
+  archiviato_il: string;
   motivo_archiviazione?: string;
 }
 
@@ -50,7 +50,7 @@ export class UtentiService {
       // Trasformo i dati per compatibilità con l'interfaccia Utente
       const utentiCompleti: Utente[] = (response.data || []).map((utente: DbUtente) => ({
         ...utente,
-        id: utente.id || utente.pin?.toString() || '', // Usa ID esistente o PIN come fallback
+        id: utente.pin?.toString() || '', // Usa PIN come identificativo (database non ha UUID)
         email: utente.email || '', // Mantieni email se presente
         telefono: utente.telefono || '', // Mantieni telefono se presente
         descrizione_contratto: utente.descrizione_contratto ?? null, // Campo opzionale

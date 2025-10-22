@@ -24,8 +24,8 @@ export default function ExDipendentiTable({
   // Ordina ex-dipendenti per data archiviazione
   const sortedExDipendenti = useMemo(() => {
     return [...exDipendenti].sort((a, b) => {
-      const dateA = new Date(a.archiviato_at).getTime();
-      const dateB = new Date(b.archiviato_at).getTime();
+      const dateA = new Date(a.archiviato_il).getTime();
+      const dateB = new Date(b.archiviato_il).getTime();
       
       if (sortOrder === 'asc') {
         return dateA - dateB;
@@ -140,7 +140,7 @@ export default function ExDipendentiTable({
                     </td>
                     <td className="bn-cell px-4 text-center">
                       <span className="font-medium text-sm text-gray-300">
-                        {new Date(exDipendente.archiviato_at).toLocaleDateString('it-IT')}
+                        {new Date(exDipendente.archiviato_il).toLocaleDateString('it-IT')}
                       </span>
                     </td>
                     <td className="bn-cell px-4">

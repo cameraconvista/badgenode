@@ -22,33 +22,23 @@ router.get('/api/utenti', async (req, res) => {
       try {
         const { data, error } = await supabaseAdmin
           .from('utenti')
-          .select('*')
+          .select('pin, nome, cognome, created_at')
           .order('pin');
 
         if (error && error.message.includes('Invalid API key')) {
           console.warn('[API] Development mode: using mock data for utenti');
           const mockUtenti = [
             {
-              id: 'mock-uuid-1',
               pin: 1,
               nome: 'Mario',
               cognome: 'Rossi',
-              ore_contrattuali: 8.0,
-              email: 'mario.rossi@test.dev',
-              telefono: '123-456-7890',
-              created_at: new Date().toISOString(),
-              note: 'mock_dev_data'
+              created_at: new Date().toISOString()
             },
             {
-              id: 'mock-uuid-2', 
               pin: 2,
               nome: 'Luigi',
               cognome: 'Verdi',
-              ore_contrattuali: 8.0,
-              email: 'luigi.verdi@test.dev',
-              telefono: '098-765-4321',
-              created_at: new Date().toISOString(),
-              note: 'mock_dev_data'
+              created_at: new Date().toISOString()
             }
           ];
           return res.json({
@@ -77,7 +67,7 @@ router.get('/api/utenti', async (req, res) => {
       // Production mode: strict Supabase connection
       const { data, error } = await supabaseAdmin
         .from('utenti')
-        .select('*')
+        .select('pin, nome, cognome, created_at')
         .order('pin');
 
       if (error) {
