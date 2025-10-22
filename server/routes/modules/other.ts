@@ -378,4 +378,110 @@ router.delete('/api/utenti/:pin', async (req, res) => {
   }
 });
 
+// POST /api/utenti/:id/archive - Archivia utente con doppia conferma
+router.post('/api/utenti/:id/archive', async (req, res) => {
+  const requestId = (req.headers['x-request-id'] as string) || `${Date.now().toString(36)}-${Math.random().toString(16).slice(2)}`;
+  const { id } = req.params;
+  const { reason } = req.body;
+  
+  try {
+    if (!supabaseAdmin) {
+      return res.status(503).json({
+        success: false,
+        error: 'Servizio admin non disponibile - configurazione Supabase mancante',
+        code: 'SERVICE_UNAVAILABLE'
+      });
+    }
+
+    // Validazione ID utente
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: 'ID utente obbligatorio',
+        code: 'MISSING_PARAMS'
+      });
+    }
+
+    // Verifica che l'utente esista e sia attivo
+    const { data: utente, error: userError } = await supabaseAdmin
+      .from('utenti')
+      .select('pin, nome, cognome, stato')
+      .eq('id', id)
+      .single();
+
+    if (userError || !utente) {
+      return res.status(404).json({
+        success: false,
+        error: 'Utente non trovato',
+        code: 'USER_NOT_FOUND'
+      });
+    }
+
+    if (utente.stato === 'archiviato') {
+      return res.status(409).json({
+        success: false,
+        error: 'Utente già archiviato',
+        code: 'ALREADY_ARCHIVED'
+      });
+    }
+
+    // Pre-check: verifica sessioni aperte (timbrature senza uscita)
+    const { data: sessioneAperta, error: sessionError } = await supabaseAdmin
+      .from('timbrature')
+      .select('id, tipo, data, ore')
+      .eq('pin', utente.pin)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (sessionError) {
+      console.warn(`[API][archive][${requestId}] Error checking sessions:`, sessionError.message);
+    }
+
+    if (sessioneAperta && sessioneAperta.length > 0 && sessioneAperta[0].tipo === 'entrata') {
+      return res.status(409).json({
+        success: false,
+        error: 'Impossibile archiviare: sessione timbratura aperta',
+        code: 'OPEN_SESSION'
+      });
+    }
+
+    // Archiviazione in transazione
+    const now = new Date().toISOString();
+    const { error: archiveError } = await supabaseAdmin
+      .from('utenti')
+      .update({
+        stato: 'archiviato',
+        archived_at: now,
+        archived_by: 'admin', // TODO(BUSINESS): Implementare auth admin
+        archive_reason: reason || null,
+        pin: null // PIN liberato per riuso
+      })
+      .eq('id', id);
+
+    if (archiveError) {
+      console.error(`[API][archive][${requestId}] Archive failed:`, archiveError.message);
+      return res.status(500).json({
+        success: false,
+        error: 'Archiviazione non riuscita. Riprova.',
+        code: 'ARCHIVE_FAILED'
+      });
+    }
+
+    console.log(`[API][archive][${requestId}] User archived: ${utente.nome} ${utente.cognome} (PIN ${utente.pin})`);
+    
+    res.json({
+      success: true,
+      message: 'Dipendente archiviato con successo'
+    });
+
+  } catch (error) {
+    console.error(`[API][archive][${requestId}] Error:`, error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Errore interno',
+      code: 'INTERNAL_ERROR'
+    });
+  }
+});
+
 export default router;

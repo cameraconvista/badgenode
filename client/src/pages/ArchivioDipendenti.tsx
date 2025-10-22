@@ -59,7 +59,42 @@ export default function ArchivioDipendenti() {
     setUtenteSelezionato(utente);
     setShowModaleModifica(true);
   };
-  const handleArchivia = async (_id: string) => { void _id; };
+  const handleArchivia = async (id: string, reason?: string) => {
+    try {
+      const result = await UtentiService.archiveUtente(id, { reason });
+      
+      if (result.success) {
+        // Ricarica le liste utenti e ex-dipendenti
+        await loadUtenti();
+        // TODO(BUSINESS): Invalidare anche query ex-dipendenti se necessario
+        
+        // Toast di successo
+        console.log('Dipendente archiviato con successo');
+      } else {
+        // Gestione errori con messaggi specifici
+        const errorMessage = getErrorMessage(result.error?.code);
+        console.error('Errore archiviazione:', errorMessage);
+        // TODO(BUSINESS): Implementare toast di errore
+      }
+    } catch (error) {
+      console.error('Errore archiviazione:', error);
+      // TODO(BUSINESS): Implementare toast di errore generico
+    }
+  };
+
+  // Messaggi d'errore specifici per codici
+  const getErrorMessage = (code?: string): string => {
+    switch (code) {
+      case 'OPEN_SESSION':
+        return 'Impossibile archiviare: sessione timbratura aperta.';
+      case 'ALREADY_ARCHIVED':
+        return 'Utente già archiviato.';
+      case 'ARCHIVE_FAILED':
+        return 'Archiviazione non riuscita. Riprova.';
+      default:
+        return 'Errore durante l\'archiviazione.';
+    }
+  };
   const handleEliminaClick = (utente: Utente) => {
     setUtenteSelezionato(utente);
     setShowModaleElimina(true);

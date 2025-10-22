@@ -206,4 +206,33 @@ export class UtentiService {
       return { available: true, error: 'Errore di connessione' };
     }
   }
+
+  // Archivia utente con motivo opzionale
+  static async archiveUtente(userId: string, payload: { reason?: string }): Promise<{ success: boolean; error?: { code: string; message: string } }> {
+    try {
+      const response = await safeFetchJsonPost<{ success: boolean; message: string }>(`/api/utenti/${userId}/archive`, payload);
+
+      if (isError(response)) {
+        return {
+          success: false,
+          error: {
+            code: response.code || 'ARCHIVE_FAILED',
+            message: normalizeError(response.error) || 'Archiviazione non riuscita. Riprova.'
+          }
+        };
+      }
+
+      return { success: true };
+    } catch (error) {
+      const err = asError(error);
+      console.error('[BadgeNode] Errore archiviazione utente:', err.message);
+      return {
+        success: false,
+        error: {
+          code: 'ARCHIVE_FAILED',
+          message: 'Archiviazione non riuscita. Riprova.'
+        }
+      };
+    }
+  }
 }

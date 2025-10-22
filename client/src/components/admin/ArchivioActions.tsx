@@ -7,7 +7,7 @@ import { ArchiviaDialog } from './ConfirmDialogs';
 interface ArchivioActionsProps {
   utente: Utente;
   onModifica: (utente: Utente) => void;
-  onArchivia: (id: string) => Promise<void>;
+  onArchivia: (id: string, reason?: string) => Promise<void>;
   onElimina: (utente: Utente) => void;
 }
 
@@ -24,10 +24,10 @@ export default function ArchivioActions({
     onModifica(utente);
   };
 
-  const handleArchivia = async () => {
+  const handleArchivia = async (reason?: string) => {
     setIsLoading(true);
     try {
-      await onArchivia(utente.id);
+      await onArchivia(utente.id, reason);
       setShowArchiviaDialog(false);
     } catch (_error) {
       void _error;
