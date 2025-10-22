@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Users } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import ExDipendentiTable from '@/components/admin/ExDipendentiTable';
 import { useAuth } from '@/contexts/AuthContext';
 import { useExDipendentiQuery } from '@/hooks/useExDipendenti';
@@ -75,19 +75,6 @@ export default function ExDipendenti() {
               Archivio
             </Button>
             
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  // TODO(BUSINESS): Implementare esportazione completa
-                  console.log('Esporta tutti ex-dipendenti');
-                }}
-                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
-              >
-                <Users className="w-4 h-4" />
-                Esporta Tutti
-              </Button>
-            </div>
           </div>
         </div>
       </div>
