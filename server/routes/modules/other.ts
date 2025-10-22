@@ -457,6 +457,18 @@ router.post('/api/utenti/:id/archive', async (req, res) => {
       });
     }
 
+    // Rimuove l'utente dalla tabella utenti attivi
+    const { error: deleteError } = await supabaseAdmin
+      .from('utenti')
+      .delete()
+      .eq('pin', id);
+
+    if (deleteError) {
+      console.error(`[API][archive][${requestId}] Delete from utenti failed:`, deleteError.message);
+      // Non blocchiamo l'operazione se il delete fallisce, l'utente è già archiviato
+      console.warn(`[API][archive][${requestId}] User archived but not removed from utenti table`);
+    }
+
     console.log(`[API][archive][${requestId}] User archived: ${utente.nome} ${utente.cognome} (PIN ${id})`);
     
     res.json({
