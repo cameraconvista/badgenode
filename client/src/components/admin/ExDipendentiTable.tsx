@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { History, Download, Users, AlertCircle } from 'lucide-react';
+import { History, Users, AlertCircle } from 'lucide-react';
 import EmptyState from './EmptyState';
 import { ExDipendente } from '@/services/utenti.service';
 
@@ -9,7 +9,6 @@ interface ExDipendentiTableProps {
   isLoading: boolean;
   isError?: boolean;
   onStorico: (pin: number) => void;
-  onEsporta: (exDipendente: ExDipendente) => void;
   onRipristina?: (exDipendente: ExDipendente) => void;
   onElimina?: (exDipendente: ExDipendente) => void;
 }
@@ -19,7 +18,6 @@ export default function ExDipendentiTable({
   isLoading,
   isError,
   onStorico,
-  onEsporta,
   onRipristina,
   onElimina,
 }: ExDipendentiTableProps) {
@@ -80,17 +78,15 @@ export default function ExDipendentiTable({
             <colgroup>
               {[
                 <col key="st" style={{ width: "88px" }} />,
-                <col key="pin" style={{ width: "112px" }} />,
-                <col key="nm" style={{ width: "20%" }} />,
-                <col key="cg" style={{ width: "20%" }} />,
-                <col key="dt" style={{ width: "140px" }} />,
-                <col key="az" style={{ width: "120px" }} />,
+                <col key="nm" style={{ width: "24%" }} />,
+                <col key="cg" style={{ width: "24%" }} />,
+                <col key="dt" style={{ width: "160px" }} />,
+                <col key="az" style={{ width: "180px" }} />,
               ]}
             </colgroup>
             <thead className="sticky top-0 z-10 bg-[rgba(255,255,255,0.06)] h-[48px]">
               <tr>
                 <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Storico</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">PIN</th>
                 <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Nome</th>
                 <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Cognome</th>
                 <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Data Archiviazione</th>
@@ -100,7 +96,7 @@ export default function ExDipendentiTable({
             <tbody>
               {sortedExDipendenti.length === 0 ? (
                 <tr className="bn-row bn-row-dense align-middle">
-                  <td colSpan={6} className="bn-cell px-4 text-center py-8">
+                  <td colSpan={5} className="bn-cell px-4 text-center py-8">
                     <div className="text-center py-8">
                       <div className="text-gray-400 mb-2">
                         <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
@@ -131,11 +127,6 @@ export default function ExDipendentiTable({
                         <History className="icon-storico" aria-label="Storico" />
                       </Button>
                     </td>
-                    <td className="bn-cell px-4 text-center tabular-nums">
-                      <span className="font-mono font-medium text-base text-gray-400">
-                        ••••
-                      </span>
-                    </td>
                     <td className="bn-cell px-4 text-center">
                       <span className="font-medium text-base text-white">{exDipendente.nome}</span>
                     </td>
@@ -148,16 +139,7 @@ export default function ExDipendentiTable({
                       </span>
                     </td>
                     <td className="bn-cell px-4">
-                      <div className="bn-actions flex items-center justify-center gap-3">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onEsporta(exDipendente)}
-                          className="p-2"
-                          title={`Esporta dati di ${exDipendente.nome} ${exDipendente.cognome}`}
-                        >
-                          <Download className="w-4 h-4 text-blue-400" aria-label="Esporta" />
-                        </Button>
+                      <div className="bn-actions flex items-center justify-end gap-3 flex-wrap">
                         {onRipristina && (
                           <Button
                             variant="ghost"
