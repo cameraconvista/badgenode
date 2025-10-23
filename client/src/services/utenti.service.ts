@@ -235,4 +235,48 @@ export class UtentiService {
       };
     }
   }
+
+  static async restoreUtente(userId: string, payload: { newPin: string }): Promise<{ success: boolean; error?: { code: string; message: string } }> {
+    try {
+      const response = await safeFetchJsonPost<{ success: boolean }>(`/api/utenti/${userId}/restore`, payload);
+      if (isError(response)) {
+        return {
+          success: false,
+          error: {
+            code: response.code || 'RESTORE_FAILED',
+            message: normalizeError(response.error) || 'Ripristino non riuscito. Riprova.'
+          }
+        };
+      }
+      return { success: true };
+    } catch (error) {
+      const err = asError(error);
+      console.error('[BadgeNode] Errore ripristino utente:', err.message);
+      return {
+        success: false,
+        error: { code: 'RESTORE_FAILED', message: 'Ripristino non riuscito. Riprova.' }
+      };
+    }
+  }
+
+  static async deleteExDipendente(pin: number): Promise<{ success: boolean; error?: { code: string; message: string } }> {
+    try {
+      if (!pin || pin < 1 || pin > 99) {
+        return { success: false, error: { code: 'INVALID_PIN', message: 'PIN non valido' } };
+      }
+      const response = await safeFetchJsonDelete(`/api/ex-dipendenti/${pin}`);
+      if (isError(response)) {
+        const code = response.code || 'DELETE_FAILED';
+        const map: Record<string, string> = {
+          USER_NOT_ARCHIVED: 'Utente non archiviato',
+          FK_CONSTRAINT: 'Impossibile eliminare: vincoli attivi',
+          DELETE_FAILED: 'Eliminazione non riuscita. Riprova.',
+        };
+        return { success: false, error: { code, message: map[code] || 'Eliminazione non riuscita. Riprova.' } };
+      }
+      return { success: true };
+    } catch (e) {
+      return { success: false, error: { code: 'DELETE_FAILED', message: 'Eliminazione non riuscita. Riprova.' } };
+    }
+  }
 }

@@ -1,19 +1,49 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
 import { ArrowLeft } from 'lucide-react';
 import ExDipendentiTable from '@/components/admin/ExDipendentiTable';
 import { useAuth } from '@/contexts/AuthContext';
 import { useExDipendentiQuery } from '@/hooks/useExDipendenti';
+import { RestoreDialog, DeleteExDialog } from '@/components/admin/ConfirmDialogs';
+import { UtentiService, ExDipendente } from '@/services/utenti.service';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ExDipendenti() {
   const [, setLocation] = useLocation();
   const { isAdmin } = useAuth();
+  const queryClient = useQueryClient();
+  const [selectedEx, setSelectedEx] = useState<ExDipendente | null>(null);
+  const [showRestore, setShowRestore] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   
   // Query ex-dipendenti con hook dedicato
   const { data: exDipendenti = [], isLoading, isError } = useExDipendentiQuery();
 
   const handleBackToArchivio = () => {
     setLocation('/archivio-dipendenti');
+  };
+
+  const handleOpenDelete = (exDipendente: ExDipendente) => {
+    setSelectedEx(exDipendente);
+    setShowDelete(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedEx) return;
+    try {
+      const result = await UtentiService.deleteExDipendente(selectedEx.pin);
+      if (result.success) {
+        queryClient.invalidateQueries({ queryKey: ['ex-dipendenti'] });
+        setShowDelete(false);
+        setSelectedEx(null);
+      } else {
+        console.warn('[ExDipendenti] Delete failed:', result.error?.code);
+      }
+    } finally {
+      // no-op
+    }
   };
 
   const handleStorico = (pin: number) => {
@@ -24,6 +54,30 @@ export default function ExDipendenti() {
   const handleEsporta = (exDipendente: any) => {
     // TODO(BUSINESS): Implementare esportazione dati ex-dipendente
     console.log('Esporta ex-dipendente:', exDipendente);
+  };
+
+  const handleOpenRestore = (exDipendente: ExDipendente) => {
+    setSelectedEx(exDipendente);
+    setShowRestore(true);
+  };
+
+  const handleConfirmRestore = async (newPin: string) => {
+    if (!selectedEx) return;
+    try {
+      setIsRestoring(true);
+      const result = await UtentiService.restoreUtente(String(selectedEx.pin), { newPin });
+      if (result.success) {
+        // Invalida cache liste
+        queryClient.invalidateQueries({ queryKey: ['ex-dipendenti'] });
+        queryClient.invalidateQueries({ queryKey: ['utenti'] });
+        setShowRestore(false);
+        setSelectedEx(null);
+      } else {
+        console.warn('[ExDipendenti] Restore failed:', result.error?.code);
+      }
+    } finally {
+      setIsRestoring(false);
+    }
   };
 
   return (
@@ -62,6 +116,8 @@ export default function ExDipendenti() {
               isError={isError}
               onStorico={handleStorico}
               onEsporta={handleEsporta}
+              onRipristina={handleOpenRestore}
+              onElimina={handleOpenDelete}
             />
           </div>
 
@@ -78,6 +134,20 @@ export default function ExDipendenti() {
           </div>
         </div>
       </div>
+      <RestoreDialog
+        isOpen={showRestore}
+        onClose={() => { setShowRestore(false); setSelectedEx(null); }}
+        utente={selectedEx ? { nome: selectedEx.nome, cognome: selectedEx.cognome, pin: selectedEx.pin } : null}
+        onConfirm={handleConfirmRestore}
+        isLoading={isRestoring}
+      />
+      <DeleteExDialog
+        isOpen={showDelete}
+        onClose={() => { setShowDelete(false); setSelectedEx(null); }}
+        utente={selectedEx ? { nome: selectedEx.nome, cognome: selectedEx.cognome, pin: selectedEx.pin } : null}
+        onConfirm={handleConfirmDelete}
+        isLoading={false}
+      />
     </div>
   );
 }

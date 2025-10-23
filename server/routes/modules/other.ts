@@ -441,12 +441,14 @@ router.post('/api/utenti/:id/archive', async (req, res) => {
     const now = new Date().toISOString();
     const { error: archiveError } = await supabaseAdmin
       .from('ex_dipendenti')
-      .insert({
-        pin: utente.pin,
-        nome: utente.nome,
-        cognome: utente.cognome,
-        archiviato_il: now
-      });
+      .insert([
+        {
+          pin: (utente as any).pin,
+          nome: (utente as any).nome,
+          cognome: (utente as any).cognome,
+          archiviato_il: now,
+        } as any,
+      ] as any);
 
     if (archiveError) {
       console.error(`[API][archive][${requestId}] Archive failed:`, archiveError.message);
@@ -469,7 +471,7 @@ router.post('/api/utenti/:id/archive', async (req, res) => {
       console.warn(`[API][archive][${requestId}] User archived but not removed from utenti table`);
     }
 
-    console.log(`[API][archive][${requestId}] User archived: ${utente.nome} ${utente.cognome} (PIN ${id})`);
+    console.log(`[API][archive][${requestId}] User archived: ${(utente as any).nome} ${(utente as any).cognome} (PIN ${id})`);
     
     res.json({
       success: true,
@@ -483,6 +485,132 @@ router.post('/api/utenti/:id/archive', async (req, res) => {
       error: error instanceof Error ? error.message : 'Errore interno',
       code: 'INTERNAL_ERROR'
     });
+  }
+});
+
+// POST /api/utenti/:id/restore - Ripristina ex-dipendente assegnando un nuovo PIN
+router.post('/api/utenti/:id/restore', async (req, res) => {
+  const requestId = (req.headers['x-request-id'] as string) || `${Date.now().toString(36)}-${Math.random().toString(16).slice(2)}`;
+  const { id } = req.params; // id = PIN ex-dipendente archiviato
+  const { newPin } = req.body as { newPin?: string | number };
+
+  try {
+    if (!supabaseAdmin) {
+      return res.status(503).json({
+        success: false,
+        error: 'Servizio admin non disponibile - configurazione Supabase mancante',
+        code: 'SERVICE_UNAVAILABLE'
+      });
+    }
+
+    if (!id) {
+      return res.status(400).json({ success: false, error: 'ID utente obbligatorio', code: 'MISSING_PARAMS' });
+    }
+
+    const oldPinNum = parseInt(String(id), 10);
+    if (isNaN(oldPinNum) || oldPinNum < 1 || oldPinNum > 99) {
+      return res.status(400).json({ success: false, error: 'PIN non valido', code: 'INVALID_PIN' });
+    }
+
+    const newPinNum = parseInt(String(newPin ?? ''), 10);
+    if (isNaN(newPinNum) || newPinNum < 1 || newPinNum > 99) {
+      return res.status(400).json({ success: false, error: 'Nuovo PIN non valido (1-99)', code: 'INVALID_NEW_PIN' });
+    }
+
+    // Verifica che l'utente sia davvero archiviato
+    const { data: exUser, error: exErr } = await supabaseAdmin
+      .from('ex_dipendenti')
+      .select('pin, nome, cognome')
+      .eq('pin', oldPinNum)
+      .maybeSingle();
+
+    if (exErr || !exUser) {
+      return res.status(409).json({ success: false, error: 'Utente non archiviato', code: 'USER_NOT_ARCHIVED' });
+    }
+
+    // Verifica disponibilità nuovo PIN
+    const { data: pinCheck, error: pinErr } = await supabaseAdmin
+      .from('utenti')
+      .select('pin', { head: false, count: 'exact' })
+      .eq('pin', newPinNum)
+      .limit(1);
+    if (pinErr) {
+      console.warn(`[API][restore][${requestId}] PIN check error:`, pinErr.message);
+    }
+    if ((pinCheck && pinCheck.length > 0)) {
+      return res.status(409).json({ success: false, error: 'PIN già in uso', code: 'PIN_IN_USE' });
+    }
+
+    // Inserisce nuovamente in utenti con il nuovo PIN
+    const now = new Date().toISOString();
+    const { error: insErr } = await supabaseAdmin
+      .from('utenti')
+      .insert([
+        { pin: newPinNum, nome: (exUser as any).nome, cognome: (exUser as any).cognome, created_at: now } as any,
+      ] as any);
+    if (insErr) {
+      console.error(`[API][restore][${requestId}] Insert utenti failed:`, insErr.message);
+      return res.status(500).json({ success: false, error: 'Ripristino non riuscito', code: 'RESTORE_FAILED' });
+    }
+
+    // Rimuove dalla tabella ex_dipendenti il record originale
+    const { error: delErr } = await supabaseAdmin
+      .from('ex_dipendenti')
+      .delete()
+      .eq('pin', oldPinNum);
+    if (delErr) {
+      console.warn(`[API][restore][${requestId}] Delete ex_dipendenti failed:`, delErr.message);
+      // Non annulliamo il restore se il delete fallisce: il record è già stato ripristinato tra gli attivi
+    }
+
+    return res.json({ success: true });
+  } catch (error) {
+    console.error(`[API][restore][${requestId}] Error:`, (error as Error)?.message || error);
+    return res.status(500).json({ success: false, error: 'Errore interno', code: 'INTERNAL_ERROR' });
+  }
+});
+
+// DELETE /api/ex-dipendenti/:pin - Eliminazione definitiva ex-dipendente
+router.delete('/api/ex-dipendenti/:pin', async (req, res) => {
+  const { pin } = req.params;
+  const pinNum = parseInt(String(pin), 10);
+
+  try {
+    if (!supabaseAdmin) {
+      return res.status(503).json({ success: false, error: 'Servizio admin non disponibile', code: 'SERVICE_UNAVAILABLE' });
+    }
+
+    if (isNaN(pinNum) || pinNum < 1 || pinNum > 99) {
+      return res.status(400).json({ success: false, error: 'PIN non valido', code: 'INVALID_PIN' });
+    }
+
+    // Verifica che l'utente sia effettivamente archiviato
+    const { data: archived, error: checkErr } = await supabaseAdmin
+      .from('ex_dipendenti')
+      .select('pin')
+      .eq('pin', pinNum)
+      .maybeSingle();
+    if (checkErr || !archived) {
+      return res.status(409).json({ success: false, error: 'Utente non archiviato', code: 'USER_NOT_ARCHIVED' });
+    }
+
+    // Hard delete dal registro ex_dipendenti (timbrature non toccate)
+    const { error: delErr } = await supabaseAdmin
+      .from('ex_dipendenti')
+      .delete()
+      .eq('pin', pinNum);
+
+    if (delErr) {
+      const code = (delErr as any)?.code || '';
+      if (code === '23503') {
+        return res.status(409).json({ success: false, error: 'Vincolo FK attivo', code: 'FK_CONSTRAINT' });
+      }
+      return res.status(500).json({ success: false, error: 'Eliminazione non riuscita', code: 'DELETE_FAILED' });
+    }
+
+    return res.json({ success: true });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: 'Errore interno', code: 'INTERNAL_ERROR' });
   }
 });
 

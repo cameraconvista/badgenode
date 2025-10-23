@@ -55,6 +55,8 @@ function getExistingBackups(): Array<{ name: string; path: string; mtime: Date }
 function cleanupOldBackups(): void {
   const backups = getExistingBackups();
 
+  // Mantieni al più (MAX_BACKUPS - 1) file prima di crearne uno nuovo,
+  // così dopo la creazione il totale sarà MAX_BACKUPS.
   if (backups.length >= MAX_BACKUPS) {
     const toDelete = backups.slice(MAX_BACKUPS - 1);
     toDelete.forEach((backup) => {
@@ -70,7 +72,7 @@ function cleanupOldBackups(): void {
 
 function createBackup(): void {
   const timestamp = getCurrentTimestamp();
-  const backupName = `backup_${timestamp}.tar`;
+  const backupName = `backup_${timestamp}.tar.gz`;
   const backupPath = join(BACKUP_DIR, backupName);
   const excludeArgs = createExcludeArgs();
 

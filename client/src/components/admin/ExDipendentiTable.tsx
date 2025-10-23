@@ -10,6 +10,8 @@ interface ExDipendentiTableProps {
   isError?: boolean;
   onStorico: (pin: number) => void;
   onEsporta: (exDipendente: ExDipendente) => void;
+  onRipristina?: (exDipendente: ExDipendente) => void;
+  onElimina?: (exDipendente: ExDipendente) => void;
 }
 
 export default function ExDipendentiTable({
@@ -18,6 +20,8 @@ export default function ExDipendentiTable({
   isError,
   onStorico,
   onEsporta,
+  onRipristina,
+  onElimina,
 }: ExDipendentiTableProps) {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc'); // Più recenti prima
 
@@ -113,7 +117,7 @@ export default function ExDipendentiTable({
               ) : (
                 sortedExDipendenti.map((exDipendente) => (
                   <tr
-                    key={exDipendente.id}
+                    key={String(exDipendente.pin ?? '') || `arch-${exDipendente.archiviato_il}`}
                     className="bn-row bn-row-tall align-middle"
                   >
                     <td className="bn-cell px-4 text-center">
@@ -154,6 +158,29 @@ export default function ExDipendentiTable({
                         >
                           <Download className="w-4 h-4 text-blue-400" aria-label="Esporta" />
                         </Button>
+                        {onRipristina && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onRipristina(exDipendente)}
+                            className="p-2"
+                            title={`Ripristina ${exDipendente.nome} ${exDipendente.cognome}`}
+                          >
+                            {/* Riusa icone di sistema, mantenendo stile */}
+                            <span className="text-green-400 text-sm font-semibold">Ripristina</span>
+                          </Button>
+                        )}
+                        {onElimina && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onElimina(exDipendente)}
+                            className="p-2"
+                            title={`Elimina definitivamente ${exDipendente.nome} ${exDipendente.cognome}`}
+                          >
+                            <span className="text-red-400 text-sm font-semibold">Elimina</span>
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>

@@ -11,6 +11,275 @@ interface ArchiviaDialogProps {
   isLoading: boolean;
 }
 
+interface DeleteExDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  utente: { nome: string; cognome: string; pin: number } | null;
+  onConfirm: () => Promise<void>;
+  isLoading: boolean;
+}
+
+export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }: DeleteExDialogProps) {
+  const [showSecondConfirm, setShowSecondConfirm] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShowSecondConfirm(false);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setTimeout(() => cancelButtonRef.current?.focus(), 100);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'Tab') {
+        const focusable = modalRef.current?.querySelectorAll('button,[tabindex]:not([tabindex="-1"])');
+        if (!focusable?.length) return;
+        const first = focusable[0] as HTMLElement;
+        const last = focusable[focusable.length - 1] as HTMLElement;
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  const handleProcedi = async () => {
+    if (!showSecondConfirm) {
+      setShowSecondConfirm(true);
+    } else {
+      await onConfirm();
+    }
+  };
+
+  if (!isOpen || !utente) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black backdrop-blur-sm">
+      <div
+        ref={modalRef}
+        className="w-full max-w-lg overflow-hidden rounded-3xl shadow-2xl border-2"
+        style={{
+          backgroundColor: '#2b0048',
+          borderColor: 'rgba(231, 116, 240, 0.6)',
+          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title-delete-ex"
+      >
+        <div className="flex items-center justify-between p-6 border-b border-gray-600">
+          <h2 id="modal-title-delete-ex" className="text-xl font-bold text-white">
+            {!showSecondConfirm ? 'Elimina definitivamente' : 'Conferma eliminazione'}
+          </h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="p-2 hover:bg-white/10 text-gray-300 hover:text-white"
+            aria-label="Chiudi modale"
+          >
+            <X className="w-5 h-5" />
+          </Button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div className="flex justify-center">
+            <div className="p-3 rounded-full bg-red-600/20">
+              <AlertTriangle className="w-8 h-8 text-red-400" />
+            </div>
+          </div>
+          <div className="text-center space-y-3">
+            {!showSecondConfirm ? (
+              <>
+                <p className="text-white text-lg">Questa operazione è irreversibile.</p>
+                <p className="text-xl font-bold text-white">{utente.nome} {utente.cognome}</p>
+                <p className="text-gray-300">PIN archiviato: <span className="font-mono text-violet-400">{utente.pin}</span></p>
+              </>
+            ) : (
+              <>
+                <p className="text-red-400 text-lg font-bold">Confermi l'eliminazione definitiva?</p>
+                <p className="text-sm text-gray-300">Le timbrature esistenti non verranno toccate.</p>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
+          <Button
+            ref={cancelButtonRef}
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={isLoading}
+            className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+          >
+            Annulla
+          </Button>
+          <Button
+            type="button"
+            onClick={handleProcedi}
+            disabled={isLoading}
+            className="bg-red-600 hover:bg-red-700 text-white border-2 border-red-600"
+          >
+            {isLoading ? 'Eliminazione...' : !showSecondConfirm ? 'Continua' : 'Conferma'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+interface RestoreDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  utente: { nome: string; cognome: string; pin: number } | null;
+  onConfirm: (newPin: string) => Promise<void>;
+  isLoading: boolean;
+}
+
+export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }: RestoreDialogProps) {
+  const [showSecondConfirm, setShowSecondConfirm] = useState(false);
+  const [newPin, setNewPin] = useState('');
+  const modalRef = useRef<HTMLDivElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setShowSecondConfirm(false);
+      setNewPin('');
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setTimeout(() => cancelButtonRef.current?.focus(), 100);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'Tab') {
+        const focusable = modalRef.current?.querySelectorAll('input,button,[tabindex]:not([tabindex="-1"])');
+        if (!focusable?.length) return;
+        const first = focusable[0] as HTMLElement;
+        const last = focusable[focusable.length - 1] as HTMLElement;
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  const isPinValid = () => {
+    const n = parseInt(newPin, 10);
+    return !isNaN(n) && n >= 1 && n <= 99;
+  };
+
+  const handleProcedi = async () => {
+    if (!showSecondConfirm) {
+      setShowSecondConfirm(true);
+    } else {
+      await onConfirm(newPin);
+    }
+  };
+
+  if (!isOpen || !utente) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black backdrop-blur-sm">
+      <div
+        ref={modalRef}
+        className="w-full max-w-lg overflow-hidden rounded-3xl shadow-2xl border-2"
+        style={{
+          backgroundColor: '#2b0048',
+          borderColor: 'rgba(231, 116, 240, 0.6)',
+          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title-restore"
+      >
+        <div className="flex items-center justify-between p-6 border-b border-gray-600">
+          <h2 id="modal-title-restore" className="text-xl font-bold text-white">
+            {!showSecondConfirm ? 'Ripristina Ex-Dipendente' : 'Conferma Ripristino'}
+          </h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="p-2 hover:bg-white/10 text-gray-300 hover:text-white"
+            aria-label="Chiudi modale"
+          >
+            <X className="w-5 h-5" />
+          </Button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div className="flex justify-center">
+            <div className="p-3 rounded-full bg-green-600/20">
+              <AlertTriangle className="w-8 h-8 text-green-400" />
+            </div>
+          </div>
+
+          <div className="text-center space-y-3">
+            {!showSecondConfirm ? (
+              <>
+                <p className="text-white text-lg">Vuoi ripristinare</p>
+                <p className="text-xl font-bold text-white">{utente.nome} {utente.cognome}</p>
+                <p className="text-gray-300">PIN archiviato: <span className="font-mono text-violet-400">{utente.pin}</span></p>
+              </>
+            ) : (
+              <>
+                <p className="text-green-400 text-lg font-bold">Confermi il ripristino?</p>
+                <p className="text-sm text-gray-300">Assegna un <span className="font-semibold">nuovo PIN</span> (1-99):</p>
+                <div className="mt-3">
+                  <input
+                    inputMode="numeric"
+                    pattern="^[0-9]{1,2}$"
+                    maxLength={2}
+                    value={newPin}
+                    onChange={(e) => setNewPin(e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="Nuovo PIN"
+                    className="w-32 text-center p-3 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-400 focus:border-violet-400 focus:outline-none"
+                  />
+                  {!isPinValid() && newPin !== '' && (
+                    <p className="text-xs text-red-400 mt-1">PIN deve essere tra 1 e 99</p>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
+          <Button
+            ref={cancelButtonRef}
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={isLoading}
+            className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+          >
+            Annulla
+          </Button>
+          <Button
+            type="button"
+            onClick={handleProcedi}
+            disabled={isLoading || (showSecondConfirm && !isPinValid())}
+            className="bg-green-600 hover:bg-green-700 text-white border-2 border-green-600"
+          >
+            {isLoading ? 'Ripristino...' : !showSecondConfirm ? 'Continua' : 'Conferma'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ArchiviaDialog({
   isOpen,
   onClose,
