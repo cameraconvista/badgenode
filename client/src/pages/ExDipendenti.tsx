@@ -6,7 +6,9 @@ import ExDipendentiTable from '@/components/admin/ExDipendentiTable';
 import { useAuth } from '@/contexts/AuthContext';
 import { useExDipendentiQuery } from '@/hooks/useExDipendenti';
 import { RestoreDialog, DeleteExDialog } from '@/components/admin/ConfirmDialogs';
+import ExStoricoModal from '@/components/admin/ExStoricoModal';
 import { UtentiService, ExDipendente } from '@/services/utenti.service';
+import { TimbratureService } from '@/services/timbrature.service';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function ExDipendenti() {
@@ -17,6 +19,9 @@ export default function ExDipendenti() {
   const [showRestore, setShowRestore] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const [showStorico, setShowStorico] = useState(false);
+  const [storicoLoading, setStoricoLoading] = useState(false);
+  const [storicoRaw, setStoricoRaw] = useState<any[]>([]);
   
   // Query ex-dipendenti con hook dedicato
   const { data: exDipendenti = [], isLoading, isError } = useExDipendentiQuery();
@@ -46,9 +51,23 @@ export default function ExDipendenti() {
     }
   };
 
-  const handleStorico = (pin: number) => {
-    // TODO(BUSINESS): Implementare navigazione storico ex-dipendente
-    console.log('Storico ex-dipendente PIN:', pin);
+  const handleStorico = async (pin: number) => {
+    const ex = exDipendenti.find(e => e.pin === pin) || null;
+    setSelectedEx(ex as any);
+    if (!ex) return;
+    try {
+      setStoricoLoading(true);
+      // Carica timbrature fino alla data di archiviazione (in base allo schema reale: archiviato_il)
+      const rows = await TimbratureService.getTimbratureByRange({ pin: ex.pin, to: ex.archiviato_il?.slice(0,10) });
+      setStoricoRaw(rows || []);
+      setShowStorico(true);
+    } catch (e) {
+      console.warn('[ExDipendenti] Caricamento storico fallito:', (e as Error).message);
+      setStoricoRaw([]);
+      setShowStorico(true);
+    } finally {
+      setStoricoLoading(false);
+    }
   };
 
   const handleEsporta = (exDipendente: any) => {
@@ -147,6 +166,14 @@ export default function ExDipendenti() {
         utente={selectedEx ? { nome: selectedEx.nome, cognome: selectedEx.cognome, pin: selectedEx.pin } : null}
         onConfirm={handleConfirmDelete}
         isLoading={false}
+      />
+      <ExStoricoModal
+        isOpen={showStorico}
+        onClose={() => { setShowStorico(false); }}
+        utente={selectedEx ? { nome: selectedEx.nome, cognome: selectedEx.cognome, pin: selectedEx.pin } : null}
+        archiviatoIl={selectedEx?.archiviato_il}
+        rawRows={storicoRaw}
+        isLoading={storicoLoading}
       />
     </div>
   );

@@ -63,6 +63,8 @@ export class TimbratureService {
         query = query.gte('giorno_logico', params.from).lte('giorno_logico', params.to);
       } else if (params.from) {
         query = query.eq('giorno_logico', params.from);
+      } else if (params.to) {
+        query = query.lte('giorno_logico', params.to);
       }
 
       // Ordinamento per ts_order
