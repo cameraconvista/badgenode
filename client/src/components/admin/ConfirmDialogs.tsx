@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { X, Archive, AlertTriangle } from 'lucide-react';
 import { Utente } from '@/services/utenti.service';
@@ -30,6 +31,20 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
     }
   }, [isOpen]);
 
+  // Disattiva interazioni sul background quando il modale è aperto
+  useEffect(() => {
+    const html = document.documentElement;
+    const root = document.getElementById('root') || document.getElementById('app');
+    if (isOpen) {
+      html.classList.add('modal-open');
+      root?.setAttribute('inert', '');
+    } else {
+      html.classList.remove('modal-open');
+      root?.removeAttribute('inert');
+    }
+    return () => { html.classList.remove('modal-open'); root?.removeAttribute('inert'); };
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen) return;
     setTimeout(() => cancelButtonRef.current?.focus(), 100);
@@ -58,15 +73,15 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
 
   if (!isOpen || !utente) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black backdrop-blur-sm">
+  return createPortal(
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black bn-modal-overlay" style={{ backdropFilter: 'none', pointerEvents: 'auto' }}>
       <div
         ref={modalRef}
-        className="w-full max-w-lg overflow-hidden rounded-3xl shadow-2xl border-2"
+        className="w-full max-w-lg overflow-hidden rounded-3xl border-2 bn-modal-solid z-[1001]"
         style={{
           backgroundColor: '#2b0048',
           borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
+          boxShadow: 'none',
         }}
         role="dialog"
         aria-modal="true"
@@ -80,7 +95,7 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-white/10 text-gray-300 hover:text-white"
+            className="p-2 hover:bg-transparent text-gray-300 hover:text-white"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -116,7 +131,7 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+            className="bg-white border-2 border-violet-600 text-violet-600"
           >
             Annulla
           </Button>
@@ -130,7 +145,8 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -189,15 +205,15 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
 
   if (!isOpen || !utente) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black backdrop-blur-sm">
+  return createPortal(
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black bn-modal-overlay" style={{ backdropFilter: 'none', pointerEvents: 'auto' }}>
       <div
         ref={modalRef}
-        className="w-full max-w-lg overflow-hidden rounded-3xl shadow-2xl border-2"
+        className="w-full max-w-lg overflow-hidden rounded-3xl border-2 bn-modal-solid z-[1001]"
         style={{
           backgroundColor: '#2b0048',
           borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
+          boxShadow: 'none',
         }}
         role="dialog"
         aria-modal="true"
@@ -211,7 +227,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-white/10 text-gray-300 hover:text-white"
+            className="p-2 hover:bg-transparent text-gray-300 hover:text-white"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -262,7 +278,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+            className="bg-white border-2 border-violet-600 text-violet-600"
           >
             Annulla
           </Button>
@@ -276,7 +292,8 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -347,15 +364,15 @@ export function ArchiviaDialog({
 
   if (!isOpen || !utente) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black backdrop-blur-sm">
+  return createPortal(
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black bn-modal-overlay" style={{ backdropFilter: 'none', pointerEvents: 'auto' }}>
       <div
         ref={modalRef}
-        className="w-full max-w-lg overflow-hidden rounded-3xl shadow-2xl border-2"
+        className="w-full max-w-lg overflow-hidden rounded-3xl border-2 bn-modal-solid z-[1001]"
         style={{
           backgroundColor: '#2b0048',
           borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
+          boxShadow: 'none',
         }}
         role="dialog"
         aria-modal="true"
@@ -370,7 +387,7 @@ export function ArchiviaDialog({
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-white/10 text-gray-300 hover:text-white"
+            className="p-2 hover:bg-transparent text-gray-300 hover:text-white"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -463,7 +480,8 @@ export function ArchiviaDialog({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

@@ -325,6 +325,27 @@
 .bn-pop-item[data-state="checked"] { background: rgba(255,255,255,0.10); }
 .bn-pop * { background: transparent; } /* niente layer trasparenti interni */
 
+.bn-modal-overlay { background-color: rgba(0,0,0,0.86) !important; backdrop-filter: none !important; z-index: 60 !important; pointer-events: all !important; }
+.bn-modal-solid { background-color: #2b0048 !important; box-shadow: none !important; position: relative; z-index: 70 !important; isolation: isolate; mix-blend-mode: normal !important; opacity: 1 !important; }
+/* Neutralizza override globali di hover trasparente dentro i modali */
+.bn-modal-solid *:hover,
+.bn-modal-solid *:focus,
+.bn-modal-solid *:focus-within { background-color: inherit !important; }
+/* Aumenta specificità se il modale è dentro un container con bn-nohover */
+.bn-nohover .bn-modal-solid *:hover,
+.bn-nohover .bn-modal-solid *:focus,
+.bn-nohover .bn-modal-solid *:focus-within { background-color: inherit !important; }
+
+/* Evita trasparenze intermittenti: mantieni bg ereditato per elementi non decorativi */
+.bn-modal-solid .p-6, 
+.bn-modal-solid .border-b,
+.bn-modal-solid .border-t { background-color: inherit !important; }
+
+/* Impedisci qualsiasi riduzione opacity su hover/focus all'interno del modale */
+.bn-modal-solid *,
+.bn-modal-solid *:hover,
+.bn-modal-solid *:focus { opacity: 1 !important; }
+
 .bn-modal       { background: var(--bn-surface) !important; border: 1px solid var(--bn-border) !important; border-radius: 18px !important; box-shadow: var(--bn-shadow) !important; color:#fff; }
 .bn-modal-header{ padding: 18px 22px; border-bottom: 1px solid var(--bn-border); }
 .bn-modal-body  { padding: 18px 22px; }
