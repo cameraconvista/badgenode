@@ -30,19 +30,21 @@ export class TimbratureService {
         // Offline: non bloccare la coda offline
         return true;
       }
-      const resp = await safeFetchJson<{ ok: boolean }>(`/api/pin/validate?pin=${encodeURIComponent(pin)}`);
-      // 4xx: safeFetchJson returns { success:false, status, message }
+      const resp = await safeFetchJson<{ ok: boolean }>(`/api/pin/validate?pin=${encodeURIComponent(pin)}`, { cache: 'no-store' });
+      // 4xx: safeFetchJson returns { success:false, code, error }
       if (isError(resp)) {
         if (import.meta.env.DEV) {
           console.debug('[pin] PIN non registrato');
         }
         return false;
       }
-      return resp.data?.ok === true;
+      // Supporta sia risposta wrappata { success:true, data:{ ok:true } } che flat { success:true, ok:true }
+      const ok = (resp as any)?.data?.ok ?? (resp as any)?.ok;
+      return ok === true;
     } catch (e) {
-      // network/5xx → considerare non valido per ora (non bloccare crash UI)
-      if (import.meta.env.DEV) console.debug('[pin] validate error', (e as Error).message);
-      return false;
+      // network/304/5xx → non bloccare: lasciare a timbratura gestire fallback
+      if (import.meta.env.DEV) console.debug('[pin] validate error (non-blocking)', (e as Error).message);
+      return true;
     }
   }
   // SEMPLIFICATO - Lettura diretta da tabella public.timbrature
@@ -189,24 +191,27 @@ export class TimbratureService {
   }
 
   // REFACTOR: Usa RPC unico centralizzato
-  static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<number> {
+  static async timbra(pin: number, tipo: 'entrata' | 'uscita'): Promise<{ ok: boolean; code?: string; message?: string; id?: number }> {
     // Pre-validazione PIN lato server senza toccare UI
     const isValid = await TimbratureService.validatePinApi(pin);
     if (!isValid) {
-      // PIN non registrato o errore 4xx → non procedere
-      return 0;
+      return { ok: false, code: 'PIN_NOT_FOUND', message: 'PIN non registrato' };
     }
     // Feature OFF → comportamento invariato
     if (!isOfflineEnabled(getDeviceId())) {
       const result = await callInsertTimbro({ pin, tipo });
-      return result.success ? 1 : 0;
+      const id = (result as any)?.data?.id as number | undefined;
+      if (result.success && typeof id === 'number' && id > 0) {
+        return { ok: true, id };
+      }
+      return { ok: false, code: result.code || 'SERVER_ERROR', message: result.error };
     }
 
     // Debounce minimo per evitare doppio tap ravvicinato (solo con flag ON)
     const now = Date.now();
     if (now - TimbratureService._lastSubmitMs < 600) {
       if (import.meta.env.DEV) console.debug('[offline:guard] debounce drop');
-      return 0;
+      return { ok: false, code: 'DEBOUNCE_DROP' };
     }
     TimbratureService._lastSubmitMs = now;
 
@@ -214,9 +219,11 @@ export class TimbratureService {
     if (navigator.onLine === true) {
       try {
         const result = await callInsertTimbro({ pin, tipo });
-        if (result.success) return 1;
-        // se fallisce per motivi non di rete, restituisci 0 (comportamento attuale)
-        return 0;
+        const id = (result as any)?.data?.id as number | undefined;
+        if (result.success && typeof id === 'number' && id > 0) {
+          return { ok: true, id };
+        }
+        return { ok: false, code: result.code || 'SERVER_ERROR', message: result.error };
       } catch (e) {
         // errore fetch/timeout → fallback offline
         if (import.meta.env.DEV) console.debug('[offline:fallback] network error → queue');
@@ -230,11 +237,11 @@ export class TimbratureService {
       // Fire-and-forget: tenta una sync se torna la rete
       void runSyncOnce();
       if (import.meta.env.DEV) console.debug('[offline:enqueue] queued');
-      // Considera l'operazione accettata lato client
-      return 1;
+      // Accettazione locale (offline)
+      return { ok: true };
     } catch (e) {
       if (import.meta.env.DEV) console.debug('[offline:enqueue] failed', (e as Error).message);
-      return 0;
+      return { ok: false, code: 'OFFLINE_QUEUE_FAILED', message: (e as Error).message };
     }
   }
 

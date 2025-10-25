@@ -113,7 +113,7 @@ export default function ExDipendenti() {
           style={{
             backgroundColor: '#2b0048',
             borderColor: 'rgba(231, 116, 240, 0.6)',
-            boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
+            boxShadow: 'none',
           }}
         >
           {/* Header con logo centrato */}
@@ -134,7 +134,6 @@ export default function ExDipendenti() {
               isLoading={isLoading}
               isError={isError}
               onStorico={handleStorico}
-              onEsporta={handleEsporta}
               onRipristina={handleOpenRestore}
               onElimina={handleOpenDelete}
             />
@@ -144,7 +143,7 @@ export default function ExDipendenti() {
             <Button
               variant="outline"
               onClick={handleBackToArchivio}
-              className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+              className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50"
             >
               <ArrowLeft className="w-4 h-4" />
               Archivio

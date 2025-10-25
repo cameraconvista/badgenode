@@ -161,6 +161,14 @@
   background-color: transparent !important; 
 }
 
+/* Archivio Dipendenti: disattiva overlay elevate solo in questa tabella */
+.archivio-table .hover-elevate::after,
+.archivio-table .active-elevate::after,
+.archivio-table .hover-elevate-2::after,
+.archivio-table .active-elevate-2::after { 
+  background-color: transparent !important; 
+}
+
 /* Pulsanti/icone in cella azioni senza bg-hover */
 .bn-actions-lg button:hover,
 .bn-actions-lg a:hover,
@@ -231,6 +239,26 @@
 .bn-nohover button:hover,
 .bn-nohover a:hover { 
   background: transparent !important; 
+}
+
+/* Ex-Dipendenti: righe con bg fisso #340808 e nessun glow */
+.exdip-table tbody tr.bn-row,
+.exdip-table tbody tr {
+  background-color: #340808 !important;
+}
+.exdip-table tbody tr.bn-row:hover,
+.exdip-table tbody tr:hover,
+.exdip-table tbody tr[aria-selected="true"],
+.exdip-table tbody tr[data-state="hover"],
+.exdip-table tbody tr[data-state="selected"] {
+  background-color: #340808 !important;
+}
+/* Disabilita overlay elevate solo nell'area exdip-table */
+.exdip-table .hover-elevate::after,
+.exdip-table .active-elevate::after,
+.exdip-table .hover-elevate-2::after,
+.exdip-table .active-elevate-2::after { 
+  background-color: transparent !important; 
 }
 /* Forza nessun background su tutti i pulsanti nella tabella */
 .bn-nohover button,

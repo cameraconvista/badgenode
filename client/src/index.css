@@ -28,8 +28,9 @@
   /* Essential Variables */
   --button-outline: rgba(255, 255, 255, 0.1);
   --badge-outline: rgba(255, 255, 255, 0.05);
-  --elevate-1: rgba(255, 255, 255, 0.04);
-  --elevate-2: rgba(255, 255, 255, 0.09);
+  /* Disabilita overlay elevate globali */
+  --elevate-1: rgba(255, 255, 255, 0.0);
+  --elevate-2: rgba(255, 255, 255, 0.0);
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
   --input: #374151;

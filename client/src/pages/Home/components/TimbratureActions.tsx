@@ -50,14 +50,15 @@ export function useTimbratureActions({
         return;
       }
 
-      const _id = await TimbratureService.timbra(pinNumber, 'entrata');
-      void _id;
-
-      // Invalida cache per refresh automatico
-      invalidateAfterTimbratura(pinNumber);
-
-      setFeedback({ type: 'success', message: 'Entrata registrata' });
-      setPin('');
+      const res = await TimbratureService.timbra(pinNumber, 'entrata');
+      if (res.ok) {
+        invalidateAfterTimbratura(pinNumber);
+        setFeedback({ type: 'success', message: 'Entrata registrata' });
+        setPin('');
+      } else {
+        const msg = res.message || res.code || 'Errore registrazione Entrata';
+        setFeedback({ type: 'error', message: msg });
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Errore durante la registrazione';
       setFeedback({ type: 'error', message });
@@ -87,14 +88,15 @@ export function useTimbratureActions({
         return;
       }
 
-      const _id = await TimbratureService.timbra(pinNumber, 'uscita');
-      void _id;
-
-      // Invalida cache per refresh automatico
-      invalidateAfterTimbratura(pinNumber);
-
-      setFeedback({ type: 'success', message: 'Uscita registrata' });
-      setPin('');
+      const res = await TimbratureService.timbra(pinNumber, 'uscita');
+      if (res.ok) {
+        invalidateAfterTimbratura(pinNumber);
+        setFeedback({ type: 'success', message: 'Uscita registrata' });
+        setPin('');
+      } else {
+        const msg = res.message || res.code || 'Errore registrazione Uscita';
+        setFeedback({ type: 'error', message: msg });
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Errore durante la registrazione';
       setFeedback({ type: 'error', message });

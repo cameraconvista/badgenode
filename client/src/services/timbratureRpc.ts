@@ -18,6 +18,7 @@ export interface InsertTimbroResult {
   success: boolean;
   data?: unknown;
   error?: string;
+  code?: string;
 }
 
 export interface UpdateTimbroParams {
@@ -46,16 +47,16 @@ export async function callInsertTimbro({
       pin: pin, 
       tipo: tipo.toLowerCase() as 'entrata'|'uscita' 
     });
-    return {
-      success: true,
-      data: result,
-    };
+    // Considera successo solo se il server ha restituito un id
+    const id = (result as any)?.id;
+    if (typeof id === 'number' && id > 0) {
+      return { success: true, data: result };
+    }
+    return { success: false, error: 'Nessun id restituito dal server', code: 'NO_ID' };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Errore sconosciuto';
-    return {
-      success: false,
-      error: message,
-    };
+    const code = (error as any)?.code || extractCodeFromMessage(message);
+    return { success: false, error: message, code };
   }
 }
 
@@ -104,7 +105,9 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
     const result = await safeFetchJsonPost<{ id: number }>('/api/timbrature', { pin, tipo, ts });
     
     if (isError(result)) {
-      throw new Error(result.error);
+      const err: any = new Error(result.error);
+      if ((result as any).code) err.code = (result as any).code;
+      throw err;
     }
     
     console.info('[SERVICE] insertTimbroServer OK →', { 
@@ -115,9 +118,16 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
     return result.data; // Solo i dati, non l'ApiResponse wrapper
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
-    console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg });
+    const code = (error as any)?.code;
+    console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg, code });
     throw error;
   }
+}
+
+function extractCodeFromMessage(msg: string | undefined): string | undefined {
+  if (!msg) return undefined;
+  const m = msg.match(/\[([A-Z0-9_\-]+)\]/);
+  return m?.[1];
 }
 
 /**

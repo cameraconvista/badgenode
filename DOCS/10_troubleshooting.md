@@ -790,3 +790,51 @@ window.__BADGENODE_DIAG__.supabase
 
 > **Documento consolidato dalla baseline Enterprise Stable (v1.0.0 — 2025-10-21)**  
 > Autore: BadgeNode / Cascade AI
+
+---
+
+## ✅ Fix recenti (2025-10-25) — Stato Attuale
+
+### 1) UI Glow e Sfondo Uniforme
+- Rimosso bagliore viola su pagine Archivio Dipendenti e Storico Timbrature.
+- Uniformato sfondo a gradiente `linear-gradient(135deg, #1a1a2e → #16213e → #0f3460)`.
+- Header tabelle resi opachi (`bn-solid-surface`, `bn-sticky-head`).
+
+File rilevanti:
+- `client/src/pages/ArchivioDipendenti.tsx` (boxShadow: none; bg gradient)
+- `client/src/pages/StoricoTimbrature.tsx` (boxShadow: none; rimozione shadow-2xl)
+- `client/src/styles/badgenode.css` (header opachi)
+
+### 2) Timbratura — Eliminazione "successi fantasma"
+- La UI mostra successo solo se il server scrive veramente (presenza `data.id`).
+- Enforced POST sempre per Entrata/Uscita; niente ottimismo.
+- Errori surfacizzati con `code` (es. `ALTERNANZA_INVALIDA`).
+
+File rilevanti:
+- `client/src/services/timbratureRpc.ts` (success solo con id; propagazione code)
+- `client/src/services/timbrature.service.ts` (`timbra` ritorna `{ ok, code, message, id }`; validatePinApi no-store + fallback)
+- `client/src/pages/Home/components/TimbratureActions.tsx` (await esito; toast verde solo su `ok===true`)
+
+### 3) Validazione PIN — Cache e Formato Risposta
+- `validatePinApi` ora usa `cache: 'no-store'` per evitare 304/risposte cached.
+- Supporto a risposte sia wrappate (`data.ok`) sia flat (`ok`).
+- In caso di errore rete → non blocca (lasciare la timbratura gestire fallback/offline).
+
+Endpoint server:
+- `GET /api/pin/validate` schema-agnostico (`select('pin')` su `public.utenti`).
+
+### 4) Storico — Fallback Robusto
+- `GET /api/storico` tenta view `v_turni_giornalieri` e fallback su tabella `timbrature` con pairing sequenziale.
+
+### 5) Dev Server e Proxy
+- Dev server Express in esecuzione su porta 10000 (proxy per preview IDE).
+- Se il proxy non carica: verificare che il server sia attivo e rilanciare `npm run dev`.
+
+---
+
+## 🔁 Checklist Rapida Post-Fix
+- [x] POST `/api/timbrature` parte su Entrata/Uscita (Network → 200 o 4xx con code).
+- [x] Nessun toast verde se `ok!==true`.
+- [x] PIN valido non mostra più "PIN non registrato" salvo 404 reali.
+- [x] Glow cornici rimosso; header opachi; sfondi uniformi.
+- [x] Dev server stabile su `:10000`.

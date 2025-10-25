@@ -56,7 +56,7 @@ export default function ArchivioTable({
       {/* Tabella TableKit Standard */}
       <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50 flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
-          <table className="w-full table-fixed border-collapse bn-archivio bn-nohover">
+          <table className="w-full table-fixed border-collapse bn-archivio bn-nohover archivio-table">
             <colgroup>
               {[
                 <col key="st" style={{ width: "88px" }} />,
@@ -66,7 +66,7 @@ export default function ArchivioTable({
                 <col key="az" style={{ width: "160px" }} />,
               ]}
             </colgroup>
-            <thead className="sticky top-0 z-10 bg-[rgba(255,255,255,0.06)] h-[48px]">
+            <thead className="sticky top-0 z-10 bn-solid-surface h-[48px]">
               <tr>
                 <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Storico</th>
                 <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">
@@ -95,7 +95,7 @@ export default function ArchivioTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => onStorico(utente.pin)}
-                        className="p-2"
+                        className="p-2 no-default-hover-elevate no-default-active-elevate"
                         title={`Storico di ${utente.nome} ${utente.cognome}`}
                       >
                         <History className="icon-storico" aria-label="Storico" />

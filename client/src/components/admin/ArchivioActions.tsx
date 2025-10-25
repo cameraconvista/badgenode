@@ -47,7 +47,7 @@ export default function ArchivioActions({
         variant="ghost"
         size="sm"
         onClick={handleModifica}
-        className="p-1"
+        className="p-1 no-default-hover-elevate no-default-active-elevate"
         title="Modifica dipendente"
       >
         <Edit className="icon-action edit" />
@@ -58,7 +58,7 @@ export default function ArchivioActions({
         variant="ghost"
         size="sm"
         onClick={() => setShowArchiviaDialog(true)}
-        className="p-1"
+        className="p-1 no-default-hover-elevate no-default-active-elevate"
         title="Archivia dipendente"
       >
         <Archive className="icon-action archive text-yellow-400/90 hover:text-yellow-300" />
@@ -69,7 +69,7 @@ export default function ArchivioActions({
         variant="ghost"
         size="sm"
         onClick={handleEliminaClick}
-        className="p-1"
+        className="p-1 no-default-hover-elevate no-default-active-elevate"
         title="Elimina dipendente"
       >
         <Trash2 className="icon-action trash text-red-400 hover:text-red-300" />

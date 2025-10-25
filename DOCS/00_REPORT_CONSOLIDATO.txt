@@ -1,17 +1,20 @@
 # 📚 REPORT CONSOLIDATO DOCUMENTAZIONE - BadgeNode
 
-Generato: 2025-10-21T10:38:45Z
+Generato: 2025-10-25T14:10:00Z
 Commit: def6303
 
-📁 Documentazione Enterprise — Struttura 2025.10.21
-01_database_api.md
-02_struttura_progetto.md
-03_scripts_utilita.md
-04_config_sviluppo.md
-05_setup_sviluppo.md
-06_icons_guide.md
-07_logica_giorno_logico.md
-08_ui_home_keypad.md
+📁 Documentazione Enterprise — Struttura 2025.10.25
+01_database_api.md        ← aggiornato: endpoint POST /api/timbrature, validate PIN, fallback storico
+02_struttura_progetto.md  ← verifica
+03_scripts_utilita.md     ← verifica
+04_config_sviluppo.md     ← verifica
+05_setup_sviluppo.md      ← verifica
+06_icons_guide.md         ← verifica
+07_logica_giorno_logico.md← verifica
+08_ui_home_keypad.md      ← verifica
 ────────────────────────────────
 DIAGNOSI_CONSOLIDATA_ALTRI.md ← riepilogo documenti extra
-
+Note:
+- Rimosso glow UI e uniformato sfondo pagine.
+- Fix timbratura: POST forzato, esito strutturato {ok, code}, toast solo su ok===true.
+- Validazione PIN: schema-agnostica e no-store.

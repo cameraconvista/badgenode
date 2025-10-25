@@ -74,7 +74,7 @@ export default function ExDipendentiTable({
       {/* Tabella TableKit Standard */}
       <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50 flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
-          <table className="w-full table-fixed border-collapse bn-archivio bn-nohover">
+          <table className="w-full table-fixed border-collapse bn-archivio bn-nohover exdip-table">
             <colgroup>
               {[
                 <col key="st" style={{ width: "88px" }} />,
@@ -121,7 +121,7 @@ export default function ExDipendentiTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => onStorico(exDipendente.pin)}
-                        className="p-2"
+                        className="p-2 no-default-hover-elevate no-default-active-elevate"
                         title={`Storico di ${exDipendente.nome} ${exDipendente.cognome}`}
                       >
                         <History className="icon-storico" aria-label="Storico" />
@@ -145,7 +145,7 @@ export default function ExDipendentiTable({
                             variant="ghost"
                             size="sm"
                             onClick={() => onRipristina(exDipendente)}
-                            className="p-2"
+                            className="p-2 no-default-hover-elevate no-default-active-elevate"
                             title={`Ripristina ${exDipendente.nome} ${exDipendente.cognome}`}
                           >
                             {/* Riusa icone di sistema, mantenendo stile */}
@@ -157,7 +157,7 @@ export default function ExDipendentiTable({
                             variant="ghost"
                             size="sm"
                             onClick={() => onElimina(exDipendente)}
-                            className="p-2"
+                            className="p-2 no-default-hover-elevate no-default-active-elevate"
                             title={`Elimina definitivamente ${exDipendente.nome} ${exDipendente.cognome}`}
                           >
                             <span className="text-red-400 text-sm font-semibold">Elimina</span>

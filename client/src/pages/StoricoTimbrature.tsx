@@ -74,11 +74,11 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
     >
       <div className="w-full max-w-[1200px] flex items-center justify-center h-full">
         <div
-          className="rounded-3xl p-6 shadow-2xl border-2 w-full h-[95vh] overflow-hidden relative flex flex-col gap-4"
+          className="rounded-3xl p-6 border-2 w-full h-[95vh] overflow-hidden relative flex flex-col gap-4"
           style={{
             backgroundColor: '#2b0048',
             borderColor: 'rgba(231, 116, 240, 0.6)',
-            boxShadow: '0 0 50px rgba(231, 116, 240, 0.3)',
+            boxShadow: 'none',
           }}
         >
           {/* Header - FISSO */}

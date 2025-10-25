@@ -118,21 +118,25 @@ DELETE /api/utenti/:pin
 ### **Timbrature**
 
 ```
-RPC insert_timbro_v2
-- Registra entrata/uscita con validazione PIN
-- Params: {p_pin: number, p_tipo: 'entrata'|'uscita'}
-- Response: {success: boolean, message: string}
-- Validazione: PIN deve esistere in tabella utenti
+POST /api/timbrature
+- Registra entrata/uscita via server con SERVICE_ROLE (bypass RLS)
+- Body: { pin: number, tipo: 'entrata'|'uscita', ts?: string }
+- Response OK: { success: true, data: { id: number, ... } }
+- Response errore: { success: false, error: string, code?: string }
+- Validazioni: alternanza entrata/uscita, giorno logico, PIN numerico 1-99
 
-GET /api/timbrature/:pin
-- Storico timbrature per PIN
-- Query: ?dal=YYYY-MM-DD&al=YYYY-MM-DD
+GET /api/storico
+- Report giornaliero; usa view v_turni_giornalieri, con fallback su tabella timbrature
+- Query: ?pin=<num>&dal=YYYY-MM-DD&al=YYYY-MM-DD
+- Response: { success: true, data: Array<TurnoGiornaliero> }
 
-GET /api/storico/:pin
-- Report aggregato giornaliero
-- Query: ?mese=YYYY-MM
-- Response: Array<TurnoGiornaliero>
+GET /api/timbrature/:pin (legacy)
+- Storico timbrature per PIN (compat)
 ```
+
+Nota:
+- La precedente RPC `insert_timbro_v2` è stata sostituita dall'endpoint server `POST /api/timbrature` per garantire coerenza e superare RLS.
+- La validazione PIN è esposta su `GET /api/pin/validate?pin=..` ed è schema-agnostica (selezione del solo campo `pin`).
 
 ### **Ex-Dipendenti**
 

@@ -150,8 +150,7 @@ export default function ArchivioDipendenti() {
     <div
       className="h-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
       style={{
-        background: 'radial-gradient(ellipse at center, #2d1b3d 0%, #1a0f2e 50%, #0f0a1a 100%)',
-        backgroundAttachment: 'fixed',
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
       }}
     >
       <div className="w-full max-w-[1120px] flex items-center justify-center h-full">
@@ -160,7 +159,7 @@ export default function ArchivioDipendenti() {
           style={{
             backgroundColor: '#2b0048',
             borderColor: 'rgba(231, 116, 240, 0.6)',
-            boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
+            boxShadow: 'none',
           }}
         >
           {/* Header con logo centrato */}
