@@ -64,16 +64,17 @@ export async function callInsertTimbro({
  * Crea nuova timbratura manuale dal Modale via endpoint server
  * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
  */
-export async function createTimbroManual({ pin, tipo, giorno, ora }: {
+export async function createTimbroManual({ pin, tipo, giorno, ora, anchorDate }: {
   pin: number; 
   tipo: 'ENTRATA'|'USCITA'; 
   giorno: string; 
   ora: string;
+  anchorDate?: string; // Data entrata per ancoraggio uscite notturne
 }) {
-  console.info('[SERVICE] createTimbroManual →', { pin, tipo, giorno, ora });
+  console.info('[SERVICE] createTimbroManual →', { pin, tipo, giorno, ora, anchorDate });
   
   try {
-    const result = await safeFetchJsonPost<{ id: number }>('/api/timbrature/manual', { pin, tipo, giorno, ora });
+    const result = await safeFetchJsonPost<{ id: number }>('/api/timbrature/manual', { pin, tipo, giorno, ora, anchorDate });
     
     if (isError(result)) {
       throw new Error(result.error);
@@ -150,7 +151,7 @@ export async function deleteTimbratureGiornata({ pin, giorno }: { pin: number; g
     console.info('[SERVICE] deleteTimbratureGiornata OK →', { 
       pin, 
       giorno, 
-      deletedCount: result.data.deleted_count 
+      deletedCount: (result as any)?.deleted_count ?? 0 
     });
     return result; // { success, deleted_count, ids, deleted_records }
   } catch (error) {

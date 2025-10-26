@@ -1,6 +1,6 @@
 import { getApiBaseUrl } from './apiBase';
 
-export async function apiGet(path: string, init?: RequestInit) {
+async function apiGet(path: string, init?: RequestInit) {
   const res = await fetch(`${getApiBaseUrl()}${path}`, {
     ...init,
     method: init?.method || 'GET',
@@ -10,7 +10,7 @@ export async function apiGet(path: string, init?: RequestInit) {
   return res.json();
 }
 
-export async function apiPost(path: string, body?: any, init?: RequestInit) {
+async function apiPost(path: string, body?: any, init?: RequestInit) {
   const res = await fetch(`${getApiBaseUrl()}${path}`, {
     ...init,
     method: 'POST',

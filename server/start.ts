@@ -3,6 +3,12 @@ import './env'; // Carica dotenv una sola volta
 import http from 'http';
 import { createApp, setupStaticFiles } from './createApp';
 
+// Disable console.log in production (preserve warn/error)
+if (process.env.NODE_ENV !== 'development') {
+  // eslint-disable-next-line no-console
+  console.log = () => {};
+}
+
 const PORT = Number(process.env.PORT || 10000);
 
 // Idempotency guard (evita doppio listen in ambienti che rieseguono i moduli)

@@ -131,7 +131,8 @@ router.post('/', async (req: Request, res: Response) => {
     // TODO(ts): replace with exact Supabase types
     const insertResult = await supabaseAdmin!
       .from('timbrature')
-      .insert([dto as unknown as TimbratureInsertClean])
+      // @ts-ignore - Supabase type inference issue
+      .insert([dto])
       .select('*')
       .single();
     

@@ -25,9 +25,9 @@ router.post('/manual', async (req: Request, res: Response) => {
       });
     }
 
-    const { pin, tipo, giorno, ora } = req.body ?? {};
+    const { pin, tipo, giorno, ora, anchorDate } = req.body ?? {};
 
-    console.info('[SERVER] INSERT manual timbratura →', { pin, tipo, giorno, ora });
+    console.info('[SERVER] INSERT manual timbratura →', { pin, tipo, giorno, ora, anchorDate });
 
     // Validazioni nette
     if (!pin || !tipo || !giorno || !ora) {
@@ -84,7 +84,7 @@ router.post('/manual', async (req: Request, res: Response) => {
       data: giorno,
       ora: `${String(H).padStart(2, '0')}:${String(M).padStart(2, '0')}:00`,
       tipo: tipoNormalized as 'entrata' | 'uscita',
-      dataEntrata: req.body.anchorDate // Parametro opzionale per ancoraggio
+      dataEntrata: anchorDate // Parametro opzionale per ancoraggio
     });
     
     const data_locale = giorno;
@@ -104,7 +104,7 @@ router.post('/manual', async (req: Request, res: Response) => {
       tipoNormalized as 'entrata' | 'uscita',
       giorno,
       ora_locale,
-      req.body.anchorDate
+      anchorDate
     );
 
     if (!validationResult.success) {
@@ -144,7 +144,8 @@ router.post('/manual', async (req: Request, res: Response) => {
     // TODO(ts): replace with exact Supabase types
     const insertResult = await supabaseAdmin!
       .from('timbrature')
-      .insert([dto as unknown as TimbratureInsertClean])
+      // @ts-ignore - Supabase type inference issue
+      .insert([dto])
       .select('*')
       .single();
     

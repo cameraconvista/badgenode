@@ -1,5 +1,6 @@
 ARCHIVE/**
 scripts/legacy/**
+legacy/**
 dist/**
 build/**
 node_modules/**

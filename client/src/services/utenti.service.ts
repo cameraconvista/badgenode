@@ -5,6 +5,7 @@ import { asError } from '@/lib/safeError';
 import { normalizeError } from '@/lib/normalizeError';
 import { safeFetchJson, safeFetchJsonPost, safeFetchJsonDelete } from '@/lib/safeFetch';
 import { isError, isSuccess } from '@/types/api';
+import { validatePinInput } from '@/utils/validation/pin';
 import type { Utente as DbUtente } from '../../../shared/types/database';
 
 export interface Utente {
@@ -97,8 +98,9 @@ export class UtentiService {
   static async upsertUtente(input: UtenteInput): Promise<Utente> {
     try {
       // Validazione lato client
-      if (!input.pin || input.pin < 1 || input.pin > 99) {
-        throw new Error('PIN deve essere tra 1 e 99');
+      const pinError = validatePinInput(input.pin);
+      if (pinError) {
+        throw new Error(pinError);
       }
       if (!input.nome?.trim()) {
         throw new Error('Nome obbligatorio');

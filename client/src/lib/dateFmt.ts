@@ -13,7 +13,7 @@ export function toInputDate(v?: string | Date | null): string {
   }
 }
 
-export function fromInputDate(dateStr: string): string | null {
+function fromInputDate(dateStr: string): string | null {
   if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null;
   return dateStr; // già in formato corretto
 }

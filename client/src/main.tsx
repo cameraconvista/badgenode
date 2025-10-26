@@ -3,6 +3,12 @@ import App from './App';
 import './index.css';
 import './components/ui/ToastKit.css';
 
+// Disable console.log in production (preserve warn/error)
+if (import.meta.env.PROD) {
+  // eslint-disable-next-line no-console
+  console.log = () => {};
+}
+
 // PWA Service Worker registration (only in production)
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
