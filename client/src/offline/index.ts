@@ -1,76 +1,82 @@
 // client/src/offline/index.ts
-// Centralized offline management with gating, initialization, and diagnostics
-
-import { featureFlags } from '@/config/featureFlags';
-import { getDeviceId } from '@/lib/deviceId';
-import { idbOpen } from './idb';
-import { flushPending, count, getAllPending, peekClientSeq } from './queue';
+// Safe offline management with lazy init and no side-effects
 
 // Device ID management
 const DEVICE_ID_KEY = 'BN_DEVICE_ID';
 
-export function ensureDeviceId(): string {
+// Safe init function - no side effects, pure function
+export async function initOfflineSystem(opts?: { diag?: boolean }): Promise<void> {
+  // Early guards - prevent any execution in unsafe environments
+  if (typeof window === 'undefined') return;
+  if (!('indexedDB' in window)) return;
+  
   try {
-    let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-    if (!deviceId) {
-      deviceId = crypto.randomUUID?.() ?? `BN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem(DEVICE_ID_KEY, deviceId);
-    }
-    return deviceId;
-  } catch {
-    // Fallback for environments without localStorage
-    return (globalThis as any).__BN_DEVICE_ID__ ?? 
-           ((globalThis as any).__BN_DEVICE_ID__ = `BN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-  }
-}
-
-// Gating logic
-export function calculateGating() {
-  const deviceId = ensureDeviceId();
-  const enabled = !!featureFlags.queue;
-  
-  let allowed = false;
-  if (featureFlags.whitelist === '*') {
-    allowed = true;
-  } else if (featureFlags.whitelist) {
-    const whitelist = featureFlags.whitelist
-      .split(',')
-      .map(s => s.trim().toLowerCase())
-      .filter(s => s.length > 0);
-    allowed = whitelist.includes(deviceId.toLowerCase());
-  }
-  
-  return { enabled, allowed, deviceId };
-}
-
-// Debounced flush function
-let flushTimeout: number | null = null;
-function debouncedFlush() {
-  if (flushTimeout) clearTimeout(flushTimeout);
-  flushTimeout = window.setTimeout(() => {
-    void flushPending();
-    flushTimeout = null;
-  }, 2000);
-}
-
-// Initialize offline system
-export async function initOfflineSystem(): Promise<void> {
-  const { enabled, allowed, deviceId } = calculateGating();
-  
-  if (import.meta.env.DEV) {
-    console.debug('[offline:init] enabled=%s, allowed=%s, deviceId=%s', enabled, allowed, deviceId);
-  }
-  
-  // Always install diagnostics
-  installDiagnostics({ enabled, allowed, deviceId });
-  
-  // Only initialize IndexedDB and listeners if enabled and allowed
-  if (enabled && allowed) {
+    // Safe flag reading
+    const q = String(import.meta.env?.VITE_FEATURE_OFFLINE_QUEUE ?? 'false') === 'true';
+    const b = String(import.meta.env?.VITE_FEATURE_OFFLINE_BADGE ?? 'false') === 'true';
+    const wl = String(import.meta.env?.VITE_OFFLINE_DEVICE_WHITELIST ?? '').trim();
+    
+    // Safe device ID management
+    let deviceId: string;
     try {
-      // Initialize IndexedDB (triggers onupgradeneeded if needed)
+      deviceId = localStorage.getItem(DEVICE_ID_KEY) ?? (crypto?.randomUUID?.() ?? String(Date.now()));
+      localStorage.setItem(DEVICE_ID_KEY, deviceId);
+    } catch {
+      deviceId = `BN-fallback-${Date.now()}`;
+    }
+    
+    // Gating calculation
+    const allowed = wl === '*' ? true : (wl ? wl.split(',').map(s => s.trim()).includes(deviceId) : false);
+    const enabled = !!q && allowed;
+    
+    if (import.meta.env.DEV) {
+      console.debug('[offline:init] enabled=%s, allowed=%s, deviceId=%s', enabled, allowed, deviceId);
+    }
+    
+    // Always install diagnostics (safe)
+    installDiagnostics({ enabled, allowed, deviceId, q, b, wl });
+    
+    // Only proceed if enabled
+    if (!enabled) {
+      if (import.meta.env.DEV) {
+        console.debug('[offline:init] disabled, skipping IndexedDB init');
+      }
+      return;
+    }
+    
+    // Initialize IndexedDB safely
+    try {
+      const { idbOpen } = await import('./idb');
       await idbOpen();
       
-      // Install online listener for auto-flush
+      if (import.meta.env.DEV) {
+        console.debug('[offline:init] IndexedDB initialized');
+      }
+    } catch (e) {
+      if (import.meta.env.DEV) {
+        console.debug('[offline:init] IndexedDB failed:', (e as Error)?.message);
+      }
+      return;
+    }
+    
+    // Install event listeners safely
+    try {
+      let flushTimeout: number | null = null;
+      const debouncedFlush = () => {
+        if (flushTimeout) clearTimeout(flushTimeout);
+        flushTimeout = window.setTimeout(async () => {
+          try {
+            const { flushPending } = await import('./queue');
+            await flushPending();
+          } catch (e) {
+            if (import.meta.env.DEV) {
+              console.debug('[offline:flush] error:', (e as Error)?.message);
+            }
+          }
+          flushTimeout = null;
+        }, 2000);
+      };
+      
       window.addEventListener('online', debouncedFlush);
       window.addEventListener('visibilitychange', () => {
         if (!document.hidden && navigator.onLine) {
@@ -79,63 +85,95 @@ export async function initOfflineSystem(): Promise<void> {
       });
       
       if (import.meta.env.DEV) {
-        console.debug('[offline:init] IndexedDB and listeners initialized');
+        console.debug('[offline:init] event listeners installed');
       }
     } catch (e) {
       if (import.meta.env.DEV) {
-        console.debug('[offline:init] failed to initialize IndexedDB:', (e as Error).message);
+        console.debug('[offline:init] listeners failed:', (e as Error)?.message);
       }
+    }
+    
+  } catch (e) {
+    // Never throw - just log and continue
+    if (import.meta.env.DEV) {
+      console.debug('[offline:init] general error:', (e as Error)?.message);
     }
   }
 }
 
-// Install diagnostics
-function installDiagnostics({ enabled, allowed, deviceId }: { enabled: boolean; allowed: boolean; deviceId: string }) {
-  const g = globalThis as any;
-  g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
-  
-  // Always expose feature flags
-  g.__BADGENODE_DIAG__.featureFlags = featureFlags;
-  
-  // Expose offline status and functions
-  g.__BADGENODE_DIAG__.offline = {
-    enabled,
-    allowed,
-    deviceId,
-    queueCount: async () => await count(),
-    peekLast: async () => {
-      const items = await getAllPending();
-      const last = items[items.length - 1];
-      return last ? { ...last, pin: '***' } : null;
-    },
-    peekClientSeq,
-    getDeviceId: () => deviceId,
-    acceptance: async () => ({
-      deviceId,
+// Safe diagnostics installation
+function installDiagnostics({ enabled, allowed, deviceId, q, b, wl }: {
+  enabled: boolean;
+  allowed: boolean;
+  deviceId: string;
+  q: boolean;
+  b: boolean;
+  wl: string;
+}) {
+  try {
+    const g = globalThis as any;
+    g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
+    
+    // Feature flags
+    g.__BADGENODE_DIAG__.featureFlags = { queue: q, badge: b, whitelist: wl };
+    
+    // Offline status with safe functions
+    g.__BADGENODE_DIAG__.offline = {
       enabled,
       allowed,
-      queueCount: await count(),
-      lastSeq: await peekClientSeq(),
-      online: navigator.onLine,
-      timestamp: new Date().toISOString(),
-    }),
-  };
+      deviceId,
+      queueCount: async () => {
+        try {
+          const { count } = await import('./queue');
+          return await count();
+        } catch {
+          return 0;
+        }
+      },
+      peekLast: async () => {
+        try {
+          const { getAllPending } = await import('./queue');
+          const items = await getAllPending();
+          const last = items[items.length - 1];
+          return last ? { ...last, pin: '***' } : null;
+        } catch {
+          return null;
+        }
+      },
+      peekClientSeq: async () => {
+        try {
+          const { peekClientSeq } = await import('./queue');
+          return await peekClientSeq();
+        } catch {
+          return 0;
+        }
+      },
+      getDeviceId: () => deviceId,
+      acceptance: () => ({ enabled, allowed, deviceId })
+    };
+    
+  } catch (e) {
+    // Never throw from diagnostics
+    if (import.meta.env.DEV) {
+      console.debug('[offline:diag] failed:', (e as Error)?.message);
+    }
+  }
 }
 
-// Check if offline queue should be used
+// Safe utility functions
 export function shouldUseOfflineQueue(): boolean {
-  const { enabled, allowed } = calculateGating();
-  return enabled && allowed;
+  try {
+    const offline = (globalThis as any)?.__BADGENODE_DIAG__?.offline;
+    return offline?.enabled && offline?.allowed;
+  } catch {
+    return false;
+  }
 }
 
-// Check if request failed due to offline condition
 export function isOfflineError(error: any): boolean {
   if (!navigator.onLine) return true;
-  
-  // Check for common network error patterns
   if (error instanceof TypeError && error.message.includes('fetch')) return true;
   if (error?.code === 'NETWORK_ERROR') return true;
   if (error?.name === 'NetworkError') return true;
-  
   return false;
 }

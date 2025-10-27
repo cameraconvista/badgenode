@@ -123,12 +123,16 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
     const code = (error as any)?.code;
     console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg, code });
     
-    // Try offline queue if enabled and this is a network error
+    // Try offline queue if enabled and this is a network error (protected)
     try {
-      const { shouldUseOfflineQueue, isOfflineError } = await import('@/offline/index');
-      if (shouldUseOfflineQueue() && isOfflineError(error)) {
-        const { enqueuePending } = await import('@/offline/queue');
-        await enqueuePending({ pin, tipo });
+      const offline = (globalThis as any)?.__BADGENODE_DIAG__?.offline;
+      const acc = typeof offline?.acceptance === 'function' ? offline.acceptance() : { enabled: false };
+      if (acc?.enabled) {
+        const { enqueuePending } = await import('../offline/queue');
+        await enqueuePending({ 
+          pin, 
+          tipo
+        });
         
         if (import.meta.env.DEV) {
           console.debug('[SERVICE] insertTimbroServer → queued offline', { pin, tipo });
@@ -139,7 +143,7 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
       }
     } catch (offlineError) {
       if (import.meta.env.DEV) {
-        console.debug('[SERVICE] offline queue failed:', (offlineError as Error).message);
+        console.debug('[SERVICE] offline queue failed:', (offlineError as Error)?.message);
       }
     }
     

@@ -34,34 +34,25 @@ try {
   </div>`;
 }
 
-// Offline system initialization (after app render) - simplified to avoid blocking
-setTimeout(() => {
-  (async () => {
-    try {
-      // Simple diagnostics setup
-      const g = globalThis as any;
-      g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
-      
-      // Load feature flags safely
-      const { featureFlags } = await import('./config/featureFlags');
-      g.__BADGENODE_DIAG__.featureFlags = featureFlags;
-      
-      // Basic offline status
-      g.__BADGENODE_DIAG__.offline = {
-        enabled: !!featureFlags.queue,
-        allowed: featureFlags.whitelist === '*' || featureFlags.whitelist.length > 0,
-        deviceId: 'BN-temp-' + Date.now(),
-        queueCount: async () => 0,
-        peekLast: async () => null,
-      };
-      
-      if (import.meta.env.DEV) {
-        console.debug('[offline:bootstrap] basic setup completed');
-      }
-    } catch (e) {
-      if (import.meta.env.DEV) {
-        console.debug('[offline:bootstrap] failed:', (e as Error)?.message);
-      }
+// Offline system initialization - lazy and protected
+(async () => {
+  try {
+    const mod = await import('./offline/index');
+    await mod.initOfflineSystem?.({ diag: true });
+  } catch (e) {
+    // Never block the boot
+    if (import.meta.env.DEV) {
+      console.debug('[offline:init] skipped', e);
     }
-  })();
-}, 100);
+    // Minimal fallback diagnostics
+    const g = globalThis as any;
+    g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
+    g.__BADGENODE_DIAG__.offline = g.__BADGENODE_DIAG__.offline || { 
+      enabled: false, 
+      allowed: false,
+      deviceId: 'BN-fallback-' + Date.now(),
+      queueCount: async () => 0,
+      peekLast: async () => null,
+    };
+  }
+})();

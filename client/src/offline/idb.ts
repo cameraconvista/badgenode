@@ -22,7 +22,7 @@ export async function idbOpen(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     let req: IDBOpenDBRequest;
     try {
-      req = indexedDB.open(DB_NAME, DB_VERSION);
+      req = indexedDB.open(DB_NAME, 2); // Increment version for safe upgrade
     } catch (e) {
       reject(e);
       return;
@@ -31,10 +31,10 @@ export async function idbOpen(): Promise<IDBDatabase> {
       try {
         const db = req.result;
         if (!db.objectStoreNames.contains(STORE_TIMBRI)) {
-          const store = db.createObjectStore(STORE_TIMBRI, { keyPath: 'client_seq' });
-          store.createIndex('status_idx', 'status', { unique: false });
-          store.createIndex('client_seq_idx', 'client_seq', { unique: true });
-          store.createIndex('by_ts', 'ts_client_ms', { unique: false });
+          const os = db.createObjectStore(STORE_TIMBRI, { keyPath: 'client_seq' });
+          os.createIndex('by_ts', 'ts_client_ms', { unique: false });
+          os.createIndex('status_idx', 'status', { unique: false });
+          os.createIndex('client_seq_idx', 'client_seq', { unique: true });
         }
       } catch (e) {
         // swallow upgrade errors, fallback will catch later
