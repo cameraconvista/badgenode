@@ -34,6 +34,7 @@ export async function idbOpen(): Promise<IDBDatabase> {
           const store = db.createObjectStore(STORE_TIMBRI, { keyPath: 'client_seq' });
           store.createIndex('status_idx', 'status', { unique: false });
           store.createIndex('client_seq_idx', 'client_seq', { unique: true });
+          store.createIndex('by_ts', 'ts_client_ms', { unique: false });
         }
       } catch (e) {
         // swallow upgrade errors, fallback will catch later

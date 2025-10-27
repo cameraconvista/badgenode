@@ -27,6 +27,8 @@ export type QueueItem = {
   pin: string;
   tipo: 'entrata' | 'uscita';
   timestamp_raw: string; // ISO
+  ts_client_ms: number; // timestamp in milliseconds for sorting
+  client_event_id: string; // unique event ID for idempotency
   status: 'pending' | 'sending' | 'sent' | 'review';
   last_error?: string;
   created_at: string; // ISO (client)

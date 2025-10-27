@@ -18,36 +18,27 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   });
 }
 
-// Offline diagnostics (Step 1): optional, DEV only, always install for diagnostics
-if (import.meta.env.DEV) {
-  (async () => {
-    try {
-      const [{ isOfflineEnabled }, { getDeviceId }] = await Promise.all([
-        import('./offline/gating'),
-        import('./lib/deviceId'),
-      ]);
-      const deviceId = getDeviceId();
-      const enabled = isOfflineEnabled(deviceId);
-      
-      // Always install diagnostics for debugging (exposes feature flags)
-      void import('./offline/diagnostic').then((m) => m.installOfflineDiagnostics());
-      
-      if (enabled) {
-        // Load sync triggers lazily only if enabled
-        void import('./offline/syncRunner').then((m) => m.installSyncTriggers());
-        // Badge is optional and mounted after a tick to avoid boot blocking
-        const { isOfflineBadgeEnabled } = await import('./config/featureFlags');
-        if (isOfflineBadgeEnabled()) {
-          setTimeout(() => {
-            void import('./offline/OfflineBadge').then((m) => m.mountOfflineBadge());
-          }, 0);
-        }
+// Offline system initialization
+(async () => {
+  try {
+    const { initOfflineSystem } = await import('./offline/index');
+    await initOfflineSystem();
+    
+    // Badge is optional and mounted after initialization
+    if (import.meta.env.DEV) {
+      const { featureFlags } = await import('./config/featureFlags');
+      if (featureFlags.badge) {
+        setTimeout(() => {
+          void import('./offline/OfflineBadge').then((m) => m.mountOfflineBadge());
+        }, 0);
       }
-    } catch (e) {
+    }
+  } catch (e) {
+    if (import.meta.env.DEV) {
       console.debug('[offline:bootstrap] skipped:', (e as Error)?.message);
     }
-  })();
-}
+  }
+})();
 
 try {
   const root = document.getElementById('root');

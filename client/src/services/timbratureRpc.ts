@@ -98,6 +98,7 @@ export async function createTimbroManual({ pin, tipo, giorno, ora, anchorDate }:
 /**
  * Inserisce nuova timbratura via endpoint server
  * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
+ * Con fallback offline queue su errori di rete
  */
 export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo: 'entrata'|'uscita'; ts?: string }): Promise<{ id: number }> {
   console.info('[SERVICE] insertTimbroServer →', { pin, tipo, ts });
@@ -121,6 +122,27 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
     const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
     const code = (error as any)?.code;
     console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg, code });
+    
+    // Try offline queue if enabled and this is a network error
+    try {
+      const { shouldUseOfflineQueue, isOfflineError } = await import('@/offline/index');
+      if (shouldUseOfflineQueue() && isOfflineError(error)) {
+        const { enqueuePending } = await import('@/offline/queue');
+        await enqueuePending({ pin, tipo });
+        
+        if (import.meta.env.DEV) {
+          console.debug('[SERVICE] insertTimbroServer → queued offline', { pin, tipo });
+        }
+        
+        // Return a synthetic success response for offline queue
+        return { id: -1 }; // Negative ID indicates queued
+      }
+    } catch (offlineError) {
+      if (import.meta.env.DEV) {
+        console.debug('[SERVICE] offline queue failed:', (offlineError as Error).message);
+      }
+    }
+    
     throw error;
   }
 }

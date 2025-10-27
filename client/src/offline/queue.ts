@@ -4,61 +4,109 @@
 // Coda offline persistente (Step 3): IndexedDB con key client_seq
 // Protetta da feature flag. Nessun side-effect quando OFF.
 
-import { isOfflineEnabled } from '@/offline/gating';
 import { STORE_TIMBRI, idbAdd, idbGetAll, idbPut, idbDelete, idbCount } from './idb';
 import type { QueueItem } from './types';
-import { nextClientSeq } from './seq';
 import { getDeviceId } from '@/lib/deviceId';
 
 function nowIso(): string {
   return new Date().toISOString();
 }
 
-export async function enqueue(itemBase: Omit<QueueItem, 'client_seq' | 'status' | 'created_at' | 'updated_at'>): Promise<QueueItem> {
-  if (!isOfflineEnabled(getDeviceId())) throw new Error('offline queue disabled');
+export async function peekClientSeq(): Promise<number> {
+  try {
+    const items = await idbGetAll<QueueItem>(STORE_TIMBRI);
+    if (items.length === 0) return 0;
+    return Math.max(...items.map(item => item.client_seq));
+  } catch {
+    return 0;
+  }
+}
+
+export async function enqueuePending(ev: { pin: number; tipo: 'entrata' | 'uscita' }): Promise<QueueItem> {
+  const client_seq = (await peekClientSeq()) + 1;
   const qi: QueueItem = {
-    client_seq: nextClientSeq(),
-    device_id: itemBase.device_id,
-    pin: itemBase.pin,
-    tipo: itemBase.tipo,
-    timestamp_raw: itemBase.timestamp_raw,
+    client_seq,
+    device_id: getDeviceId(),
+    pin: String(ev.pin),
+    tipo: ev.tipo,
+    timestamp_raw: nowIso(),
+    ts_client_ms: Date.now(),
+    client_event_id: crypto.randomUUID?.() ?? String(Date.now()),
     status: 'pending',
     created_at: nowIso(),
   };
-  await idbAdd(STORE_TIMBRI, qi);
+  await idbPut(STORE_TIMBRI, qi);
   if (import.meta.env.DEV) console.debug('[offline:enqueue]', qi.client_seq);
   return qi;
 }
 
 export async function getAllPending(): Promise<QueueItem[]> {
-  if (!isOfflineEnabled(getDeviceId())) return [];
-  const all = await idbGetAll<QueueItem>(STORE_TIMBRI);
-  return all
-    .filter((x) => x.status === 'pending' || x.status === 'sending' || !x.status)
-    .sort((a, b) => a.client_seq - b.client_seq);
+  try {
+    const items = await idbGetAll<QueueItem>(STORE_TIMBRI);
+    return items
+      .filter(item => item.status === 'pending' || !item.status)
+      .sort((a, b) => (a.ts_client_ms || 0) - (b.ts_client_ms || 0));
+  } catch {
+    return [];
+  }
 }
 
-async function updateStatus(client_seq: number, status: QueueItem['status'], reason?: string): Promise<void> {
-  const all = await idbGetAll<QueueItem>(STORE_TIMBRI);
-  const item = all.find((x) => x.client_seq === client_seq);
-  if (!item) return;
-  item.status = status;
-  item.updated_at = nowIso();
-  if (reason) item.last_error = reason;
-  await idbPut(STORE_TIMBRI, item);
+export async function flushPending(): Promise<void> {
+  if (!navigator.onLine) return;
+  
+  const pending = await getAllPending();
+  if (pending.length === 0) return;
+
+  if (import.meta.env.DEV) console.debug('[offline:flush] processing', pending.length, 'items');
+
+  for (const item of pending) {
+    try {
+      const response = await fetch('/api/timbrature', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pin: Number(item.pin),
+          tipo: item.tipo,
+          client_event_id: item.client_event_id,
+        }),
+      });
+
+      if (response.ok) {
+        // Success - remove from queue
+        await idbDelete(STORE_TIMBRI, item.client_seq);
+        if (import.meta.env.DEV) console.debug('[offline:flush] synced', item.client_seq);
+      } else if (response.status >= 400 && response.status < 500) {
+        // Client error - remove from queue (won't succeed on retry)
+        await idbDelete(STORE_TIMBRI, item.client_seq);
+        if (import.meta.env.DEV) console.debug('[offline:flush] discarded 4xx', item.client_seq);
+      }
+      // 5xx errors: keep in queue for retry
+    } catch (e) {
+      // Network error: keep in queue for retry
+      if (import.meta.env.DEV) console.debug('[offline:flush] network error, keeping', item.client_seq);
+    }
+  }
 }
 
-export function markSending(client_seq: number): Promise<void> { return updateStatus(client_seq, 'sending'); }
-export function markSent(client_seq: number): Promise<void> { return updateStatus(client_seq, 'sent'); }
-export function markReview(client_seq: number, reason?: string): Promise<void> { return updateStatus(client_seq, 'review', reason); }
+// Utility functions
+export async function count(): Promise<number> {
+  try {
+    return await idbCount(STORE_TIMBRI);
+  } catch {
+    return 0;
+  }
+}
 
 export async function remove(client_seq: number): Promise<void> {
   await idbDelete(STORE_TIMBRI, client_seq);
 }
 
-export async function count(): Promise<number> {
-  if (!isOfflineEnabled(getDeviceId())) return 0;
-  return idbCount(STORE_TIMBRI);
+// Legacy compatibility functions
+export async function enqueue(itemBase: Omit<QueueItem, 'client_seq' | 'status' | 'created_at' | 'updated_at'>): Promise<QueueItem> {
+  return enqueuePending({
+    pin: Number(itemBase.pin),
+    tipo: itemBase.tipo,
+  });
 }
 
 export function buildBaseItem(pin: number, tipo: 'entrata'|'uscita'): Omit<QueueItem, 'client_seq'|'status'|'created_at'|'updated_at'> {
@@ -67,5 +115,7 @@ export function buildBaseItem(pin: number, tipo: 'entrata'|'uscita'): Omit<Queue
     pin: String(pin),
     tipo,
     timestamp_raw: new Date().toISOString(),
+    ts_client_ms: Date.now(),
+    client_event_id: crypto.randomUUID?.() ?? String(Date.now()),
   };
 }
