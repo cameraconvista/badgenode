@@ -18,28 +18,6 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   });
 }
 
-// Offline system initialization
-(async () => {
-  try {
-    const { initOfflineSystem } = await import('./offline/index');
-    await initOfflineSystem();
-    
-    // Badge is optional and mounted after initialization
-    if (import.meta.env.DEV) {
-      const { featureFlags } = await import('./config/featureFlags');
-      if (featureFlags.badge) {
-        setTimeout(() => {
-          void import('./offline/OfflineBadge').then((m) => m.mountOfflineBadge());
-        }, 0);
-      }
-    }
-  } catch (e) {
-    if (import.meta.env.DEV) {
-      console.debug('[offline:bootstrap] skipped:', (e as Error)?.message);
-    }
-  }
-})();
-
 try {
   const root = document.getElementById('root');
   if (!root) {
@@ -55,3 +33,35 @@ try {
     <p>Check console for details</p>
   </div>`;
 }
+
+// Offline system initialization (after app render) - simplified to avoid blocking
+setTimeout(() => {
+  (async () => {
+    try {
+      // Simple diagnostics setup
+      const g = globalThis as any;
+      g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
+      
+      // Load feature flags safely
+      const { featureFlags } = await import('./config/featureFlags');
+      g.__BADGENODE_DIAG__.featureFlags = featureFlags;
+      
+      // Basic offline status
+      g.__BADGENODE_DIAG__.offline = {
+        enabled: !!featureFlags.queue,
+        allowed: featureFlags.whitelist === '*' || featureFlags.whitelist.length > 0,
+        deviceId: 'BN-temp-' + Date.now(),
+        queueCount: async () => 0,
+        peekLast: async () => null,
+      };
+      
+      if (import.meta.env.DEV) {
+        console.debug('[offline:bootstrap] basic setup completed');
+      }
+    } catch (e) {
+      if (import.meta.env.DEV) {
+        console.debug('[offline:bootstrap] failed:', (e as Error)?.message);
+      }
+    }
+  })();
+}, 100);
