@@ -1,0 +1,17 @@
+# tsconfig.json
+
+## Include/Exclude (righe 2-3)
+- include: ["client/src/**/*", "shared/**/*", "server/**/*"]
+- exclude: ["node_modules", "build", "dist", "**/*.test.ts", "legacy/**/*"]
+
+## CompilerOptions (righe 4-22)
+- noEmit: true
+- module: "ESNext"
+- strict: true
+- jsx: "preserve"
+- moduleResolution: "bundler"
+- allowImportingTsExtensions: true
+
+## Paths (righe 18-21)
+- "@/*": ["./client/src/*"]
+- "@shared/*": ["./shared/*"]

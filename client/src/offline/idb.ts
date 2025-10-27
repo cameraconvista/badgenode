@@ -128,3 +128,38 @@ export async function idbCount(store: StoreName): Promise<number> {
     }
   });
 }
+
+export async function idbUpdateByKey<T = any>(store: StoreName, key: IDBValidKey, updater: (current: T | null) => T): Promise<void> {
+  if (!hasIDB()) {
+    const arr = memDB[store] as T[];
+    const i = arr.findIndex((x: any) => x.client_seq === key);
+    if (i >= 0) {
+      arr[i] = updater(arr[i]);
+    } else {
+      arr.push(updater(null));
+    }
+    return;
+  }
+  const db = await idbOpen();
+  return new Promise<void>((resolve, reject) => {
+    try {
+      const tx = db.transaction(store, 'readwrite');
+      const st = tx.objectStore(store);
+      const getReq = st.get(key);
+      getReq.onsuccess = () => {
+        try {
+          const next = updater((getReq.result ?? null) as T | null);
+          const putReq = st.put(next as any);
+          putReq.onsuccess = () => resolve();
+          putReq.onerror = () => reject(putReq.error);
+        } catch (e) {
+          reject(e);
+        }
+      };
+      getReq.onerror = () => reject(getReq.error);
+      tx.onerror = () => reject(tx.error);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}

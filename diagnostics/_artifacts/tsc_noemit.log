@@ -1,0 +1,15 @@
+TypeScript Check FAILED - Exit code: 2
+
+ERRORI TROVATI: 3 errori nello stesso file
+
+client/src/offline/syncRunner.ts:8:25 - error TS2305: Module '"./queue"' has no exported member 'markSending'.
+client/src/offline/syncRunner.ts:8:38 - error TS2305: Module '"./queue"' has no exported member 'markSent'.
+client/src/offline/syncRunner.ts:8:48 - error TS2305: Module '"./queue"' has no exported member 'markReview'.
+
+CAUSA: Import di funzioni non esistenti in queue.ts
+- markSending: NON ESPORTATA
+- markSent: NON ESPORTATA  
+- markReview: NON ESPORTATA
+
+IMPATTO: TypeScript compilation completamente bloccata
+SEVERITÀ: CRITICA

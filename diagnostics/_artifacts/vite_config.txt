@@ -1,0 +1,23 @@
+# vite.config.ts
+
+## Plugins (righe 15-36)
+- react()
+- Icons (unplugin-icons/vite)
+- VitePWA (registerType: 'autoUpdate', devOptions: { enabled: false })
+
+## Resolve Alias (righe 38-44)
+- '@': path.resolve(__dirname, 'client/src')
+- '@shared': path.resolve(__dirname, 'server/shared')
+
+## Root & Build (righe 45-72)
+- root: path.resolve(__dirname, 'client')
+- outDir: path.resolve(__dirname, 'dist', 'public')
+- manualChunks: react, recharts, radix, supabase, query
+
+## Server Config (righe 73-85)
+- fs.strict: true, fs.deny: ['**/.*']
+- proxy '/api' → 'http://localhost:3001'
+
+## Define (righe 86-90)
+- VITE_SUPABASE_URL: JSON.stringify(env.VITE_SUPABASE_URL)
+- VITE_SUPABASE_ANON_KEY: JSON.stringify(env.VITE_SUPABASE_ANON_KEY)
