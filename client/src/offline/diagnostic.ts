@@ -3,7 +3,8 @@
 // client/src/offline/diagnostic.ts
 // Diagnostica non invasiva per offline (Step 1). Esegue SOLO se flag ON.
 
-import { isOfflineEnabled } from '@/offline/gating';
+import { featureFlags, isOfflineQueueEnabled } from '@/config/featureFlags';
+import { isOfflineEnabled, isDeviceAllowed } from '@/offline/gating';
 import { getDeviceId } from '@/lib/deviceId';
 import { count } from './queue';
 import { peekClientSeq } from './seq';
@@ -17,8 +18,8 @@ export async function getAcceptanceSnapshot(): Promise<{
   lastSyncAt: string | null;
   appVersion: string | null;
 }> {
-  const allowed = isOfflineEnabled();
   const deviceId = getDeviceId();
+  const allowed = isOfflineEnabled(deviceId);
   const queueCount = await count();
   const lastSeq = peekClientSeq();
   const online = navigator.onLine === true;
@@ -28,23 +29,44 @@ export async function getAcceptanceSnapshot(): Promise<{
 }
 
 export async function installOfflineDiagnostics(): Promise<void> {
-  if (!isOfflineEnabled()) return; // NO-OP quando OFF
   const g = globalThis as any;
   const deviceId = getDeviceId();
-  const queueCount = await count();
-  const allowed = true; // se siamo qui, la combinazione flag+whitelist è vera
+  const enabled = isOfflineQueueEnabled();
+  const allowed = isDeviceAllowed(deviceId);
+  
+  // Always expose feature flags for diagnostics
   g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
+  g.__BADGENODE_DIAG__.featureFlags = featureFlags;
+  
+  // Expose offline status regardless of enabled state
   g.__BADGENODE_DIAG__.offline = {
-    enabled: true,
-    deviceId,
-    queueCount,
+    enabled,
     allowed,
+    deviceId,
+    queueCount: async () => {
+      // Always try to get count for diagnostics, even if offline disabled
+      try {
+        const { idbCount, STORE_TIMBRI } = await import('./idb');
+        return await idbCount(STORE_TIMBRI);
+      } catch {
+        return 0;
+      }
+    },
+    peekLast: async () => {
+      // Mask PIN for security in diagnostics
+      const items = await import('./queue').then(m => m.getAllPending());
+      const last = items[items.length - 1];
+      return last ? { ...last, pin: '***' } : null;
+    },
     getDeviceId,
-    getQueueCount: () => count(),
     peekClientSeq,
     acceptance: () => getAcceptanceSnapshot(),
   };
-  if (import.meta.env.DEV) {
-    console.debug('[offline:diag] enabled, allowed=%s, queueCount=%s', allowed, queueCount);
+  
+  if (enabled && allowed) {
+    const queueCount = await count();
+    if (import.meta.env.DEV) {
+      console.debug('[offline:diag] enabled, allowed=%s, queueCount=%s', allowed, queueCount);
+    }
   }
 }

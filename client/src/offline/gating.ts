@@ -1,8 +1,10 @@
 // client/src/offline/gating.ts
 // Gating per-device per l'abilitazione offline
 
+import { featureFlags, isOfflineQueueEnabled } from '@/config/featureFlags';
+
 export function getWhitelistedDevices(): string[] {
-  const raw = (import.meta as any)?.env?.VITE_OFFLINE_DEVICE_WHITELIST as string | undefined;
+  const raw = featureFlags.whitelist;
   if (!raw) return [];
   return raw
     .split(',')
@@ -14,12 +16,12 @@ export function getWhitelistedDevices(): string[] {
 export function isDeviceAllowed(deviceId: string): boolean {
   if (!deviceId) return false;
   const list = getWhitelistedDevices();
+  // Handle wildcard '*' for all devices
+  if (list.includes('*')) return true;
   return list.includes(deviceId.toLowerCase());
 }
 
 // Centralized enablement: global flag AND device whitelisted
-import { isOfflineQueueEnabled } from '@/config/featureFlags';
-
 export function isOfflineEnabled(deviceId?: string): boolean {
   if (!isOfflineQueueEnabled()) return false;
   const id = deviceId ?? '';

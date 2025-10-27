@@ -11,8 +11,22 @@ function readBoolEnv(name: string, defaultValue = false): boolean {
   return defaultValue;
 }
 
+// Lettura string da env runtime (Vite) con fallback sicuro.
+function readStringEnv(name: string, defaultValue = ''): string {
+  const raw = (import.meta as any)?.env?.[name];
+  return typeof raw === 'string' ? raw : defaultValue;
+}
+
 export const FEATURE_OFFLINE_QUEUE = readBoolEnv('VITE_FEATURE_OFFLINE_QUEUE', false);
 export const FEATURE_OFFLINE_BADGE = readBoolEnv('VITE_FEATURE_OFFLINE_BADGE', false);
+export const OFFLINE_DEVICE_WHITELIST = readStringEnv('VITE_OFFLINE_DEVICE_WHITELIST', '');
+
+// Immutable feature flags object
+export const featureFlags = {
+  queue: FEATURE_OFFLINE_QUEUE,
+  badge: FEATURE_OFFLINE_BADGE,
+  whitelist: OFFLINE_DEVICE_WHITELIST,
+} as const;
 
 export function isOfflineQueueEnabled(): boolean {
   return FEATURE_OFFLINE_QUEUE === true;

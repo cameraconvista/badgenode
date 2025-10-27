@@ -18,7 +18,7 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   });
 }
 
-// Offline diagnostics (Step 1): optional, DEV only, guarded by feature flag
+// Offline diagnostics (Step 1): optional, DEV only, always install for diagnostics
 if (import.meta.env.DEV) {
   (async () => {
     try {
@@ -26,10 +26,14 @@ if (import.meta.env.DEV) {
         import('./offline/gating'),
         import('./lib/deviceId'),
       ]);
-      const enabled = isOfflineEnabled(getDeviceId());
+      const deviceId = getDeviceId();
+      const enabled = isOfflineEnabled(deviceId);
+      
+      // Always install diagnostics for debugging (exposes feature flags)
+      void import('./offline/diagnostic').then((m) => m.installOfflineDiagnostics());
+      
       if (enabled) {
-        // Load diagnostics and sync triggers lazily
-        void import('./offline/diagnostic').then((m) => m.installOfflineDiagnostics());
+        // Load sync triggers lazily only if enabled
         void import('./offline/syncRunner').then((m) => m.installSyncTriggers());
         // Badge is optional and mounted after a tick to avoid boot blocking
         const { isOfflineBadgeEnabled } = await import('./config/featureFlags');
