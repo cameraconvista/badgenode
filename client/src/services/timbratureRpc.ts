@@ -125,21 +125,31 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
     
     // Try offline queue if enabled and this is a network error (protected)
     try {
-      const offline = (globalThis as any)?.__BADGENODE_DIAG__?.offline;
-      const acc = typeof offline?.acceptance === 'function' ? offline.acceptance() : { enabled: false };
-      if (acc?.enabled) {
-        const { enqueuePending } = await import('../offline/queue');
-        await enqueuePending({ 
-          pin, 
-          tipo
-        });
-        
-        if (import.meta.env.DEV) {
-          console.debug('[SERVICE] insertTimbroServer → queued offline', { pin, tipo });
+      // Check if this is a network error that should trigger offline queue
+      const isNetworkError = (
+        error instanceof TypeError && error.message.includes('fetch') ||
+        error instanceof TypeError && error.message.includes('Failed to fetch') ||
+        (error as any)?.code === 'ERR_INTERNET_DISCONNECTED' ||
+        (error as any)?.name === 'NetworkError' ||
+        !navigator.onLine
+      );
+      
+      if (isNetworkError) {
+        const offline = (globalThis as any)?.__BADGENODE_DIAG__?.offline;
+        if (offline?.enabled && offline?.allowed) {
+          const { enqueuePending } = await import('../offline/queue');
+          await enqueuePending({ 
+            pin, 
+            tipo
+          });
+          
+          if (import.meta.env.DEV) {
+            console.debug('[SERVICE] insertTimbroServer → queued offline', { pin, tipo });
+          }
+          
+          // Return a synthetic success response for offline queue
+          return { id: -1 }; // Negative ID indicates queued
         }
-        
-        // Return a synthetic success response for offline queue
-        return { id: -1 }; // Negative ID indicates queued
       }
     } catch (offlineError) {
       if (import.meta.env.DEV) {

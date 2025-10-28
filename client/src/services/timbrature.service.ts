@@ -201,8 +201,12 @@ export class TimbratureService {
     if (!isOfflineEnabled(getDeviceId())) {
       const result = await callInsertTimbro({ pin, tipo });
       const id = (result as any)?.data?.id as number | undefined;
-      if (result.success && typeof id === 'number' && id > 0) {
-        return { ok: true, id };
+      if (result.success && typeof id === 'number') {
+        if (id > 0) {
+          return { ok: true, id }; // Success online
+        } else if (id === -1) {
+          return { ok: true, id: -1 }; // Success offline (queued even if feature disabled)
+        }
       }
       return { ok: false, code: result.code || 'SERVER_ERROR', message: result.error };
     }
@@ -220,8 +224,12 @@ export class TimbratureService {
       try {
         const result = await callInsertTimbro({ pin, tipo });
         const id = (result as any)?.data?.id as number | undefined;
-        if (result.success && typeof id === 'number' && id > 0) {
-          return { ok: true, id };
+        if (result.success && typeof id === 'number') {
+          if (id > 0) {
+            return { ok: true, id }; // Success online
+          } else if (id === -1) {
+            return { ok: true, id: -1 }; // Success offline (queued)
+          }
         }
         return { ok: false, code: result.code || 'SERVER_ERROR', message: result.error };
       } catch (e) {
