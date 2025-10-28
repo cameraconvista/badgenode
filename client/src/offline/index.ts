@@ -19,14 +19,36 @@ export async function initOfflineSystem(opts?: { diag?: boolean }): Promise<void
     // Safe device ID management
     let deviceId: string;
     try {
-      deviceId = localStorage.getItem(DEVICE_ID_KEY) ?? (crypto?.randomUUID?.() ?? String(Date.now()));
-      localStorage.setItem(DEVICE_ID_KEY, deviceId);
+      const stored = localStorage.getItem(DEVICE_ID_KEY);
+      if (stored) {
+        deviceId = stored;
+      } else {
+        // Generate a recognizable device ID with BN_ prefix
+        const uuid = crypto?.randomUUID?.() ?? String(Date.now());
+        deviceId = `BN_DEV_${uuid.substring(0, 8)}`;
+        localStorage.setItem(DEVICE_ID_KEY, deviceId);
+      }
     } catch {
-      deviceId = `BN-fallback-${Date.now()}`;
+      deviceId = `BN_fallback_${Date.now()}`;
     }
     
-    // Gating calculation
-    const allowed = wl === '*' ? true : (wl ? wl.split(',').map(s => s.trim()).includes(deviceId) : false);
+    // Gating calculation with flexible device matching
+    let allowed = false;
+    if (wl === '*') {
+      allowed = true;
+    } else if (wl) {
+      const whitelist = wl.split(',').map(s => s.trim().toLowerCase());
+      // Check exact match first
+      allowed = whitelist.includes(deviceId.toLowerCase());
+      
+      // Fallback: check if device starts with any whitelisted prefix
+      if (!allowed) {
+        allowed = whitelist.some(prefix => 
+          deviceId.toLowerCase().startsWith(prefix.toLowerCase()) ||
+          prefix.toLowerCase().startsWith('bn_') && deviceId.toLowerCase().startsWith('bn_')
+        );
+      }
+    }
     const enabled = !!q && allowed;
     
     if (import.meta.env.DEV) {

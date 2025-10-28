@@ -47,10 +47,14 @@ export async function callInsertTimbro({
       pin: pin, 
       tipo: tipo.toLowerCase() as 'entrata'|'uscita' 
     });
-    // Considera successo solo se il server ha restituito un id
+    // Considera successo se il server ha restituito un id valido (incluso -1 per offline)
     const id = (result as any)?.id;
-    if (typeof id === 'number' && id > 0) {
-      return { success: true, data: result };
+    if (typeof id === 'number') {
+      if (id > 0) {
+        return { success: true, data: result }; // Success online
+      } else if (id === -1) {
+        return { success: true, data: result }; // Success offline (queued)
+      }
     }
     return { success: false, error: 'Nessun id restituito dal server', code: 'NO_ID' };
   } catch (error) {
