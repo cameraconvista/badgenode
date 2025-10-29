@@ -7,8 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { callInsertTimbro, callUpdateTimbro, UpdateTimbroParams } from './timbratureRpc';
 import { isOfflineEnabled } from '@/offline/gating';
 import { getDeviceId } from '@/lib/deviceId';
-import { buildBaseItem, enqueue } from '@/offline/queue';
-import { runSyncOnce } from '@/offline/syncRunner';
+// Offline queue now handled internally by callInsertTimbro
 import { asError } from '@/lib/safeError';
 import { safeFetchJson } from '@/lib/safeFetch';
 import { isError } from '@/types/api';
@@ -219,37 +218,23 @@ export class TimbratureService {
     }
     TimbratureService._lastSubmitMs = now;
 
-    // Se siamo online, prova percorso attuale
-    if (navigator.onLine === true) {
-      try {
-        const result = await callInsertTimbro({ pin, tipo });
-        const id = (result as any)?.data?.id as number | undefined;
-        if (result.success && typeof id === 'number') {
-          if (id > 0) {
-            return { ok: true, id }; // Success online
-          } else if (id === -1) {
-            return { ok: true, id: -1 }; // Success offline (queued)
-          }
-        }
-        return { ok: false, code: result.code || 'SERVER_ERROR', message: result.error };
-      } catch (e) {
-        // errore fetch/timeout → fallback offline
-        if (import.meta.env.DEV) console.debug('[offline:fallback] network error → queue');
-      }
-    }
-
-    // Offline o errore rete → enqueue
+    // Unified flow - callInsertTimbro handles both online and offline fallback
     try {
-      const base = buildBaseItem(pin, tipo);
-      await enqueue(base);
-      // Fire-and-forget: tenta una sync se torna la rete
-      void runSyncOnce();
-      if (import.meta.env.DEV) console.debug('[offline:enqueue] queued');
-      // Accettazione locale (offline)
-      return { ok: true };
+      const result = await callInsertTimbro({ pin, tipo });
+      const id = (result as any)?.data?.id as number | undefined;
+      if (result.success && typeof id === 'number') {
+        if (id > 0) {
+          return { ok: true, id }; // Success online
+        } else if (id === -1) {
+          return { ok: true, id: -1 }; // Success offline (queued)
+        }
+      }
+      return { ok: false, code: result.code || 'SERVER_ERROR', message: result.error };
     } catch (e) {
-      if (import.meta.env.DEV) console.debug('[offline:enqueue] failed', (e as Error).message);
-      return { ok: false, code: 'OFFLINE_QUEUE_FAILED', message: (e as Error).message };
+      // Should not reach here as callInsertTimbro handles all fallbacks internally
+      const errorMsg = e instanceof Error ? e.message : 'Errore sconosciuto';
+      if (import.meta.env.DEV) console.debug('[offline:service] unexpected error:', errorMsg);
+      return { ok: false, code: 'UNEXPECTED_ERROR', message: errorMsg };
     }
   }
 

@@ -34,25 +34,40 @@ try {
   </div>`;
 }
 
-// Offline system initialization - lazy and protected
+// Offline system initialization - immediate fallback, then async init
+(() => {
+  // Immediate fallback diagnostics to ensure system works from start
+  const g = globalThis as any;
+  g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
+  
+  // Check environment for immediate availability
+  const queueEnabled = String(import.meta.env?.VITE_FEATURE_OFFLINE_QUEUE ?? 'false') === 'true';
+  const deviceId = 'BN-immediate-' + Date.now();
+  
+  g.__BADGENODE_DIAG__.offline = { 
+    enabled: queueEnabled, 
+    allowed: queueEnabled, // In immediate mode, if enabled then allowed
+    deviceId,
+    queueCount: async () => 0,
+    peekLast: async () => null,
+  };
+  
+  if (import.meta.env.DEV) {
+    console.debug('[offline:immediate] Fallback diagnostics installed', { enabled: queueEnabled, deviceId });
+  }
+})();
+
+// Async initialization to upgrade diagnostics
 (async () => {
   try {
     const mod = await import('./offline/index');
     await mod.initOfflineSystem?.({ diag: true });
-  } catch (e) {
-    // Never block the boot
     if (import.meta.env.DEV) {
-      console.debug('[offline:init] skipped', e);
+      console.debug('[offline:async] Full system initialized');
     }
-    // Minimal fallback diagnostics
-    const g = globalThis as any;
-    g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
-    g.__BADGENODE_DIAG__.offline = g.__BADGENODE_DIAG__.offline || { 
-      enabled: false, 
-      allowed: false,
-      deviceId: 'BN-fallback-' + Date.now(),
-      queueCount: async () => 0,
-      peekLast: async () => null,
-    };
+  } catch (e) {
+    if (import.meta.env.DEV) {
+      console.debug('[offline:async] Init failed, keeping fallback', e);
+    }
   }
 })();

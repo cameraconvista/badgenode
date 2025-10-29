@@ -139,8 +139,24 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
       );
       
       if (isNetworkError) {
+        // Try diagnostics first, then fallback to environment check
         const offline = (globalThis as any)?.__BADGENODE_DIAG__?.offline;
+        let shouldQueue = false;
+        
         if (offline?.enabled && offline?.allowed) {
+          shouldQueue = true;
+        } else {
+          // Fallback: check environment directly if diagnostics not ready
+          const queueEnabled = String(import.meta.env?.VITE_FEATURE_OFFLINE_QUEUE ?? 'false') === 'true';
+          if (queueEnabled) {
+            shouldQueue = true;
+            if (import.meta.env.DEV) {
+              console.debug('[SERVICE] Using environment fallback for offline queue');
+            }
+          }
+        }
+        
+        if (shouldQueue) {
           const { enqueuePending } = await import('../offline/queue');
           await enqueuePending({ 
             pin, 

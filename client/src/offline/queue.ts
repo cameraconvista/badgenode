@@ -111,59 +111,7 @@ export async function remove(client_seq: number): Promise<void> {
   await idbDelete(STORE_TIMBRI, client_seq);
 }
 
-// Legacy compatibility functions
-export async function enqueue(itemBase: Omit<QueueItem, 'client_seq' | 'status' | 'created_at' | 'updated_at'>): Promise<QueueItem> {
-  return enqueuePending({
-    pin: Number(itemBase.pin),
-    tipo: itemBase.tipo,
-  });
-}
+// Unified offline queue - single entry point
+// Legacy functions removed - use enqueuePending() directly
 
-export function buildBaseItem(pin: number, tipo: 'entrata'|'uscita'): Omit<QueueItem, 'client_seq'|'status'|'created_at'|'updated_at'> {
-  return {
-    device_id: getDeviceId(),
-    pin: String(pin),
-    tipo,
-    timestamp_raw: new Date().toISOString(),
-    ts_client_ms: Date.now(),
-    client_event_id: crypto.randomUUID?.() ?? String(Date.now()),
-  };
-}
-
-// State management functions for sync runner
-function now(): number {
-  return Date.now();
-}
-
-export async function markSending(client_seq: number): Promise<void> {
-  try {
-    await idbUpdateByKey<QueueItem>(STORE_TIMBRI, client_seq, (cur) => {
-      const base = cur ?? ({ client_seq } as any);
-      return { ...base, status: 'sending', updated_at: nowIso() };
-    });
-  } catch {
-    // no-throw policy
-  }
-}
-
-export async function markSent(client_seq: number): Promise<void> {
-  try {
-    await idbUpdateByKey<QueueItem>(STORE_TIMBRI, client_seq, (cur) => {
-      const base = cur ?? ({ client_seq } as any);
-      return { ...base, status: 'sent', updated_at: nowIso(), last_error: undefined };
-    });
-  } catch {
-    // no-throw policy
-  }
-}
-
-export async function markReview(client_seq: number, reason?: string): Promise<void> {
-  try {
-    await idbUpdateByKey<QueueItem>(STORE_TIMBRI, client_seq, (cur) => {
-      const base = cur ?? ({ client_seq } as any);
-      return { ...base, status: 'review', updated_at: nowIso(), last_error: reason };
-    });
-  } catch {
-    // no-throw policy
-  }
-}
+// State management functions removed - flushPending() handles status internally
