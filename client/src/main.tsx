@@ -48,9 +48,73 @@ try {
     enabled: queueEnabled, 
     allowed: queueEnabled, // In immediate mode, if enabled then allowed
     deviceId,
-    queueCount: async () => 0,
-    peekLast: async () => null,
+    queueCount: async () => {
+      try {
+        const { count } = await import('./offline/queue');
+        return await count();
+      } catch {
+        return 0;
+      }
+    },
+    peekLast: async () => {
+      try {
+        const { getAllPending } = await import('./offline/queue');
+        const items = await getAllPending();
+        return items.length > 0 ? { ...items[items.length - 1], pin: '***' } : null;
+      } catch {
+        return null;
+      }
+    },
+    // Manual flush trigger for debugging
+    flushNow: async () => {
+      try {
+        const { flushPending } = await import('./offline/queue');
+        await flushPending();
+        if (import.meta.env.DEV) {
+          console.debug('[offline:manual] Flush triggered manually');
+        }
+        return true;
+      } catch (e) {
+        if (import.meta.env.DEV) {
+          console.debug('[offline:manual] Flush error:', (e as Error)?.message);
+        }
+        return false;
+      }
+    },
   };
+  
+  // Install flush triggers immediately if offline is enabled
+  if (queueEnabled) {
+    let flushTimeout: number | null = null;
+    const debouncedFlush = () => {
+      if (flushTimeout) clearTimeout(flushTimeout);
+      flushTimeout = window.setTimeout(async () => {
+        try {
+          const { flushPending } = await import('./offline/queue');
+          await flushPending();
+          if (import.meta.env.DEV) {
+            console.debug('[offline:immediate] Flush completed');
+          }
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.debug('[offline:immediate] Flush error:', (e as Error)?.message);
+          }
+        }
+        flushTimeout = null;
+      }, 2000);
+    };
+    
+    window.addEventListener('online', debouncedFlush);
+    window.addEventListener('visibilitychange', () => {
+      if (!document.hidden && navigator.onLine) {
+        debouncedFlush();
+      }
+    });
+    
+    if (import.meta.env.DEV) {
+      console.debug('[offline:immediate] Flush triggers installed');
+    }
+  }
   
   if (import.meta.env.DEV) {
     console.debug('[offline:immediate] Fallback diagnostics installed', { enabled: queueEnabled, deviceId });
