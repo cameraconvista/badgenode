@@ -83,6 +83,28 @@ try {
     },
   };
   
+  // Pre-load queue functions for offline fallback
+  if (queueEnabled) {
+    // Install global queue fallback for dynamic import failures
+    (async () => {
+      try {
+        const queueModule = await import('./offline/queue');
+        (globalThis as any).__BADGENODE_QUEUE__ = {
+          enqueuePending: queueModule.enqueuePending,
+          flushPending: queueModule.flushPending,
+          count: queueModule.count,
+        };
+        if (import.meta.env.DEV) {
+          console.debug('[offline:immediate] Global queue fallback installed');
+        }
+      } catch (e) {
+        if (import.meta.env.DEV) {
+          console.debug('[offline:immediate] Global queue fallback failed:', (e as Error)?.message);
+        }
+      }
+    })();
+  }
+
   // Install flush triggers immediately if offline is enabled
   if (queueEnabled) {
     let flushTimeout: number | null = null;
@@ -90,7 +112,20 @@ try {
       if (flushTimeout) clearTimeout(flushTimeout);
       flushTimeout = window.setTimeout(async () => {
         try {
-          const { flushPending } = await import('./offline/queue');
+          // Try dynamic import first, fallback to global
+          let flushPending;
+          try {
+            const queueModule = await import('./offline/queue');
+            flushPending = queueModule.flushPending;
+          } catch (importError) {
+            const globalQueue = (globalThis as any)?.__BADGENODE_QUEUE__;
+            if (globalQueue?.flushPending) {
+              flushPending = globalQueue.flushPending;
+            } else {
+              throw new Error('Flush not available');
+            }
+          }
+          
           await flushPending();
           if (import.meta.env.DEV) {
             console.debug('[offline:immediate] Flush completed');
@@ -110,6 +145,36 @@ try {
         debouncedFlush();
       }
     });
+    
+    // Periodic flush every 5 minutes if online and has pending items
+    const periodicFlush = async () => {
+      if (navigator.onLine) {
+        try {
+          let count;
+          try {
+            const queueModule = await import('./offline/queue');
+            count = await queueModule.count();
+          } catch {
+            const globalQueue = (globalThis as any)?.__BADGENODE_QUEUE__;
+            count = globalQueue?.count ? await globalQueue.count() : 0;
+          }
+          
+          if (count > 0) {
+            debouncedFlush();
+            if (import.meta.env.DEV) {
+              console.debug('[offline:periodic] Triggered flush for', count, 'pending items');
+            }
+          }
+        } catch (e) {
+          if (import.meta.env.DEV) {
+            console.debug('[offline:periodic] Check failed:', (e as Error)?.message);
+          }
+        }
+      }
+    };
+    
+    // Start periodic check every 5 minutes
+    setInterval(periodicFlush, 5 * 60 * 1000);
     
     if (import.meta.env.DEV) {
       console.debug('[offline:immediate] Flush triggers installed');

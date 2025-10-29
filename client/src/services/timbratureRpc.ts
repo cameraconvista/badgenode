@@ -157,18 +157,40 @@ export async function insertTimbroServer({ pin, tipo, ts }: { pin: number; tipo:
         }
         
         if (shouldQueue) {
-          const { enqueuePending } = await import('../offline/queue');
-          await enqueuePending({ 
-            pin, 
-            tipo
-          });
-          
-          if (import.meta.env.DEV) {
-            console.debug('[SERVICE] insertTimbroServer → queued offline', { pin, tipo });
+          try {
+            // Try dynamic import first, fallback to global queue if available
+            let enqueuePending;
+            try {
+              const queueModule = await import('../offline/queue');
+              enqueuePending = queueModule.enqueuePending;
+            } catch (importError) {
+              // Fallback: use pre-loaded queue from global diagnostics
+              const globalQueue = (globalThis as any)?.__BADGENODE_QUEUE__;
+              if (globalQueue?.enqueuePending) {
+                enqueuePending = globalQueue.enqueuePending;
+              } else {
+                throw new Error('Queue module not available offline');
+              }
+            }
+            
+            await enqueuePending({ 
+              pin, 
+              tipo
+            });
+            
+            if (import.meta.env.DEV) {
+              console.debug('[SERVICE] insertTimbroServer → queued offline', { pin, tipo });
+            }
+            
+            // Return a synthetic success response for offline queue
+            return { id: -1 }; // Negative ID indicates queued
+          } catch (queueError) {
+            if (import.meta.env.DEV) {
+              console.debug('[SERVICE] queue failed:', (queueError as Error)?.message);
+            }
+            // If queue fails, still return error to user
+            throw error; // Original network error
           }
-          
-          // Return a synthetic success response for offline queue
-          return { id: -1 }; // Negative ID indicates queued
         }
       }
     } catch (offlineError) {
