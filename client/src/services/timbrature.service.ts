@@ -6,6 +6,7 @@ import { TimbratureStatsService, TimbratureStats } from './timbrature-stats.serv
 import { supabase } from '@/lib/supabaseClient';
 import { callInsertTimbro, callUpdateTimbro, UpdateTimbroParams } from './timbratureRpc';
 import { isOfflineEnabled } from '@/offline/gating';
+import { OfflineValidatorService } from './offline-validator.service';
 import { getDeviceId } from '@/lib/deviceId';
 // Offline queue now handled internally by callInsertTimbro
 import { asError } from '@/lib/safeError';
@@ -218,14 +219,38 @@ export class TimbratureService {
     }
     TimbratureService._lastSubmitMs = now;
 
+    // AGGIUNTA: Validazione offline business logic (non-invasiva)
+    try {
+      const offlineValidation = await OfflineValidatorService.validateOfflineTimbratura(pin, tipo);
+      if (!offlineValidation.valid) {
+        if (import.meta.env.DEV) {
+          console.debug('[offline:validation] Blocked:', offlineValidation.message);
+        }
+        return { 
+          ok: false, 
+          code: offlineValidation.code || 'VALIDATION_ERROR', 
+          message: offlineValidation.message || 'Validazione fallita' 
+        };
+      }
+    } catch (validationError) {
+      // Fallback sicuro: se validazione fallisce, permetti (non bloccare utente)
+      if (import.meta.env.DEV) {
+        console.debug('[offline:validation] Error, allowing:', (validationError as Error)?.message);
+      }
+    }
+
     // Unified flow - callInsertTimbro handles both online and offline fallback
     try {
       const result = await callInsertTimbro({ pin, tipo });
       const id = (result as any)?.data?.id as number | undefined;
       if (result.success && typeof id === 'number') {
         if (id > 0) {
+          // Success online - aggiorna cache per future validazioni offline
+          void OfflineValidatorService.updateCacheAfterSuccess(pin, tipo);
           return { ok: true, id }; // Success online
         } else if (id === -1) {
+          // Success offline - aggiorna cache per future validazioni
+          void OfflineValidatorService.updateCacheAfterSuccess(pin, tipo);
           return { ok: true, id: -1 }; // Success offline (queued)
         }
       }
