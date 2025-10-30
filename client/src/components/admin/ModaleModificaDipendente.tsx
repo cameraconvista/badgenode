@@ -34,13 +34,13 @@ export default function ModaleModificaDipendente({
   useEffect(() => {
     if (isOpen && utente) {
       setFormData({
-        nome: utente.nome,
-        cognome: utente.cognome,
-        email: utente.email || '',
-        telefono: utente.telefono || '',
-        pin: utente.pin,
-        ore_contrattuali: utente.ore_contrattuali,
-        descrizione_contratto: utente.descrizione_contratto || '',
+        nome: utente.nome || '',
+        cognome: utente.cognome || '',
+        email: utente.email ?? '',
+        telefono: utente.telefono ?? '',
+        pin: utente.pin || 0,
+        ore_contrattuali: utente.ore_contrattuali || 8.0,
+        descrizione_contratto: utente.descrizione_contratto ?? '',
       });
       setErrors({});
       setTimeout(() => firstInputRef.current?.focus(), 100);

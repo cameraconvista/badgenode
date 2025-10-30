@@ -3,7 +3,7 @@
 
 import { asError } from '@/lib/safeError';
 import { normalizeError } from '@/lib/normalizeError';
-import { safeFetchJson, safeFetchJsonPost, safeFetchJsonDelete } from '@/lib/safeFetch';
+import { safeFetchJson, safeFetchJsonPost, safeFetchJsonPut, safeFetchJsonDelete } from '@/lib/safeFetch';
 import { isError, isSuccess } from '@/types/api';
 import { validatePinInput } from '@/utils/validation/pin';
 import type { Utente as DbUtente } from '../../../shared/types/database';
@@ -153,26 +153,57 @@ export class UtentiService {
     return await this.upsertUtente(input);
   }
 
-  // Aggiorna utente esistente (usa upsert API)
+  // Aggiorna utente esistente (usa PUT API)
   static async updateUtente(pin: number, input: Partial<UtenteInput>): Promise<Utente> {
-    // Ottieni i dati attuali dell'utente
-    const utenteCorrente = await this.getUtenteByPin(pin);
-    if (!utenteCorrente) {
-      throw new Error('Utente non trovato');
+    try {
+      // Validazione PIN
+      if (!pin || pin < 1 || pin > 99) {
+        throw new Error('PIN non valido');
+      }
+
+      // Validazione campi se forniti
+      if (input.nome !== undefined && !input.nome?.trim()) {
+        throw new Error('Nome obbligatorio');
+      }
+      if (input.cognome !== undefined && !input.cognome?.trim()) {
+        throw new Error('Cognome obbligatorio');
+      }
+
+      // Payload per API - invia solo i campi supportati dal database
+      // NOTA: La tabella utenti supporta SOLO: nome, cognome (altri campi non esistono nello schema)
+      const payload: Record<string, unknown> = {};
+      if (input.nome !== undefined) payload.nome = input.nome.trim();
+      if (input.cognome !== undefined) payload.cognome = input.cognome.trim();
+
+      const response = await safeFetchJsonPut<DbUtente>(`/api/utenti/${pin}`, payload);
+
+      if (isError(response)) {
+        throw new Error(normalizeError(response.error) || 'Errore durante l\'aggiornamento utente');
+      }
+
+      if (!response.data) {
+        throw new Error('Nessun dato restituito dopo aggiornamento');
+      }
+
+      // Trasformo per compatibilità con l'interfaccia UI
+      const utenteCompleto: Utente = {
+        id: response.data.pin?.toString() || '',
+        pin: response.data.pin,
+        nome: response.data.nome,
+        cognome: response.data.cognome,
+        email: response.data.email || null,
+        telefono: response.data.telefono || null,
+        ore_contrattuali: response.data.ore_contrattuali || 8,
+        note: response.data.note || null,
+        descrizione_contratto: response.data.descrizione_contratto || null,
+        created_at: response.data.created_at,
+        updated_at: response.data.updated_at || response.data.created_at,
+      };
+
+      return utenteCompleto;
+    } catch (error) {
+      throw asError(error);
     }
-
-    // Merge dei dati attuali con quelli nuovi
-    const inputCompleto: UtenteInput = {
-      pin: input.pin ?? utenteCorrente.pin,
-      nome: input.nome ?? utenteCorrente.nome,
-      cognome: input.cognome ?? utenteCorrente.cognome,
-      email: input.email ?? utenteCorrente.email ?? null,
-      telefono: input.telefono ?? utenteCorrente.telefono ?? null,
-      ore_contrattuali: input.ore_contrattuali ?? utenteCorrente.ore_contrattuali,
-      descrizione_contratto: input.descrizione_contratto ?? utenteCorrente.descrizione_contratto ?? null,
-    };
-
-    return await this.upsertUtente(inputCompleto);
   }
 
   static async deleteUtente(pin: number): Promise<void> {

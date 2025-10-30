@@ -32,13 +32,23 @@ router.get('/api/utenti', async (req, res) => {
               pin: 1,
               nome: 'Mario',
               cognome: 'Rossi',
-              created_at: new Date().toISOString()
+              created_at: new Date().toISOString(),
+              email: null,
+              telefono: null,
+              ore_contrattuali: 8.0,
+              descrizione_contratto: null,
+              note: null
             },
             {
               pin: 2,
               nome: 'Luigi',
               cognome: 'Verdi',
-              created_at: new Date().toISOString()
+              created_at: new Date().toISOString(),
+              email: null,
+              telefono: null,
+              ore_contrattuali: 8.0,
+              descrizione_contratto: null,
+              note: null
             }
           ];
           return res.json({
@@ -51,9 +61,19 @@ router.get('/api/utenti', async (req, res) => {
           throw error;
         }
 
+        // Aggiungi campi di default per compatibilità con l'interfaccia
+        const utentiConDefault = (data || []).map((u: any) => ({
+          ...u,
+          email: null,
+          telefono: null,
+          ore_contrattuali: 8.0,
+          descrizione_contratto: null,
+          note: null
+        }));
+
         res.json({
           success: true,
-          data: data || []
+          data: utentiConDefault
         });
       } catch (devError) {
         console.error('[API] Development error:', devError);
@@ -79,9 +99,19 @@ router.get('/api/utenti', async (req, res) => {
         });
       }
 
+      // Aggiungi campi di default per compatibilità con l'interfaccia
+      const utentiConDefault = (data || []).map((u: any) => ({
+        ...u,
+        email: null,
+        telefono: null,
+        ore_contrattuali: 8.0,
+        descrizione_contratto: null,
+        note: null
+      }));
+
       res.json({
         success: true,
-        data: data || []
+        data: utentiConDefault
       });
     }
   } catch (error) {
@@ -254,6 +284,126 @@ router.post('/api/utenti', async (req, res) => {
     console.error('[API] Errore creazione utente:', error);
     
     // Genera request ID per tracking
+    const requestId = Math.random().toString(36).substring(2, 15);
+    
+    res.status(500).json({
+      success: false,
+      message: 'Errore interno del server',
+      code: 'INTERNAL_ERROR',
+      requestId
+    });
+  }
+});
+
+// PUT /api/utenti/:pin - Aggiorna utente esistente
+router.put('/api/utenti/:pin', async (req, res) => {
+  try {
+    if (!supabaseAdmin && process.env.NODE_ENV !== 'development') {
+      return res.status(503).json({
+        success: false,
+        message: 'Servizio admin non disponibile - configurazione Supabase mancante',
+        code: 'SERVICE_UNAVAILABLE'
+      });
+    }
+
+    const { pin: paramPin } = req.params;
+    const pinNum = parseInt(paramPin, 10);
+
+    // Validazione PIN
+    if (isNaN(pinNum) || pinNum < 1 || pinNum > 99) {
+      return res.status(400).json({
+        success: false,
+        message: 'PIN deve essere un numero tra 1 e 99',
+        code: 'INVALID_PIN'
+      });
+    }
+
+    // Estrai campi aggiornabili dal body
+    // NOTA: La tabella utenti ha SOLO: pin, nome, cognome, created_at
+    // Altri campi (email, telefono, ore_contrattuali, descrizione_contratto) non esistono nello schema reale
+    const { nome, cognome } = req.body;
+
+    // Costruisci payload di update solo con campi forniti
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updatePayload: Record<string, any> = {};
+    
+    if (nome !== undefined) {
+      const nomeStr = typeof nome === 'string' ? nome.trim() : '';
+      if (!nomeStr) {
+        return res.status(400).json({
+          success: false,
+          message: 'Nome non può essere vuoto',
+          code: 'BAD_REQUEST'
+        });
+      }
+      updatePayload.nome = nomeStr;
+    }
+
+    if (cognome !== undefined) {
+      const cognomeStr = typeof cognome === 'string' ? cognome.trim() : '';
+      if (!cognomeStr) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cognome non può essere vuoto',
+          code: 'BAD_REQUEST'
+        });
+      }
+      updatePayload.cognome = cognomeStr;
+    }
+
+    // Verifica che ci sia almeno un campo da aggiornare
+    if (Object.keys(updatePayload).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nessun campo da aggiornare',
+        code: 'BAD_REQUEST'
+      });
+    }
+
+    // UPDATE con Supabase
+    if (!supabaseAdmin) {
+      return res.status(503).json({
+        success: false,
+        message: 'Servizio admin non disponibile',
+        code: 'SERVICE_UNAVAILABLE'
+      });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabaseAdmin as any)
+      .from('utenti')
+      .update(updatePayload)
+      .eq('pin', pinNum)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[API] Supabase UPDATE error:', error);
+      
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({
+          success: false,
+          message: `Utente con PIN ${pinNum} non trovato`,
+          code: 'NOT_FOUND'
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: 'Errore durante l\'aggiornamento dell\'utente',
+        code: 'QUERY_ERROR'
+      });
+    }
+
+    console.log(`[API] ✅ Utente aggiornato: PIN ${pinNum}`);
+
+    res.json({
+      success: true,
+      data
+    });
+  } catch (error) {
+    console.error('[API] Errore aggiornamento utente:', error);
+    
     const requestId = Math.random().toString(36).substring(2, 15);
     
     res.status(500).json({

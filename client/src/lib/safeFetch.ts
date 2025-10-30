@@ -107,6 +107,22 @@ export async function safeFetchJsonPost<T = unknown>(url: string, body: Record<s
 }
 
 /**
+ * Wrapper per PUT JSON con headers automatici
+ */
+export async function safeFetchJsonPut<T = unknown>(url: string, body: Record<string, unknown>, options?: RequestInit): Promise<ApiResponse<T>> {
+  const fullUrl = url.startsWith('/api/') ? `${getApiBaseUrl()}${url}` : url;
+  return safeFetchJson<T>(fullUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+    body: JSON.stringify(body),
+    ...options,
+  });
+}
+
+/**
  * Wrapper per PATCH JSON con headers automatici
  */
 export async function safeFetchJsonPatch<T = unknown>(url: string, body: Record<string, unknown>, options?: RequestInit): Promise<ApiResponse<T>> {
