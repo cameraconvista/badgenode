@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== 'development') {
   console.log = () => {};
 }
 
-const PORT = Number(process.env.PORT || 10000);
+const PORT = Number(process.env.PORT || 3001);
 
 // Idempotency guard (evita doppio listen in ambienti che rieseguono i moduli)
 const GUARD = Symbol.for('__BADGENODE_SERVER__');
