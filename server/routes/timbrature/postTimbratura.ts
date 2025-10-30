@@ -60,14 +60,17 @@ router.post('/', async (req: Request, res: Response) => {
       });
     }
 
-    // Timestamp server se non fornito
-    const now = ts ? new Date(ts) : new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
+    // Timestamp server se non fornito - FORZATO Europe/Rome
+    const nowUtc = ts ? new Date(ts) : new Date();
+    
+    // FIX TIMEZONE: Forza Europe/Rome invece di affidarsi a TZ env var
+    const nowRome = new Date(nowUtc.toLocaleString("en-US", { timeZone: "Europe/Rome" }));
+    const yyyy = nowRome.getFullYear();
+    const mm = String(nowRome.getMonth() + 1).padStart(2, '0');
+    const dd = String(nowRome.getDate()).padStart(2, '0');
     
     const dataLocale = `${yyyy}-${mm}-${dd}`;
-    const oraLocale = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+    const oraLocale = `${String(nowRome.getHours()).padStart(2, '0')}:${String(nowRome.getMinutes()).padStart(2, '0')}:00`;
     
     // Calcolo giorno logico unificato
     const { giorno_logico } = computeGiornoLogico({
@@ -121,8 +124,8 @@ router.post('/', async (req: Request, res: Response) => {
     const dto: TimbratureInsertClean = {
       pin: pinNum,
       tipo,
-      ts_order: now.toISOString(),
-      created_at: now.toISOString(),
+      ts_order: nowRome.toISOString(),
+      created_at: nowRome.toISOString(),
       giorno_logico: giorno_logico,
       data_locale: dataLocale,
       ora_locale: oraLocale,
