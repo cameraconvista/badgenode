@@ -233,10 +233,15 @@ export class TimbratureService {
         };
       }
     } catch (validationError) {
-      // Fallback sicuro: se validazione fallisce, permetti (non bloccare utente)
+      // FIX: Non permettere se validazione fallisce - ritorna errore
       if (import.meta.env.DEV) {
-        console.debug('[offline:validation] Error, allowing:', (validationError as Error)?.message);
+        console.debug('[offline:validation] Validation error:', (validationError as Error)?.message);
       }
+      return { 
+        ok: false, 
+        code: 'VALIDATION_ERROR', 
+        message: 'Errore durante validazione offline' 
+      };
     }
 
     // Unified flow - callInsertTimbro handles both online and offline fallback
