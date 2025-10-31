@@ -187,14 +187,25 @@ export async function buildStoricoDataset(params: StoricoParams): Promise<Storic
 
 /**
  * Calcola totali V5 (solo giorni lavorati)
+ * @param dataset - Array di giorni con ore totali chiuse
+ * @param oreContrattuali - Ore contrattuali giornaliere del dipendente (default 8)
  */
-export function calcolaTotaliV5(dataset: StoricoDatasetV5[]): {
+export function calcolaTotaliV5(
+  dataset: StoricoDatasetV5[],
+  oreContrattuali: number = 8
+): {
   totaleOre: number;
   totaleExtra: number;
 } {
   const giorniLavorati = dataset.filter(d => d.ore_totali_chiuse > 0);
   const totaleOre = giorniLavorati.reduce((sum, d) => sum + d.ore_totali_chiuse, 0);
-  const totaleExtra = Math.max(0, totaleOre - giorniLavorati.length * 8); // 8 ore standard
+  
+  // Calcola extra sommando l'extra di ogni singolo giorno
+  // (ore_giorno - ore_contrattuali) se positivo, altrimenti 0
+  const totaleExtra = giorniLavorati.reduce((sum, d) => {
+    const extraGiorno = Math.max(0, d.ore_totali_chiuse - oreContrattuali);
+    return sum + extraGiorno;
+  }, 0);
 
   return { totaleOre, totaleExtra };
 }

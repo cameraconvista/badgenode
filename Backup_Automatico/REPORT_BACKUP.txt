@@ -41,3 +41,4 @@ BACKUP AUTOMATICO - Thu Oct 30 00:29:19 CET 2025
 File sostituito: backup_2025.10.27_00.23.tar.gz
 Nuovo backup: backup_2025.10.30_00.29.tar.gz
 ---
+2025-10-31T12:24:34.493Z - backup_2025.10.31_13.24.tar.gz - 2350KB - SUCCESS

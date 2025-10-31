@@ -26,11 +26,11 @@ export default function StoricoTable({
   storicoDataset, // Dataset con sotto-righe
   storicoDatasetV5, // NUOVO: Dataset v5 per totali
   filters: _filters,
-  oreContrattuali: _oreContrattuali,
+  oreContrattuali,
   onEditTimbrature,
   isLoading,
 }: StoricoTableProps) {
-  void _timbrature; void _filters; void _oreContrattuali;
+  void _timbrature; void _filters;
   
   // Log quando i props cambiano
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function StoricoTable({
   
   // Calcola totali dal dataset v5 (fonte unica di verità) con protezione
   const list = Array.isArray(storicoDatasetV5) ? storicoDatasetV5 : [];
-  const { totaleOre: totaleMensileOre, totaleExtra: totaleMensileExtra } = calcolaTotaliV5(list);
+  const { totaleOre: totaleMensileOre, totaleExtra: totaleMensileExtra } = calcolaTotaliV5(list, oreContrattuali);
   const giorniLavorati = list.filter(d => d.ore_totali_chiuse > 0).length;
 
   // Evidenziazione riga: considera presenza di QUALSIASI timbratura o valori
