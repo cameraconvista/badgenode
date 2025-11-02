@@ -342,13 +342,19 @@ router.put('/api/utenti/:pin', async (req, res) => {
     }
 
     // Estrai campi aggiornabili dal body
-    // NOTA: La tabella utenti ha SOLO: pin, nome, cognome, created_at
-    // Altri campi (email, telefono, ore_contrattuali, descrizione_contratto) non esistono nello schema reale
-    const { nome, cognome } = req.body;
+    const { nome, cognome, email, telefono, ore_contrattuali, note, descrizione_contratto } = req.body;
 
     // S3: typesafety
     // Costruisci payload di update solo con campi forniti
-    const updatePayload: Partial<{ nome: string; cognome: string }> = {};
+    const updatePayload: Partial<{
+      nome: string;
+      cognome: string;
+      email: string | null;
+      telefono: string | null;
+      ore_contrattuali: number;
+      note: string | null;
+      descrizione_contratto: string | null;
+    }> = {};
     
     if (nome !== undefined) {
       const nomeStr = typeof nome === 'string' ? nome.trim() : '';
@@ -372,6 +378,34 @@ router.put('/api/utenti/:pin', async (req, res) => {
         });
       }
       updatePayload.cognome = cognomeStr;
+    }
+
+    if (email !== undefined) {
+      updatePayload.email = email && typeof email === 'string' ? email.trim() : null;
+    }
+
+    if (telefono !== undefined) {
+      updatePayload.telefono = telefono && typeof telefono === 'string' ? telefono.trim() : null;
+    }
+
+    if (ore_contrattuali !== undefined) {
+      const oreNum = typeof ore_contrattuali === 'number' ? ore_contrattuali : parseFloat(ore_contrattuali);
+      if (isNaN(oreNum) || oreNum <= 0 || oreNum > 24) {
+        return res.status(400).json({
+          success: false,
+          message: 'Ore contrattuali devono essere tra 0.25 e 24',
+          code: 'BAD_REQUEST'
+        });
+      }
+      updatePayload.ore_contrattuali = oreNum;
+    }
+
+    if (note !== undefined) {
+      updatePayload.note = note && typeof note === 'string' ? note.trim() : null;
+    }
+
+    if (descrizione_contratto !== undefined) {
+      updatePayload.descrizione_contratto = descrizione_contratto && typeof descrizione_contratto === 'string' ? descrizione_contratto.trim() : null;
     }
 
     // Verifica che ci sia almeno un campo da aggiornare
