@@ -15,6 +15,7 @@ import {
   debounce,
 } from '@/state/timbrature.cache';
 import { formatDateLocal, getMeseItaliano } from '@/lib/time';
+import { useToast } from '@/hooks/use-toast';
 
 // Funzione di mapping puro per compatibilità tipi
 function toGiornoLogicoDettagliato(rows: TurnoFull[]): GiornoLogicoDettagliato[] {
@@ -171,52 +172,38 @@ export function useStoricoTimbrature(pin: number) {
     enabled: !!selectedGiorno,
   });
 
-  // Hook per export - Lazy-load condizionale (feature flag)
-  const LAZY_EXPORT = import.meta.env.VITE_FEATURE_LAZY_EXPORT !== '0';
+  // Export handlers - Lazy-load funzioni dirette (non hook)
+  const { toast } = useToast();
 
   const handleExportPDF = useCallback(async () => {
-    if (LAZY_EXPORT) {
-      // Lazy-load: carica useStoricoExport solo al click
-      const { useStoricoExport } = await import('@/hooks/useStoricoExport');
-      const exportHook = useStoricoExport({
+    try {
+      // Lazy-load: carica funzione export solo al click
+      const { exportPDF } = await import('@/hooks/useStoricoExport');
+      await exportPDF({
         dipendente,
         timbrature: turniGiornalieri,
         filters,
+        toast,
       });
-      return exportHook.handleExportPDF();
-    } else {
-      // Fallback: import statico (per rollback)
-      const { useStoricoExport } = await import('@/hooks/useStoricoExport');
-      const exportHook = useStoricoExport({
-        dipendente,
-        timbrature: turniGiornalieri,
-        filters,
-      });
-      return exportHook.handleExportPDF();
+    } catch (error) {
+      console.error('[useStoricoTimbrature] Export PDF failed:', error);
     }
-  }, [LAZY_EXPORT, dipendente, turniGiornalieri, filters]);
+  }, [dipendente, turniGiornalieri, filters, toast]);
 
   const handleExportXLS = useCallback(async () => {
-    if (LAZY_EXPORT) {
-      // Lazy-load: carica useStoricoExport solo al click
-      const { useStoricoExport } = await import('@/hooks/useStoricoExport');
-      const exportHook = useStoricoExport({
+    try {
+      // Lazy-load: carica funzione export solo al click
+      const { exportXLS } = await import('@/hooks/useStoricoExport');
+      await exportXLS({
         dipendente,
         timbrature: turniGiornalieri,
         filters,
+        toast,
       });
-      return exportHook.handleExportXLS();
-    } else {
-      // Fallback: import statico (per rollback)
-      const { useStoricoExport } = await import('@/hooks/useStoricoExport');
-      const exportHook = useStoricoExport({
-        dipendente,
-        timbrature: turniGiornalieri,
-        filters,
-      });
-      return exportHook.handleExportXLS();
+    } catch (error) {
+      console.error('[useStoricoTimbrature] Export Excel failed:', error);
     }
-  }, [LAZY_EXPORT, dipendente, turniGiornalieri, filters]);
+  }, [dipendente, turniGiornalieri, filters, toast]);
 
   // Hook per mutations (deprecato - ora gestito direttamente in StoricoTimbrature)
   // const { updateMutation, deleteMutation } = useStoricoMutations(...);

@@ -1,18 +1,7 @@
-// Hook per gestione export storico timbrature
-// reserved: api-internal (non rimuovere senza migrazione)
-// import { useState } from 'react';
-// import { useToast } from '@/hooks/use-toast';
-import { useToast } from './use-toast';
+// Modulo per export storico timbrature (PDF/Excel)
+// Funzioni normali (non hook) per evitare violazione Rules of Hooks
 import { Utente } from '@/services/utenti.service';
-// Lazy import per ridurre bundle size
-// import jsPDF from 'jspdf';
-// import autoTable from 'jspdf-autotable';
-// Lazy import per ridurre bundle size
-// import ExcelJS from 'exceljs';
 import type { TurnoFull } from '@/services/storico/types';
-// reserved: api-internal (non rimuovere senza migrazione)
-// import { TimbratureService } from '@/services/timbrature.service';
-// import { downloadCSV, ExportData } from '@/lib/csv-export';
 
 export interface StoricoExportFilters {
   pin?: number;
@@ -20,22 +9,23 @@ export interface StoricoExportFilters {
   al: string;
 }
 
-interface UseStoricoExportProps {
+interface ExportParams {
   dipendente: Utente | undefined;
   timbrature: TurnoFull[];
   filters: { pin: number; dal: string; al: string };
+  toast?: (options: { title: string; description: string; variant?: 'destructive' }) => void;
 }
 
-export function useStoricoExport({ dipendente, timbrature, filters }: UseStoricoExportProps) {
-  const { toast } = useToast();
-
-  const handleExportPDF = async () => {
-    try {
-      // Lazy load jsPDF per ridurre bundle size
-      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
-        import('jspdf'),
-        import('jspdf-autotable')
-      ]);
+/**
+ * Esporta storico timbrature in formato PDF
+ */
+export async function exportPDF({ dipendente, timbrature, filters, toast }: ExportParams): Promise<void> {
+  try {
+    // Lazy load jsPDF per ridurre bundle size
+    const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+      import('jspdf'),
+      import('jspdf-autotable')
+    ]);
       
       const doc = new jsPDF({ unit: "pt", format: "a4" });
       const periodo = `${filters.dal} - ${filters.al}`;
@@ -73,25 +63,34 @@ export function useStoricoExport({ dipendente, timbrature, filters }: UseStorico
       doc.text(`Totale: ${totaleOre.toFixed(2)}`, 240, y);
       doc.text(`Totale Extra: ${totaleExtra.toFixed(2)}`, 380, y);
       
-      doc.save(`storico_${dipendente?.nome}_${periodo.replace(/\//g, '-')}.pdf`);
-      
+    doc.save(`storico_${dipendente?.nome}_${periodo.replace(/\//g, '-')}.pdf`);
+    
+    if (toast) {
       toast({
         title: 'PDF Esportato',
         description: 'Il file è stato scaricato con successo',
       });
-    } catch {
+    }
+  } catch (error) {
+    console.error('[Export PDF] Error:', error);
+    if (toast) {
       toast({
         title: 'Errore Export',
         description: 'Impossibile generare il PDF',
         variant: 'destructive',
       });
     }
-  };
+    throw error;
+  }
+}
 
-  const handleExportXLS = async () => {
-    try {
-      // Lazy load ExcelJS per ridurre bundle size
-      const { default: ExcelJS } = await import('exceljs');
+/**
+ * Esporta storico timbrature in formato Excel
+ */
+export async function exportXLS({ dipendente, timbrature, filters, toast }: ExportParams): Promise<void> {
+  try {
+    // Lazy load ExcelJS per ridurre bundle size
+    const { default: ExcelJS } = await import('exceljs');
       
       const periodo = `${filters.dal} - ${filters.al}`;
       const header = ["Data","Mese","Entrata","Uscita","Ore","Extra"];
@@ -151,24 +150,24 @@ export function useStoricoExport({ dipendente, timbrature, filters }: UseStorico
       const link = document.createElement('a');
       link.href = url;
       link.download = `storico_${dipendente?.nome}_${periodo.replace(/\//g, '-')}.xlsx`;
-      link.click();
-      window.URL.revokeObjectURL(url);
-      
+    link.click();
+    window.URL.revokeObjectURL(url);
+    
+    if (toast) {
       toast({
         title: 'Excel Esportato',
         description: 'Il file è stato scaricato con successo',
       });
-    } catch {
+    }
+  } catch (error) {
+    console.error('[Export Excel] Error:', error);
+    if (toast) {
       toast({
         title: 'Errore Export',
         description: 'Impossibile generare il file Excel',
         variant: 'destructive',
       });
     }
-  };
-
-  return {
-    handleExportPDF,
-    handleExportXLS,
-  };
+    throw error;
+  }
 }

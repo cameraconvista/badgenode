@@ -1,402 +1,246 @@
-# BadgeNode — Documentazione Master Index
+# BadgeNode - Sistema Timbrature Enterprise
 
-**Versione:** 1.0.0  
-**Ultima Revisione:** 2025-11-01
+Sistema PWA per la gestione delle timbrature aziendali con PIN, progettato per dispositivi mobile e desktop con sincronizzazione offline avanzata.
 
----
+## 🚀 Quick Start (5 minuti)
 
-## 📚 Benvenuto
+### Prerequisiti
+- **Node.js** ≥18.0.0 (LTS raccomandato)
+- **npm** ≥9.0.0
+- **Git** ≥2.30.0
 
-Questo è l'indice completo della documentazione BadgeNode. Tutti i documenti sono organizzati per categoria e livello di dettaglio.
+### Setup Rapido
+```bash
+# 1. Clona il repository
+git clone https://github.com/cameraconvista/badgenode.git
+cd badgenode
 
-**Quick Links:**
-- [Setup Rapido](#-setup-rapido)
-- [Guide Tecniche](#-guide-tecniche-core)
-- [Operatività](#-operativit-deployment)
-- [Report Diagnosi](#-report-diagnosi)
-- [Governance](#-governance-policy)
+# 2. Installa dipendenze
+npm install
 
----
+# 3. Configura environment
+cp .env.example .env.local
+# Modifica .env.local con le tue credenziali Supabase
 
-## 🚀 Setup Rapido
+# 4. Verifica setup
+npm run check && npm run check:ci
 
-### Onboarding Sviluppatori
+# 5. Avvia development server
+npm run dev
 
-| Documento | Descrizione | Tempo Lettura |
-|-----------|-------------|---------------|
-| [README.md](../README.md) | Overview progetto, Quick Start 5 minuti | 10 min |
-| [05_setup_sviluppo.md](05_setup_sviluppo.md) | Setup completo ambiente development | 20 min |
-| [04_config_sviluppo.md](04_config_sviluppo.md) | Configurazione tools (ESLint, TypeScript, Vite) | 15 min |
+# 6. Apri l'applicazione
+open http://localhost:10000
+```
 
-**Checklist Onboarding:**
-1. ✅ Leggi README.md
-2. ✅ Setup environment (05_setup_sviluppo.md)
-3. ✅ Configura editor (04_config_sviluppo.md)
-4. ✅ Esegui `npm run check:ci`
-5. ✅ Avvia `npm run dev`
-6. ✅ Esplora DOCS/ per approfondimenti
+## 🏗️ Architettura
 
----
+### Stack Tecnologico
+- **Frontend**: React 18.3.1 + TypeScript 5.6.3 + Vite 5.4.20
+- **UI Framework**: Radix UI + TailwindCSS + Lucide Icons
+- **Backend**: Express.js + TypeScript
+- **Database**: Supabase PostgreSQL (timezone Europe/Rome)
+- **PWA**: Service Worker + Offline Support
+- **State Management**: TanStack Query + React Context
 
-## 📖 Guide Tecniche (Core)
+### Struttura Progetto
+```
+BadgeNode/
+├── client/          # Frontend React PWA
+├── server/          # Backend Express API
+├── shared/          # Tipi condivisi
+├── scripts/         # Automazione e utility
+├── DOCS/           # Documentazione enterprise
+└── supabase/       # Migrazioni database
+```
 
-### Architettura & Database
+### Funzionalità Principali
+- **Timbrature PIN**: Sistema 1-99 con validazione
+- **Giorno Logico**: Gestione turni notturni (cutoff 05:00)
+- **Offline-First**: Sincronizzazione automatica
+- **Admin Dashboard**: Gestione utenti e storico
+- **PWA**: Installabile su mobile/desktop
+- **Multi-sessione**: Più entrate/uscite per giorno
 
-| Documento | Descrizione | Livello |
-|-----------|-------------|---------|
-| [01_database_api.md](01_database_api.md) | Schema DB, API endpoints, RLS policies | ⭐⭐⭐ Essenziale |
-| [02_struttura_progetto.md](02_struttura_progetto.md) | Struttura cartelle, moduli, convenzioni | ⭐⭐⭐ Essenziale |
+## 📚 Documentazione
 
-**Contenuti:**
-- Schema tabelle PostgreSQL (utenti, timbrature, ex_dipendenti)
-- API REST endpoints (`/api/health`, `/api/timbrature`, `/api/storico`)
-- Row Level Security (RLS) policies Supabase
-- Relazioni e indici database
-- Architettura monorepo (client/ + server/ + shared/)
+### Guide Essenziali
+- [**Setup Sviluppo**](DOCS/05_setup_sviluppo.md) - Onboarding completo
+- [**Struttura Progetto**](DOCS/02_struttura_progetto.md) - Architettura dettagliata
+- [**Database & API**](DOCS/01_database_api.md) - Schema e endpoints
+- [**Troubleshooting**](DOCS/10_troubleshooting.md) - Risoluzione problemi
 
----
+### Documentazione Tecnica
+- [**Scripts Utilità**](DOCS/03_scripts_utilita.md) - Automazione e backup
+- [**Configurazione**](DOCS/04_config_sviluppo.md) - Environment e tools
+- [**Sistema Offline**](DOCS/09_offline.md) - Sincronizzazione avanzata
+- [**UI Guidelines**](DOCS/08_ui_home_keypad.md) - Design system
 
 ### Logica Business
+- [**Giorno Logico**](DOCS/07_logica_giorno_logico.md) - Regole timbrature
+- [**Icons Guide**](DOCS/06_icons_guide.md) - Sistema icone
 
-| Documento | Descrizione | Livello |
-|-----------|-------------|---------|
-| [07_logica_giorno_logico.md](07_logica_giorno_logico.md) | Cutoff 05:00, multi-sessione, edge cases | ⭐⭐⭐ Essenziale |
-| [09_offline.md](09_offline.md) | Offline-first, IndexedDB, sync, retry | ⭐⭐ Importante |
+## 🔧 Scripts Principali
 
-**Contenuti:**
-- Giorno logico con cutoff 05:00 per turni notturni
-- Multi-sessione: più entrate/uscite per giorno
-- Pairing automatico entrate/uscite
-- Coda offline IndexedDB con fallback in-memory
-- Sync automatica con backoff exponential
-- Device whitelist e feature flags
-
----
-
-### UI/UX & Design
-
-| Documento | Descrizione | Livello |
-|-----------|-------------|---------|
-| [08_ui_home_keypad.md](08_ui_home_keypad.md) | Home keypad, accessibilità, layout | ⭐⭐ Importante |
-| [06_icons_guide.md](06_icons_guide.md) | Sistema icone, PWA manifest | ⭐ Opzionale |
-
-**Contenuti:**
-- Tastierino 3x4 accessibile (WCAG)
-- Layout mobile-first responsive
-- Palette colori enterprise (blue/gray)
-- Logo app customizzato
-- PWA icons e manifest
-- Lucide React icons
-
----
-
-### Performance & Optimization
-
-| Documento | Descrizione | Livello |
-|-----------|-------------|---------|
-| [11_asset_optimization.md](11_asset_optimization.md) | Bundle size, lazy-loading, PWA | ⭐⭐ Importante |
-| [12_dependency_management.md](12_dependency_management.md) | Audit deps, outdated, security | ⭐⭐ Importante |
-
-**Contenuti:**
-- Bundle analysis (max 920KB lazy-loaded)
-- Code splitting route-based
-- Lazy-loading export libraries (exceljs, jspdf)
-- PWA caching strategies
-- Dependency audit e update policy
-- Security vulnerabilities check
-
----
-
-## 🔧 Operatività & Deployment
-
-### Script & Automazione
-
-| Documento | Descrizione | Livello |
-|-----------|-------------|---------|
-| [03_scripts_utilita.md](03_scripts_utilita.md) | Backup, diagnosi, health check, CI/CD | ⭐⭐⭐ Essenziale |
-| [10_troubleshooting.md](10_troubleshooting.md) | Risoluzione problemi comuni | ⭐⭐⭐ Essenziale |
-
-**Contenuti:**
-- Script backup automatico con rotazione
-- Health check runner
-- Diagnosi completa progetto
-- CI/CD checks (TypeScript + ESLint + build)
-- Smoke test runtime Supabase
-- Fix comuni (bootstrap offline, PIN validation, storico)
-
----
-
-### Deployment & Monitoring
-
-| Documento | Descrizione | Livello |
-|-----------|-------------|---------|
-| [POST_DEPLOY_CHECKLIST.md](../POST_DEPLOY_CHECKLIST.md) | Checklist post-deploy completa | ⭐⭐⭐ Essenziale |
-| [ALERT_UPTIME.md](../ALERT_UPTIME.md) | Monitoring UptimeRobot, alert policy | ⭐⭐ Importante |
-| [LOG_ROTATION.md](../LOG_ROTATION.md) | Policy log, rotation, retention | ⭐⭐ Importante |
-
-**Contenuti:**
-- Verifica health endpoints post-deploy
-- Smoke test login e timbrature
-- UptimeRobot configuration
-- Alert channels (Email, Slack, Telegram)
-- Incident response escalation
-- Log rotation policy (pianificato Sprint 2)
-
----
-
-## 📊 Report Diagnosi
-
-### Report Completi (STEP 1-4)
-
-| Report | Descrizione | Data | Linee |
-|--------|-------------|------|-------|
-| [Report_Asset&CodeMap.md](../Report_Asset&CodeMap.md) | Mappa codice, asset, bundle analysis | 2025-11-01 | 383 |
-| [Report_Governance.md](../Report_Governance.md) | Governance, pre-commit, ESLint, deps | 2025-11-01 | 376 |
-| [Report_Qualità&Stabilità.md](../Report_Qualità&Stabilità.md) | TypeScript, ESLint, security, testing | 2025-11-01 | 543 |
-| [Report_Performance&Sync.md](../Report_Performance&Sync.md) | TTFB, API latency, offline, bundle | 2025-11-01 | 168 |
-| [Report_Docs&Operatività.md](../Report_Docs&Operatività.md) | Scorecard docs 28/36, prontezza ops | 2025-11-01 | ~600 |
-
-**Highlights:**
-- ✅ **0 errori TypeScript** (strict mode)
-- ✅ **0 vulnerabilità npm** (production)
-- ✅ **API <1ms** latency (dev)
-- ✅ **Bundle ottimizzato** (max 920KB lazy)
-- ✅ **Documentazione 78%** completa
-
----
-
-### Report Storici (EXTRA/)
-
-| Report | Descrizione | Categoria |
-|--------|-------------|-----------|
-| [DIAGNOSI_PROGETTO_COMPLETA.md](DIAGNOSI_PROGETTO_COMPLETA.md) | Diagnosi completa pre-STEP 1-4 | Storico |
-| [SECURITY_AUDIT_PIN_VALIDATION.md](SECURITY_AUDIT_PIN_VALIDATION.md) | Audit sicurezza validazione PIN | Security |
-| [REPORT_CONSOLIDATO_STORICO.md](EXTRA/REPORT_CONSOLIDATO_STORICO.md) | Report consolidato feature storiche | Storico |
-| [REPORT_STEP3-8_*.md](EXTRA/) | Report sviluppo feature (archiviazione, export, etc.) | Storico |
-
----
-
-## 📜 Governance & Policy
-
-### Documenti Formali
-
-| Documento | Descrizione | Livello |
-|-----------|-------------|---------|
-| [CHANGELOG.md](../CHANGELOG.md) | Cronologia versioni e rilasci (semver) | ⭐⭐⭐ Essenziale |
-| [SECURITY.md](../SECURITY.md) | Disclosure policy, RLS, incident response | ⭐⭐⭐ Essenziale |
-| [CONTRIBUTING.md](../CONTRIBUTING.md) | Linee guida contributi, coding standards | ⭐⭐⭐ Essenziale |
-| [LICENSE](../LICENSE) | MIT License | ⭐⭐ Importante |
-
-**Contenuti:**
-- Versioning semver (MAJOR.MINOR.PATCH)
-- Commit convention (type(scope): message)
-- Responsible disclosure policy
-- RLS policies e key management
-- Branch naming, PR process
-- File-length policy (≤220 righe)
-
----
-
-### Configurazione & Tools
-
-| File | Descrizione | Tipo |
-|------|-------------|------|
-| [.editorconfig](../.editorconfig) | Configurazione editor cross-IDE | Config |
-| [.env.example](../.env.example) | Template environment variables | Config |
-| [eslint.config.js](../eslint.config.js) | ESLint flat config | Config |
-| [tsconfig.json](../tsconfig.json) | TypeScript strict configuration | Config |
-| [vite.config.ts](../vite.config.ts) | Vite build + dev server | Config |
-
----
-
-## 🗂️ Struttura Completa DOCS/
-
-```
-DOCS/
-├── README.md                          # ← Questo file (indice master)
-│
-├── 01_database_api.md                 # Schema DB, API, RLS
-├── 02_struttura_progetto.md           # Architettura, cartelle
-├── 03_scripts_utilita.md              # Backup, diagnosi, CI/CD
-├── 04_config_sviluppo.md              # ESLint, TypeScript, Vite
-├── 05_setup_sviluppo.md               # Onboarding completo
-├── 06_icons_guide.md                  # PWA icons, manifest
-├── 07_logica_giorno_logico.md         # Cutoff 05:00, multi-sessione
-├── 08_ui_home_keypad.md               # UI keypad, accessibilità
-├── 09_offline.md                      # Offline-first, IndexedDB
-├── 10_troubleshooting.md              # Fix comuni, diagnostica
-├── 11_asset_optimization.md           # Bundle, lazy-loading
-├── 12_dependency_management.md        # Audit deps, security
-│
-├── DIAGNOSI_PROGETTO_COMPLETA.md      # Diagnosi pre-STEP 1-4
-├── SECURITY_AUDIT_PIN_VALIDATION.md   # Audit security PIN
-├── OFFLINE_DEVICE_IDS.md              # Device whitelist guide
-├── env-setup.md                       # Environment setup dettagliato
-├── offline-queue-test.md              # Test offline queue
-├── split_plan.md                      # Piano split feature
-│
-├── diagnosi/                          # Report diagnosi tecnici
-│   ├── bundle-analysis.md
-│   ├── circular-deps.md
-│   ├── eslint-analysis.md
-│   └── legacy-files.md
-│
-└── EXTRA/                             # Report storici feature
-    ├── DIAGNOSI_CONSOLIDATA_ALTRI.md
-    ├── REPORT_CONSOLIDATO_STORICO.md
-    ├── REPORT_STEP3_EX_DIP_ARCHIVIAZIONE.md
-    ├── REPORT_STEP4_RIMOZIONE_ESPORTA_TUTTI.md
-    ├── REPORT_STEP5_FIX_E2E_E_ID_ARCHIVIAZIONE.md
-    ├── REPORT_STEP6_RIPRISTINO.md
-    ├── REPORT_STEP7_ELIMINAZIONE_DEFINITIVA.md
-    ├── REPORT_STEP8_STORICO_EXPORT_CSV.md
-    └── ... (altri report storici)
+### Development
+```bash
+npm run dev          # Avvia dev server (porta 10000)
+npm run build        # Build production
+npm run start        # Avvia server production
+npm run check        # TypeScript check
+npm run lint         # ESLint check
 ```
 
----
+### Quality Assurance
+```bash
+npm run check:ci     # Validazione CI completa
+npm run smoke:runtime # Test connettività Supabase
+npm run diagnose     # Diagnosi progetto completa
+```
 
-## 🎯 Percorsi di Lettura Consigliati
+### Utility
+```bash
+npm run esegui:backup    # Backup automatico
+npm run docs:consolidate # Aggiorna documentazione
+npm run health:check     # Verifica sistema
+```
 
-### Per Nuovi Sviluppatori
+## ⚙️ Configurazione
 
-1. **Giorno 1**: README.md + 05_setup_sviluppo.md
-2. **Giorno 2**: 02_struttura_progetto.md + 01_database_api.md
-3. **Giorno 3**: 07_logica_giorno_logico.md + 08_ui_home_keypad.md
-4. **Giorno 4**: 09_offline.md + 10_troubleshooting.md
-5. **Giorno 5**: CONTRIBUTING.md + 03_scripts_utilita.md
+### Environment Variables (.env.local)
+```bash
+# Supabase Configuration
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
-### Per DevOps
+# Development Settings
+NODE_ENV=development
+PORT=10000
 
-1. **Setup**: 05_setup_sviluppo.md + 04_config_sviluppo.md
-2. **Deploy**: POST_DEPLOY_CHECKLIST.md + ALERT_UPTIME.md
-3. **Monitoring**: LOG_ROTATION.md + 03_scripts_utilita.md
-4. **Security**: SECURITY.md + 01_database_api.md (RLS)
-5. **Troubleshooting**: 10_troubleshooting.md
+# Feature Flags
+VITE_FEATURE_OFFLINE_QUEUE=false
+VITE_FEATURE_OFFLINE_BADGE=false
+```
 
-### Per Product Owner
+### Database Setup
+1. Crea progetto Supabase
+2. Applica migrazioni: `supabase/migrations/`
+3. Configura RLS policies (incluse nelle migrazioni)
+4. Verifica connessione: `npm run smoke:runtime`
 
-1. **Overview**: README.md + Report_Docs&Operatività.md
-2. **Features**: 07_logica_giorno_logico.md + 09_offline.md
-3. **Quality**: Report_Qualità&Stabilità.md + Report_Performance&Sync.md
-4. **Governance**: CHANGELOG.md + Report_Governance.md
-5. **Security**: SECURITY.md
+## 🚨 Troubleshooting
 
----
+### Problemi Comuni
 
-## 🔍 Ricerca Rapida
+#### Port già in uso
+```bash
+# Trova processo sulla porta 10000
+lsof -ti:10000
 
-### Per Argomento
+# Termina processo
+kill $(lsof -ti:10000)
+```
 
-**Setup & Configuration:**
-- Environment: 05_setup_sviluppo.md, .env.example
-- Editor: 04_config_sviluppo.md, .editorconfig
-- Build: vite.config.ts, tsconfig.json
+#### Errori TypeScript
+```bash
+# Clean e rebuild
+npm run build:clean
+npm run check
+```
 
-**Database & API:**
-- Schema: 01_database_api.md
-- Endpoints: 01_database_api.md
-- RLS: 01_database_api.md, SECURITY.md
+#### Problemi Supabase
+```bash
+# Verifica configurazione
+npm run smoke:runtime
 
-**Business Logic:**
-- Giorno logico: 07_logica_giorno_logico.md
-- Timbrature: 01_database_api.md, 07_logica_giorno_logico.md
-- Offline: 09_offline.md
+# Check environment
+echo $VITE_SUPABASE_URL
+```
 
-**UI/UX:**
-- Keypad: 08_ui_home_keypad.md
-- Icons: 06_icons_guide.md
-- Styling: 08_ui_home_keypad.md
+### Log e Diagnostica
+- **Health Check**: `GET /api/health`
+- **Diagnostica**: `npm run diagnose`
+- **Logs Server**: Console output in development
+- **PWA Debug**: DevTools > Application > Service Workers
 
-**Operations:**
-- Deploy: POST_DEPLOY_CHECKLIST.md
-- Monitoring: ALERT_UPTIME.md
-- Logs: LOG_ROTATION.md
-- Backup: 03_scripts_utilita.md
+## 🏢 Enterprise Features
 
-**Quality & Performance:**
-- TypeScript: Report_Qualità&Stabilità.md
-- ESLint: Report_Qualità&Stabilità.md
-- Bundle: 11_asset_optimization.md, Report_Performance&Sync.md
-- Testing: CONTRIBUTING.md, Report_Qualità&Stabilità.md
+### Governance
+- **File Length Guard**: ≤220 righe hard limit
+- **Pre-commit Hooks**: ESLint + TypeScript + Prettier
+- **Backup Automatico**: Rotazione 3 copie
+- **Documentazione**: Enterprise-grade completa
 
-**Security:**
-- Disclosure: SECURITY.md
-- RLS: 01_database_api.md, SECURITY.md
-- Keys: SECURITY.md, .env.example
+### Sicurezza
+- **Row Level Security**: Policies Supabase attive
+- **API Server-Only**: SERVICE_ROLE_KEY protetta
+- **Request Tracking**: ID univoci per audit
+- **Environment Validation**: Controlli automatici
 
----
+### Monitoring
+- **Health Endpoints**: `/api/health`, `/api/ready`, `/api/version`
+- **Performance Targets**: Build <10s, Bundle <1MB
+- **Quality Gates**: TypeScript strict, ESLint, tests
 
-## 📝 Contribuire alla Documentazione
+## 📱 Utilizzo
 
-### Aggiungere Nuovi Documenti
+### Timbrature (Mobile)
+1. Apri app su dispositivo mobile
+2. Inserisci PIN (1-99)
+3. Seleziona ENTRATA/USCITA
+4. Conferma timbratura
 
-1. **Crea file** in `DOCS/` con naming convention:
-   - Guide tecniche: `NN_nome_guida.md` (numerato)
-   - Report: `REPORT_Nome_Report.md`
-   - Policy: `NOME_POLICY.md` (radice)
+### Gestione Admin (Desktop)
+1. Accedi con PIN amministratore
+2. Gestisci utenti e PIN
+3. Visualizza storico timbrature
+4. Export dati (CSV/PDF)
 
-2. **Formato standard**:
-   ```markdown
-   # BadgeNode — Titolo Documento
-   
-   **Versione:** X.Y.Z
-   **Ultima Revisione:** YYYY-MM-DD
-   
-   ---
-   
-   ## 📋 Contenuti
-   ...
-   ```
+### Modalità Offline
+- Timbrature salvate localmente
+- Sincronizzazione automatica al ritorno online
+- Badge diagnostico (development)
 
-3. **Aggiorna questo indice** (DOCS/README.md)
+## 🤝 Contributi
 
-4. **Commit**:
-   ```bash
-   git add DOCS/
-   git commit -m "docs: add new guide for XYZ"
-   ```
+### Development Workflow
+1. Fork del repository
+2. Crea branch feature: `git checkout -b feature/nome-feature`
+3. Commit con messaggi descrittivi
+4. Push e crea Pull Request
+5. Review e merge
 
-### Aggiornare Documenti Esistenti
+### Coding Standards
+- **TypeScript Strict**: Tipi espliciti obbligatori
+- **ESLint**: Configurazione enterprise
+- **File Length**: Max 220 righe per file
+- **Testing**: Coverage minima 80%
 
-1. **Modifica file**
-2. **Aggiorna "Ultima Revisione"**
-3. **Aggiorna CHANGELOG.md** se breaking change
-4. **Commit**:
-   ```bash
-   git commit -m "docs(guide): update XYZ section"
-   ```
+## 📄 Licenza
 
----
+MIT License - vedi file LICENSE per dettagli.
+
+## 📊 Report e Monitoring
+
+```bash
+# Security audit
+npm run security:audit
+
+# Dipendenze obsolete
+npm run deps:outdated
+
+# Analisi bundle
+npm run analyze:bundle
+```
 
 ## 🆘 Supporto
 
-### Documentazione Non Trovata?
-
-- **GitHub Issues**: Apri issue con tag `documentation`
-- **GitHub Discussions**: Chiedi nella sezione Q&A
-- **Email**: docs@badgenode.example.com
-
-### Segnala Errori
-
-- **Typo/errori**: Apri PR con fix
-- **Contenuto obsoleto**: Apri issue
-- **Link rotti**: Apri issue con tag `broken-link`
+- **Documentazione**: [DOCS/](DOCS/)
+- **Issues**: GitHub Issues
+- **Troubleshooting**: [DOCS/10_troubleshooting.md](DOCS/10_troubleshooting.md)
+- **Setup**: [DOCS/05_setup_sviluppo.md](DOCS/05_setup_sviluppo.md)
 
 ---
 
-## 📈 Statistiche Documentazione
-
-**Totale Documenti:** 45+  
-**Guide Core:** 12  
-**Report Diagnosi:** 5  
-**Policy Formali:** 6  
-**Linee Totali:** ~15,000+  
-**Ultima Revisione Completa:** 2025-11-01
-
-**Scorecard Qualità:** 28/36 (78%) — 🟢 Buono
-
----
-
-**Maintainer:** BadgeNode Team  
-**Last Updated:** 2025-11-01  
-**Version:** 1.0.0
+> **BadgeNode v5.0** - Enterprise Stable  
+> Sistema timbrature PWA con sincronizzazione offline avanzata
