@@ -342,7 +342,7 @@ router.put('/api/utenti/:pin', async (req, res) => {
     }
 
     // Estrai campi aggiornabili dal body
-    const { nome, cognome, email, telefono, ore_contrattuali, note, descrizione_contratto } = req.body;
+    const { nome, cognome, email, telefono, ore_contrattuali, note } = req.body;
 
     // S3: typesafety
     // Costruisci payload di update solo con campi forniti
@@ -353,7 +353,6 @@ router.put('/api/utenti/:pin', async (req, res) => {
       telefono: string | null;
       ore_contrattuali: number;
       note: string | null;
-      descrizione_contratto: string | null;
     }> = {};
     
     if (nome !== undefined) {
@@ -404,9 +403,7 @@ router.put('/api/utenti/:pin', async (req, res) => {
       updatePayload.note = note && typeof note === 'string' ? note.trim() : null;
     }
 
-    if (descrizione_contratto !== undefined) {
-      updatePayload.descrizione_contratto = descrizione_contratto && typeof descrizione_contratto === 'string' ? descrizione_contratto.trim() : null;
-    }
+    // NOTA: descrizione_contratto non esiste nella tabella utenti (solo in types per compatibilità UI)
 
     // Verifica che ci sia almeno un campo da aggiornare
     if (Object.keys(updatePayload).length === 0) {

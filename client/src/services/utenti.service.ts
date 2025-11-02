@@ -170,13 +170,13 @@ export class UtentiService {
       }
 
       // Payload per API - invia tutti i campi modificabili
+      // NOTA: descrizione_contratto non esiste nella tabella DB (solo in UI per compatibilità)
       const payload: Record<string, unknown> = {};
       if (input.nome !== undefined) payload.nome = input.nome.trim();
       if (input.cognome !== undefined) payload.cognome = input.cognome.trim();
       if (input.email !== undefined) payload.email = input.email?.trim() || null;
       if (input.telefono !== undefined) payload.telefono = input.telefono?.trim() || null;
       if (input.ore_contrattuali !== undefined) payload.ore_contrattuali = input.ore_contrattuali;
-      if (input.descrizione_contratto !== undefined) payload.descrizione_contratto = input.descrizione_contratto?.trim() || null;
 
       const response = await safeFetchJsonPut<DbUtente>(`/api/utenti/${pin}`, payload);
 
