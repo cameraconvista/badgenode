@@ -1,7 +1,8 @@
 # 01 📊 DATABASE API - BadgeNode
 
 **Descrizione concettuale del modello dati e API endpoints**  
-**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
+**Versione**: 5.1 • **Data**: 2025-11-02 • **Stato**: Enterprise Stable  
+**Ultima modifica**: Migration 20251102 - Aggiunta colonne utenti (email, telefono, ore_contrattuali, note)
 
 ---
 
@@ -23,18 +24,22 @@
 Campi principali:
 - id: UUID (PK, auto-generated)
 - pin: INTEGER (1-99, UNIQUE)
-- nome: VARCHAR(100)
-- cognome: VARCHAR(100)
-- ore_contrattuali: DECIMAL(4,2) default 8.00
-- email: VARCHAR(255) optional
-- telefono: VARCHAR(20) optional
-- created_at: TIMESTAMP
-- updated_at: TIMESTAMP
+- nome: VARCHAR(100) NOT NULL
+- cognome: VARCHAR(100) NOT NULL
+- email: TEXT (nullable) ← aggiunto 2025-11-02
+- telefono: TEXT (nullable) ← aggiunto 2025-11-02
+- ore_contrattuali: NUMERIC(4,2) DEFAULT 8.00 ← aggiunto 2025-11-02
+- note: TEXT (nullable) ← aggiunto 2025-11-02
+- created_at: TIMESTAMP DEFAULT NOW()
 
 Vincoli:
-- PIN deve essere tra 1 e 99
+- PIN deve essere tra 1 e 99 (UNIQUE)
 - Nome e cognome obbligatori
-- Ore contrattuali positive
+- Ore contrattuali: 0.25-24 (validazione server)
+
+Migration:
+- 20251102_add_utenti_extra_fields.sql
+- Compatibile con dati esistenti (DEFAULT 8.00 per ore_contrattuali)
 ```
 
 ### **timbrature** - Registrazioni Entrate/Uscite

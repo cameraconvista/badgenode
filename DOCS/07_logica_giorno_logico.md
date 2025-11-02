@@ -1,8 +1,13 @@
 # 📅 LOGICA GIORNO LOGICO — BadgeNode
 
-**Data aggiornamento**: 2025-10-21
-**Versione documento**: v5.0 (fix giorno logico cutoff 05:00 + formato ore.minuti + tutti i giorni) • **Stato**: Enterprise Stable
+**Data aggiornamento**: 2025-11-02
+**Versione documento**: v5.1 (fix giorno logico cutoff 05:00 + anchor date auto-recovery + client-side UI fix) • **Stato**: Enterprise Stable
 **Autore**: BadgeNode • Revisione tecnica Cascade
+
+**Fix Recenti (Sprint 10)**:
+- ✅ Server: Auto-recovery `anchorDate` per uscite notturne (00:00-05:00) senza client anchor
+- ✅ Client: Calcolo giorno logico in UI Home per abilitazione pulsante Uscita
+- ✅ Offline: Bypass validazione per turni notturni (00:00-05:00)
 
 ---
 

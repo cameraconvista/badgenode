@@ -1,18 +1,99 @@
 # 10 🔧 TROUBLESHOOTING - BadgeNode
 
 **Risoluzione problemi post-implementazione offline e diagnostica avanzata**  
-**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
+**Versione**: 5.1 • **Data**: 2025-11-02 • **Stato**: Enterprise Stable
 
 ---
 
 ## 📋 Contenuti
 
-1. [Overview Problematiche](#overview-problematiche)
-2. [Fix Bootstrap Offline](#fix-bootstrap-offline)
-3. [Fix Validazione PIN](#fix-validazione-pin)
-4. [Fix Storico Timbrature](#fix-storico-timbrature)
-5. [Diagnostica Environment](#diagnostica-environment)
-6. [Sincronizzazione e Validazione](#sincronizzazione-e-validazione)
+1. [Fix Sprint 10 (Nov 2025)](#fix-sprint-10-nov-2025) ⭐ NUOVO
+2. [Overview Problematiche](#overview-problematiche)
+3. [Fix Bootstrap Offline](#fix-bootstrap-offline)
+4. [Fix Validazione PIN](#fix-validazione-pin)
+5. [Fix Storico Timbrature](#fix-storico-timbrature)
+6. [Diagnostica Environment](#diagnostica-environment)
+7. [Sincronizzazione e Validazione](#sincronizzazione-e-validazione)
+
+---
+
+## ⭐ Fix Sprint 10 (Nov 2025)
+
+### **1. Export PDF/Excel - Rules of Hooks Violation**
+
+**Problema**: Click su pulsanti "Esporta PDF" e "Esporta Excel" non eseguiva azione.
+
+**Causa**: `useStoricoExport` era un React Hook chiamato dentro callback async, violando Rules of Hooks.
+
+**Soluzione**:
+- Convertito `useStoricoExport` da hook a modulo di funzioni normali
+- `export async function exportPDF({...})` e `exportXLS({...})`
+- Mantenuto lazy-loading di `jspdf` e `exceljs`
+
+**File modificati**:
+- `client/src/hooks/useStoricoExport.ts`
+- `client/src/hooks/useStoricoTimbrature.ts`
+
+**Commit**: `9193754` (2025-11-02)
+
+---
+
+### **2. Formato Export - Ordinamento e Date**
+
+**Problema**: Export mostrava date 31→1 (decrescente) e colonna Mese vuota.
+
+**Soluzione**:
+- Ordinamento 1→31 con `.sort((a, b) => a.giorno.localeCompare(b.giorno))`
+- Colonna Data: `formatDataConGiorno()` → "01 Lunedì"
+- Colonna Mese: `formatMeseAnno()` → "Ottobre 2025"
+
+**File modificati**:
+- `client/src/hooks/useStoricoExport.ts`
+
+**Commit**: `122f40d` (2025-11-02)
+
+---
+
+### **3. Ore Contrattuali Non Modificabili**
+
+**Problema**: Modifica "Ore max giornaliere da contratto" non veniva salvata.
+
+**Causa**: Campi `email`, `telefono`, `ore_contrattuali`, `note` non esistevano nella tabella database.
+
+**Soluzione**:
+- Creata migration SQL: `20251102_add_utenti_extra_fields.sql`
+- Aggiornato server GET/PUT per includere nuovi campi
+- Aggiornato client per inviare campi modificabili
+- Form UI ora permette modifica
+
+**File modificati**:
+- `supabase/migrations/20251102_add_utenti_extra_fields.sql` (NUOVO)
+- `server/routes/modules/utenti.ts`
+- `client/src/services/utenti.service.ts`
+- `client/src/components/admin/FormModificaDipendente.tsx`
+
+**Commit**: `0d65e5a` (2025-11-02)
+
+**⚠️ Azione Richiesta**: Applicare migration manualmente su Supabase Dashboard
+
+---
+
+### **4. Form Modali - TypeScript Errors**
+
+**Problema**: Errori console "Cannot read properties of undefined (reading 'control')" all'apertura modali.
+
+**Causa**: Pulsante `type="submit"` fuori dal `<form>`, React cercava form control inesistente.
+
+**Soluzione**:
+- Spostato `<form>` per includere body + footer
+- Pulsanti ora dentro il form
+- Rimosso `onClick` duplicato
+
+**File modificati**:
+- `client/src/components/admin/ModaleModificaDipendente.tsx`
+- `client/src/components/admin/ModaleNuovoDipendente.tsx`
+
+**Commit**: `c5bf326` (2025-11-02)
 
 ---
 

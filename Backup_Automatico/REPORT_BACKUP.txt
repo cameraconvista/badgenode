@@ -43,3 +43,4 @@ Nuovo backup: backup_2025.10.30_00.29.tar.gz
 ---
 2025-10-31T12:24:34.493Z - backup_2025.10.31_13.24.tar.gz - 2350KB - SUCCESS
 2025-11-02T00:50:35.170Z - backup_2025.11.02_01.50.tar.gz - 2475KB - SUCCESS
+2025-11-02T02:03:16.813Z - backup_2025.11.02_03.03.tar.gz - 2324KB - SUCCESS

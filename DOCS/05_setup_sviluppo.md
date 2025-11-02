@@ -1,7 +1,8 @@
 # 05 🚀 SETUP SVILUPPO - BadgeNode
 
-**Onboarding rapido per sviluppatori**  
-**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
+**Guida rapida setup ambiente locale**  
+**Versione**: 5.1 • **Data**: 2025-11-02 • **Stato**: Enterprise Stable  
+**Porta Dev Server**: 3001 (Express + Vite middleware mode)
 
 ---
 
