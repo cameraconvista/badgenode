@@ -5,7 +5,7 @@ import './components/ui/ToastKit.css';
 
 // Disable console.log in production (preserve warn/error)
 if (import.meta.env.PROD) {
-  // eslint-disable-next-line no-console
+   
   console.log = () => {};
 }
 

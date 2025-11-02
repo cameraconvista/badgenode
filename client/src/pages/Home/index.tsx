@@ -44,8 +44,17 @@ export default function Home() {
     (async () => {
       if (!pin) { setLastAllowed(null); return; }
       try {
-        const today = formatDateLocal(new Date());
-        const list = await TimbratureService.getTimbratureGiorno(Number(pin), today);
+        // FIX: Usa giorno logico considerando cutoff 05:00
+        const now = new Date();
+        let targetDate = new Date(now);
+        
+        // Se ora < 05:00, cerca sul giorno precedente (giorno logico)
+        if (now.getHours() < 5) {
+          targetDate.setDate(targetDate.getDate() - 1);
+        }
+        
+        const giornoLogico = formatDateLocal(targetDate);
+        const list = await TimbratureService.getTimbratureGiorno(Number(pin), giornoLogico);
         const last = list.sort((a, b) => (a.ts_order || '').localeCompare(b.ts_order || '')).at(-1);
         if (cancelled) return;
         if (!last) { setLastAllowed('entrata'); return; }

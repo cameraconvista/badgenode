@@ -2,6 +2,8 @@
 import { Router } from 'express';
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin';
 import { validatePinParam } from '../../../../utils/validation/pin';
+import { log } from '../../../../lib/logger';
+import { FEATURE_LOGGER_ADAPTER } from '../../../../config/featureFlags';
 
 const router = Router();
 
@@ -19,7 +21,9 @@ router.get('/api/pin/validate', async (req, res) => {
     }
     const pinNum = validation.pinNum!;
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[API][pin.validate] starting pin=${pinNum}`);
+      FEATURE_LOGGER_ADAPTER
+        ? log.info({ pin: pinNum, route: 'pin:validate' }, 'starting')
+        : console.log(`[API][pin.validate] starting pin=${pinNum}`);
     }
     // Pre-check table access (dev diagnostics)
     try {
@@ -28,10 +32,16 @@ router.get('/api/pin/validate', async (req, res) => {
         .select('pin', { head: true, count: 'exact' })
         .limit(1);
       if (tblErr && process.env.NODE_ENV === 'development') {
-        console.error('[API][pin.validate] table_check_error:', (tblErr as any)?.message || tblErr);
+        FEATURE_LOGGER_ADAPTER
+          ? log.error({ error: (tblErr as any)?.message || tblErr, route: 'pin:validate' }, 'table_check_error')
+          : console.error('[API][pin.validate] table_check_error:', (tblErr as any)?.message || tblErr);
       }
     } catch (tblEx) {
-      if (process.env.NODE_ENV === 'development') console.error('[API][pin.validate] table_check_exception:', (tblEx as Error).message);
+      if (process.env.NODE_ENV === 'development') {
+        FEATURE_LOGGER_ADAPTER
+          ? log.error({ error: (tblEx as Error).message, route: 'pin:validate' }, 'table_check_exception')
+          : console.error('[API][pin.validate] table_check_exception:', (tblEx as Error).message);
+      }
     }
 
     // Schema-agnostic lookup: seleziona solo 'pin'
@@ -54,21 +64,39 @@ router.get('/api/pin/validate', async (req, res) => {
       const qCode = (qErr as any)?.code || '';
       // PostgREST: no rows for maybeSingle
       if (qCode === 'PGRST116' || /no rows|results contain 0 rows|row not found/i.test(String(qMsg))) {
-        if (process.env.NODE_ENV === 'development') console.log('[API][pin.validate] not_found');
+        if (process.env.NODE_ENV === 'development') {
+          FEATURE_LOGGER_ADAPTER
+            ? log.info({ route: 'pin:validate' }, 'not_found')
+            : console.log('[API][pin.validate] not_found');
+        }
         return res.status(404).json({ success: false, code: 'NOT_FOUND' });
       }
-      if (process.env.NODE_ENV === 'development') console.error('[API][pin.validate] query_error:', qMsg || qErr);
+      if (process.env.NODE_ENV === 'development') {
+        FEATURE_LOGGER_ADAPTER
+          ? log.error({ error: qMsg || qErr, route: 'pin:validate' }, 'query_error')
+          : console.error('[API][pin.validate] query_error:', qMsg || qErr);
+      }
       return res.status(500).json({ success: false, code: 'QUERY_ERROR', message: qMsg || 'query error' });
     }
     if (!data) {
-      if (process.env.NODE_ENV === 'development') console.log('[API][pin.validate] not_found');
+      if (process.env.NODE_ENV === 'development') {
+        FEATURE_LOGGER_ADAPTER
+          ? log.info({ route: 'pin:validate' }, 'not_found')
+          : console.log('[API][pin.validate] not_found');
+      }
       return res.status(404).json({ success: false, code: 'NOT_FOUND' });
     }
     const userKey = String((data as any)?.pin);
-    if (process.env.NODE_ENV === 'development') console.log('[API][pin.validate] ok');
+    if (process.env.NODE_ENV === 'development') {
+      FEATURE_LOGGER_ADAPTER
+        ? log.info({ route: 'pin:validate' }, 'ok')
+        : console.log('[API][pin.validate] ok');
+    }
     return res.json({ success: true, ok: true, user_key: userKey, pin: String((data as any)?.pin ?? pinNum) });
   } catch (e) {
-    console.error('[API][pin.validate] query_error:', (e as Error).message);
+    FEATURE_LOGGER_ADAPTER
+      ? log.error({ error: (e as Error).message, route: 'pin:validate' }, 'query_error')
+      : console.error('[API][pin.validate] query_error:', (e as Error).message);
     return res.status(500).json({ success: false, error: 'Errore interno', code: 'INTERNAL_ERROR' });
   }
 });

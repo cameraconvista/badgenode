@@ -2,10 +2,13 @@
 import './env'; // Carica dotenv una sola volta
 import http from 'http';
 import { createApp, setupStaticFiles } from './createApp';
+import { FEATURE_LOGGER_ADAPTER } from './config/featureFlags';
+import { logger } from './lib/logger';
+import { httpLog } from './middleware/httpLog';
 
 // Disable console.log in production (preserve warn/error)
 if (process.env.NODE_ENV !== 'development') {
-  // eslint-disable-next-line no-console
+   
   console.log = () => {};
 }
 
@@ -18,6 +21,12 @@ const g = globalThis as Record<string | symbol, unknown>;
 async function startServer() {
   if (!g[GUARD]) {
     const app = createApp();
+    
+    // S4: HTTP logging middleware (feature-flagged)
+    if (FEATURE_LOGGER_ADAPTER) {
+      app.use(httpLog);
+    }
+    
     const server = http.createServer(app);
     
     // Setup static files (Vite dev o produzione) - passa server per HMR
@@ -26,18 +35,30 @@ async function startServer() {
     // DEV diagnostics: Supabase URL prefix
     if (process.env.NODE_ENV === 'development') {
       const supaUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
-      console.log(`[ENV][server] prefix: ${supaUrl.slice(0,20)} role: service`);
+      if (FEATURE_LOGGER_ADAPTER) {
+        logger.info('[ENV][server]', { prefix: supaUrl.slice(0,20), role: 'service' });
+      } else {
+        console.log(`[ENV][server] prefix: ${supaUrl.slice(0,20)} role: service`);
+      }
     }
 
     server.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server running on port ${PORT}`);
+      if (FEATURE_LOGGER_ADAPTER) {
+        logger.info('🚀 Server running', { port: PORT });
+      } else {
+        console.log(`🚀 Server running on port ${PORT}`);
+      }
     });
     
     g[GUARD] = server;
     
     return server;
   } else {
-    console.log('ℹ️ Server already started — skipping listen()');
+    if (FEATURE_LOGGER_ADAPTER) {
+      logger.info('ℹ️ Server already started — skipping listen()');
+    } else {
+      console.log('ℹ️ Server already started — skipping listen()');
+    }
     return g[GUARD] as http.Server;
   }
 }

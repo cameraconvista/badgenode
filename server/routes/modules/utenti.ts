@@ -1,7 +1,8 @@
 // API endpoints per gestione utenti
 import { Router } from 'express';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
-import { createClient } from '@supabase/supabase-js';
+import { log } from '../../lib/logger';
+import { FEATURE_LOGGER_ADAPTER } from '../../config/featureFlags';
 // Rimuovo import tipi per evitare conflitti schema
 
 const router = Router();
@@ -26,7 +27,9 @@ router.get('/api/utenti', async (req, res) => {
           .order('pin');
 
         if (error && error.message.includes('Invalid API key')) {
-          console.warn('[API] Development mode: using mock data for utenti');
+          FEATURE_LOGGER_ADAPTER
+            ? log.warn({ mode: 'development', route: 'utenti:list' }, 'using mock data')
+            : console.warn('[API] Development mode: using mock data for utenti');
           const mockUtenti = [
             {
               pin: 1,
@@ -61,8 +64,10 @@ router.get('/api/utenti', async (req, res) => {
           throw error;
         }
 
+        // S3: typesafety
+        interface UtenteDaDB { pin: number; nome: string; cognome: string; created_at: string }
         // Aggiungi campi di default per compatibilità con l'interfaccia
-        const utentiConDefault = (data || []).map((u: any) => ({
+        const utentiConDefault = (data || []).map((u: UtenteDaDB) => ({
           ...u,
           email: null,
           telefono: null,
@@ -76,7 +81,9 @@ router.get('/api/utenti', async (req, res) => {
           data: utentiConDefault
         });
       } catch (devError) {
-        console.error('[API] Development error:', devError);
+        FEATURE_LOGGER_ADAPTER
+          ? log.error({ error: devError, route: 'utenti:list' }, 'development error')
+          : console.error('[API] Development error:', devError);
         return res.status(500).json({
           success: false,
           error: 'Errore durante il recupero degli utenti',
@@ -91,7 +98,9 @@ router.get('/api/utenti', async (req, res) => {
         .order('pin');
 
       if (error) {
-        console.warn('[API] Error fetching utenti:', error.message);
+        FEATURE_LOGGER_ADAPTER
+          ? log.warn({ error: error.message, route: 'utenti:list' }, 'error fetching utenti')
+          : console.warn('[API] Error fetching utenti:', error.message);
         return res.status(500).json({
           success: false,
           error: 'Errore durante il recupero degli utenti',
@@ -99,8 +108,10 @@ router.get('/api/utenti', async (req, res) => {
         });
       }
 
+      // S3: typesafety
+      interface UtenteDaDB { pin: number; nome: string; cognome: string; created_at: string }
       // Aggiungi campi di default per compatibilità con l'interfaccia
-      const utentiConDefault = (data || []).map((u: any) => ({
+      const utentiConDefault = (data || []).map((u: UtenteDaDB) => ({
         ...u,
         email: null,
         telefono: null,
@@ -115,7 +126,9 @@ router.get('/api/utenti', async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('[API] Errore utenti:', error);
+    FEATURE_LOGGER_ADAPTER
+      ? log.error({ error, route: 'utenti:list' }, 'errore utenti')
+      : console.error('[API] Errore utenti:', error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Errore interno',
@@ -161,7 +174,9 @@ router.get('/api/utenti/pin/:pin', async (req, res) => {
         });
       }
       
-      console.warn('[API] Error checking PIN:', error.message);
+      FEATURE_LOGGER_ADAPTER
+        ? log.warn({ error: error.message, route: 'utenti:checkPin' }, 'error checking PIN')
+        : console.warn('[API] Error checking PIN:', error.message);
       return res.status(500).json({
         success: false,
         error: 'Errore durante la verifica del PIN',
@@ -175,7 +190,9 @@ router.get('/api/utenti/pin/:pin', async (req, res) => {
       data
     });
   } catch (error) {
-    console.error('[API] Errore verifica PIN:', error);
+    FEATURE_LOGGER_ADAPTER
+      ? log.error({ error, route: 'utenti:checkPin' }, 'errore verifica PIN')
+      : console.error('[API] Errore verifica PIN:', error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Errore interno',
@@ -252,7 +269,9 @@ router.post('/api/utenti', async (req, res) => {
     
     if (!insertResponse.ok) {
       const errorText = await insertResponse.text();
-      console.error('[API] Supabase INSERT error:', errorText);
+      FEATURE_LOGGER_ADAPTER
+        ? log.error({ errorText, status: insertResponse.status, route: 'utenti:create' }, 'supabase INSERT error')
+        : console.error('[API] Supabase INSERT error:', errorText);
       
       // Gestione errori specifici
       if (insertResponse.status === 409 || errorText.includes('duplicate')) {
@@ -271,7 +290,9 @@ router.post('/api/utenti', async (req, res) => {
     }
     
     const data = await insertResponse.json();
-    console.log(`[API] ✅ Utente creato: PIN ${pin} - ${nome} ${cognome}`);
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ pin, nome, cognome, route: 'utenti:create' }, '✅ utente creato')
+      : console.log(`[API] ✅ Utente creato: PIN ${pin} - ${nome} ${cognome}`);
     
     // Restituisci il primo elemento dell'array (Supabase restituisce array)
     const userData = Array.isArray(data) ? data[0] : data;
@@ -281,7 +302,9 @@ router.post('/api/utenti', async (req, res) => {
       data: userData
     });
   } catch (error) {
-    console.error('[API] Errore creazione utente:', error);
+    FEATURE_LOGGER_ADAPTER
+      ? log.error({ error, route: 'utenti:create' }, 'errore creazione utente')
+      : console.error('[API] Errore creazione utente:', error);
     
     // Genera request ID per tracking
     const requestId = Math.random().toString(36).substring(2, 15);
@@ -323,9 +346,9 @@ router.put('/api/utenti/:pin', async (req, res) => {
     // Altri campi (email, telefono, ore_contrattuali, descrizione_contratto) non esistono nello schema reale
     const { nome, cognome } = req.body;
 
+    // S3: typesafety
     // Costruisci payload di update solo con campi forniti
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updatePayload: Record<string, any> = {};
+    const updatePayload: Partial<{ nome: string; cognome: string }> = {};
     
     if (nome !== undefined) {
       const nomeStr = typeof nome === 'string' ? nome.trim() : '';
@@ -378,7 +401,9 @@ router.put('/api/utenti/:pin', async (req, res) => {
       .single();
 
     if (error) {
-      console.error('[API] Supabase UPDATE error:', error);
+      FEATURE_LOGGER_ADAPTER
+        ? log.error({ error, route: 'utenti:update' }, 'supabase UPDATE error')
+        : console.error('[API] Supabase UPDATE error:', error);
       
       if (error.code === 'PGRST116') {
         return res.status(404).json({
@@ -395,14 +420,18 @@ router.put('/api/utenti/:pin', async (req, res) => {
       });
     }
 
-    console.log(`[API] ✅ Utente aggiornato: PIN ${pinNum}`);
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ pin: pinNum, route: 'utenti:update' }, '✅ utente aggiornato')
+      : console.log(`[API] ✅ Utente aggiornato: PIN ${pinNum}`);
 
     res.json({
       success: true,
       data
     });
   } catch (error) {
-    console.error('[API] Errore aggiornamento utente:', error);
+    FEATURE_LOGGER_ADAPTER
+      ? log.error({ error, route: 'utenti:update' }, 'errore aggiornamento utente')
+      : console.error('[API] Errore aggiornamento utente:', error);
     
     const requestId = Math.random().toString(36).substring(2, 15);
     

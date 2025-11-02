@@ -4,6 +4,8 @@ import { supabaseAdmin } from '../../lib/supabaseAdmin';
 import { computeGiornoLogico } from '../../shared/time/computeGiornoLogico';
 import type { TimbratureInsertClean, Timbratura } from '../../../shared/types/database';
 import { validateAlternanza } from './validation';
+import { log } from '../../lib/logger';
+import { FEATURE_LOGGER_ADAPTER } from '../../config/featureFlags';
 
 const router = Router();
 
@@ -26,7 +28,9 @@ router.post('/', async (req: Request, res: Response) => {
     
     // Verifica che il client Supabase sia inizializzato
     if (!supabaseAdmin) {
-      console.error('[SERVER] Supabase admin client non disponibile');
+      FEATURE_LOGGER_ADAPTER
+        ? log.error({ route: 'timbrature:post' }, 'supabase admin client non disponibile')
+        : console.error('[SERVER] Supabase admin client non disponibile');
       return res.status(500).json({
         success: false,
         error: 'Configurazione server non completa - variabili ambiente mancanti',
@@ -34,8 +38,11 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     const { pin, tipo, ts } = req.body as TimbratureRequestBody;
+    let anchorDate = (req.body as TimbratureRequestBody).anchorDate;
 
-    console.info('[SERVER] INSERT timbratura →', { pin, tipo, ts });
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ pin, tipo, ts, anchorDate, route: 'timbrature:post' }, 'INSERT timbratura')
+      : console.info('[SERVER] INSERT timbratura →', { pin, tipo, ts, anchorDate });
 
     // Validazione parametri
     if (!pin || !tipo) {
@@ -72,21 +79,35 @@ router.post('/', async (req: Request, res: Response) => {
     const dataLocale = `${yyyy}-${mm}-${dd}`;
     const oraLocale = `${String(nowRome.getHours()).padStart(2, '0')}:${String(nowRome.getMinutes()).padStart(2, '0')}:00`;
     
+    // AUTO-RECOVERY: Per uscite notturne (00:00-05:00) senza anchorDate, recupera ultima entrata
+    if (tipo === 'uscita' && !anchorDate && nowRome.getHours() >= 0 && nowRome.getHours() < 5) {
+      const { data: lastEntries } = await supabaseAdmin!
+        .from('timbrature')
+        .select('giorno_logico')
+        .eq('pin', pinNum)
+        .eq('tipo', 'entrata')
+        .order('ts_order', { ascending: false })
+        .limit(1);
+      
+      if (lastEntries && lastEntries.length > 0) {
+        anchorDate = (lastEntries[0] as { giorno_logico: string }).giorno_logico;
+        FEATURE_LOGGER_ADAPTER
+          ? log.info({ pin: pinNum, anchorDate, route: 'timbrature:post' }, 'AUTO-RECOVERY: anchorDate recuperato da ultima entrata')
+          : console.info('[SERVER] AUTO-RECOVERY: anchorDate recuperato →', { pin: pinNum, anchorDate });
+      }
+    }
+    
     // Calcolo giorno logico unificato
     const { giorno_logico } = computeGiornoLogico({
       data: dataLocale,
       ora: oraLocale,
       tipo,
-      dataEntrata: (req.body as TimbratureRequestBody).anchorDate // Parametro opzionale per ancoraggio
+      dataEntrata: anchorDate // Parametro opzionale per ancoraggio (ora con auto-recovery)
     });
 
-    console.info('[SERVER] INSERT params validated →', { 
-      pin: pinNum, 
-      tipo, 
-      giorno_logico, 
-      dataLocale, 
-      oraLocale 
-    });
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ pin: pinNum, tipo, giorno_logico, dataLocale, oraLocale, route: 'timbrature:post' }, 'INSERT params validated')
+      : console.info('[SERVER] INSERT params validated →', { pin: pinNum, tipo, giorno_logico, dataLocale, oraLocale });
 
     // VALIDAZIONE ALTERNANZA CON ANCORAGGIO (STEP A)
     const validationResult = await validateAlternanza(
@@ -94,17 +115,13 @@ router.post('/', async (req: Request, res: Response) => {
       tipo,
       dataLocale,
       oraLocale,
-      (req.body as TimbratureRequestBody).anchorDate
+      anchorDate // Usa anchorDate con auto-recovery
     );
 
     if (!validationResult.success) {
-      console.warn('[SERVER] Validazione alternanza fallita:', {
-        pin: pinNum,
-        tipo,
-        giorno_logico,
-        code: validationResult.code,
-        error: validationResult.error
-      });
+      FEATURE_LOGGER_ADAPTER
+        ? log.warn({ pin: pinNum, tipo, giorno_logico, code: validationResult.code, error: validationResult.error, route: 'timbrature:post' }, 'validazione alternanza fallita')
+        : console.warn('[SERVER] Validazione alternanza fallita:', { pin: pinNum, tipo, giorno_logico, code: validationResult.code, error: validationResult.error });
       
       return res.status(400).json({
         success: false,
@@ -113,12 +130,9 @@ router.post('/', async (req: Request, res: Response) => {
       });
     }
 
-    console.info('[SERVER] Validazione alternanza OK:', {
-      pin: pinNum,
-      tipo,
-      giorno_logico,
-      anchorEntry: validationResult.anchorEntry?.id || null
-    });
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ pin: pinNum, tipo, giorno_logico, anchorEntry: validationResult.anchorEntry?.id || null, route: 'timbrature:post' }, 'validazione alternanza OK')
+      : console.info('[SERVER] Validazione alternanza OK:', { pin: pinNum, tipo, giorno_logico, anchorEntry: validationResult.anchorEntry?.id || null });
 
     // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
     const dto: TimbratureInsertClean = {
@@ -142,19 +156,18 @@ router.post('/', async (req: Request, res: Response) => {
     const { data, error } = insertResult;
 
     if (error) {
-      console.error('[SERVER] INSERT fallito →', { error: error.message });
+      FEATURE_LOGGER_ADAPTER
+        ? log.error({ error: error.message, route: 'timbrature:post' }, 'INSERT fallito')
+        : console.error('[SERVER] INSERT fallito →', { error: error.message });
       return res.status(500).json({
         success: false,
         error: error.message,
       });
     }
 
-    console.info('[SERVER] INSERT success →', { 
-      id: (data as Timbratura)?.id, 
-      pin: pinNum, 
-      tipo, 
-      giorno_logico 
-    });
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ id: (data as Timbratura)?.id, pin: pinNum, tipo, giorno_logico, route: 'timbrature:post' }, 'INSERT success')
+      : console.info('[SERVER] INSERT success →', { id: (data as Timbratura)?.id, pin: pinNum, tipo, giorno_logico });
 
     res.json({
       success: true,
@@ -163,7 +176,9 @@ router.post('/', async (req: Request, res: Response) => {
 
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Errore sconosciuto';
-    console.error('[SERVER] INSERT error →', { error: message });
+    FEATURE_LOGGER_ADAPTER
+      ? log.error({ error: message, route: 'timbrature:post' }, 'INSERT error')
+      : console.error('[SERVER] INSERT error →', { error: message });
     
     res.status(500).json({
       success: false,

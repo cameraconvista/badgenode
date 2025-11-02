@@ -22,6 +22,15 @@ export class OfflineValidatorService {
         return { valid: true };
       }
 
+      // BYPASS per turni notturni (00:00-05:00): cache inaffidabile, server gestisce con auto-recovery
+      const now = new Date();
+      if (now.getHours() >= 0 && now.getHours() < 5) {
+        if (import.meta.env.DEV) {
+          console.debug('[OfflineValidator] Turno notturno detected - bypassing validation (server auto-recovery)');
+        }
+        return { valid: true };
+      }
+
       const ultimaTimbratura = await TimbratureCacheService.getUltimaTimbratura(pin);
       
       // Se non c'è cache, modalità permissiva (primo utilizzo o cache scaduta)
