@@ -17,6 +17,29 @@ interface ExportParams {
 }
 
 /**
+ * Formatta data con giorno della settimana (es: "01 Lunedì")
+ */
+function formatDataConGiorno(dataISO: string): string {
+  const giorni = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+  const date = new Date(dataISO + 'T00:00:00');
+  const giorno = String(date.getDate()).padStart(2, '0');
+  const nomGiorno = giorni[date.getDay()];
+  return `${giorno} ${nomGiorno}`;
+}
+
+/**
+ * Formatta mese e anno (es: "Ottobre 2025")
+ */
+function formatMeseAnno(dataISO: string): string {
+  const mesi = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
+                'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+  const date = new Date(dataISO + 'T00:00:00');
+  const mese = mesi[date.getMonth()];
+  const anno = date.getFullYear();
+  return `${mese} ${anno}`;
+}
+
+/**
  * Esporta storico timbrature in formato PDF
  */
 export async function exportPDF({ dipendente, timbrature, filters, toast }: ExportParams): Promise<void> {
@@ -34,9 +57,12 @@ export async function exportPDF({ dipendente, timbrature, filters, toast }: Expo
       doc.setFontSize(14);
       doc.text(`Storico Timbrature — ${dipendente?.nome} ${dipendente?.cognome} (${periodo})`, 40, 40);
       
-      const rows = timbrature.map(t => [
-        t.giorno,
-        '—', // mese placeholder
+      // Ordina timbrature per data crescente (1-31)
+      const timbratureOrdinate = [...timbrature].sort((a, b) => a.giorno.localeCompare(b.giorno));
+      
+      const rows = timbratureOrdinate.map(t => [
+        formatDataConGiorno(t.giorno),  // "01 Lunedì"
+        formatMeseAnno(t.giorno),       // "Ottobre 2025"
         t.entrata || '—',
         t.uscita || '—',
         t.ore?.toFixed(2) || '0.00',
@@ -94,9 +120,13 @@ export async function exportXLS({ dipendente, timbrature, filters, toast }: Expo
       
       const periodo = `${filters.dal} - ${filters.al}`;
       const header = ["Data","Mese","Entrata","Uscita","Ore","Extra"];
-      const data = timbrature.map(t => [
-        t.giorno,
-        '—', // mese placeholder
+      
+      // Ordina timbrature per data crescente (1-31)
+      const timbratureOrdinate = [...timbrature].sort((a, b) => a.giorno.localeCompare(b.giorno));
+      
+      const data = timbratureOrdinate.map(t => [
+        formatDataConGiorno(t.giorno),  // "01 Lunedì"
+        formatMeseAnno(t.giorno),       // "Ottobre 2025"
         t.entrata || '—',
         t.uscita || '—',
         t.ore || 0,
