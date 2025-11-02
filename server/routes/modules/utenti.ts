@@ -23,7 +23,7 @@ router.get('/api/utenti', async (req, res) => {
       try {
         const { data, error } = await supabaseAdmin
           .from('utenti')
-          .select('pin, nome, cognome, created_at')
+          .select('pin, nome, cognome, email, telefono, ore_contrattuali, note, created_at')
           .order('pin');
 
         if (error && error.message.includes('Invalid API key')) {
@@ -64,21 +64,10 @@ router.get('/api/utenti', async (req, res) => {
           throw error;
         }
 
-        // S3: typesafety
-        interface UtenteDaDB { pin: number; nome: string; cognome: string; created_at: string }
-        // Aggiungi campi di default per compatibilità con l'interfaccia
-        const utentiConDefault = (data || []).map((u: UtenteDaDB) => ({
-          ...u,
-          email: null,
-          telefono: null,
-          ore_contrattuali: 8.0,
-          descrizione_contratto: null,
-          note: null
-        }));
-
+        // Restituisci dati direttamente dal DB (ora include tutti i campi)
         res.json({
           success: true,
-          data: utentiConDefault
+          data: data || []
         });
       } catch (devError) {
         FEATURE_LOGGER_ADAPTER
@@ -94,7 +83,7 @@ router.get('/api/utenti', async (req, res) => {
       // Production mode: strict Supabase connection
       const { data, error } = await supabaseAdmin
         .from('utenti')
-        .select('pin, nome, cognome, created_at')
+        .select('pin, nome, cognome, email, telefono, ore_contrattuali, note, created_at')
         .order('pin');
 
       if (error) {
@@ -342,15 +331,17 @@ router.put('/api/utenti/:pin', async (req, res) => {
     }
 
     // Estrai campi aggiornabili dal body
-    // NOTA: La tabella utenti ha SOLO: pin, nome, cognome, created_at
-    // Altri campi (email, telefono, ore_contrattuali, note) non esistono nello schema reale
-    const { nome, cognome } = req.body;
+    const { nome, cognome, email, telefono, ore_contrattuali, note } = req.body;
 
     // S3: typesafety
     // Costruisci payload di update solo con campi forniti
     const updatePayload: Partial<{
       nome: string;
       cognome: string;
+      email: string | null;
+      telefono: string | null;
+      ore_contrattuali: number;
+      note: string | null;
     }> = {};
     
     if (nome !== undefined) {
@@ -377,9 +368,29 @@ router.put('/api/utenti/:pin', async (req, res) => {
       updatePayload.cognome = cognomeStr;
     }
 
-    // NOTA: email, telefono, ore_contrattuali, note, descrizione_contratto 
-    // non esistono nella tabella utenti (solo in types per compatibilità UI)
-    // La tabella ha SOLO: pin, nome, cognome, created_at
+    if (email !== undefined) {
+      updatePayload.email = email && typeof email === 'string' ? email.trim() : null;
+    }
+
+    if (telefono !== undefined) {
+      updatePayload.telefono = telefono && typeof telefono === 'string' ? telefono.trim() : null;
+    }
+
+    if (ore_contrattuali !== undefined) {
+      const oreNum = typeof ore_contrattuali === 'number' ? ore_contrattuali : parseFloat(ore_contrattuali);
+      if (isNaN(oreNum) || oreNum <= 0 || oreNum > 24) {
+        return res.status(400).json({
+          success: false,
+          message: 'Ore contrattuali devono essere tra 0.25 e 24',
+          code: 'BAD_REQUEST'
+        });
+      }
+      updatePayload.ore_contrattuali = oreNum;
+    }
+
+    if (note !== undefined) {
+      updatePayload.note = note && typeof note === 'string' ? note.trim() : null;
+    }
 
     // Verifica che ci sia almeno un campo da aggiornare
     if (Object.keys(updatePayload).length === 0) {

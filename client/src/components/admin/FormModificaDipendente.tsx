@@ -90,10 +90,12 @@ export default function FormModificaDipendente({
               type="tel"
               value={formData.telefono ?? ''}
               onChange={(e) => onInputChange('telefono', e.target.value)}
-              placeholder="Non disponibile"
-              className="bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-violet-400"
+              className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
+                errors.telefono ? 'border-red-500' : 'focus:border-violet-400'
+              }`}
               disabled={isLoading}
             />
+            {errors.telefono && <p className="text-sm text-red-400">{errors.telefono}</p>}
           </div>
 
           <div className="space-y-2">
