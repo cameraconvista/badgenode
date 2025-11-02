@@ -176,9 +176,9 @@ export default function ModaleNuovoDipendente({
           </Button>
         </div>
 
-        {/* Body scrollabile */}
-        <div className="overflow-y-auto max-h-[60vh] p-6">
-          <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+          {/* Body scrollabile */}
+          <div className="overflow-y-auto max-h-[60vh] p-6">
             <FormNuovoDipendente
               formData={formData}
               errors={errors}
@@ -186,29 +186,28 @@ export default function ModaleNuovoDipendente({
               onInputChange={handleInputChange}
               firstInputRef={firstInputRef}
             />
-          </form>
-        </div>
+          </div>
 
-        {/* Footer */}
-        <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            disabled={isLoading}
-            className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
-          >
-            Annulla
-          </Button>
-          <Button
-            type="submit"
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            {isLoading ? 'Salvataggio...' : 'Salva'}
-          </Button>
-        </div>
+          {/* Footer */}
+          <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isLoading}
+              className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+            >
+              Annulla
+            </Button>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              {isLoading ? 'Salvataggio...' : 'Salva'}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
