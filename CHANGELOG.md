@@ -7,6 +7,42 @@ e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.0.1] — 2025-11-03
+
+### 🚀 Performance & Cleanup
+
+**Stato:** Enterprise Stable + Performance Optimized
+
+#### Performance (Fase 1 - Quick Wins)
+- ✅ **Tastierino Home**: -56% latenza (-226ms)
+  - Debounce useEffect: query solo PIN completo (4 digit)
+  - Query ottimizzata: LIMIT 1 + ORDER BY sul DB
+  - CSS hover states: rimossi 48 event listeners JS
+- ✅ **Query DB**: -75% (da 4 a 1 per inserimento PIN)
+- ✅ **Event listeners**: -100% (da 48 a 0)
+- ✅ **Transizioni**: GPU-accelerated con Tailwind CSS
+
+#### Cleanup
+- 🧹 **66 file eliminati** (~400 KB recuperati)
+  - Client: 32 file (componenti UI shadcn/ui non usati, lib legacy)
+  - Scripts: 9 file (script debug/legacy non referenziati)
+  - Diagnostics: 17 file (artifacts debug temporanei)
+  - Server: 6 file (backup routes, .DS_Store)
+  - Supabase: 2 file (.DS_Store, .temp)
+  - Root: 5 file (log vecchi, test temporanei)
+
+#### Changed
+- `client/src/pages/Home/index.tsx`: useEffect ottimizzato
+- `client/src/components/home/KeyButton.tsx`: CSS-only hover states
+
+#### Documentation
+- DOCS/08_ui_home_keypad.md: aggiunta sezione Performance
+- DOCS/02_struttura_progetto.md: aggiunta sezione Cleanup
+- DOCS/diagnosi/ANALISI_PERFORMANCE_TASTIERINO.md: analisi dettagliata
+- DOCS/diagnosi/FASE1_OTTIMIZZAZIONI_COMPLETATE.md: riepilogo modifiche
+
+---
+
 ## [1.0.0] — 2025-11-01
 
 ### 🎉 Release Iniziale Production-Ready

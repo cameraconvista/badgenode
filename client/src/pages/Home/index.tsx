@@ -5,7 +5,7 @@ import { subscribeTimbrature } from '@/lib/realtime';
 import { invalidateAfterTimbratura, debounce } from '@/state/timbrature.cache';
 import { useTimbratureActions } from './components/TimbratureActions';
 import HomeContainer from './components/HomeContainer';
-import { TimbratureService } from '@/services/timbrature.service';
+import { supabase } from '@/lib/supabaseClient';
 import { formatDateLocal } from '@/lib/time';
 
 export default function Home() {
@@ -40,49 +40,84 @@ export default function Home() {
 
   // Refetch ultimo timbro per il PIN digitato e aggiorna azione consentita
   // AUTO-RECOVERY: Per uscite notturne (00:00-05:00), cerca ultima entrata aperta
+  // OTTIMIZZATO: Query solo per PIN completo (4 digit) con debounce
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      if (!pin) { setLastAllowed(null); return; }
-      try {
-        const now = new Date();
-        let targetDate = new Date(now);
-        const isNightShift = now.getHours() >= 0 && now.getHours() < 5;
-        
-        // Se ora < 05:00, cerca sul giorno precedente (giorno logico)
-        if (isNightShift) {
-          targetDate.setDate(targetDate.getDate() - 1);
-        }
-        
-        const giornoLogico = formatDateLocal(targetDate);
-        const list = await TimbratureService.getTimbratureGiorno(Number(pin), giornoLogico);
-        const last = list.sort((a, b) => (a.ts_order || '').localeCompare(b.ts_order || '')).at(-1);
-        if (cancelled) return;
-        
-        // AUTO-RECOVERY: Se uscita notturna e non trova timbrature sul giorno logico,
-        // cerca ultima entrata aperta (stesso comportamento del server)
-        if (!last && isNightShift) {
-          // Cerca ultima entrata su qualsiasi giorno
-          const allTimbrature = await TimbratureService.getTimbratureByRange({ pin: Number(pin) });
-          const lastEntry = allTimbrature
-            .filter(t => t.tipo === 'entrata')
-            .sort((a, b) => (b.ts_order || '').localeCompare(a.ts_order || ''))[0];
+    // Reset immediato per PIN incompleto
+    if (!pin || pin.length !== 4) {
+      setLastAllowed(null);
+      return;
+    }
+
+    // Debounce 300ms per evitare query multiple durante digitazione veloce
+    const timer = setTimeout(() => {
+      let cancelled = false;
+      
+      (async () => {
+        try {
+          const now = new Date();
+          let targetDate = new Date(now);
+          const isNightShift = now.getHours() >= 0 && now.getHours() < 5;
           
-          if (lastEntry) {
-            // Trovata entrata aperta: abilita uscita
-            setLastAllowed('uscita');
+          // Se ora < 05:00, cerca sul giorno precedente (giorno logico)
+          if (isNightShift) {
+            targetDate.setDate(targetDate.getDate() - 1);
+          }
+          
+          const giornoLogico = formatDateLocal(targetDate);
+          
+          // Query ottimizzata: usa Supabase direttamente con limit e order
+          const { data: timbratureList } = await supabase
+            .from('timbrature')
+            .select('tipo, ts_order')
+            .eq('pin', Number(pin))
+            .eq('giorno_logico', giornoLogico)
+            .order('ts_order', { ascending: false })
+            .limit(1);
+          
+          const lastTimbratura = timbratureList?.[0] as { tipo: 'entrata' | 'uscita'; ts_order: string } | undefined;
+          
+          if (cancelled) return;
+          
+          // AUTO-RECOVERY: Se uscita notturna e non trova timbrature sul giorno logico,
+          // cerca ultima entrata aperta (stesso comportamento del server)
+          if (!lastTimbratura && isNightShift) {
+            const { data: entryList } = await supabase
+              .from('timbrature')
+              .select('tipo, ts_order')
+              .eq('pin', Number(pin))
+              .eq('tipo', 'entrata')
+              .order('ts_order', { ascending: false })
+              .limit(1);
+            
+            if (cancelled) return;
+            
+            const lastEntry = entryList?.[0];
+            if (lastEntry) {
+              // Trovata entrata aperta: abilita uscita
+              setLastAllowed('uscita');
+              return;
+            }
+          }
+          
+          if (!lastTimbratura) {
+            setLastAllowed('entrata');
             return;
           }
+          
+          setLastAllowed(lastTimbratura.tipo === 'entrata' ? 'uscita' : 'entrata');
+        } catch (error) {
+          if (!cancelled) {
+            // In caso di errore, permetti entrata (fail-safe)
+            setLastAllowed('entrata');
+          }
         }
-        
-        if (!last) { setLastAllowed('entrata'); return; }
-        setLastAllowed(last.tipo === 'entrata' ? 'uscita' : 'entrata');
-      } catch (_) {
-        if (!cancelled) setLastAllowed(null);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [pin, feedback.type]);
+      })();
+      
+      return () => { cancelled = true; };
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [pin]);
 
   const { handleEntrata, handleUscita } = useTimbratureActions({
     pin,

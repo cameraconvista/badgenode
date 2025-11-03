@@ -38,7 +38,6 @@ BadgeNode/
 ├── 📄 vite.config.ts           # Build configuration
 ├── 📄 tsconfig.json            # TypeScript configuration
 ├── 📄 .env.example             # Template variabili ambiente
-├── 📄 .env.sample              # Template semplificato
 └── 📄 .husky/                  # Git hooks pre-commit
 ```
 
@@ -345,9 +344,44 @@ components.json       # Radix UI components config
 
 ---
 
+## 🧹 Cleanup Eseguiti (2025-11-03)
+
+### **Fase Cleanup Completa**
+
+```
+✅ Client (32 file, 75 KB):
+- Componenti UI shadcn/ui non usati (28 file)
+- Lib legacy (api.ts, rum.ts)
+- Types duplicati (icons.d.ts, rpc.ts)
+
+✅ Scripts (9 file, 26 KB):
+- Script legacy/debug non referenziati
+- cascade-integration.ts, dev-guardian.ts, etc.
+
+✅ Diagnostics (17 file, 68 KB):
+- Cartella diagnostics/_artifacts completa
+- Log debug temporanei
+
+✅ Server (6 file, 75 KB):
+- File .DS_Store (2 file)
+- Backup routes (4 file)
+
+✅ Supabase (2 file, 12 KB):
+- .DS_Store, .temp/cli-latest
+
+✅ Root (5 file, 120 KB):
+- .DS_Store, server.log, .env.sample
+- test_offline_functions.js, setup-env-step2.cjs
+
+Totale: 66 file eliminati, ~400 KB recuperati
+```
+
+---
+
 **Nota**: Questa struttura è ottimizzata per sviluppo team, manutenibilità e scalabilità. Ogni cartella ha responsabilità specifiche e regole di governance per mantenere il codice pulito e organizzato.
 
 ---
 
 > **Documento aggiornato alla baseline Enterprise Stable (v1.0.0 — 2025-10-21)**  
+> **Cleanup Fase Completa**: 2025-11-03  
 > Autore: BadgeNode / Cascade AI
