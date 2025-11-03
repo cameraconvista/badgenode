@@ -40,10 +40,10 @@ export default function Home() {
 
   // Refetch ultimo timbro per il PIN digitato e aggiorna azione consentita
   // AUTO-RECOVERY: Per uscite notturne (00:00-05:00), cerca ultima entrata aperta
-  // OTTIMIZZATO: Query solo per PIN completo (4 digit) con debounce
+  // OTTIMIZZATO: Query per PIN valido (1-4 digit) con debounce
   useEffect(() => {
-    // Reset immediato per PIN incompleto
-    if (!pin || pin.length !== 4) {
+    // Reset immediato per PIN vuoto o invalido
+    if (!pin || pin.length < 1 || pin.length > 4) {
       setLastAllowed(null);
       return;
     }
@@ -149,19 +149,25 @@ export default function Home() {
     <HomeContainer
       pin={pin}
       lastPin={lastPinToast}
-      disabledEntrata={lastAllowed === 'uscita'}
-      disabledUscita={lastAllowed === 'entrata'}
+      disabledEntrata={lastAllowed !== null && lastAllowed !== 'entrata'}
+      disabledUscita={lastAllowed !== null && lastAllowed !== 'uscita'}
       feedback={feedback}
       loading={loading}
       onKeyPress={handleKeyPress}
       onClear={handleClear}
       onSettings={handleSettings}
       onEntrata={async () => {
-        if (lastAllowed === 'uscita') { setFeedback({ type: 'error', message: 'Alternanza violata: entrata consecutiva nello stesso giorno logico' }); return; }
+        if (lastAllowed !== null && lastAllowed !== 'entrata') { 
+          setFeedback({ type: 'error', message: 'Alternanza violata: entrata consecutiva nello stesso giorno logico' }); 
+          return; 
+        }
         setLastPinToast(pin); await handleEntrata();
       }}
       onUscita={async () => {
-        if (lastAllowed === 'entrata') { setFeedback({ type: 'error', message: 'Manca ENTRATA di ancoraggio per questa uscita' }); return; }
+        if (lastAllowed !== null && lastAllowed !== 'uscita') { 
+          setFeedback({ type: 'error', message: 'Manca ENTRATA di ancoraggio per questa uscita' }); 
+          return; 
+        }
         setLastPinToast(pin); await handleUscita();
       }}
       onFeedbackClose={() => setFeedback({ type: null, message: '' })}

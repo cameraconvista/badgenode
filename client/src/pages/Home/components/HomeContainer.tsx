@@ -42,22 +42,36 @@ export default function HomeContainer({
   const [cognome, setCognome] = useState<string | undefined>(undefined);
 
   // Fetch nominativo per mostrare Nome Cognome nel toast quando c'è un successo
+  // OTTIMIZZATO: Fetch in background, toast appare immediatamente
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      if (feedback.type === 'success' && lastPin && /^\d+$/.test(lastPin)) {
-        const u = await UtentiService.getUtenteByPin(Number(lastPin));
-        if (!cancelled) {
-          setNome(u?.nome || undefined);
-          setCognome(u?.cognome || undefined);
+    
+    // Reset immediato se non è successo
+    if (feedback.type !== 'success') {
+      setNome(undefined);
+      setCognome(undefined);
+      return;
+    }
+    
+    // Fetch in background (non blocca visualizzazione toast)
+    if (lastPin && /^\d+$/.test(lastPin)) {
+      (async () => {
+        try {
+          const u = await UtentiService.getUtenteByPin(Number(lastPin));
+          if (!cancelled) {
+            setNome(u?.nome || undefined);
+            setCognome(u?.cognome || undefined);
+          }
+        } catch (error) {
+          // Fallback silenzioso: toast appare comunque senza nome
+          if (!cancelled) {
+            setNome(undefined);
+            setCognome(undefined);
+          }
         }
-      } else {
-        if (!cancelled) {
-          setNome(undefined);
-          setCognome(undefined);
-        }
-      }
-    })();
+      })();
+    }
+    
     return () => { cancelled = true; };
   }, [feedback.type, lastPin]);
   const variant = feedback.type === 'success'
