@@ -39,17 +39,18 @@ export default function Home() {
   }, [user?.pin]);
 
   // Refetch ultimo timbro per il PIN digitato e aggiorna azione consentita
+  // AUTO-RECOVERY: Per uscite notturne (00:00-05:00), cerca ultima entrata aperta
   useEffect(() => {
     let cancelled = false;
     (async () => {
       if (!pin) { setLastAllowed(null); return; }
       try {
-        // FIX: Usa giorno logico considerando cutoff 05:00
         const now = new Date();
         let targetDate = new Date(now);
+        const isNightShift = now.getHours() >= 0 && now.getHours() < 5;
         
         // Se ora < 05:00, cerca sul giorno precedente (giorno logico)
-        if (now.getHours() < 5) {
+        if (isNightShift) {
           targetDate.setDate(targetDate.getDate() - 1);
         }
         
@@ -57,6 +58,23 @@ export default function Home() {
         const list = await TimbratureService.getTimbratureGiorno(Number(pin), giornoLogico);
         const last = list.sort((a, b) => (a.ts_order || '').localeCompare(b.ts_order || '')).at(-1);
         if (cancelled) return;
+        
+        // AUTO-RECOVERY: Se uscita notturna e non trova timbrature sul giorno logico,
+        // cerca ultima entrata aperta (stesso comportamento del server)
+        if (!last && isNightShift) {
+          // Cerca ultima entrata su qualsiasi giorno
+          const allTimbrature = await TimbratureService.getTimbratureByRange({ pin: Number(pin) });
+          const lastEntry = allTimbrature
+            .filter(t => t.tipo === 'entrata')
+            .sort((a, b) => (b.ts_order || '').localeCompare(a.ts_order || ''))[0];
+          
+          if (lastEntry) {
+            // Trovata entrata aperta: abilita uscita
+            setLastAllowed('uscita');
+            return;
+          }
+        }
+        
         if (!last) { setLastAllowed('entrata'); return; }
         setLastAllowed(last.tipo === 'entrata' ? 'uscita' : 'entrata');
       } catch (_) {
