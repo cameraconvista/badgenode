@@ -9,11 +9,8 @@ export default function LogoHeader({ className = '' }: LogoHeaderProps) {
         <img
           src="/logo_badgenode.png"
           alt=""
-          className="max-h-[60px] w-auto object-contain drop-shadow-sm"
-          style={{
-            maxWidth: '200px',
-            filter: 'drop-shadow(0 1px 0 rgba(122,18,40,0.6)) drop-shadow(0 -1px 0 rgba(122,18,40,0.6)) drop-shadow(1px 0 0 rgba(122,18,40,0.6)) drop-shadow(-1px 0 0 rgba(122,18,40,0.6))',
-          }}
+          className="max-h-[60px] w-auto object-contain"
+          style={{ maxWidth: '200px' }}
           onLoad={() => {}}
           onError={() => {}}
         />
