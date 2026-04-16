@@ -39,7 +39,7 @@ export default function LoginPage() {
         >
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <img src="/logo2_app.png" alt="BADGENODE" className="h-12 w-auto" />
+            <img src="/logo_badgenode.png" alt="BADGENODE" className="h-12 w-auto" />
           </div>
 
           <h1 className="text-2xl font-bold text-white text-center mb-8">Accesso BadgeNode</h1>

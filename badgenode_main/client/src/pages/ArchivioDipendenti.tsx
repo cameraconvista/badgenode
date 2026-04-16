@@ -164,7 +164,7 @@ export default function ArchivioDipendenti() {
         >
           {/* Header con logo centrato */}
           <div className="flex justify-center mb-4">
-            <img src="/logo2_app.png" alt="BADGENODE" className="h-10 w-auto" />
+            <img src="/logo_badgenode.png" alt="BADGENODE" className="h-10 w-auto" />
           </div>
           <div className="text-center mb-4">
             <h1 className="text-2xl font-bold text-[#1C0A10] mb-2">Archivio Dipendenti</h1>

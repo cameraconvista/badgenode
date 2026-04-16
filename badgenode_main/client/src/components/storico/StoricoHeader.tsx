@@ -53,7 +53,7 @@ export default function StoricoHeader({
 
       {/* Logo centrato */}
       <div className="flex justify-center mb-4">
-        <img src="/logo2_app.png" alt="BADGENODE" className="h-10 w-auto" />
+        <img src="/logo_badgenode.png" alt="BADGENODE" className="h-10 w-auto" />
       </div>
 
       <div className="flex flex-col items-center gap-4">

@@ -7,7 +7,7 @@ export default function LogoHeader({ className = '' }: LogoHeaderProps) {
     <div className={`text-center mb-6 ${className}`}>
       <div className="h-[60px] flex items-center justify-center">
         <img
-          src="/logo2_app.png"
+          src="/logo_badgenode.png"
           alt=""
           className="max-h-[60px] w-auto object-contain drop-shadow-sm"
           style={{

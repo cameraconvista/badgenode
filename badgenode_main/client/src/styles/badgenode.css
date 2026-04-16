@@ -2,6 +2,7 @@
 
 /* Logo: outline bordeaux per rendere visibile il testo bianco "NODE" su sfondi chiari */
 img[alt="BADGENODE"],
+img[src*="logo_badgenode"],
 img[src*="logo2_app"],
 img[src*="logo_app"],
 img[src*="logo_home"] {
