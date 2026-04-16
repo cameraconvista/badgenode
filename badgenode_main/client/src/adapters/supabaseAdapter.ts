@@ -1,0 +1,89 @@
+// Supabase SDK adapter - any confinato qui per 3rd-party API
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../../../shared/types/database';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+
+// Diagnostica runtime per verifica config (any confinato qui)
+export function getRuntimeSupabaseConfig() {
+  const url = import.meta.env.VITE_SUPABASE_URL ?? '';
+  const key = import.meta.env.VITE_SUPABASE_ANON_KEY ?? '';
+  
+  // Espone in window per verifica manuale DevTools - any necessario per window
+  if (typeof window !== 'undefined') {
+    (window as any).__BADGENODE_DIAG__ = {
+      ...(window as any).__BADGENODE_DIAG__,
+      supabase: { url, anonKeyPrefix: key.slice(0, 8), len: key.length },
+    };
+  }
+  return { url, hasKey: Boolean(key) };
+}
+
+// RPC call wrapper - DEPRECATED in STEP B (server-only)
+// Follow-up: remove after full migration to /api endpoints
+export async function callSupabaseRpc(functionName: string, params?: Record<string, unknown>): Promise<any> {
+  console.warn('[DEPRECATED] callSupabaseRpc - use /api endpoints instead');
+  throw new Error('Direct Supabase RPC calls disabled in server-only mode');
+}
+
+// Diagnostica PROD - any necessario per probe dinamico
+export function setupProdDiagnostics() {
+  if (!import.meta.env.PROD) return;
+  
+  console.info('🔍 BadgeNode PROD Diagnostics');
+  
+  const config = getRuntimeSupabaseConfig();
+  console.info('📊 Supabase Config:', {
+    url: config.url,
+    domain: config.url.split('//')[1]?.split('.')[0] || 'unknown',
+    anonKey: supabaseAnonKey.slice(0, 8) + '...',
+    keyLength: supabaseAnonKey.length
+  });
+
+  // Probe asincrono - any necessario per response dinamiche
+  setTimeout(async () => {
+    try {
+      console.info('🔍 Testing data access...');
+      
+      // STEP B: Diagnostics disabled for server-only mode
+      console.info('✅ STEP B: Direct Supabase calls disabled - using /api endpoints');
+      
+      // Follow-up: replace with /api/health endpoint call
+      /*
+      const { count: utentiCount, error: utentiError } = await supabase
+        .from('utenti')
+        .select('*', { count: 'exact', head: true });
+      
+      // Disabilita ping_test in produzione (evita 404 rumorosi)
+      if (process.env.NODE_ENV !== 'production') {
+        try {
+          const { data: _rpcData } = await supabase.rpc('ping_test');
+          console.info('✅ DEV Data Access:', {
+            utenti: utentiError ? `Error: ${utentiError.message}` : `${utentiCount} records`,
+            rpc: 'ping_test OK'
+          });
+        } catch (rpcError) {
+          console.info('✅ PROD Data Access:', {
+            utenti: utentiError ? `Error: ${utentiError.message}` : `${utentiCount} records`,
+            rpc: 'ping_test not available (expected in prod)'
+          });
+        }
+      } else {
+        console.info('✅ PROD Data Access:', {
+          utenti: utentiError ? `Error: ${utentiError.message}` : `${utentiCount} records`,
+          rpc: 'ping_test skipped (production mode)'
+        });
+      }
+      */
+    } catch (e) {
+      console.warn('⚠️ PROD Probe failed:', e);
+    }
+  }, 2000);
+}

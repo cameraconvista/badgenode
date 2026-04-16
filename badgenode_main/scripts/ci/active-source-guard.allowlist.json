@@ -1,0 +1,36 @@
+{
+  "console": [
+    "client/src/adapters/supabaseAdapter.ts",
+    "client/src/components/storico/ModaleTimbrature/useModaleTimbrature.ts",
+    "client/src/components/storico/StoricoTable.tsx",
+    "client/src/hooks/useStoricoMutations/shared.ts",
+    "client/src/hooks/useStoricoMutations/useDeleteMutation.ts",
+    "client/src/hooks/useStoricoMutations/useSaveFromModalMutation.ts",
+    "client/src/hooks/useStoricoMutations/useUpdateMutation.ts",
+    "client/src/hooks/useStoricoTimbrature.ts",
+    "client/src/lib/debugQuery.ts",
+    "client/src/lib/timbraturaDiagnostics.ts",
+    "client/src/main.tsx",
+    "client/src/offline/diagnostic.ts",
+    "client/src/offline/index.ts",
+    "client/src/offline/queue.ts",
+    "client/src/pages/ArchivioDipendenti.tsx",
+    "client/src/services/offline-validator.service.ts",
+    "client/src/services/timbrature-cache.service.ts",
+    "client/src/services/timbrature.service.ts",
+    "client/src/services/timbratureRpc.ts",
+    "server/lib/logger.ts",
+    "server/routes/modules/other/internal/pinRoutes.ts",
+    "server/routes/timbrature/deleteTimbrature.ts",
+    "server/routes/timbrature/postManual.ts",
+    "server/routes/timbrature/postTimbratura.ts",
+    "server/routes/timbrature/updateTimbratura.ts",
+    "server/vite.ts"
+  ],
+  "todo": [
+    "server/routes/timbrature/postManual.ts",
+    "server/routes/timbrature/postTimbratura.ts",
+    "server/routes/timbrature/updateTimbratura.ts",
+    "server/shared/time/computeGiornoLogico.ts"
+  ]
+}

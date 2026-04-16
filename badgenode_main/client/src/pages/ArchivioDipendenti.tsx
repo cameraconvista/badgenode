@@ -1,0 +1,241 @@
+import { useState, useEffect, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { useLocation } from 'wouter';
+import { ArrowLeft, Archive, Plus } from 'lucide-react';
+import ArchivioTable from '@/components/admin/ArchivioTable';
+import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
+import ModaleModificaDipendente from '@/components/admin/ModaleModificaDipendente';
+import ModaleEliminaDipendente from '@/components/admin/ModaleEliminaDipendente';
+import { UtentiService, Utente, UtenteInput } from '@/services/utenti.service';
+import { useAuth } from '@/contexts/AuthContext';
+import { subscribeTimbrature } from '@/lib/realtime';
+import { invalidateUtenti, debounce } from '@/state/timbrature.cache';
+import { useQueryClient } from '@tanstack/react-query';
+
+export default function ArchivioDipendenti() {
+  const [, setLocation] = useLocation();
+  const [utenti, setUtenti] = useState<Utente[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showModaleModifica, setShowModaleModifica] = useState(false);
+  const [showModaleNuovo, setShowModaleNuovo] = useState(false);
+  const [showModaleElimina, setShowModaleElimina] = useState(false);
+  const [utenteSelezionato, setUtenteSelezionato] = useState<Utente | null>(null);
+  const [isEliminaLoading, setIsEliminaLoading] = useState(false);
+  const { isAdmin } = useAuth();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (!isAdmin) return;
+    const debouncedInvalidate = debounce(() => {
+      invalidateUtenti();
+      loadUtenti();
+    }, 250);
+    const unsubscribe = subscribeTimbrature({
+      onChange: (_payload: unknown) => {
+        void _payload;
+        debouncedInvalidate();
+      },
+    });
+    return () => unsubscribe();
+  }, [isAdmin]);
+  useEffect(() => {
+    loadUtenti();
+  }, []);
+  const loadUtenti = async () => {
+    setIsLoading(true);
+    try {
+      const data = await UtentiService.getUtenti();
+      setUtenti(data);
+    } catch (_error) {
+      void _error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const handleStorico = (pin: number) => {
+    setLocation(`/storico-timbrature/${pin}`);
+  };
+  const _onEditClick: (_id: number) => void = (_id) => { void _id;
+    setLocation(`/storico-timbrature/${_id}`);
+  };
+  const handleModifica = (utente: Utente) => {
+    setUtenteSelezionato(utente);
+    setShowModaleModifica(true);
+  };
+  const handleArchivia = async (id: string, reason?: string) => {
+    try {
+      const result = await UtentiService.archiveUtente(id, { reason });
+      
+      if (result.success) {
+        // Ricarica le liste utenti e ex-dipendenti
+        await loadUtenti();
+        
+        // Invalida cache ex-dipendenti per aggiornamento immediato
+        queryClient.invalidateQueries({ queryKey: ['ex-dipendenti'] });
+        
+        // Toast di successo
+        console.log('Dipendente archiviato con successo');
+      } else {
+        // Gestione errori con messaggi specifici
+        const errorMessage = getErrorMessage(result.error?.code);
+        console.error('Errore archiviazione:', errorMessage);
+        // TODO(BUSINESS): Implementare toast di errore
+      }
+    } catch (error) {
+      console.error('Errore archiviazione:', error);
+      // TODO(BUSINESS): Implementare toast di errore generico
+    }
+  };
+
+  // Messaggi d'errore specifici per codici
+  const getErrorMessage = (code?: string): string => {
+    switch (code) {
+      case 'OPEN_SESSION':
+        return 'Impossibile archiviare: sessione timbratura aperta.';
+      case 'ALREADY_ARCHIVED':
+        return 'Utente già archiviato.';
+      case 'ARCHIVE_FAILED':
+        return 'Archiviazione non riuscita. Riprova.';
+      default:
+        return 'Errore durante l\'archiviazione.';
+    }
+  };
+  const handleEliminaClick = (utente: Utente) => {
+    setUtenteSelezionato(utente);
+    setShowModaleElimina(true);
+  };
+  const handleConfermaElimina = async () => {
+    if (!utenteSelezionato) return;
+    setIsEliminaLoading(true);
+    try {
+      await UtentiService.deleteUtente(utenteSelezionato.pin);
+      await loadUtenti();
+      setShowModaleElimina(false);
+      setUtenteSelezionato(null);
+    } catch (error) {
+      console.error('Errore eliminazione dipendente:', error);
+      // L'errore viene gestito dal modale che rimane aperto
+    } finally {
+      setIsEliminaLoading(false);
+    }
+  };
+  const handleSalvaModifica = async (datiUtente: UtenteInput) => {
+    if (!utenteSelezionato) return;
+    try {
+      await UtentiService.updateUtente(utenteSelezionato.pin, datiUtente);
+      await loadUtenti();
+      setShowModaleModifica(false);
+      setUtenteSelezionato(null);
+    } catch (error) {
+      throw error;
+    }
+  };
+  const handleSalvaNuovo = async (data: UtenteInput) => {
+    try {
+      await UtentiService.createUtente(data);
+      await loadUtenti();
+      setShowModaleNuovo(false);
+    } catch (error) {
+      throw error;
+    }
+  };
+  const handleBackToLogin = () => setLocation('/');
+  const _handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
+  const handleExDipendenti = () => {
+    setLocation('/admin/ex-dipendenti');
+  };
+
+  
+
+  return (
+    <div
+      className="h-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
+      style={{
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+      }}
+    >
+      <div className="w-full max-w-[1120px] flex items-center justify-center h-full">
+        <div
+          className="rounded-3xl p-4 shadow-2xl border-2 w-full h-[90vh] overflow-hidden relative flex flex-col"
+          style={{
+            backgroundColor: '#2b0048',
+            borderColor: 'rgba(231, 116, 240, 0.6)',
+            boxShadow: 'none',
+          }}
+        >
+          {/* Header con logo centrato */}
+          <div className="flex justify-center mb-4">
+            <img src="/logo2_app.png" alt="BADGENODE" className="h-10 w-auto" />
+          </div>
+          <div className="text-center mb-4">
+            <h1 className="text-2xl font-bold text-white mb-2">Archivio Dipendenti</h1>
+            <p className="text-yellow-300 text-base md:text-lg font-medium">
+              {utenti.length} dipendenti attivi
+            </p>
+          </div>
+          <div className="flex-1 overflow-hidden mb-4">
+            <ArchivioTable
+              utenti={utenti}
+              isLoading={isLoading}
+              onStorico={handleStorico}
+              onModifica={handleModifica}
+              onArchivia={handleArchivia}
+              onElimina={handleEliminaClick}
+            />
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t border-gray-600">
+            <Button
+              variant="outline"
+              onClick={handleBackToLogin}
+              className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Badge
+            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleExDipendenti}
+                className="flex items-center gap-2 bg-white border-2 border-violet-600 text-yellow-700 hover:text-yellow-600 hover:bg-violet-50 hover:shadow-md transition-all"
+              >
+                <Archive className="w-4 h-4 text-current" />
+                Ex-Dipendenti
+              </Button>
+              <Button
+                onClick={() => setShowModaleNuovo(true)}
+                className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white"
+              >
+                <Plus className="w-4 h-4" />
+                Aggiungi
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ModaleModificaDipendente
+        isOpen={showModaleModifica}
+        onClose={() => {
+          setShowModaleModifica(false);
+          setUtenteSelezionato(null);
+        }}
+        utente={utenteSelezionato}
+        onSave={handleSalvaModifica}
+      />
+      <ModaleNuovoDipendente
+        isOpen={showModaleNuovo}
+        onClose={() => setShowModaleNuovo(false)}
+        onSave={handleSalvaNuovo}
+      />
+      <ModaleEliminaDipendente
+        isOpen={showModaleElimina}
+        onClose={() => {
+          setShowModaleElimina(false);
+          setUtenteSelezionato(null);
+        }}
+        utente={utenteSelezionato}
+        onConfirm={handleConfermaElimina}
+        isLoading={isEliminaLoading}
+      />
+    </div>
+  );
+}

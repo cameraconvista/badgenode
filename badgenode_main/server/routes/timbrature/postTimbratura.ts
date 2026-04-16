@@ -1,0 +1,192 @@
+// POST /api/timbrature - Inserisce nuova timbratura
+import { Router, Request, Response } from 'express';
+import { supabaseAdmin } from '../../lib/supabaseAdmin';
+import { computeGiornoLogico } from '../../shared/time/computeGiornoLogico';
+import type { TimbratureInsertClean, Timbratura } from '../../../shared/types/database';
+import { validateAlternanza } from './validation';
+import { log } from '../../lib/logger';
+import { FEATURE_LOGGER_ADAPTER } from '../../config/featureFlags';
+
+const router = Router();
+
+// Tipi per eliminare any types
+interface TimbratureRequestBody {
+  pin?: number;
+  tipo?: 'entrata' | 'uscita';
+  ts?: string;
+  anchorDate?: string;
+}
+
+/**
+ * POST /api/timbrature - Inserisce nuova timbratura
+ * Bypassa RLS usando SERVICE_ROLE_KEY
+ */
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    // Garantisci sempre Content-Type JSON
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    
+    // Verifica che il client Supabase sia inizializzato
+    if (!supabaseAdmin) {
+      FEATURE_LOGGER_ADAPTER
+        ? log.error({ route: 'timbrature:post' }, 'supabase admin client non disponibile')
+        : console.error('[SERVER] Supabase admin client non disponibile');
+      return res.status(500).json({
+        success: false,
+        error: 'Configurazione server non completa - variabili ambiente mancanti',
+      });
+    }
+
+    const { pin, tipo, ts } = req.body as TimbratureRequestBody;
+    let anchorDate = (req.body as TimbratureRequestBody).anchorDate;
+    const traceId = req.header('x-badgenode-trace') || undefined;
+
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ traceId, pin, tipo, ts, anchorDate, route: 'timbrature:post' }, 'INSERT timbratura')
+      : console.info('[SERVER] INSERT timbratura →', { pin, tipo, ts, anchorDate });
+
+    // Validazione parametri
+    if (!pin || !tipo) {
+      return res.status(400).json({
+        success: false,
+        error: 'Parametri mancanti: pin, tipo',
+      });
+    }
+
+    if (!['entrata', 'uscita'].includes(tipo)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Tipo non valido (entrata|uscita)',
+      });
+    }
+
+    const pinNum = Number(pin);
+    if (!Number.isInteger(pinNum) || pinNum <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'PIN non valido',
+      });
+    }
+
+    // Timestamp server se non fornito - FORZATO Europe/Rome
+    const nowUtc = ts ? new Date(ts) : new Date();
+    
+    // FIX TIMEZONE: Forza Europe/Rome invece di affidarsi a TZ env var
+    const nowRome = new Date(nowUtc.toLocaleString("en-US", { timeZone: "Europe/Rome" }));
+    const yyyy = nowRome.getFullYear();
+    const mm = String(nowRome.getMonth() + 1).padStart(2, '0');
+    const dd = String(nowRome.getDate()).padStart(2, '0');
+    
+    const dataLocale = `${yyyy}-${mm}-${dd}`;
+    const oraLocale = `${String(nowRome.getHours()).padStart(2, '0')}:${String(nowRome.getMinutes()).padStart(2, '0')}:00`;
+    
+    // AUTO-RECOVERY: Per uscite notturne (00:00-05:00) senza anchorDate, recupera ultima entrata
+    if (tipo === 'uscita' && !anchorDate && nowRome.getHours() >= 0 && nowRome.getHours() < 5) {
+      const { data: lastEntries } = await supabaseAdmin!
+        .from('timbrature')
+        .select('giorno_logico')
+        .eq('pin', pinNum)
+        .eq('tipo', 'entrata')
+        .order('ts_order', { ascending: false })
+        .limit(1);
+      
+      if (lastEntries && lastEntries.length > 0) {
+        anchorDate = (lastEntries[0] as { giorno_logico: string }).giorno_logico;
+        FEATURE_LOGGER_ADAPTER
+          ? log.info({ traceId, pin: pinNum, anchorDate, route: 'timbrature:post' }, 'AUTO-RECOVERY: anchorDate recuperato da ultima entrata')
+          : console.info('[SERVER] AUTO-RECOVERY: anchorDate recuperato →', { pin: pinNum, anchorDate });
+      }
+    }
+    
+    // Calcolo giorno logico unificato
+    const { giorno_logico } = computeGiornoLogico({
+      data: dataLocale,
+      ora: oraLocale,
+      tipo,
+      dataEntrata: anchorDate // Parametro opzionale per ancoraggio (ora con auto-recovery)
+    });
+
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ traceId, pin: pinNum, tipo, giorno_logico, dataLocale, oraLocale, route: 'timbrature:post' }, 'INSERT params validated')
+      : console.info('[SERVER] INSERT params validated →', { pin: pinNum, tipo, giorno_logico, dataLocale, oraLocale });
+
+    // VALIDAZIONE ALTERNANZA CON ANCORAGGIO (STEP A)
+    const validationResult = await validateAlternanza(
+      pinNum,
+      tipo,
+      dataLocale,
+      oraLocale,
+      anchorDate, // Usa anchorDate con auto-recovery
+      traceId
+    );
+
+    if (!validationResult.success) {
+      FEATURE_LOGGER_ADAPTER
+        ? log.warn({ traceId, pin: pinNum, tipo, giorno_logico, code: validationResult.code, error: validationResult.error, source: 'server-validateAlternanza', route: 'timbrature:post' }, 'validazione alternanza fallita')
+        : console.warn('[SERVER] Validazione alternanza fallita:', { pin: pinNum, tipo, giorno_logico, code: validationResult.code, error: validationResult.error });
+      
+      return res.status(400).json({
+        success: false,
+        error: validationResult.error,
+        code: validationResult.code
+      });
+    }
+
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ traceId, pin: pinNum, tipo, giorno_logico, anchorEntry: validationResult.anchorEntry?.id || null, source: 'server-validateAlternanza', route: 'timbrature:post' }, 'validazione alternanza OK')
+      : console.info('[SERVER] Validazione alternanza OK:', { pin: pinNum, tipo, giorno_logico, anchorEntry: validationResult.anchorEntry?.id || null });
+
+    // INSERT con SERVICE_ROLE_KEY (bypassa RLS e trigger)
+    const dto: TimbratureInsertClean = {
+      pin: pinNum,
+      tipo,
+      ts_order: nowRome.toISOString(),
+      created_at: nowRome.toISOString(),
+      giorno_logico: giorno_logico,
+      data_locale: dataLocale,
+      ora_locale: oraLocale,
+    };
+
+    // TODO(ts): replace with exact Supabase types
+    const insertResult = await supabaseAdmin!
+      .from('timbrature')
+      // @ts-ignore - Supabase type inference issue
+      .insert([dto])
+      .select('*')
+      .single();
+    
+    const { data, error } = insertResult;
+
+    if (error) {
+      FEATURE_LOGGER_ADAPTER
+        ? log.error({ traceId, error: error.message, source: 'server-postTimbratura', route: 'timbrature:post' }, 'INSERT fallito')
+        : console.error('[SERVER] INSERT fallito →', { error: error.message });
+      return res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
+
+    FEATURE_LOGGER_ADAPTER
+      ? log.info({ traceId, id: (data as Timbratura)?.id, pin: pinNum, tipo, giorno_logico, source: 'server-postTimbratura', route: 'timbrature:post' }, 'INSERT success')
+      : console.info('[SERVER] INSERT success →', { id: (data as Timbratura)?.id, pin: pinNum, tipo, giorno_logico });
+
+    res.json({
+      success: true,
+      data,
+    });
+
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Errore sconosciuto';
+    FEATURE_LOGGER_ADAPTER
+      ? log.error({ traceId: req.header('x-badgenode-trace') || undefined, error: message, source: 'server-postTimbratura', route: 'timbrature:post' }, 'INSERT error')
+      : console.error('[SERVER] INSERT error →', { error: message });
+    
+    res.status(500).json({
+      success: false,
+      error: message,
+    });
+  }
+});
+
+export default router;

@@ -1,0 +1,175 @@
+import ModalKit from '@/components/ui/ModalKit';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
+import ConfirmFullscreen from '@/components/ui/ConfirmFullscreen';
+import { formatDataItaliana } from '@/lib/time';
+import { toInputDate } from '@/lib/dateFmt';
+import TimeSelect from './TimeSelect';
+import type { FormData, ModaleTimbratureProps } from './types';
+
+interface ModaleTimbratureViewProps extends ModaleTimbratureProps {
+  formData: FormData;
+  setFormData: (data: FormData) => void;
+  errors: string[];
+  showDeleteConfirm: boolean;
+  setShowDeleteConfirm: (show: boolean) => void;
+  handleSave: () => Promise<void>;
+  handleDelete: () => Promise<void>;
+}
+
+export default function ModaleTimbratureView({
+  isOpen,
+  onClose,
+  giorno_logico,
+  timbrature,
+  dipendente,
+  isLoading,
+  formData,
+  setFormData,
+  errors,
+  showDeleteConfirm,
+  setShowDeleteConfirm,
+  handleSave,
+  handleDelete,
+}: ModaleTimbratureViewProps) {
+  const entrata = timbrature.find((t) => t.tipo === 'entrata');
+  const uscita = timbrature.find((t) => t.tipo === 'uscita');
+  
+  // Usa dipendente passato come prop, fallback su timbrature, poi "Sconosciuto"
+  const fullName = dipendente?.nome && dipendente?.cognome 
+    ? `${dipendente.nome} ${dipendente.cognome}`
+    : entrata?.nome && entrata?.cognome 
+    ? `${entrata.nome} ${entrata.cognome}` 
+    : 'Sconosciuto';
+
+  const title = `Modifica Timbrature — ${formatDataItaliana(giorno_logico)}`;
+  const description = `Dipendente ${fullName} (PIN: ${dipendente?.pin || entrata?.pin || uscita?.pin})`;
+
+  // Footer rimosso - pulsanti ora nel body
+
+  return (
+    <ModalKit 
+      open={isOpen} 
+      onOpenChange={onClose}
+      title={title}
+      description={description}
+      contentClassName="bn-modal-square"
+      className="bn-modal-body-scroll"
+      preventDismiss
+    >
+      {errors.length > 0 && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <ul className="list-disc list-inside space-y-1">
+              {errors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <div className="bn-timbrature-grid">
+        {/* ENTRATA */}
+        <section>
+          <h3 className="text-green-400 font-semibold mb-3 text-lg">Entrata</h3>
+          <div className="bn-field-row">
+            <div>
+              <label className="block text-sm text-white/80 mb-2 font-medium">Data</label>
+              <input
+                type="date"
+                value={toInputDate(formData.dataEntrata)}
+                onChange={(e) => setFormData({ ...formData, dataEntrata: e.target.value || '' })}
+                className="bn-field-input bn-entrata-field w-full"
+                disabled={isLoading}
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/80 mb-2 font-medium">Ora</label>
+              <TimeSelect
+                value={formData.oraEntrata}
+                onChange={(value) => setFormData({ ...formData, oraEntrata: value })}
+                className=""
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* USCITA */}
+        <section>
+          <h3 className="text-red-400 font-semibold mb-3 text-lg">Uscita</h3>
+          <div className="bn-field-row">
+            <div>
+              <label className="block text-sm text-white/80 mb-2 font-medium">Data</label>
+              <input
+                type="date"
+                value={toInputDate(formData.dataUscita)}
+                onChange={(e) => setFormData({ ...formData, dataUscita: e.target.value || '' })}
+                className="bn-field-input bn-uscita-field w-full"
+                disabled={isLoading}
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/80 mb-2 font-medium">Ora</label>
+              <TimeSelect
+                value={formData.oraUscita}
+                onChange={(value) => setFormData({ ...formData, oraUscita: value })}
+                className=""
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Tutti i pulsanti sulla stessa riga */}
+      <div className="flex items-center justify-between mt-6">
+        <button
+          type="button"
+          className="bn-btn-large bn-btn-danger h-11 px-4 rounded-lg"
+          onClick={() => setShowDeleteConfirm(true)}
+          disabled={isLoading || showDeleteConfirm}
+        >
+          Elimina
+        </button>
+        
+        <div className="flex items-center gap-3">
+          <button 
+            type="button" 
+            aria-label="Annulla"
+            className="bn-btn-large bn-btn-neutral h-11 px-4 rounded-lg" 
+            onClick={onClose} 
+            disabled={isLoading}
+          >
+            Annulla
+          </button>
+          <button 
+            type="button" 
+            aria-label="Salva"
+            className="bn-btn-large bn-btn-success h-11 px-5 rounded-lg" 
+            onClick={handleSave} 
+            disabled={isLoading}
+          >
+            Salva
+          </button>
+        </div>
+      </div>
+
+      {showDeleteConfirm && (
+        <ConfirmFullscreen
+          open={showDeleteConfirm}
+          title="Eliminare tutte le timbrature di questo giorno?"
+          description={`Dipendente: ${fullName} (PIN: ${dipendente?.pin || entrata?.pin || uscita?.pin}) • Giorno logico: ${giorno_logico}`}
+          onCancel={() => setShowDeleteConfirm(false)}
+          onConfirm={async () => {
+            await handleDelete();
+            setShowDeleteConfirm(false);
+          }}
+        />
+      )}
+
+    </ModalKit>
+  );
+}

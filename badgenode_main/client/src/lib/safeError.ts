@@ -1,0 +1,4 @@
+// Safe error handling utility for BadgeNode client
+export function asError(e: unknown): Error {
+  return e instanceof Error ? e : new Error(String(e));
+}

@@ -1,0 +1,72 @@
+// server/start.ts - Punto d'ingresso unico con guardia idempotente
+import './env'; // Carica dotenv una sola volta
+import http from 'http';
+import { createApp, setupStaticFiles } from './createApp';
+import { FEATURE_LOGGER_ADAPTER } from './config/featureFlags';
+import { logger } from './lib/logger';
+import { log } from './lib/logger';
+import { httpLog } from './middleware/httpLog';
+
+// Disable console.log in production (preserve warn/error)
+if (process.env.NODE_ENV !== 'development') {
+   
+  console.log = () => {};
+}
+
+const PORT = Number(process.env.PORT || 3001);
+
+// Idempotency guard (evita doppio listen in ambienti che rieseguono i moduli)
+const GUARD = Symbol.for('__BADGENODE_SERVER__');
+const g = globalThis as Record<string | symbol, unknown>;
+
+async function startServer() {
+  if (!g[GUARD]) {
+    const app = createApp();
+    
+    // S4: HTTP logging middleware (feature-flagged)
+    if (FEATURE_LOGGER_ADAPTER) {
+      app.use(httpLog);
+    }
+    
+    const server = http.createServer(app);
+    
+    // Setup static files (Vite dev o produzione) - passa server per HMR
+    await setupStaticFiles(app, server);
+    
+    // DEV diagnostics: Supabase URL prefix
+    if (process.env.NODE_ENV === 'development') {
+      const supaUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '';
+      if (FEATURE_LOGGER_ADAPTER) {
+        logger.info('[ENV][server]', { prefix: supaUrl.slice(0,20), role: 'service' });
+      } else {
+        log.info(`[ENV][server] prefix: ${supaUrl.slice(0,20)} role: service`);
+      }
+    }
+
+    server.listen(PORT, '0.0.0.0', () => {
+      if (FEATURE_LOGGER_ADAPTER) {
+        logger.info('🚀 Server running', { port: PORT });
+      } else {
+        log.info(`🚀 Server running on port ${PORT}`);
+      }
+    });
+    
+    g[GUARD] = server;
+    
+    return server;
+  } else {
+    if (FEATURE_LOGGER_ADAPTER) {
+      logger.info('ℹ️ Server already started — skipping listen()');
+    } else {
+      log.info('ℹ️ Server already started — skipping listen()');
+    }
+    return g[GUARD] as http.Server;
+  }
+}
+
+// Avvia server solo se questo file è il main module (ES module compatible)
+if (import.meta.url === `file://${process.argv[1]}`) {
+  startServer().catch(console.error);
+}
+
+export default startServer;

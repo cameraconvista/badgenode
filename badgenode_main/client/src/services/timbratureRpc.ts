@@ -1,0 +1,340 @@
+// Service RPC unico per timbrature BadgeNode
+// Centralizza tutte le chiamate verso insert_timbro_v2
+
+import { safeFetchJsonPost, safeFetchJsonPatch, safeFetchJsonDelete } from '@/lib/safeFetch';
+import { isError, type DeleteResult } from '@/types/api';
+import type { Timbratura, TimbratureUpdate } from '../../../shared/types/database';
+import { logTimbraturaDiag } from '@/lib/timbraturaDiagnostics';
+
+// reserved: api-internal (non rimuovere senza migrazione)
+// import type { TimbraturePayload, RpcResult } from '@/types/rpc';
+
+export interface InsertTimbroParams {
+  pin: number;
+  tipo: 'entrata' | 'uscita';
+  client_event_id?: string;
+  traceId?: string;
+}
+
+export interface InsertTimbroResult {
+  success: boolean;
+  data?: unknown;
+  error?: string;
+  code?: string;
+}
+
+export interface UpdateTimbroParams {
+  id: number;
+  updateData: Partial<TimbratureUpdate>;
+}
+
+export interface UpdateTimbroResult {
+  success: boolean;
+  data?: unknown;
+  error?: string;
+}
+
+/**
+ * Chiamata per inserimento timbrature via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS (risolve 401 Unauthorized)
+ */
+export async function callInsertTimbro({
+  pin,
+  tipo,
+  client_event_id,
+  traceId,
+}: InsertTimbroParams): Promise<InsertTimbroResult> {
+  try {
+    logTimbraturaDiag('rpc.callInsertTimbro_start', {
+      traceId,
+      pin,
+      tipo,
+      source: 'timbrature-rpc',
+      client_event_id: client_event_id ?? null,
+    });
+    // Usa il nuovo endpoint server invece della RPC diretta
+    const result = await insertTimbroServer({ 
+      pin: pin, 
+      tipo: tipo.toLowerCase() as 'entrata'|'uscita',
+      traceId,
+    });
+    // Considera successo se il server ha restituito un id valido (incluso -1 per offline)
+    const id = (result as any)?.id;
+    if (typeof id === 'number') {
+      if (id > 0) {
+        logTimbraturaDiag('rpc.callInsertTimbro_result', {
+          traceId,
+          pin,
+          tipo,
+          source: 'timbrature-rpc',
+          success: true,
+          id,
+          mode: 'online',
+        });
+        return { success: true, data: result }; // Success online
+      } else if (id === -1) {
+        logTimbraturaDiag('rpc.callInsertTimbro_result', {
+          traceId,
+          pin,
+          tipo,
+          source: 'timbrature-rpc',
+          success: true,
+          id,
+          mode: 'queued',
+        });
+        return { success: true, data: result }; // Success offline (queued)
+      }
+    }
+    logTimbraturaDiag('rpc.callInsertTimbro_result', {
+      traceId,
+      pin,
+      tipo,
+      source: 'timbrature-rpc',
+      success: false,
+      code: 'NO_ID',
+    });
+    return { success: false, error: 'Nessun id restituito dal server', code: 'NO_ID' };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Errore sconosciuto';
+    const code = (error as any)?.code || extractCodeFromMessage(message);
+    logTimbraturaDiag('rpc.callInsertTimbro_result', {
+      traceId,
+      pin,
+      tipo,
+      source: 'timbrature-rpc',
+      success: false,
+      code,
+      error: message,
+    });
+    return { success: false, error: message, code };
+  }
+}
+
+/**
+ * Crea nuova timbratura manuale dal Modale via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
+ */
+export async function createTimbroManual({ pin, tipo, giorno, ora, anchorDate }: {
+  pin: number; 
+  tipo: 'ENTRATA'|'USCITA'; 
+  giorno: string; 
+  ora: string;
+  anchorDate?: string; // Data entrata per ancoraggio uscite notturne
+}) {
+  console.info('[SERVICE] createTimbroManual →', { pin, tipo, giorno, ora, anchorDate });
+  
+  try {
+    const result = await safeFetchJsonPost<{ id: number }>('/api/timbrature/manual', { pin, tipo, giorno, ora, anchorDate });
+    
+    if (isError(result)) {
+      throw new Error(result.error);
+    }
+    
+    console.info('[SERVICE] createTimbroManual OK →', { 
+      pin, 
+      tipo, 
+      giorno, 
+      ora,
+      id: result.data?.id 
+    });
+    return result; // { success, data }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
+    console.error('[SERVICE] createTimbroManual ERR →', { pin, tipo, giorno, ora, error: errorMsg });
+    throw error;
+  }
+}
+
+/**
+ * Inserisce nuova timbratura via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
+ * Con fallback offline queue su errori di rete
+ */
+export async function insertTimbroServer({ pin, tipo, ts, traceId }: { pin: number; tipo: 'entrata'|'uscita'; ts?: string; traceId?: string }): Promise<{ id: number }> {
+  console.info('[SERVICE] insertTimbroServer →', { pin, tipo, ts });
+  logTimbraturaDiag('rpc.insertTimbroServer_start', {
+    traceId,
+    pin,
+    tipo,
+    source: 'timbrature-rpc',
+    ts: ts ?? null,
+  });
+  
+  try {
+    const result = await safeFetchJsonPost<{ id: number }>('/api/timbrature', { pin, tipo, ts }, {
+      headers: traceId ? { 'x-badgenode-trace': traceId } : undefined,
+    });
+    
+    if (isError(result)) {
+      const err: any = new Error(result.error);
+      if ((result as any).code) err.code = (result as any).code;
+      logTimbraturaDiag('rpc.insertTimbroServer_result', {
+        traceId,
+        pin,
+        tipo,
+        source: 'timbrature-rpc',
+        success: false,
+        code: (result as any).code,
+        error: result.error,
+      });
+      throw err;
+    }
+    
+    console.info('[SERVICE] insertTimbroServer OK →', { 
+      pin, 
+      tipo, 
+      id: result.data?.id 
+    });
+    logTimbraturaDiag('rpc.insertTimbroServer_result', {
+      traceId,
+      pin,
+      tipo,
+      source: 'timbrature-rpc',
+      success: true,
+      id: result.data?.id,
+    });
+    return result.data; // Solo i dati, non l'ApiResponse wrapper
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
+    const code = (error as any)?.code;
+    console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg, code });
+    
+    // Try offline queue if enabled and this is a network error (protected)
+    try {
+      // Check if this is a network error that should trigger offline queue
+      const isNetworkError = (
+        error instanceof TypeError && error.message.includes('fetch') ||
+        error instanceof TypeError && error.message.includes('Failed to fetch') ||
+        (error as any)?.code === 'ERR_INTERNET_DISCONNECTED' ||
+        (error as any)?.name === 'NetworkError' ||
+        !navigator.onLine
+      );
+      
+      if (isNetworkError) {
+        // Try diagnostics first, then fallback to environment check
+        const offline = (globalThis as any)?.__BADGENODE_DIAG__?.offline;
+        let shouldQueue = false;
+        
+        if (offline?.enabled && offline?.allowed) {
+          shouldQueue = true;
+        } else {
+          // Fallback: check environment directly if diagnostics not ready
+          const queueEnabled = String(import.meta.env?.VITE_FEATURE_OFFLINE_QUEUE ?? 'false') === 'true';
+          if (queueEnabled) {
+            shouldQueue = true;
+            if (import.meta.env.DEV) {
+              console.debug('[SERVICE] Using environment fallback for offline queue');
+            }
+          }
+        }
+        
+        if (shouldQueue) {
+          try {
+            // Try dynamic import first, fallback to global queue if available
+            let enqueuePending;
+            try {
+              const queueModule = await import('../offline/queue');
+              enqueuePending = queueModule.enqueuePending;
+            } catch (importError) {
+              // Fallback: use pre-loaded queue from global diagnostics
+              const globalQueue = (globalThis as any)?.__BADGENODE_QUEUE__;
+              if (globalQueue?.enqueuePending) {
+                enqueuePending = globalQueue.enqueuePending;
+              } else {
+                throw new Error('Queue module not available offline');
+              }
+            }
+            
+            await enqueuePending({ 
+              pin, 
+              tipo
+            });
+            
+            if (import.meta.env.DEV) {
+              console.debug('[SERVICE] insertTimbroServer → queued offline', { pin, tipo });
+            }
+            logTimbraturaDiag('rpc.insertTimbroServer_result', {
+              traceId,
+              pin,
+              tipo,
+              source: 'timbrature-rpc',
+              success: true,
+              id: -1,
+              mode: 'queued-offline',
+            });
+            
+            // Return a synthetic success response for offline queue
+            return { id: -1 }; // Negative ID indicates queued
+          } catch (queueError) {
+            if (import.meta.env.DEV) {
+              console.debug('[SERVICE] queue failed:', (queueError as Error)?.message);
+            }
+            // If queue fails, still return error to user
+            throw error; // Original network error
+          }
+        }
+      }
+    } catch (offlineError) {
+      if (import.meta.env.DEV) {
+        console.debug('[SERVICE] offline queue failed:', (offlineError as Error)?.message);
+      }
+    }
+    
+    throw error;
+  }
+}
+
+function extractCodeFromMessage(msg: string | undefined): string | undefined {
+  if (!msg) return undefined;
+  const m = msg.match(/\[([A-Z0-9_\-]+)\]/);
+  return m?.[1];
+}
+
+/**
+ * Elimina tutte le timbrature di un giorno logico via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
+ */
+export async function deleteTimbratureGiornata({ pin, giorno }: { pin: number; giorno: string }) {
+  console.info('[SERVICE] deleteTimbratureGiornata →', { pin, giorno });
+  
+  try {
+    const result = await safeFetchJsonDelete<DeleteResult>('/api/timbrature/day', { 
+      pin: String(pin), 
+      giorno 
+    });
+    
+    if (isError(result)) {
+      throw new Error(result.error);
+    }
+    
+    console.info('[SERVICE] deleteTimbratureGiornata OK →', { 
+      pin, 
+      giorno, 
+      deletedCount: (result as any)?.deleted_count ?? 0 
+    });
+    return result; // { success, deleted_count, ids, deleted_records }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
+    console.error('[SERVICE] deleteTimbratureGiornata ERR →', { pin, giorno, error: errorMsg });
+    throw error;
+  }
+}
+
+/**
+ * Aggiorna timbratura esistente via endpoint server
+ * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
+ */
+export async function callUpdateTimbro({ id, updateData }: { id: number; updateData: Partial<TimbratureUpdate> }) {
+  console.info('[SERVICE] callUpdateTimbro (ENDPOINT) →', { id, updateData });
+  
+  try {
+    const result = await safeFetchJsonPatch(`/api/timbrature/${id}`, updateData);
+    
+    console.info('[SERVICE] update OK →', { id, success: result.success });
+    return result; // { success: true, data: { ... } }
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
+    console.error('[SERVICE] update ERR →', { id, error: errorMsg });
+    throw error;
+  }
+}

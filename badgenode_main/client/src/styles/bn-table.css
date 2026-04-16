@@ -1,0 +1,148 @@
+/* 
+ * BadgeNode Table Styles - Single Source of Truth
+ * Palette colori solidi per tabella Storico Timbrature
+ * NO trasparenze, NO gradients nella tabella
+ */
+
+/* Container principale tabella - UNICO background solido */
+.bn-table__container {
+  background-color: #1a1a2e; /* Viola base BadgeNode - colore solido, NO gradient, NO opacity */
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Header sticky - completamente opaco */
+.bn-table__header {
+  background-color: #510357; /* Viola primario BadgeNode - completamente opaco */
+  border-bottom: 1px solid rgba(231, 116, 240, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Riga base (giorni feriali) - SFONDO UNIFORME */
+.bn-row {
+  background-color: #2b0048; /* Viola uniforme per TUTTE le righe */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06); /* Bordo separatore */
+  height: 2.5rem; /* Ridotta da 2.75rem a 2.5rem (~10% in meno) */
+  transition: none; /* Rimossa transizione hover */
+}
+
+/* Riga weekend - STESSO SFONDO delle righe normali */
+.bn-row--weekend {
+  background-color: #2b0048; /* STESSO colore delle righe feriali - UNIFORME */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06); /* Stesso bordo per separazione */
+}
+
+/* Riga sessione (sotto-righe) */
+.bn-table__row--session {
+  background-color: #1f0035; /* Viola più scuro per sotto-righe */
+  height: 2.75rem; /* Stessa altezza delle righe principali */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04); /* Bordo più sottile per sessioni */
+}
+
+/* --- Storico Timbrature: hardening visuale --- */
+/* Disabilita qualunque highlight di hover/selected - SFONDO UNIFORME */
+.bn-row:hover,
+.bn-row--weekend:hover,
+.bn-table__row--session:hover,
+.bn-row[aria-selected="true"],
+.bn-row[data-state="hover"],
+.bn-row[data-state="selected"],
+.bn-row--weekend[aria-selected="true"],
+.bn-row--weekend[data-state="hover"],
+.bn-row--weekend[data-state="selected"] {
+  background-color: #2b0048 !important; /* STESSO colore uniforme per TUTTE le righe */
+}
+
+/* Barra totali - colore pieno coerente */
+.bn-table__totals {
+  background-color: #510357; /* Stesso colore dell'header - viola primario, colore pieno */
+  border-top: 2px solid #e774f0; /* Bordo accent BadgeNode */
+  flex-shrink: 0;
+  padding: 0; /* RIMOSSO padding per allineamento perfetto con tabella */
+}
+
+/* Celle standard - allineamenti uniformi */
+.bn-table__cell {
+  padding: 0 1rem; /* Padding uniforme header/body/footer */
+  text-align: center;
+  vertical-align: middle;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  height: 2.5rem; /* Ridotta da 2.75rem a 2.5rem (~10% in meno) */
+}
+
+/* Celle nella barra totali - altezza ridotta (~20-25% in meno) */
+.bn-table__totals .bn-table__cell {
+  height: 2.5rem; /* Ridotta drasticamente per essere PIÙ BASSA */
+  padding: 0.5rem; /* Padding ridotto per compattezza */
+}
+
+/* Footer più compatto (~20-25% in meno) */
+.bn-footer {
+  padding-block: 12px; /* ~-25% se era 16px */
+}
+
+/* Righe più dense (~10% in meno) */
+.bn-row-dense {
+  padding-block: 10px; /* ~-10% */
+  line-height: 1.25;   /* testo più compatto senza tagliare glifi */
+}
+
+/* Controllo testo righe con/senza timbrature */
+.bn-row .bn-cell {
+  color: rgb(156 163 175); /* text-gray-400 - testo muted di default */
+}
+
+.bn-row.has-timbrature .bn-cell {
+  color: #ffffff; /* mantiene testo bianco SOLO se c'è timbratura */
+}
+
+.bn-table__cell--left {
+  text-align: left;
+}
+
+.bn-table__cell--center {
+  text-align: center;
+}
+
+/* Header cells - stesso padding delle celle */
+.bn-table__header-cell {
+  padding: 0 1rem; /* STESSO padding delle celle per allineamento perfetto */
+  text-align: center;
+  vertical-align: middle;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  height: 2.75rem;
+}
+
+.bn-table__header-cell--left {
+  text-align: left;
+}
+
+/* Scroll area */
+.bn-table__scroll-area {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Table base */
+.bn-table__table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Assicura che i bordi delle colonne siano perfettamente allineati */
+.bn-table__totals .bn-table__table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  /* Rimuove qualsiasi margine che potrebbe causare disallineamento */
+  margin: 0;
+}
