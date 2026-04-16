@@ -69,14 +69,9 @@ export function createApp() {
     next();
   });
 
-  // STEP D: Route osservabilità
+  // Route osservabilità (health, ready, version)
   app.use('/api', healthRouter);
   app.use('/api', versionRouter);
-
-  // Ready endpoint - minimal health check without DB
-  app.get('/api/ready', (_req, res) => {
-    res.json({ ok: true, status: 'ready' });
-  });
 
   // Monta tutti i moduli router mantenendo endpoint originali
   registerRoutes(app);

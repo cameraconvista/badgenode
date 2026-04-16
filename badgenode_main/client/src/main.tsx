@@ -9,14 +9,7 @@ if (import.meta.env.PROD) {
   console.log = () => {};
 }
 
-// PWA Service Worker registration (only in production)
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // Silent fail - PWA is optional
-    });
-  });
-}
+// Service Worker gestito automaticamente da vite-plugin-pwa (registerType: 'autoUpdate')
 
 try {
   const root = document.getElementById('root');
