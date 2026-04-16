@@ -135,7 +135,7 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
                     <th className="px-4 text-center text-sm font-semibold text-[#1C0A10]">Extra</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-700/60">
+                <tbody className="divide-y divide-[rgba(122,18,40,0.10)]">
                   {giornaliere.map((g) => (
                     <tr key={g.giorno} className="hover:bg-white/5">
                       <td className="px-4 py-2 text-[#1C0A10] text-sm">{formatDate(g.giorno)}</td>
@@ -160,7 +160,7 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
             href={csvBlobUrl || undefined}
             download={fileName}
             onClick={(e) => { if (!csvBlobUrl) e.preventDefault(); }}
-            className={`inline-flex items-center justify-center rounded-md border-2 px-4 py-2 text-sm font-medium ${csvBlobUrl ? 'bg-green-600 border-green-600 text-white hover:bg-green-700' : 'bg-[#E8DDD5] border-[#E8DDD5] text-[#7A5A64]/60 cursor-not-allowed'}`}
+            className={`inline-flex items-center justify-center rounded-md border-2 px-4 py-2 text-sm font-medium ${csvBlobUrl ? 'bg-[#7A1228] border-[#7A1228] text-white hover:bg-[#9B1E35]' : 'bg-[#E8DDD5] border-[#E8DDD5] text-[#7A5A64]/60 cursor-not-allowed'}`}
           >
             Esporta CSV
           </a>

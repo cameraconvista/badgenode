@@ -121,7 +121,7 @@ export default function StoricoFilters({
           <Select value={selectedPeriod} onValueChange={handlePeriodChange} disabled={isLoading}>
             <SelectTrigger
               className={
-                `bg-[#FDFAF8] border border-[rgba(122,18,40,0.20)] text-[#1C0A10] rounded-xl h-9 px-3 pr-8 text-base focus:border-violet-400`
+                `bg-[#FDFAF8] border border-[rgba(122,18,40,0.20)] text-[#1C0A10] rounded-xl h-9 px-3 pr-8 text-base focus:border-[#7A1228]`
               }
             >
               <SelectValue placeholder="Periodo" />

@@ -195,7 +195,7 @@ export default function ModaleNuovoDipendente({
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-[#7A1228] hover:bg-[#9B1E35] text-white"
             >
               {isLoading ? 'Salvataggio...' : 'Salva'}
             </Button>

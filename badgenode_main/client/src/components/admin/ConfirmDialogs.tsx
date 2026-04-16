@@ -236,7 +236,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
 
         <div className="p-6 space-y-4">
           <div className="flex justify-center">
-            <div className="p-3 rounded-full bg-green-600/20">
+            <div className="p-3 rounded-full bg-[rgba(122,18,40,0.10)]">
               <AlertTriangle className="w-8 h-8 text-green-700" />
             </div>
           </div>
@@ -260,7 +260,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
                     value={newPin}
                     onChange={(e) => setNewPin(e.target.value.replace(/[^0-9]/g, ''))}
                     placeholder="Nuovo PIN"
-                    className="w-32 text-center p-3 rounded-lg bg-gray-800 border border-[rgba(122,18,40,0.15)] text-white placeholder-gray-400 focus:border-[#7A1228] focus:outline-none"
+                    className="w-32 text-center p-3 rounded-lg bg-[#FDFAF8] border border-[rgba(122,18,40,0.25)] text-[#1C0A10] placeholder:text-[#7A5A64]/60 focus:border-[#7A1228] focus:outline-none"
                   />
                   {!isPinValid() && newPin !== '' && (
                     <p className="text-xs text-red-600 mt-1">PIN deve essere tra 1 e 99</p>
@@ -286,7 +286,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
             type="button"
             onClick={handleProcedi}
             disabled={isLoading || (showSecondConfirm && !isPinValid())}
-            className="bg-green-600 hover:bg-green-700 text-white border-2 border-green-600"
+            className="bg-[#7A1228] hover:bg-[#9B1E35] text-white border-2 border-[#7A1228]"
           >
             {isLoading ? 'Ripristino...' : !showSecondConfirm ? 'Continua' : 'Conferma'}
           </Button>
@@ -434,7 +434,7 @@ export function ArchiviaDialog({
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Es: Dimissioni, fine contratto..."
-                    className="w-full p-3 rounded-lg bg-gray-800 border border-[rgba(122,18,40,0.15)] text-white placeholder-gray-400 focus:border-[#7A1228] focus:outline-none resize-none"
+                    className="w-full p-3 rounded-lg bg-[#FDFAF8] border border-[rgba(122,18,40,0.25)] text-[#1C0A10] placeholder:text-[#7A5A64]/60 focus:border-[#7A1228] focus:outline-none resize-none"
                     rows={3}
                     maxLength={200}
                   />

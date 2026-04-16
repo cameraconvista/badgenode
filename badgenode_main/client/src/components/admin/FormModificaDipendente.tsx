@@ -20,16 +20,15 @@ export default function FormModificaDipendente({
 }: FormModificaDipendenteProps) {
   return (
     <div className="space-y-6">
-      {/* Sezione Dati Anagrafici */}
       <div className="space-y-4">
         <div className="flex items-center gap-2 mb-4">
-          <User className="w-5 h-5 text-violet-400" />
-          <h3 className="text-lg font-semibold text-white">Dati Anagrafici</h3>
+          <User className="w-5 h-5 text-[#7A1228]" />
+          <h3 className="text-lg font-semibold text-[#1C0A10]">Dati Anagrafici</h3>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="nome" className="text-gray-200">
+            <Label htmlFor="nome" className="text-[#1C0A10]">
               Nome *
             </Label>
             <Input
@@ -38,16 +37,16 @@ export default function FormModificaDipendente({
               type="text"
               value={formData.nome}
               onChange={(e) => onInputChange('nome', e.target.value)}
-              className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
-                errors.nome ? 'border-red-500' : 'focus:border-violet-400'
+              className={`bg-[#FDFAF8] text-[#1C0A10] placeholder:text-[#7A5A64]/60 ${
+                errors.nome ? 'border-red-500' : 'border-[rgba(122,18,40,0.25)] focus:border-[#7A1228]'
               }`}
               disabled={isLoading}
             />
-            {errors.nome && <p className="text-sm text-red-400">{errors.nome}</p>}
+            {errors.nome && <p className="text-sm text-red-600">{errors.nome}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="cognome" className="text-gray-200">
+            <Label htmlFor="cognome" className="text-[#1C0A10]">
               Cognome *
             </Label>
             <Input
@@ -55,16 +54,16 @@ export default function FormModificaDipendente({
               type="text"
               value={formData.cognome}
               onChange={(e) => onInputChange('cognome', e.target.value)}
-              className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
-                errors.cognome ? 'border-red-500' : 'focus:border-violet-400'
+              className={`bg-[#FDFAF8] text-[#1C0A10] placeholder:text-[#7A5A64]/60 ${
+                errors.cognome ? 'border-red-500' : 'border-[rgba(122,18,40,0.25)] focus:border-[#7A1228]'
               }`}
               disabled={isLoading}
             />
-            {errors.cognome && <p className="text-sm text-red-400">{errors.cognome}</p>}
+            {errors.cognome && <p className="text-sm text-red-600">{errors.cognome}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-gray-200">
+            <Label htmlFor="email" className="text-[#1C0A10]">
               Email
             </Label>
             <Input
@@ -72,16 +71,16 @@ export default function FormModificaDipendente({
               type="email"
               value={formData.email ?? ''}
               onChange={(e) => onInputChange('email', e.target.value)}
-              className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
-                errors.email ? 'border-red-500' : 'focus:border-violet-400'
+              className={`bg-[#FDFAF8] text-[#1C0A10] placeholder:text-[#7A5A64]/60 ${
+                errors.email ? 'border-red-500' : 'border-[rgba(122,18,40,0.25)] focus:border-[#7A1228]'
               }`}
               disabled={isLoading}
             />
-            {errors.email && <p className="text-sm text-red-400">{errors.email}</p>}
+            {errors.email && <p className="text-sm text-red-600">{errors.email}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="telefono" className="text-gray-200">
+            <Label htmlFor="telefono" className="text-[#1C0A10]">
               Numero di Telefono
             </Label>
             <Input
@@ -89,16 +88,16 @@ export default function FormModificaDipendente({
               type="tel"
               value={formData.telefono ?? ''}
               onChange={(e) => onInputChange('telefono', e.target.value)}
-              className={`bg-gray-700/50 border-gray-600 text-white placeholder:text-gray-400 ${
-                errors.telefono ? 'border-red-500' : 'focus:border-violet-400'
+              className={`bg-[#FDFAF8] text-[#1C0A10] placeholder:text-[#7A5A64]/60 ${
+                errors.telefono ? 'border-red-500' : 'border-[rgba(122,18,40,0.25)] focus:border-[#7A1228]'
               }`}
               disabled={isLoading}
             />
-            {errors.telefono && <p className="text-sm text-red-400">{errors.telefono}</p>}
+            {errors.telefono && <p className="text-sm text-red-600">{errors.telefono}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="pin" className="text-yellow-400 font-bold">
+            <Label htmlFor="pin" className="text-[#7A1228] font-bold">
               PIN
             </Label>
             <Input
@@ -106,14 +105,13 @@ export default function FormModificaDipendente({
               type="number"
               value={formData.pin}
               disabled={true}
-              className="bg-gray-600/50 border-gray-500 text-gray-300 cursor-not-allowed [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
+              className="bg-[#E8DDD5] border-[rgba(122,18,40,0.15)] text-[#7A5A64] cursor-not-allowed [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
             />
-            <p className="text-sm text-gray-400">Il PIN non può essere modificato</p>
+            <p className="text-sm text-[#7A5A64]">Il PIN non può essere modificato</p>
           </div>
         </div>
       </div>
-      {/* Errore generale */}
-      {errors.general && <p className="text-sm text-red-400 text-center">{errors.general}</p>}
+      {errors.general && <p className="text-sm text-red-600 text-center">{errors.general}</p>}
     </div>
   );
 }

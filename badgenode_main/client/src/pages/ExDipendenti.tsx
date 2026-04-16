@@ -21,7 +21,6 @@ export default function ExDipendenti() {
   const [storicoLoading, setStoricoLoading] = useState(false);
   const [storicoRaw, setStoricoRaw] = useState<unknown[]>([]);
   
-  // Query ex-dipendenti con hook dedicato
   const { data: exDipendenti = [], isLoading, isError } = useExDipendentiQuery();
 
   const handleBackToArchivio = () => {
@@ -55,7 +54,6 @@ export default function ExDipendenti() {
     if (!ex) return;
     try {
       setStoricoLoading(true);
-      // Carica timbrature fino alla data di archiviazione (in base allo schema reale: archiviato_il)
       const rows = await TimbratureService.getTimbratureByRange({ pin: ex.pin, to: ex.archiviato_il?.slice(0,10) });
       setStoricoRaw(rows || []);
       setShowStorico(true);
@@ -79,7 +77,6 @@ export default function ExDipendenti() {
       setIsRestoring(true);
       const result = await UtentiService.restoreUtente(String(selectedEx.pin), { newPin });
       if (result.success) {
-        // Invalida cache liste
         queryClient.invalidateQueries({ queryKey: ['ex-dipendenti'] });
         queryClient.invalidateQueries({ queryKey: ['utenti'] });
         setShowRestore(false);
@@ -96,17 +93,17 @@ export default function ExDipendenti() {
     <div
       className="h-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
       style={{
-        background: 'radial-gradient(ellipse at center, #2d1b3d 0%, #1a0f2e 50%, #0f0a1a 100%)',
+        background: 'radial-gradient(ellipse at center, #EDE3D9 0%, #E5D8CC 50%, #F8F3EE 100%)',
         backgroundAttachment: 'fixed',
       }}
     >
       <div className="w-full max-w-[1120px] flex items-center justify-center h-full">
         <div
-          className="rounded-3xl p-4 shadow-2xl border-2 w-full h-[90vh] overflow-hidden relative flex flex-col"
+          className="rounded-3xl p-4 shadow-lg border-2 w-full h-[90vh] overflow-hidden relative flex flex-col"
           style={{
-            backgroundColor: '#2b0048',
-            borderColor: 'rgba(231, 116, 240, 0.6)',
-            boxShadow: 'none',
+            backgroundColor: '#FFFFFF',
+            borderColor: 'rgba(122,18,40,0.25)',
+            boxShadow: '0 4px 24px rgba(122,18,40,0.08)',
           }}
         >
           {/* Header con logo centrato */}
@@ -115,8 +112,8 @@ export default function ExDipendenti() {
           </div>
           
           <div className="text-center mb-4">
-            <h1 className="text-2xl font-bold text-white mb-2">Ex-Dipendenti</h1>
-            <p className="text-yellow-300 text-base md:text-lg font-medium">
+            <h1 className="text-2xl font-bold text-[#1C0A10] mb-2">Ex-Dipendenti</h1>
+            <p className="text-[#9B1E35] text-base md:text-lg font-medium">
               {exDipendenti.length} ex-dipendenti archiviati
             </p>
           </div>
@@ -132,16 +129,15 @@ export default function ExDipendenti() {
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t border-gray-600">
+          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t border-[rgba(122,18,40,0.12)]">
             <Button
               variant="outline"
               onClick={handleBackToArchivio}
-              className="flex items-center gap-2 bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50"
+              className="flex items-center gap-2 bg-white border-2 border-[#7A1228] text-[#7A1228] hover:bg-[#F8F3EE]"
             >
               <ArrowLeft className="w-4 h-4" />
               Archivio
             </Button>
-            
           </div>
         </div>
       </div>

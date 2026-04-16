@@ -45,22 +45,22 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
       <div
-        className="rounded-2xl p-6 shadow-2xl border-2 max-w-sm w-full"
+        className="rounded-2xl p-6 shadow-xl border-2 max-w-sm w-full"
         style={{
           backgroundColor: '#FFFFFF',
-          borderColor: 'rgba(231, 116, 240, 0.5)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3)',
+          borderColor: 'rgba(122,18,40,0.35)',
+          boxShadow: '0 8px 32px rgba(122,18,40,0.15)',
         }}
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-[#1C0A10]">Codice Admin</h2>
-          <button onClick={handleCancel} className="text-white hover:text-[#7A5A64] p-1">
+          <button onClick={handleCancel} className="text-[#7A5A64] hover:text-[#7A1228] p-1">
             <X className="w-6 h-6" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} autoComplete="off" className="mb-6">
-          <label className="block text-white text-sm font-medium mb-3 text-center">
+          <label className="block text-[#7A5A64] text-sm font-medium mb-3 text-center">
             Inserisci PIN
           </label>
           <input
@@ -78,25 +78,25 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
             onKeyDown={handleKeyDown}
             placeholder="••••"
             maxLength={4}
-            className={`w-full px-4 py-3 text-center text-2xl font-mono tracking-[0.4em] rounded-xl border-2 bg-white/95 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 ${
-              error ? 'border-red-400 bg-red-50' : 'border-gray-200'
+            className={`w-full px-4 py-3 text-center text-2xl font-mono tracking-[0.4em] rounded-xl border-2 bg-[#FDFAF8] text-[#1C0A10] placeholder-[#7A5A64]/50 focus:outline-none focus:ring-2 focus:ring-[#9B1E35]/30 ${
+              error ? 'border-red-400 bg-red-50' : 'border-[rgba(122,18,40,0.25)]'
             }`}
             autoFocus
           />
-          {error && <p className="text-red-300 text-sm text-center mt-2">PIN non valido</p>}
+          {error && <p className="text-red-600 text-sm text-center mt-2">PIN non valido</p>}
         </form>
 
         <div className="flex gap-3">
           <button
             onClick={handleCancel}
-            className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors"
+            className="flex-1 px-4 py-3 bg-[#E8DDD5] hover:bg-[#DDD0C5] text-[#1C0A10] font-medium rounded-xl transition-colors"
           >
             Annulla
           </button>
           <button
             onClick={handleSubmit}
             disabled={pin.length === 0}
-            className="flex-1 px-4 py-3 bg-violet-600 hover:bg-violet-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
+            className="flex-1 px-4 py-3 bg-[#7A1228] hover:bg-[#9B1E35] disabled:bg-[rgba(122,18,40,0.25)] disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
           >
             Conferma
           </button>

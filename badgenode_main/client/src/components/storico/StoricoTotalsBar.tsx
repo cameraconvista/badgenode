@@ -15,9 +15,7 @@ export default function StoricoTotalsBar({
   return (
     <div className="bn-footer bn-totals-solid bn-border w-full rounded-b-2xl">
       <div className="bn-footer-inner bn-totals-compact">
-        {/* Mini tabella con stesso colgroup per allineamento perfetto */}
         <table className="bn-table__table">
-        {/* Stesso colgroup della tabella principale - unica fonte di verità */}
         <ColGroupStorico />
         
         <tbody>
@@ -25,7 +23,7 @@ export default function StoricoTotalsBar({
             {/* td[1] Data - Giorni lavorati */}
             <td className="bn-table__cell bn-table__cell--left bn-cell">
               <div className="flex items-baseline">
-                <span className="bn-totals-label text-violet-300">Giorni lavorati</span>
+                <span className="bn-totals-label text-white/80">Giorni lavorati</span>
                 <span className="bn-totals-value text-white">{giorniLavorati}</span>
               </div>
             </td>
@@ -41,16 +39,16 @@ export default function StoricoTotalsBar({
 
             {/* td[5] Ore - Totale */}
             <td className="bn-table__cell bn-cell">
-              <div className="text-violet-300 font-semibold text-sm mb-1">Totale</div>
-              <div className="text-yellow-300 font-bold text-base tabular-nums">
+              <div className="text-white/80 font-semibold text-sm mb-1">Totale</div>
+              <div className="text-white font-bold text-base tabular-nums">
                 {formatOre(totaleMensileOre)}
               </div>
             </td>
 
             {/* td[6] Extra - Totale Extra */}
             <td className="bn-table__cell bn-cell">
-              <div className="text-violet-300 font-semibold text-sm mb-1">Totale Extra</div>
-              <div className="text-yellow-400 font-bold text-base tabular-nums">
+              <div className="text-white/80 font-semibold text-sm mb-1">Totale Extra</div>
+              <div className="text-white font-bold text-base tabular-nums">
                 {totaleMensileExtra > 0 ? formatOre(totaleMensileExtra) : '0.00'}
               </div>
             </td>
