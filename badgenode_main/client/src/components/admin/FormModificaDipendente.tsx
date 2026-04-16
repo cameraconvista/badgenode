@@ -1,6 +1,6 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User } from 'lucide-react';
+import { User } from "@/lib/icons";
 import { UtenteInput } from '@/services/utenti.service';
 
 interface FormModificaDipendenteProps {

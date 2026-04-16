@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { History } from 'lucide-react';
+import { History } from "@/lib/icons";
 import { Utente } from '@/services/utenti.service';
 import ArchivioActions from './ArchivioActions';
 import EmptyState from './EmptyState';

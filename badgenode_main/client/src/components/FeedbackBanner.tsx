@@ -1,4 +1,4 @@
-import { CheckCircle, XCircle, X } from 'lucide-react';
+import { CheckCircle, XCircle, X } from "@/lib/icons";
 import { Button } from '@/components/ui/button';
 
 interface FeedbackBannerProps {

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
-import { X, Archive, AlertTriangle } from 'lucide-react';
+import { X, Archive, AlertTriangle } from "@/lib/icons";
 import { Utente } from '@/services/utenti.service';
 
 interface ArchiviaDialogProps {

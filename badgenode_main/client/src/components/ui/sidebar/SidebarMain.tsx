@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cva, VariantProps } from 'class-variance-authority';
-import { PanelLeftIcon } from 'lucide-react';
+import { PanelLeftIcon } from "@/lib/icons";
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X } from "@/lib/icons";
 import { UtenteInput, Utente } from '@/services/utenti.service';
 import FormModificaDipendente from './FormModificaDipendente';
 

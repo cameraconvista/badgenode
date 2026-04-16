@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from 'lucide-react';
+import { User } from "@/lib/icons";
 import StoricoHeader from '@/components/storico/StoricoHeader';
 import StoricoFilters from '@/components/storico/StoricoFilters';
 import StoricoTable from '@/components/storico/StoricoTable';

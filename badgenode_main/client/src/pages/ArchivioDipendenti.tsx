@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Archive, Plus } from 'lucide-react';
+import { ArrowLeft, Archive, Plus } from "@/lib/icons";
 import ArchivioTable from '@/components/admin/ArchivioTable';
 import ModaleNuovoDipendente from '@/components/admin/ModaleNuovoDipendente';
 import ModaleModificaDipendente from '@/components/admin/ModaleModificaDipendente';

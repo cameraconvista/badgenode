@@ -1,4 +1,4 @@
-import { Search, Users } from 'lucide-react';
+import { Search, Users } from "@/lib/icons";
 
 interface EmptyStateProps {
   hasSearch: boolean;

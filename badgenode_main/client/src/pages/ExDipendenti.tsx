@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'wouter';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from "@/lib/icons";
 import ExDipendentiTable from '@/components/admin/ExDipendentiTable';
 import { useExDipendentiQuery } from '@/hooks/useExDipendenti';
 import { RestoreDialog, DeleteExDialog } from '@/components/admin/ConfirmDialogs';

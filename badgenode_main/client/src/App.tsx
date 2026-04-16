@@ -1,3 +1,4 @@
+import { IconContext } from "@phosphor-icons/react";
 import { Switch, Route } from 'wouter';
 import { Suspense, lazy } from 'react';
 import { queryClient } from './lib/queryClient';
@@ -38,14 +39,16 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Router />
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <IconContext.Provider value={{ weight: "light", size: 20 }}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <AuthProvider>
+            <Toaster />
+            <Router />
+          </AuthProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </IconContext.Provider>
   );
 }
 

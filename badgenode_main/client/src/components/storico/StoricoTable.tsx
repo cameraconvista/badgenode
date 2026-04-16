@@ -1,4 +1,4 @@
-import { Edit } from 'lucide-react';
+import { Edit } from "@/lib/icons";
 import { Button } from '@/components/ui/button';
 import { formatOre, formatDataEstesa, getMeseItaliano } from '@/lib/time';
 import { useEffect } from 'react';

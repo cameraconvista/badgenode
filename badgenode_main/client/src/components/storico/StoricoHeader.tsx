@@ -1,4 +1,4 @@
-import { FileSpreadsheet, FileText, ArrowLeft } from 'lucide-react';
+import { FileSpreadsheet, FileText, ArrowLeft } from "@/lib/icons";
 import { useLocation } from 'wouter';
 
 interface StoricoHeaderProps {

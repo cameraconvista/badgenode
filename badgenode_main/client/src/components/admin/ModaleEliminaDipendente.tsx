@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, AlertTriangle } from 'lucide-react';
+import { X, AlertTriangle } from "@/lib/icons";
 import { Utente } from '@/services/utenti.service';
 
 interface ModaleEliminaDipendenteProps {

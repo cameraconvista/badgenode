@@ -1,4 +1,4 @@
-import { Settings } from 'lucide-react';
+import { Settings } from "@/lib/icons";
 
 interface KeyButtonProps {
   value: string;

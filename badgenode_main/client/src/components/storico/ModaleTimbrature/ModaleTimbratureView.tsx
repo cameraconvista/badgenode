@@ -1,6 +1,6 @@
 import ModalKit from '@/components/ui/ModalKit';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from "@/lib/icons";
 import ConfirmFullscreen from '@/components/ui/ConfirmFullscreen';
 import { formatDataItaliana } from '@/lib/time';
 import { toInputDate } from '@/lib/dateFmt';

@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, AlertTriangle } from "lucide-react";
+import { X, AlertTriangle } from "@/lib/icons";
 import { createPortal } from "react-dom";
 import { useId, useRef, useEffect } from "react";
 

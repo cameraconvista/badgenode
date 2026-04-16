@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { History, Users, AlertCircle } from 'lucide-react';
+import { History, Users, AlertCircle } from "@/lib/icons";
 import { ExDipendente } from '@/services/utenti.service';
 
 interface ExDipendentiTableProps {

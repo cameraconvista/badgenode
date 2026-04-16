@@ -1,5 +1,5 @@
 import * as Select from "@radix-ui/react-select";
-import { ChevronDown, ChevronUp, Check } from "lucide-react";
+import { ChevronDown, ChevronUp, Check } from "@/lib/icons";
 
 interface TimeSelectProps {
   value: string;

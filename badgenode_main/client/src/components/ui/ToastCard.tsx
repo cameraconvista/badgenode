@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LogIn, LogOut, AlertCircle } from "lucide-react";
+import { LogIn, LogOut, AlertCircle } from "@/lib/icons";
 
 export type ToastVariant = 'success-entrata' | 'success-uscita' | 'error';
 
@@ -97,7 +97,7 @@ export default function ToastCard({
           {/* Icona grande */}
           <div className="flex flex-col items-center pt-8 pb-2 px-6">
             <div className={`rounded-full p-4 mb-4 ${isError ? 'bg-rose-100' : 'bg-white/20'}`}>
-              <Icon className="w-12 h-12" strokeWidth={2} />
+              <Icon className="w-12 h-12" />
             </div>
 
             {/* Nome dipendente */}

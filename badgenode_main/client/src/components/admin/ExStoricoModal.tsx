@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X } from "@/lib/icons";
 import { aggregateTimbratureByGiornoLogico } from '@/lib/storico/aggregate';
 import { formatOre } from '@/lib/time';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Edit, Archive, Trash2 } from 'lucide-react';
+import { Edit, Archive, Trash2 } from "@/lib/icons";
 import { Utente } from '@/services/utenti.service';
 import { ArchiviaDialog } from './ConfirmDialogs';
 
