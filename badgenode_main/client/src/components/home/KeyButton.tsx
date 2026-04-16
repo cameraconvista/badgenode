@@ -21,14 +21,14 @@ export default function KeyButton({ value, onClick, className = '' }: KeyButtonP
         md:w-[76px] md:h-[76px]
         lg:w-[80px] lg:h-[80px]
         rounded-full
-        text-xl sm:text-[1.375rem] md:text-2xl font-medium text-white
-        bg-[#3a0a57]
-        border-2 border-[rgba(231,116,240,0.4)]
-        hover:border-[rgba(231,116,240,0.7)]
-        active:bg-[rgba(231,116,240,0.15)]
+        text-xl sm:text-[1.375rem] md:text-2xl font-medium text-[#1C0A10]
+        bg-[#F5EBE0]
+        border-2 border-[rgba(122,18,40,0.25)]
+        hover:border-[rgba(122,18,40,0.55)]
+        active:bg-[rgba(122,18,40,0.10)]
         active:scale-95
         transition-colors duration-100
-        focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#e774f0]
+        focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#7A1228]
         flex items-center justify-center
         touch-manipulation
         ${className}

@@ -86,36 +86,36 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
         ref={modalRef}
         className="w-full max-w-3xl overflow-hidden rounded-3xl shadow-2xl border-2"
         style={{
-          backgroundColor: '#2b0048',
-          borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)'
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(122, 18, 40, 0.25)',
+          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.10)'
         }}
         role="dialog" aria-modal="true" aria-labelledby="modal-title-storico"
       >
-        <div className="flex items-center justify-between p-6 border-b border-gray-600">
-          <h2 id="modal-title-storico" className="text-xl font-bold text-white">
+        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
+          <h2 id="modal-title-storico" className="text-xl font-bold text-[#1C0A10]">
             Storico Timbrature — {utente.nome} {utente.cognome}
           </h2>
-          <Button ref={closeBtnRef} variant="ghost" size="sm" onClick={onClose} className="p-2 hover:bg-white/10 text-gray-300 hover:text-white" aria-label="Chiudi modale">
+          <Button ref={closeBtnRef} variant="ghost" size="sm" onClick={onClose} className="p-2 hover:bg-white/10 text-[#7A5A64] hover:text-[#1C0A10]" aria-label="Chiudi modale">
             <X className="w-5 h-5" />
           </Button>
         </div>
 
         <div className="p-6 space-y-4">
           {archiviatoIl && (
-            <p className="text-sm text-gray-300">Fino a: <span className="font-mono text-violet-300">{new Date(archiviatoIl).toLocaleDateString('it-IT')}</span></p>
+            <p className="text-sm text-[#7A5A64]">Fino a: <span className="font-mono text-[#7A1228]">{new Date(archiviatoIl).toLocaleDateString('it-IT')}</span></p>
           )}
 
           {isLoading ? (
             <div className="flex items-center justify-center py-10">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-400" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7A1228]" />
             </div>
           ) : giornaliere.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-300">Nessuna timbratura registrata</p>
+              <p className="text-[#7A5A64]">Nessuna timbratura registrata</p>
             </div>
           ) : (
-            <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50 max-h-[60vh]">
+            <div className="border border-[rgba(122,18,40,0.15)] rounded-lg overflow-hidden bg-[#F8F3EE] max-h-[60vh]">
               <table className="w-full table-fixed border-collapse">
                 <colgroup>
                   <col style={{ width: '120px' }} />
@@ -127,23 +127,23 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
                 </colgroup>
                 <thead className="sticky top-0 z-10 bg-[rgba(255,255,255,0.06)] h-[44px]">
                   <tr>
-                    <th className="px-4 text-left text-sm font-semibold text-white/90">Data</th>
-                    <th className="px-4 text-left text-sm font-semibold text-white/90">Mese</th>
-                    <th className="px-4 text-center text-sm font-semibold text-white/90">Entrata</th>
-                    <th className="px-4 text-center text-sm font-semibold text-white/90">Uscita</th>
-                    <th className="px-4 text-center text-sm font-semibold text-white/90">Ore</th>
-                    <th className="px-4 text-center text-sm font-semibold text-white/90">Extra</th>
+                    <th className="px-4 text-left text-sm font-semibold text-[#1C0A10]">Data</th>
+                    <th className="px-4 text-left text-sm font-semibold text-[#1C0A10]">Mese</th>
+                    <th className="px-4 text-center text-sm font-semibold text-[#1C0A10]">Entrata</th>
+                    <th className="px-4 text-center text-sm font-semibold text-[#1C0A10]">Uscita</th>
+                    <th className="px-4 text-center text-sm font-semibold text-[#1C0A10]">Ore</th>
+                    <th className="px-4 text-center text-sm font-semibold text-[#1C0A10]">Extra</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700/60">
                   {giornaliere.map((g) => (
                     <tr key={g.giorno} className="hover:bg-white/5">
-                      <td className="px-4 py-2 text-white text-sm">{formatDate(g.giorno)}</td>
-                      <td className="px-4 py-2 text-left text-gray-300 text-sm">{g.mese_label}</td>
-                      <td className="px-4 py-2 text-center text-gray-200 tabular-nums">{g.entrata || ''}</td>
-                      <td className="px-4 py-2 text-center text-gray-200 tabular-nums">{g.uscita || ''}</td>
-                      <td className="px-4 py-2 text-center text-gray-200 tabular-nums">{formatOre(g.ore)}</td>
-                      <td className="px-4 py-2 text-center text-gray-200 tabular-nums">{formatOre(g.extra)}</td>
+                      <td className="px-4 py-2 text-[#1C0A10] text-sm">{formatDate(g.giorno)}</td>
+                      <td className="px-4 py-2 text-left text-[#7A5A64] text-sm">{g.mese_label}</td>
+                      <td className="px-4 py-2 text-center text-[#1C0A10] tabular-nums">{g.entrata || ''}</td>
+                      <td className="px-4 py-2 text-center text-[#1C0A10] tabular-nums">{g.uscita || ''}</td>
+                      <td className="px-4 py-2 text-center text-[#1C0A10] tabular-nums">{formatOre(g.ore)}</td>
+                      <td className="px-4 py-2 text-center text-[#1C0A10] tabular-nums">{formatOre(g.extra)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -152,15 +152,15 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
           )}
         </div>
 
-        <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
-          <Button type="button" onClick={onClose} className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all">
+        <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
+          <Button type="button" onClick={onClose} className="bg-white border-2 border-[#7A1228] text-[#7A1228] hover:bg-[#F5EBE0] hover:shadow-md transition-all">
             Chiudi
           </Button>
           <a
             href={csvBlobUrl || undefined}
             download={fileName}
             onClick={(e) => { if (!csvBlobUrl) e.preventDefault(); }}
-            className={`inline-flex items-center justify-center rounded-md border-2 px-4 py-2 text-sm font-medium ${csvBlobUrl ? 'bg-green-600 border-green-600 text-white hover:bg-green-700' : 'bg-gray-600 border-gray-600 text-white/60 cursor-not-allowed'}`}
+            className={`inline-flex items-center justify-center rounded-md border-2 px-4 py-2 text-sm font-medium ${csvBlobUrl ? 'bg-green-600 border-green-600 text-white hover:bg-green-700' : 'bg-[#E8DDD5] border-[#E8DDD5] text-[#7A5A64]/60 cursor-not-allowed'}`}
           >
             Esporta CSV
           </a>

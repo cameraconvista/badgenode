@@ -4,6 +4,13 @@
 
 **BadgeNode** è un sistema enterprise di timbratura dipendenti (entrata/uscita) basato su PIN, progettato per l'uso su tablet o kiosk. Attualmente in uso attivo nel ristorante del proprietario.
 
+## Tema Visivo (Aggiornato Aprile 2026)
+
+Palette light professionale: **sfondo crema caldo** (`#F8F3EE`) + **bordeaux scuro elegante** (`#7A1228`) come colore dominante. File CSS principali:
+- `client/src/index.css` — CSS variables (`:root`)
+- `client/src/styles/badgenode.css` — classi utili BN + overrides
+- `client/src/styles/bn-table.css` — stile tabelle storico/archivio
+
 ## Stack Tecnologico
 
 | Layer | Tecnologia |

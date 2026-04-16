@@ -113,24 +113,24 @@ export default function ModaleModificaDipendente({
         ref={modalRef}
         className="w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl border-2"
         style={{
-          backgroundColor: '#2b0048',
-          borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: '0 0 20px rgba(231, 116, 240, 0.3), inset 0 0 20px rgba(231, 116, 240, 0.1)',
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(122, 18, 40, 0.25)',
+          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.10)',
         }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-600">
-          <h2 id="modal-title" className="text-xl font-bold text-white">
+        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
+          <h2 id="modal-title" className="text-xl font-bold text-[#1C0A10]">
             Modifica Dipendente
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-white/10 text-gray-300 hover:text-white"
+            className="p-2 hover:bg-white/10 text-[#7A5A64] hover:text-white"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -150,13 +150,13 @@ export default function ModaleModificaDipendente({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
+          <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
               disabled={isLoading}
-              className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+              className="bg-white border-2 border-[#7A1228] text-[#7A1228] hover:bg-[#F5EBE0] hover:shadow-md transition-all"
             >
               Annulla
             </Button>

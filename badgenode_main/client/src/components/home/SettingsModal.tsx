@@ -47,14 +47,14 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
       <div
         className="rounded-2xl p-6 shadow-2xl border-2 max-w-sm w-full"
         style={{
-          backgroundColor: '#2b0048',
+          backgroundColor: '#FFFFFF',
           borderColor: 'rgba(231, 116, 240, 0.5)',
           boxShadow: '0 0 20px rgba(231, 116, 240, 0.3)',
         }}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-white">Codice Admin</h2>
-          <button onClick={handleCancel} className="text-white hover:text-gray-300 p-1">
+          <h2 className="text-xl font-bold text-[#1C0A10]">Codice Admin</h2>
+          <button onClick={handleCancel} className="text-white hover:text-[#7A5A64] p-1">
             <X className="w-6 h-6" />
           </button>
         </div>

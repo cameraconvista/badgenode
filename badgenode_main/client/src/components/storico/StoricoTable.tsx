@@ -59,9 +59,9 @@ export default function StoricoTable({
 
   if (isLoading) {
     return (
-      <div className="bg-gray-800/50 rounded-lg p-8">
+      <div className="bg-white/70 border border-[rgba(122,18,40,0.12)] rounded-lg p-8">
         <div className="flex items-center justify-center">
-          <span className="text-gray-300">Caricamento storico...</span>
+          <span className="text-[#7A5A64]">Caricamento storico...</span>
         </div>
       </div>
     );

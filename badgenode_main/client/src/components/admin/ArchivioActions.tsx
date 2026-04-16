@@ -61,7 +61,7 @@ export default function ArchivioActions({
         className="p-1 no-default-hover-elevate no-default-active-elevate"
         title="Archivia dipendente"
       >
-        <Archive className="icon-action archive text-yellow-400/90 hover:text-yellow-300" />
+        <Archive className="icon-action archive text-amber-600 hover:text-amber-700" />
       </Button>
 
       {/* Cestino rosso */}
@@ -72,7 +72,7 @@ export default function ArchivioActions({
         className="p-1 no-default-hover-elevate no-default-active-elevate"
         title="Elimina dipendente"
       >
-        <Trash2 className="icon-action trash text-red-400 hover:text-red-300" />
+        <Trash2 className="icon-action trash text-red-600 hover:text-red-700" />
       </Button>
 
       {/* Dialogo archiviazione */}

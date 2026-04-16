@@ -42,7 +42,7 @@ export default function ConfirmFullscreen({
           onInteractOutside={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
-          className="fixed z-[9999] pointer-events-auto left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-md rounded-2xl bg-[#1b1126] text-white shadow-2xl ring-1 ring-white/10 p-6"
+          className="fixed z-[9999] pointer-events-auto left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] max-w-md rounded-2xl bg-white text-[#1C0A10] shadow-2xl ring-1 ring-[rgba(122,18,40,0.20)] p-6"
           aria-labelledby={titleId}
           aria-describedby={descId}
         >

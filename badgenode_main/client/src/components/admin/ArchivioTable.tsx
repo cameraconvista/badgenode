@@ -44,8 +44,8 @@ export default function ArchivioTable({
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Caricamento dipendenti...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7A1228] mx-auto mb-4"></div>
+          <p className="text-[#7A5A64]">Caricamento dipendenti...</p>
         </div>
       </div>
     );
@@ -54,7 +54,7 @@ export default function ArchivioTable({
   return (
     <div className="h-full flex flex-col">
       {/* Tabella TableKit Standard */}
-      <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50 flex-1 flex flex-col">
+      <div className="border border-[rgba(122,18,40,0.15)] rounded-lg overflow-hidden bg-white flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
           <table className="w-full table-fixed border-collapse bn-archivio bn-nohover archivio-table">
             <colgroup>
@@ -68,13 +68,13 @@ export default function ArchivioTable({
             </colgroup>
             <thead className="sticky top-0 z-10 bn-solid-surface h-[48px]">
               <tr>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Storico</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Storico</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">
                   PIN
                 </th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Nome</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Cognome</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Azioni</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Nome</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Cognome</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Azioni</th>
               </tr>
             </thead>
             <tbody>
@@ -102,15 +102,15 @@ export default function ArchivioTable({
                       </Button>
                     </td>
                     <td className="bn-cell px-4 text-center tabular-nums">
-                      <span className="font-mono font-medium text-base text-violet-400">
+                      <span className="font-mono font-medium text-base text-[#7A1228]">
                         {utente.pin.toString().padStart(2, '0')}
                       </span>
                     </td>
                     <td className="bn-cell px-4 text-center">
-                      <span className="font-medium text-base text-white">{utente.nome}</span>
+                      <span className="font-medium text-base text-[#1C0A10]">{utente.nome}</span>
                     </td>
                     <td className="bn-cell px-4 text-center">
-                      <span className="font-medium text-base text-white">{utente.cognome}</span>
+                      <span className="font-medium text-base text-[#1C0A10]">{utente.cognome}</span>
                     </td>
                     <td className="bn-cell px-4">
                       <div className="bn-actions flex items-center justify-center gap-3">

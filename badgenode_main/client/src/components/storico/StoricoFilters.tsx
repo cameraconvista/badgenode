@@ -117,41 +117,41 @@ export default function StoricoFilters({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Periodo Rapido */}
         <div className="space-y-2">
-          <Label className="text-gray-200 text-base">Periodo</Label>
+          <Label className="text-[#7A5A64] text-base">Periodo</Label>
           <Select value={selectedPeriod} onValueChange={handlePeriodChange} disabled={isLoading}>
             <SelectTrigger
               className={
-                `bg-gray-700/50 border border-gray-600 text-white rounded-xl h-9 px-3 pr-8 text-base focus:border-violet-400`
+                `bg-[#FDFAF8] border border-[rgba(122,18,40,0.20)] text-[#1C0A10] rounded-xl h-9 px-3 pr-8 text-base focus:border-violet-400`
               }
             >
               <SelectValue placeholder="Periodo" />
             </SelectTrigger>
             <SelectContent
               position="popper"
-              className="z-50 bg-[#1a1228] border border-violet-800 rounded-xl shadow-lg text-white"
+              className="z-50 bg-white border border-[rgba(122,18,40,0.18)] rounded-xl shadow-lg text-[#1C0A10]"
               sideOffset={8}
               align="start"
             >
               <SelectItem
-                className="text-white data-[highlighted]:bg-violet-600/30 data-[highlighted]:text-white data-[state=checked]:bg-violet-700/50 data-[state=checked]:text-white cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
+                className="text-[#1C0A10] data-[highlighted]:bg-[rgba(122,18,40,0.08)] data-[highlighted]:text-[#1C0A10] data-[state=checked]:bg-[rgba(122,18,40,0.12)] data-[state=checked]:text-[#1C0A10] cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
                 value="corrente"
               >
                 Mese corrente
               </SelectItem>
               <SelectItem
-                className="text-white data-[highlighted]:bg-violet-600/30 data-[highlighted]:text-white data-[state=checked]:bg-violet-700/50 data-[state=checked]:text-white cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
+                className="text-[#1C0A10] data-[highlighted]:bg-[rgba(122,18,40,0.08)] data-[highlighted]:text-[#1C0A10] data-[state=checked]:bg-[rgba(122,18,40,0.12)] data-[state=checked]:text-[#1C0A10] cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
                 value="precedente"
               >
                 Mese precedente
               </SelectItem>
               <SelectItem
-                className="text-white data-[highlighted]:bg-violet-600/30 data-[highlighted]:text-white data-[state=checked]:bg-violet-700/50 data-[state=checked]:text-white cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
+                className="text-[#1C0A10] data-[highlighted]:bg-[rgba(122,18,40,0.08)] data-[highlighted]:text-[#1C0A10] data-[state=checked]:bg-[rgba(122,18,40,0.12)] data-[state=checked]:text-[#1C0A10] cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
                 value="due_mesi_fa"
               >
                 2 mesi fa
               </SelectItem>
               <SelectItem
-                className="text-white data-[highlighted]:bg-violet-600/30 data-[highlighted]:text-white data-[state=checked]:bg-violet-700/50 data-[state=checked]:text-white cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
+                className="text-[#1C0A10] data-[highlighted]:bg-[rgba(122,18,40,0.08)] data-[highlighted]:text-[#1C0A10] data-[state=checked]:bg-[rgba(122,18,40,0.12)] data-[state=checked]:text-[#1C0A10] cursor-pointer select-none rounded-md px-3 py-2 outline-none pl-8"
                 value="personalizzato"
               >
                 Personalizzato
@@ -162,12 +162,12 @@ export default function StoricoFilters({
 
         {/* Data Dal */}
         <div className="space-y-2">
-          <Label htmlFor="dal" className="text-gray-200 text-base">
+          <Label htmlFor="dal" className="text-[#7A5A64] text-base">
             Dal
           </Label>
           <div className="relative">
             <Calendar
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white cursor-pointer z-10"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#7A5A64] cursor-pointer z-10"
               onClick={() => handleCalendarClick('dal')}
             />
             <Input
@@ -176,7 +176,7 @@ export default function StoricoFilters({
               type="date"
               value={filters.dal}
               onChange={(e) => handleDateChange('dal', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer pl-10"
+              className="bg-[#FDFAF8] border-[rgba(122,18,40,0.20)] text-[#1C0A10] focus:border-[#7A1228] text-base cursor-pointer pl-10"
               disabled={isLoading}
             />
           </div>
@@ -184,12 +184,12 @@ export default function StoricoFilters({
 
         {/* Data Al */}
         <div className="space-y-2">
-          <Label htmlFor="al" className="text-gray-200 text-base">
+          <Label htmlFor="al" className="text-[#7A5A64] text-base">
             Al
           </Label>
           <div className="relative">
             <Calendar
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white cursor-pointer z-10"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#7A5A64] cursor-pointer z-10"
               onClick={() => handleCalendarClick('al')}
             />
             <Input
@@ -198,7 +198,7 @@ export default function StoricoFilters({
               type="date"
               value={filters.al}
               onChange={(e) => handleDateChange('al', e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-white focus:border-violet-400 text-base cursor-pointer pl-10"
+              className="bg-[#FDFAF8] border-[rgba(122,18,40,0.20)] text-[#1C0A10] focus:border-[#7A1228] text-base cursor-pointer pl-10"
               disabled={isLoading}
             />
           </div>

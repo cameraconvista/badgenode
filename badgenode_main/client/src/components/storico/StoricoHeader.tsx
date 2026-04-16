@@ -23,7 +23,7 @@ export default function StoricoHeader({
   };
 
   return (
-    <div className="bg-gray-800/50 rounded-lg p-6 flex-shrink-0 relative">
+    <div className="bg-[#F5EBE0] border border-[rgba(122,18,40,0.15)] rounded-lg p-6 flex-shrink-0 relative">
       {/* Pulsante TORNA in alto a sinistra */}
       <div className="absolute top-4 left-4">
         <button 
@@ -39,15 +39,15 @@ export default function StoricoHeader({
       <div className="absolute top-4 right-4 flex gap-3">
         <button 
           onClick={onExportPDF}
-          className="bn-export-btn border border-white/10"
+          className="bn-export-btn border border-[rgba(122,18,40,0.20)]"
         >
-          <FileText className="bn-export-icon text-red-400" aria-label="Esporta PDF" />
+          <FileText className="bn-export-icon text-red-600" aria-label="Esporta PDF" />
         </button>
         <button 
           onClick={onExportXLS}
-          className="bn-export-btn border border-white/10"
+          className="bn-export-btn border border-[rgba(122,18,40,0.20)]"
         >
-          <FileSpreadsheet className="bn-export-icon text-green-400" aria-label="Esporta Excel" />
+          <FileSpreadsheet className="bn-export-icon text-green-700" aria-label="Esporta Excel" />
         </button>
       </div>
 
@@ -58,8 +58,8 @@ export default function StoricoHeader({
 
       <div className="flex flex-col items-center gap-4">
         <div className="text-center">
-          <h1 className="text-lg font-normal text-white mb-3">Storico Timbrature</h1>
-          <p className="text-violet-300 text-3xl font-semibold">
+          <h1 className="text-lg font-normal text-[#7A5A64] mb-3">Storico Timbrature</h1>
+          <p className="text-[#7A1228] text-3xl font-semibold">
             {dipendente.nome} {dipendente.cognome}
           </p>
         </div>

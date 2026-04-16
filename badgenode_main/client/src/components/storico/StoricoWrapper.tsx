@@ -37,10 +37,10 @@ export default function StoricoWrapper() {
     // Se non c'è PIN e stiamo ancora caricando utenti, mostra loading
     if (!utenti || utenti.length === 0) {
       return (
-        <div className="min-h-screen bg-gray-900 p-4">
+        <div className="min-h-screen bg-[#F8F3EE] p-4">
           <div className="max-w-7xl mx-auto">
-            <div className="bg-gray-800/50 rounded-lg p-8 text-center">
-              <span className="text-gray-300">Caricamento utenti...</span>
+            <div className="bg-white/70 border border-[rgba(122,18,40,0.12)] rounded-lg p-8 text-center">
+              <span className="text-[#7A5A64]">Caricamento utenti...</span>
             </div>
           </div>
         </div>

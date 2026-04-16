@@ -79,23 +79,23 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
         ref={modalRef}
         className="w-full max-w-lg overflow-hidden rounded-3xl border-2 bn-modal-solid z-[1001]"
         style={{
-          backgroundColor: '#2b0048',
-          borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: 'none',
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(122, 18, 40, 0.25)',
+          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.08)',
         }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title-delete-ex"
       >
-        <div className="flex items-center justify-between p-6 border-b border-gray-600">
-          <h2 id="modal-title-delete-ex" className="text-xl font-bold text-white">
+        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
+          <h2 id="modal-title-delete-ex" className="text-xl font-bold text-[#1C0A10]">
             {!showSecondConfirm ? 'Elimina definitivamente' : 'Conferma eliminazione'}
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-transparent text-gray-300 hover:text-white"
+            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-white"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -105,33 +105,33 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
         <div className="p-6 space-y-4">
           <div className="flex justify-center">
             <div className="p-3 rounded-full bg-red-600/20">
-              <AlertTriangle className="w-8 h-8 text-red-400" />
+              <AlertTriangle className="w-8 h-8 text-red-600" />
             </div>
           </div>
           <div className="text-center space-y-3">
             {!showSecondConfirm ? (
               <>
-                <p className="text-white text-lg">Questa operazione è irreversibile.</p>
-                <p className="text-xl font-bold text-white">{utente.nome} {utente.cognome}</p>
-                <p className="text-gray-300">PIN archiviato: <span className="font-mono text-violet-400">{utente.pin}</span></p>
+                <p className="text-[#1C0A10] text-lg">Questa operazione è irreversibile.</p>
+                <p className="text-xl font-bold text-[#1C0A10]">{utente.nome} {utente.cognome}</p>
+                <p className="text-[#7A5A64]">PIN archiviato: <span className="font-mono text-[#7A1228]">{utente.pin}</span></p>
               </>
             ) : (
               <>
-                <p className="text-red-400 text-lg font-bold">Confermi l'eliminazione definitiva?</p>
-                <p className="text-sm text-gray-300">Le timbrature esistenti non verranno toccate.</p>
+                <p className="text-red-600 text-lg font-bold">Confermi l'eliminazione definitiva?</p>
+                <p className="text-sm text-[#7A5A64]">Le timbrature esistenti non verranno toccate.</p>
               </>
             )}
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
+        <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
           <Button
             ref={cancelButtonRef}
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="bg-white border-2 border-violet-600 text-violet-600"
+            className="bg-white border-2 border-[#7A1228] text-[#7A1228]"
           >
             Annulla
           </Button>
@@ -211,23 +211,23 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
         ref={modalRef}
         className="w-full max-w-lg overflow-hidden rounded-3xl border-2 bn-modal-solid z-[1001]"
         style={{
-          backgroundColor: '#2b0048',
-          borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: 'none',
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(122, 18, 40, 0.25)',
+          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.08)',
         }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title-restore"
       >
-        <div className="flex items-center justify-between p-6 border-b border-gray-600">
-          <h2 id="modal-title-restore" className="text-xl font-bold text-white">
+        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
+          <h2 id="modal-title-restore" className="text-xl font-bold text-[#1C0A10]">
             {!showSecondConfirm ? 'Ripristina Ex-Dipendente' : 'Conferma Ripristino'}
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-transparent text-gray-300 hover:text-white"
+            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-white"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -237,21 +237,21 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
         <div className="p-6 space-y-4">
           <div className="flex justify-center">
             <div className="p-3 rounded-full bg-green-600/20">
-              <AlertTriangle className="w-8 h-8 text-green-400" />
+              <AlertTriangle className="w-8 h-8 text-green-700" />
             </div>
           </div>
 
           <div className="text-center space-y-3">
             {!showSecondConfirm ? (
               <>
-                <p className="text-white text-lg">Vuoi ripristinare</p>
-                <p className="text-xl font-bold text-white">{utente.nome} {utente.cognome}</p>
-                <p className="text-gray-300">PIN archiviato: <span className="font-mono text-violet-400">{utente.pin}</span></p>
+                <p className="text-[#1C0A10] text-lg">Vuoi ripristinare</p>
+                <p className="text-xl font-bold text-[#1C0A10]">{utente.nome} {utente.cognome}</p>
+                <p className="text-[#7A5A64]">PIN archiviato: <span className="font-mono text-[#7A1228]">{utente.pin}</span></p>
               </>
             ) : (
               <>
-                <p className="text-green-400 text-lg font-bold">Confermi il ripristino?</p>
-                <p className="text-sm text-gray-300">Assegna un <span className="font-semibold">nuovo PIN</span> (1-99):</p>
+                <p className="text-green-700 text-lg font-bold">Confermi il ripristino?</p>
+                <p className="text-sm text-[#7A5A64]">Assegna un <span className="font-semibold">nuovo PIN</span> (1-99):</p>
                 <div className="mt-3">
                   <input
                     inputMode="numeric"
@@ -260,10 +260,10 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
                     value={newPin}
                     onChange={(e) => setNewPin(e.target.value.replace(/[^0-9]/g, ''))}
                     placeholder="Nuovo PIN"
-                    className="w-32 text-center p-3 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-400 focus:border-violet-400 focus:outline-none"
+                    className="w-32 text-center p-3 rounded-lg bg-gray-800 border border-[rgba(122,18,40,0.15)] text-white placeholder-gray-400 focus:border-[#7A1228] focus:outline-none"
                   />
                   {!isPinValid() && newPin !== '' && (
-                    <p className="text-xs text-red-400 mt-1">PIN deve essere tra 1 e 99</p>
+                    <p className="text-xs text-red-600 mt-1">PIN deve essere tra 1 e 99</p>
                   )}
                 </div>
               </>
@@ -271,14 +271,14 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
+        <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
           <Button
             ref={cancelButtonRef}
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="bg-white border-2 border-violet-600 text-violet-600"
+            className="bg-white border-2 border-[#7A1228] text-[#7A1228]"
           >
             Annulla
           </Button>
@@ -370,24 +370,24 @@ export function ArchiviaDialog({
         ref={modalRef}
         className="w-full max-w-lg overflow-hidden rounded-3xl border-2 bn-modal-solid z-[1001]"
         style={{
-          backgroundColor: '#2b0048',
-          borderColor: 'rgba(231, 116, 240, 0.6)',
-          boxShadow: 'none',
+          backgroundColor: '#FFFFFF',
+          borderColor: 'rgba(122, 18, 40, 0.25)',
+          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.08)',
         }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-600">
-          <h2 id="modal-title" className="text-xl font-bold text-white">
+        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
+          <h2 id="modal-title" className="text-xl font-bold text-[#1C0A10]">
             {!showSecondConfirm ? 'Archivia Dipendente' : 'Conferma Archiviazione'}
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-transparent text-gray-300 hover:text-white"
+            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-white"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -407,12 +407,12 @@ export function ArchiviaDialog({
           <div className="text-center space-y-3">
             {!showSecondConfirm ? (
               <>
-                <p className="text-white text-lg">Vuoi archiviare</p>
-                <p className="text-xl font-bold text-white">
+                <p className="text-[#1C0A10] text-lg">Vuoi archiviare</p>
+                <p className="text-xl font-bold text-[#1C0A10]">
                   {utente.nome} {utente.cognome}
                 </p>
-                <p className="text-gray-300">
-                  PIN: <span className="font-mono text-violet-400">{utente.pin}</span>
+                <p className="text-[#7A5A64]">
+                  PIN: <span className="font-mono text-[#7A1228]">{utente.pin}</span>
                 </p>
               </>
             ) : (
@@ -420,13 +420,13 @@ export function ArchiviaDialog({
                 <p className="text-yellow-400 text-lg font-bold">
                   Confermi l'archiviazione definitiva di
                 </p>
-                <p className="text-xl font-bold text-white">
+                <p className="text-xl font-bold text-[#1C0A10]">
                   {utente.nome} {utente.cognome}
                 </p>
                 
                 {/* Campo motivo opzionale */}
                 <div className="mt-4 text-left">
-                  <label htmlFor="reason" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="reason" className="block text-sm font-medium text-[#7A5A64] mb-2">
                     Motivo archiviazione (opzionale)
                   </label>
                   <textarea
@@ -434,11 +434,11 @@ export function ArchiviaDialog({
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Es: Dimissioni, fine contratto..."
-                    className="w-full p-3 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-400 focus:border-violet-400 focus:outline-none resize-none"
+                    className="w-full p-3 rounded-lg bg-gray-800 border border-[rgba(122,18,40,0.15)] text-white placeholder-gray-400 focus:border-[#7A1228] focus:outline-none resize-none"
                     rows={3}
                     maxLength={200}
                   />
-                  <p className="text-xs text-gray-400 mt-1">{reason.length}/200 caratteri</p>
+                  <p className="text-xs text-[#7A5A64] mt-1">{reason.length}/200 caratteri</p>
                 </div>
               </>
             )}
@@ -459,14 +459,14 @@ export function ArchiviaDialog({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 p-6 border-t border-gray-600">
+        <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
           <Button
             ref={cancelButtonRef}
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="bg-white border-2 border-violet-600 text-violet-600 hover:bg-violet-50 hover:shadow-md transition-all"
+            className="bg-white border-2 border-[#7A1228] text-[#7A1228] hover:bg-[#F5EBE0] hover:shadow-md transition-all"
           >
             Annulla
           </Button>

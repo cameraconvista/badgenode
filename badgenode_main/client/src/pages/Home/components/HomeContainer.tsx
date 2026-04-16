@@ -147,9 +147,9 @@ export default function HomeContainer({
     : undefined;
 
   return (
-    <div className="fixed inset-0 flex h-screen w-screen items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_center,_#2d1b3d_0%,_#1a0f2e_50%,_#0f0a1a_100%)] bg-fixed p-4">
+    <div className="fixed inset-0 flex h-screen w-screen items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_center,_#F5EBE0_0%,_#F0E2D4_50%,_#E8D5C4_100%)] bg-fixed p-4">
       <div className="flex w-full max-w-sm items-center justify-center md:max-w-md">
-        <div className="relative h-auto max-h-[90vh] w-full min-w-[320px] max-w-[420px] overflow-hidden rounded-3xl border-2 border-[rgba(231,116,240,0.6)] bg-[#2b0048] p-6 shadow-[0_0_20px_rgba(231,116,240,0.3),_inset_0_0_20px_rgba(231,116,240,0.1)]">
+        <div className="relative h-auto max-h-[90vh] w-full min-w-[320px] max-w-[420px] overflow-hidden rounded-3xl border-2 border-[rgba(122,18,40,0.30)] bg-white p-6 shadow-[0_8px_40px_rgba(122,18,40,0.15),_inset_0_0_0_0_transparent]">
           <LogoHeader />
 
           <PinDisplay pin={pin} />

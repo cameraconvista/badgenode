@@ -15,12 +15,12 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
   // Se non c'è PIN, mostra errore
   if (!pin) {
     return (
-      <div className="min-h-screen bg-gray-900 p-4">
+      <div className="min-h-screen bg-[#F8F3EE] p-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gray-800/50 rounded-lg p-8 text-center">
-            <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">PIN richiesto</h2>
-            <p className="text-gray-400">Specificare un PIN valido per visualizzare lo storico</p>
+          <div className="bg-white/70 border border-[rgba(122,18,40,0.12)] rounded-lg p-8 text-center">
+            <User className="w-12 h-12 text-[#7A5A64] mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-[#1C0A10] mb-2">PIN richiesto</h2>
+            <p className="text-[#7A5A64]">Specificare un PIN valido per visualizzare lo storico</p>
           </div>
         </div>
       </div>
@@ -53,12 +53,12 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
 
   if (!dipendente) {
     return (
-      <div className="min-h-screen bg-gray-900 p-4">
+      <div className="min-h-screen bg-[#F8F3EE] p-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-gray-800/50 rounded-lg p-8 text-center">
-            <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">Dipendente non trovato</h2>
-            <p className="text-gray-400">PIN {pin} non presente nel sistema</p>
+          <div className="bg-white/70 border border-[rgba(122,18,40,0.12)] rounded-lg p-8 text-center">
+            <User className="w-12 h-12 text-[#7A5A64] mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-[#1C0A10] mb-2">Dipendente non trovato</h2>
+            <p className="text-[#7A5A64]">PIN {pin} non presente nel sistema</p>
           </div>
         </div>
       </div>
@@ -69,16 +69,16 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
     <div
       className="h-screen flex items-center justify-center p-4"
       style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+        background: 'linear-gradient(135deg, #F8F3EE 0%, #F0E5DC 50%, #E8D8CC 100%)',
       }}
     >
       <div className="w-full max-w-[1200px] flex items-center justify-center h-full">
         <div
           className="rounded-3xl p-6 border-2 w-full h-[95vh] overflow-hidden relative flex flex-col gap-4"
           style={{
-            backgroundColor: '#2b0048',
-            borderColor: 'rgba(231, 116, 240, 0.6)',
-            boxShadow: 'none',
+            backgroundColor: '#FFFFFF',
+            borderColor: 'rgba(122, 18, 40, 0.25)',
+            boxShadow: '0 8px 40px rgba(122, 18, 40, 0.10)',
           }}
         >
           {/* Header - FISSO */}

@@ -45,8 +45,8 @@ export default function ExDipendentiTable({
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-400 mx-auto mb-4"></div>
-          <p className="text-gray-300">Caricamento ex-dipendenti...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7A1228] mx-auto mb-4"></div>
+          <p className="text-[#7A5A64]">Caricamento ex-dipendenti...</p>
         </div>
       </div>
     );
@@ -57,10 +57,10 @@ export default function ExDipendentiTable({
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 mx-auto mb-3 text-red-400" />
-          <h3 className="text-lg font-medium text-gray-300 mb-2">
+          <h3 className="text-lg font-medium text-[#7A5A64] mb-2">
             Errore di caricamento
           </h3>
-          <p className="text-gray-400 text-sm">
+          <p className="text-[#7A5A64] text-sm">
             Impossibile caricare gli ex-dipendenti
           </p>
         </div>
@@ -71,7 +71,7 @@ export default function ExDipendentiTable({
   return (
     <div className="h-full flex flex-col">
       {/* Tabella TableKit Standard */}
-      <div className="border border-gray-600 rounded-lg overflow-hidden bg-gray-800/50 flex-1 flex flex-col">
+      <div className="border border-[rgba(122,18,40,0.15)] rounded-lg overflow-hidden bg-white flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto">
           <table className="w-full table-fixed border-collapse bn-archivio bn-nohover exdip-table">
             <colgroup>
@@ -85,11 +85,11 @@ export default function ExDipendentiTable({
             </colgroup>
             <thead className="sticky top-0 z-10 bg-[rgba(255,255,255,0.06)] h-[48px]">
               <tr>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Storico</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Nome</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Cognome</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Data Archiviazione</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-white/90">Azioni</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Storico</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Nome</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Cognome</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Data Archiviazione</th>
+                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Azioni</th>
               </tr>
             </thead>
             <tbody>
@@ -97,13 +97,13 @@ export default function ExDipendentiTable({
                 <tr className="bn-row bn-row-dense align-middle">
                   <td colSpan={5} className="bn-cell px-4 text-center py-8">
                     <div className="text-center py-8">
-                      <div className="text-gray-400 mb-2">
+                      <div className="text-[#7A5A64] mb-2">
                         <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
                       </div>
-                      <h3 className="text-lg font-medium text-gray-300 mb-2">
+                      <h3 className="text-lg font-medium text-[#7A5A64] mb-2">
                         Nessun ex-dipendente
                       </h3>
-                      <p className="text-gray-400 text-sm">
+                      <p className="text-[#7A5A64] text-sm">
                         Gli ex-dipendenti archiviati appariranno qui
                       </p>
                     </div>
@@ -127,13 +127,13 @@ export default function ExDipendentiTable({
                       </Button>
                     </td>
                     <td className="bn-cell px-4 text-center">
-                      <span className="font-medium text-base text-white">{exDipendente.nome}</span>
+                      <span className="font-medium text-base text-[#1C0A10]">{exDipendente.nome}</span>
                     </td>
                     <td className="bn-cell px-4 text-center">
-                      <span className="font-medium text-base text-white">{exDipendente.cognome}</span>
+                      <span className="font-medium text-base text-[#1C0A10]">{exDipendente.cognome}</span>
                     </td>
                     <td className="bn-cell px-4 text-center">
-                      <span className="font-medium text-sm text-gray-300">
+                      <span className="font-medium text-sm text-[#7A5A64]">
                         {new Date(exDipendente.archiviato_il).toLocaleDateString('it-IT')}
                       </span>
                     </td>
