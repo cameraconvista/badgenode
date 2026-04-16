@@ -167,7 +167,7 @@ export default function StoricoTable({
         {/* Ore Extra */}
         <td className="bn-table__cell bn-cell text-sm tabular-nums">
           {giorno.extra > 0 ? (
-            <span className="text-yellow-400 font-bold">{formatOre(giorno.extra)}</span>
+            <span className="text-amber-700 font-bold">{formatOre(giorno.extra)}</span>
           ) : (
             <span>—</span>
           )}
@@ -181,7 +181,7 @@ export default function StoricoTable({
             onClick={() => onEditTimbrature(giorno.giorno)}
             className="h-8 w-8 p-0 hover:bg-white/10"
           >
-            <Edit className="h-4 w-4 text-yellow-400 hover:text-yellow-300 transition-colors" />
+            <Edit className="h-4 w-4 text-amber-700 hover:text-amber-800 transition-colors" />
           </Button>
         </td>
       </tr>

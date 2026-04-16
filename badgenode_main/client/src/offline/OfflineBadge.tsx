@@ -8,7 +8,7 @@ import { isOfflineEnabled } from '@/config/featureFlags';
 import { count } from '@/offline/queue';
 
 function computeStatus(queueCount: number, online: boolean): { text: string; color: string } {
-  if (!online && queueCount > 0) return { text: `offline • queued: ${queueCount}`, color: '#f59e0b' };
+  if (!online && queueCount > 0) return { text: `offline • queued: ${queueCount}`, color: '#b45309' };
   if (online && queueCount > 0) return { text: `syncing… (${queueCount})`, color: '#60a5fa' };
   if (!online) return { text: 'offline', color: '#ef4444' };
   return { text: 'ok', color: '#10b981' };

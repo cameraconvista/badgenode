@@ -398,8 +398,8 @@ export function ArchiviaDialog({
         <div className="p-6 space-y-4">
           {/* Icona di avviso */}
           <div className="flex justify-center">
-            <div className="p-3 rounded-full bg-yellow-600/20">
-              <Archive className="w-8 h-8 text-yellow-400" />
+            <div className="p-3 rounded-full bg-amber-700/15">
+              <Archive className="w-8 h-8 text-amber-700" />
             </div>
           </div>
 
@@ -417,7 +417,7 @@ export function ArchiviaDialog({
               </>
             ) : (
               <>
-                <p className="text-yellow-400 text-lg font-bold">
+                <p className="text-amber-700 text-lg font-bold">
                   Confermi l'archiviazione definitiva di
                 </p>
                 <p className="text-xl font-bold text-[#1C0A10]">
@@ -446,12 +446,12 @@ export function ArchiviaDialog({
 
           {/* Avviso PIN liberato */}
           {!showSecondConfirm && (
-            <div className="bg-yellow-900/30 border border-yellow-600/50 rounded-lg p-4">
+            <div className="bg-amber-700/10 border border-amber-700/40 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Archive className="w-5 h-5 text-yellow-400" />
-                <p className="font-semibold text-yellow-400">PIN sarà liberato</p>
+                <Archive className="w-5 h-5 text-amber-700" />
+                <p className="font-semibold text-amber-700">PIN sarà liberato</p>
               </div>
-              <p className="text-sm text-yellow-300">
+              <p className="text-sm text-amber-800">
                 Il dipendente verrà spostato negli ex-dipendenti e il PIN {utente.pin} sarà disponibile per riuso.
               </p>
             </div>
@@ -474,7 +474,7 @@ export function ArchiviaDialog({
             type="button"
             onClick={handleProcedi}
             disabled={isLoading}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white border-2 border-yellow-600"
+            className="bg-amber-700 hover:bg-amber-800 text-white border-2 border-amber-700"
           >
             {isLoading ? 'Archiviazione...' : !showSecondConfirm ? 'Continua' : 'Conferma definitiva'}
           </Button>

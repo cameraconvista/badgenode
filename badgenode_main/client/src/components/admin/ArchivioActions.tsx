@@ -61,7 +61,7 @@ export default function ArchivioActions({
         className="p-1 no-default-hover-elevate no-default-active-elevate"
         title="Archivia dipendente"
       >
-        <Archive className="icon-action archive text-amber-600 hover:text-amber-700" />
+        <Archive className="icon-action archive text-amber-700 hover:text-amber-800" />
       </Button>
 
       {/* Cestino rosso */}
