@@ -154,20 +154,6 @@ export default function HomeContainer({
 
           <PinDisplay pin={pin} />
 
-          {/* Messaggio elegante sotto il PIN (UI-only) */}
-          <ToastCard
-            open={Boolean(feedback.type)}
-            variant={computedVariant}
-            timestampText={timestampText}
-            messageOverride={feedback.type === 'success' ? (feedback.message?.toLowerCase().includes('uscita') ? 'USCITA Registrata!' : 'ENTRATA Registrata!') : feedback.message}
-            nome={nome}
-            cognome={cognome}
-            onClose={onFeedbackClose}
-            inline
-            showClose={false}
-            hideTimestamp={feedback.type === 'error' && /PIN non registrato nel sistema/i.test(feedback.message)}
-          />
-
           <Keypad onKeyPress={onKeyPress} onClear={onClear} onSettings={onSettings} />
           <DateTimeLive />
           <ActionButtons
@@ -181,6 +167,20 @@ export default function HomeContainer({
       </div>
 
       {children}
+
+      {/* Modale di conferma timbratura — appare sopra tutto */}
+      <ToastCard
+        open={Boolean(feedback.type)}
+        variant={computedVariant}
+        timestampText={timestampText}
+        messageOverride={feedback.type === 'success' ? (feedback.message?.toLowerCase().includes('uscita') ? 'USCITA Registrata!' : 'ENTRATA Registrata!') : feedback.message}
+        nome={nome}
+        cognome={cognome}
+        onClose={onFeedbackClose}
+        modal
+        showClose={false}
+        hideTimestamp={feedback.type === 'error' && /PIN non registrato nel sistema/i.test(feedback.message)}
+      />
     </div>
   );
 }
