@@ -49,7 +49,7 @@ export default function DateTimeLive({ className = '' }: DateTimeLiveProps) {
   };
 
   return (
-    <div className={`text-center mb-4 ${className}`} data-testid="text-datetime">
+    <div className={`text-center mb-3 ${className}`} data-testid="text-datetime">
       <div
         className="text-base font-semibold mb-1"
         style={{ color: '#7A5A64' }}
