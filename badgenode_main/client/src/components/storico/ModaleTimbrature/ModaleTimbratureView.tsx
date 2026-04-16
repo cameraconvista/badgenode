@@ -73,10 +73,10 @@ export default function ModaleTimbratureView({
       <div className="bn-timbrature-grid">
         {/* ENTRATA */}
         <section>
-          <h3 className="text-green-400 font-semibold mb-3 text-lg">Entrata</h3>
+          <h3 className="text-green-700 font-semibold mb-3 text-lg">Entrata</h3>
           <div className="bn-field-row">
             <div>
-              <label className="block text-sm text-white/80 mb-2 font-medium">Data</label>
+              <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Data</label>
               <input
                 type="date"
                 value={toInputDate(formData.dataEntrata)}
@@ -86,7 +86,7 @@ export default function ModaleTimbratureView({
               />
             </div>
             <div>
-              <label className="block text-sm text-white/80 mb-2 font-medium">Ora</label>
+              <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Ora</label>
               <TimeSelect
                 value={formData.oraEntrata}
                 onChange={(value) => setFormData({ ...formData, oraEntrata: value })}
@@ -99,10 +99,10 @@ export default function ModaleTimbratureView({
 
         {/* USCITA */}
         <section>
-          <h3 className="text-red-400 font-semibold mb-3 text-lg">Uscita</h3>
+          <h3 className="text-red-700 font-semibold mb-3 text-lg">Uscita</h3>
           <div className="bn-field-row">
             <div>
-              <label className="block text-sm text-white/80 mb-2 font-medium">Data</label>
+              <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Data</label>
               <input
                 type="date"
                 value={toInputDate(formData.dataUscita)}
@@ -112,7 +112,7 @@ export default function ModaleTimbratureView({
               />
             </div>
             <div>
-              <label className="block text-sm text-white/80 mb-2 font-medium">Ora</label>
+              <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Ora</label>
               <TimeSelect
                 value={formData.oraUscita}
                 onChange={(value) => setFormData({ ...formData, oraUscita: value })}

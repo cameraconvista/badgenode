@@ -473,11 +473,11 @@ img[src*="logo_home"] {
 }
 
 .bn-btn-success {
-  background: #15803d;
+  background: #7A1228;
   color: #fff;
 }
 .bn-btn-success:hover {
-  background: #166534;
+  background: #9B1E35;
 }
 
 /* Modale form fields */

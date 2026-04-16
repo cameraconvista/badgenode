@@ -9,9 +9,8 @@ type ModalKitProps = {
   description?: React.ReactNode;
   children: React.ReactNode;
   footer?: React.ReactNode;
-  className?: string; // per body
-  contentClassName?: string; // per content container
-  // Se true, impedisce la chiusura con click esterno o tasto ESC
+  className?: string;
+  contentClassName?: string;
   preventDismiss?: boolean;
 };
 
@@ -37,9 +36,9 @@ export default function ModalKit({
           className={cn("bn-modal bn-z-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[96vw] max-w-[880px] max-h-[80vh] overflow-hidden focus:outline-none", contentClassName)}
         >
           <div className="bn-modal-header pr-12">
-            {title && <Dialog.Title className="text-white text-xl font-semibold">{title}</Dialog.Title>}
-            {description && <Dialog.Description className="text-white/70 mt-1">{description}</Dialog.Description>}
-            <Dialog.Close className="absolute right-4 top-4 text-white/90 hover:text-white">
+            {title && <Dialog.Title className="text-[#1C0A10] text-xl font-semibold">{title}</Dialog.Title>}
+            {description && <Dialog.Description className="text-[#7A5A64] mt-1 text-sm">{description}</Dialog.Description>}
+            <Dialog.Close className="absolute right-4 top-4 text-[#7A5A64] hover:text-[#7A1228] transition-colors">
               <X className="w-5 h-5"/>
             </Dialog.Close>
           </div>

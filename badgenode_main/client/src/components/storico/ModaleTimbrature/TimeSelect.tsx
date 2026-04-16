@@ -30,13 +30,13 @@ export default function TimeSelect({ value, onChange, className = "", disabled =
         <Select.Trigger className="bn-field-input flex items-center justify-between w-full">
           <Select.Value placeholder="HH" />
           <Select.Icon>
-            <ChevronDown size={16} className="text-white/60" />
+            <ChevronDown size={16} className="text-[#7A5A64]" />
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>
           <Select.Content className="bn-time-popover" position="popper" sideOffset={4}>
             <Select.ScrollUpButton className="flex items-center justify-center h-6">
-              <ChevronUp size={14} className="text-white/60" />
+              <ChevronUp size={14} className="text-[#7A5A64]" />
             </Select.ScrollUpButton>
             <Select.Viewport className="p-1 max-h-48">
               {hoursList.map(hour => (
@@ -49,7 +49,7 @@ export default function TimeSelect({ value, onChange, className = "", disabled =
               ))}
             </Select.Viewport>
             <Select.ScrollDownButton className="flex items-center justify-center h-6">
-              <ChevronDown size={14} className="text-white/60" />
+              <ChevronDown size={14} className="text-[#7A5A64]" />
             </Select.ScrollDownButton>
           </Select.Content>
         </Select.Portal>
@@ -60,13 +60,13 @@ export default function TimeSelect({ value, onChange, className = "", disabled =
         <Select.Trigger className="bn-field-input flex items-center justify-between w-full">
           <Select.Value placeholder="MM" />
           <Select.Icon>
-            <ChevronDown size={16} className="text-white/60" />
+            <ChevronDown size={16} className="text-[#7A5A64]" />
           </Select.Icon>
         </Select.Trigger>
         <Select.Portal>
           <Select.Content className="bn-time-popover" position="popper" sideOffset={4}>
             <Select.ScrollUpButton className="flex items-center justify-center h-6">
-              <ChevronUp size={14} className="text-white/60" />
+              <ChevronUp size={14} className="text-[#7A5A64]" />
             </Select.ScrollUpButton>
             <Select.Viewport className="p-1 max-h-48">
               {minutesList.map(minute => (
@@ -79,7 +79,7 @@ export default function TimeSelect({ value, onChange, className = "", disabled =
               ))}
             </Select.Viewport>
             <Select.ScrollDownButton className="flex items-center justify-center h-6">
-              <ChevronDown size={14} className="text-white/60" />
+              <ChevronDown size={14} className="text-[#7A5A64]" />
             </Select.ScrollDownButton>
           </Select.Content>
         </Select.Portal>
