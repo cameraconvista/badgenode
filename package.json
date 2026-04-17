@@ -1,0 +1,13 @@
+{
+  "name": "badgenode-root",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm --prefix badgenode_main ci && npm --prefix badgenode_main run build",
+    "start": "npm --prefix badgenode_main run start",
+    "dev": "npm --prefix badgenode_main run dev",
+    "check": "npm --prefix badgenode_main run check",
+    "lint": "npm --prefix badgenode_main run lint",
+    "test": "npm --prefix badgenode_main run test"
+  }
+}
