@@ -32,6 +32,7 @@ export default function Home() {
   const [homeVisible, setHomeVisible] = useState(true);
 
   useEffect(() => {
+    const INTRO_SESSION_KEY = 'bn_intro_shown_v1';
     let tFadeOut: number | null = null;
     let tHomeIn: number | null = null;
     let tHideIntro: number | null = null;
@@ -76,7 +77,23 @@ export default function Home() {
       }
     };
 
-    runIntro();
+    const shouldShowIntroOnMount = (() => {
+      try {
+        const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+        const isReload = navEntry?.type === 'reload';
+        const alreadyShown = sessionStorage.getItem(INTRO_SESSION_KEY) === '1';
+        // Show on first app start in this tab/session, or on explicit reload.
+        return isReload || !alreadyShown;
+      } catch {
+        // Conservative fallback: show intro once per session.
+        return sessionStorage.getItem(INTRO_SESSION_KEY) !== '1';
+      }
+    })();
+
+    if (shouldShowIntroOnMount) {
+      sessionStorage.setItem(INTRO_SESSION_KEY, '1');
+      runIntro();
+    }
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
@@ -116,20 +133,20 @@ export default function Home() {
     // Debounce 300ms per evitare query multiple durante digitazione veloce
     const timer = setTimeout(() => {
       let cancelled = false;
-      
+
       (async () => {
         try {
           const now = new Date();
           const targetDate = new Date(now);
           const isNightShift = now.getHours() >= 0 && now.getHours() < 5;
-          
+
           // Se ora < 05:00, cerca sul giorno precedente (giorno logico)
           if (isNightShift) {
             targetDate.setDate(targetDate.getDate() - 1);
           }
-          
+
           const giornoLogico = formatDateLocal(targetDate);
-          
+
           // Query ottimizzata: usa Supabase direttamente con limit e order
           const { data: timbratureList } = await supabase
             .from('timbrature')
@@ -138,11 +155,11 @@ export default function Home() {
             .eq('giorno_logico', giornoLogico)
             .order('ts_order', { ascending: false })
             .limit(1);
-          
+
           const lastTimbratura = timbratureList?.[0] as { tipo: 'entrata' | 'uscita'; ts_order: string } | undefined;
-          
+
           if (cancelled) return;
-          
+
           // AUTO-RECOVERY: Se uscita notturna e non trova timbrature sul giorno logico,
           // cerca ultima entrata aperta (stesso comportamento del server)
           if (!lastTimbratura && isNightShift) {
@@ -153,9 +170,9 @@ export default function Home() {
               .eq('tipo', 'entrata')
               .order('ts_order', { ascending: false })
               .limit(1);
-            
+
             if (cancelled) return;
-            
+
             const lastEntry = entryList?.[0];
             if (lastEntry) {
               // Trovata entrata aperta: abilita uscita
@@ -170,7 +187,7 @@ export default function Home() {
               return;
             }
           }
-          
+
           if (!lastTimbratura) {
             logTimbraturaDiag('home.lastAllowed_decision', {
               pin,
@@ -182,7 +199,7 @@ export default function Home() {
             setLastAllowed('entrata');
             return;
           }
-          
+
           logTimbraturaDiag('home.lastAllowed_decision', {
             pin,
             source: 'home-precheck',
@@ -206,7 +223,7 @@ export default function Home() {
           }
         }
       })();
-      
+
       return () => { cancelled = true; };
     }, 300);
 

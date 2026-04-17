@@ -18,7 +18,7 @@ type ToastCardProps = {
 };
 
 // Durata visualizzazione modale in ms
-const MODAL_DURATION = 4000;
+const MODAL_DURATION = 3000;
 
 export default function ToastCard({
   open,
@@ -34,6 +34,16 @@ export default function ToastCard({
   modal = false,
 }: ToastCardProps) {
   const [progress, setProgress] = useState(100);
+
+  // Auto-close del modale: deve coincidere con la fine della barra (solo success)
+  useEffect(() => {
+    if (!open || !modal) return;
+    if (variant === 'error') return;
+    const t = window.setTimeout(() => {
+      onClose();
+    }, MODAL_DURATION);
+    return () => window.clearTimeout(t);
+  }, [open, modal, variant, onClose]);
 
   // Barra di progresso animata per il modale
   useEffect(() => {
@@ -77,9 +87,7 @@ export default function ToastCard({
 
     const progressColor = isError
       ? 'bg-rose-600'
-      : isEntrata
-        ? 'bg-emerald-600'
-        : 'bg-rose-600';
+      : 'bg-white';
 
     const Icon = isError ? AlertCircle : isEntrata ? LogIn : LogOut;
 
@@ -121,7 +129,7 @@ export default function ToastCard({
           </div>
 
           {/* Barra di progresso auto-close */}
-          <div className="h-1 w-full bg-black/10 mt-6">
+          <div className="h-1 w-full bg-white/25 mt-6">
             <div
               className={`h-full transition-none ${progressColor}`}
               style={{ width: `${progress}%` }}
