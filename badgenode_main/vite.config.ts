@@ -20,43 +20,47 @@ export default defineConfig(({ mode }) => {
       }),
       VitePWA({
         registerType: 'autoUpdate',
+        // Disabilita completamente asset auto-generator del plugin per evitare override di icone/manifest custom
+        pwaAssets: false,
         // Manifest PWA esplicito per evitare fallback default del plugin in produzione
         manifest: {
           name: 'BadgeNode',
           short_name: 'BadgeNode',
           description: 'Sistema di timbratura con PIN per la gestione delle presenze',
+          id: '/?app=badgenode-v2',
           start_url: '/',
+          scope: '/',
           display: 'standalone',
           background_color: '#0b0b10',
           theme_color: '#510357',
           orientation: 'portrait',
           icons: [
             {
-              src: '/icons/icon-192x192.png',
+              src: '/icons/icon-192x192-v2.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/icons/icon-256x256.png',
+              src: '/icons/icon-256x256-v2.png',
               sizes: '256x256',
               type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/icons/icon-384x384.png',
+              src: '/icons/icon-384x384-v2.png',
               sizes: '384x384',
               type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/icons/icon-512x512.png',
+              src: '/icons/icon-512x512-v2.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/icons/maskable-512x512.png',
+              src: '/icons/maskable-512x512-v2.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable',
@@ -77,14 +81,18 @@ export default defineConfig(({ mode }) => {
           maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3MB
         },
         includeAssets: [
-          'favicon.ico', 
+          'favicon.ico',
           'robots.txt', 
-          'icons/apple-touch-icon-180x180.png',
-          'icons/icon-192x192.png',
-          'icons/icon-256x256.png',
-          'icons/icon-384x384.png',
-          'icons/icon-512x512.png',
-          'icons/maskable-512x512.png'
+          'icons/favicon-16x16-v2.png',
+          'icons/favicon-32x32-v2.png',
+          'icons/apple-touch-icon-152x152-v2.png',
+          'icons/apple-touch-icon-167x167-v2.png',
+          'icons/apple-touch-icon-180x180-v2.png',
+          'icons/icon-192x192-v2.png',
+          'icons/icon-256x256-v2.png',
+          'icons/icon-384x384-v2.png',
+          'icons/icon-512x512-v2.png',
+          'icons/maskable-512x512-v2.png'
         ],
         // Usa il manifest.webmanifest esterno invece di configurazione inline
         useCredentials: false,

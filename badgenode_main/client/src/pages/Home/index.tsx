@@ -10,10 +10,10 @@ import { supabase } from '@/lib/supabaseClient';
 import { formatDateLocal } from '@/lib/time';
 import { createTimbraturaTraceId, logTimbraturaDiag } from '@/lib/timbraturaDiagnostics';
 
-const INTRO_SEEN_KEY = 'badgenode_intro_seen_v1';
 const INTRO_TOTAL_MS = 3500;
 const INTRO_FADE_OUT_START_MS = 2400;
 const HOME_FADE_IN_START_MS = 2600;
+const INTRO_REOPEN_THRESHOLD_MS = 1200;
 
 export default function Home() {
   const [pin, setPin] = useState('');
@@ -35,44 +35,53 @@ export default function Home() {
     let tFadeOut: number | null = null;
     let tHomeIn: number | null = null;
     let tHideIntro: number | null = null;
+    let hiddenAt = 0;
 
-    let shouldShowIntro = false;
-    try {
-      shouldShowIntro = localStorage.getItem(INTRO_SEEN_KEY) !== '1';
-      if (shouldShowIntro) {
-        localStorage.setItem(INTRO_SEEN_KEY, '1');
-      }
-    } catch {
-      shouldShowIntro = true;
-    }
-
-    if (!shouldShowIntro) {
-      setHomeVisible(true);
-      setShowIntroLayer(false);
-      setIntroVisible(false);
-      return;
-    }
-
-    setHomeVisible(false);
-    setShowIntroLayer(true);
-    setIntroVisible(true);
-
-    tFadeOut = window.setTimeout(() => {
-      setIntroVisible(false);
-    }, INTRO_FADE_OUT_START_MS);
-
-    tHomeIn = window.setTimeout(() => {
-      setHomeVisible(true);
-    }, HOME_FADE_IN_START_MS);
-
-    tHideIntro = window.setTimeout(() => {
-      setShowIntroLayer(false);
-    }, INTRO_TOTAL_MS);
-
-    return () => {
+    const clearTimers = () => {
       if (tFadeOut) window.clearTimeout(tFadeOut);
       if (tHomeIn) window.clearTimeout(tHomeIn);
       if (tHideIntro) window.clearTimeout(tHideIntro);
+      tFadeOut = null;
+      tHomeIn = null;
+      tHideIntro = null;
+    };
+
+    const runIntro = () => {
+      clearTimers();
+      setHomeVisible(false);
+      setShowIntroLayer(true);
+      setIntroVisible(true);
+
+      tFadeOut = window.setTimeout(() => {
+        setIntroVisible(false);
+      }, INTRO_FADE_OUT_START_MS);
+
+      tHomeIn = window.setTimeout(() => {
+        setHomeVisible(true);
+      }, HOME_FADE_IN_START_MS);
+
+      tHideIntro = window.setTimeout(() => {
+        setShowIntroLayer(false);
+      }, INTRO_TOTAL_MS);
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        hiddenAt = Date.now();
+        return;
+      }
+      const elapsed = hiddenAt ? Date.now() - hiddenAt : 0;
+      if (elapsed >= INTRO_REOPEN_THRESHOLD_MS) {
+        runIntro();
+      }
+    };
+
+    runIntro();
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearTimers();
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 
