@@ -49,14 +49,14 @@ export default function DateTimeLive({ className = '' }: DateTimeLiveProps) {
   };
 
   return (
-    <div className={`text-center mb-3 ${className}`} data-testid="text-datetime">
+    <div className={`text-center mb-2 sm:mb-3 ${className}`} data-testid="text-datetime">
       <div
-        className="text-base font-semibold mb-1"
+        className="text-sm sm:text-base font-semibold mb-0.5 sm:mb-1"
         style={{ color: '#7A5A64' }}
       >
         {formatDate(dateTime)}
       </div>
-      <div className="text-2xl md:text-3xl font-bold tracking-wide" style={{ color: '#7A1228' }}>
+      <div className="text-xl sm:text-2xl md:text-3xl font-bold tracking-wide" style={{ color: '#7A1228' }}>
         {formatTime(dateTime)}
       </div>
     </div>

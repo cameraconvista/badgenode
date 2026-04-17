@@ -16,12 +16,12 @@ export default function KeyButton({ value, onClick, className = '' }: KeyButtonP
       data-testid={`button-key-${value === '⚙' ? 'settings' : value === 'C' ? 'clear' : value}`}
       onClick={handleClick}
       className={`
-        w-[72px] h-[72px] 
-        sm:w-[74px] sm:h-[74px]
+        w-[68px] h-[68px]
+        sm:w-[72px] sm:h-[72px]
         md:w-[76px] md:h-[76px]
         lg:w-[80px] lg:h-[80px]
         rounded-full
-        text-xl sm:text-[1.375rem] md:text-2xl font-medium text-[#1C0A10]
+        text-lg sm:text-xl md:text-2xl font-medium text-[#1C0A10]
         bg-[#FCF6EE]
         border-2 border-[rgba(122,18,40,0.25)]
         hover:border-[rgba(122,18,40,0.55)]
@@ -31,6 +31,7 @@ export default function KeyButton({ value, onClick, className = '' }: KeyButtonP
         focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#7A1228]
         flex items-center justify-center
         touch-manipulation
+        shadow-sm active:shadow-md
         ${className}
       `}
     >

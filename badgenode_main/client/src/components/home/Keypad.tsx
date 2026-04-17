@@ -26,8 +26,8 @@ export default function Keypad({ onKeyPress, onClear, onSettings, className = ''
   };
 
   return (
-    <div className={`w-full mb-4 ${className}`}>
-      <div className="grid grid-cols-3 grid-rows-4 gap-3 max-w-[280px] mx-auto place-items-center px-2">
+    <div className={`w-full mb-3 sm:mb-4 ${className}`}>
+      <div className="grid grid-cols-3 grid-rows-4 gap-2 sm:gap-3 max-w-[260px] sm:max-w-[280px] mx-auto place-items-center px-1 sm:px-2">
         {keys.flat().map((key) => (
           <KeyButton key={key} value={key} onClick={handlePress} />
         ))}

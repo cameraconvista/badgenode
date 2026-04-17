@@ -5,7 +5,7 @@ interface IntroSplashProps {
 }
 
 export default function IntroSplash({ visible }: IntroSplashProps) {
-  const [logoSrc, setLogoSrc] = useState('/logo_badgenode_intro.png');
+  const [logoSrc, setLogoSrc] = useState('/logo_intro.svg');
 
   return (
     <div
@@ -18,7 +18,7 @@ export default function IntroSplash({ visible }: IntroSplashProps) {
         src={logoSrc}
         alt="BADGENODE"
         onError={() => setLogoSrc('/logo_badgenode.png')}
-        className="w-[min(55vw,392px)] h-auto object-contain"
+        className="w-[min(65vw,450px)] h-auto object-contain"
       />
     </div>
   );
