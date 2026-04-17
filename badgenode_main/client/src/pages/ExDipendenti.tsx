@@ -113,9 +113,6 @@ export default function ExDipendenti() {
           
           <div className="text-center mb-4">
             <h1 className="text-2xl font-bold text-[#1C0A10] mb-2">Ex-Dipendenti</h1>
-            <p className="text-[#9B1E35] text-base md:text-lg font-medium">
-              {exDipendenti.length} ex-dipendenti archiviati
-            </p>
           </div>
 
           <div className="flex-1 overflow-hidden mb-4">
@@ -129,7 +126,7 @@ export default function ExDipendenti() {
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t border-[rgba(122,18,40,0.12)]">
+          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3">
             <Button
               variant="outline"
               onClick={handleBackToArchivio}

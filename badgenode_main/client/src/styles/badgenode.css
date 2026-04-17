@@ -190,18 +190,41 @@ img[src*="logo_home"] {
   line-height: 1.5 !important;
 }
 
-/* Celle più alte per Archivio */
-.bn-archivio .bn-row-tall .bn-cell {
-  min-height: 70px !important;
-  padding-top: 20px !important;
-  padding-bottom: 20px !important;
+/* Archivio Dipendenti: riduzione altezza righe visibile */
+.archivio-table tbody tr.bn-row-archivio-compact > td.bn-cell {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
   vertical-align: middle !important;
+}
+
+/* Mantiene leggibilità e compatta la riga in modo deterministico */
+.archivio-table tbody tr.bn-row-archivio-compact {
+  line-height: 1.45 !important;
+}
+
+/* Bottone cella compatto (era il vincolo principale che nascondeva la riduzione) */
+.archivio-table tbody tr.bn-row-archivio-compact td.bn-cell button {
+  min-height: 1.82rem !important;
 }
 
 /* Tabella Archivio: testi più grandi */
 .bn-archivio th,
 .bn-archivio td {
   font-size: 1.125rem;
+}
+
+/* Separatori verticali sottili tra colonne (Archivio + Ex-Dipendenti) */
+.archivio-table th,
+.archivio-table td,
+.exdip-table th,
+.exdip-table td {
+  border-right: 1px solid rgba(122, 18, 40, 0.10);
+}
+.archivio-table th:last-child,
+.archivio-table td:last-child,
+.exdip-table th:last-child,
+.exdip-table td:last-child {
+  border-right: none;
 }
 
 /* Testi specifici nella tabella ancora più grandi */
@@ -250,17 +273,42 @@ img[src*="logo_home"] {
   background: transparent !important;
 }
 
-/* Ex-Dipendenti: righe con tono leggermente diverso */
+/* Ex-Dipendenti: allineamento estetico a Archivio Dipendenti */
+.exdip-table thead,
+.exdip-table thead tr,
+.exdip-table thead th {
+  background-color: #F0E8E0 !important;
+}
+
 .exdip-table tbody tr.bn-row,
 .exdip-table tbody tr {
-  background-color: #FFF5F4 !important;
+  background: var(--card) !important;
 }
 .exdip-table tbody tr.bn-row:hover,
 .exdip-table tbody tr:hover,
 .exdip-table tbody tr[aria-selected="true"],
 .exdip-table tbody tr[data-state="hover"],
 .exdip-table tbody tr[data-state="selected"] {
-  background-color: #FFF5F4 !important;
+  background: var(--card) !important;
+}
+
+/* Stessa densità riga della tabella Archivio Dipendenti */
+.exdip-table tbody tr.bn-row-tall > td.bn-cell {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  vertical-align: middle !important;
+}
+.exdip-table tbody tr.bn-row-tall {
+  line-height: 1.45 !important;
+}
+.exdip-table tbody tr.bn-row-tall td.bn-cell button {
+  min-height: 1.82rem !important;
+}
+
+/* Azioni centrate come Archivio */
+.exdip-table tbody tr.bn-row-tall td .bn-actions {
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
 }
 /* Disabilita overlay elevate nell'area exdip-table */
 .exdip-table .hover-elevate::after,

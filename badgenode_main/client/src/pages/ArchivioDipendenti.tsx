@@ -182,7 +182,7 @@ export default function ArchivioDipendenti() {
               onElimina={handleEliminaClick}
             />
           </div>
-          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t border-[rgba(122,18,40,0.12)]">
+          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3">
             <Button
               variant="outline"
               onClick={handleBackToLogin}

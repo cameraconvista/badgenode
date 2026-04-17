@@ -76,10 +76,10 @@ export default function ToastCard({
         : 'bg-rose-600 text-white';
 
     const progressColor = isError
-      ? 'bg-rose-400'
+      ? 'bg-rose-600'
       : isEntrata
-        ? 'bg-emerald-300'
-        : 'bg-rose-300';
+        ? 'bg-emerald-600'
+        : 'bg-rose-600';
 
     const Icon = isError ? AlertCircle : isEntrata ? LogIn : LogOut;
 
@@ -138,8 +138,8 @@ export default function ToastCard({
   const color = isError
     ? 'bg-white text-rose-600 ring-rose-400/60'
     : isEntrata
-      ? 'bg-emerald-600/90 text-white ring-emerald-400/40'
-      : 'bg-rose-600/90 text-white ring-rose-400/40';
+      ? 'bg-emerald-600 text-white ring-emerald-400/40'
+      : 'bg-rose-600 text-white ring-rose-400/40';
 
   const role = isError ? 'alert' : 'status';
 

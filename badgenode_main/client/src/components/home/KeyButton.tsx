@@ -22,7 +22,7 @@ export default function KeyButton({ value, onClick, className = '' }: KeyButtonP
         lg:w-[80px] lg:h-[80px]
         rounded-full
         text-xl sm:text-[1.375rem] md:text-2xl font-medium text-[#1C0A10]
-        bg-[#F5EBE0]
+        bg-[#FCF6EE]
         border-2 border-[rgba(122,18,40,0.25)]
         hover:border-[rgba(122,18,40,0.55)]
         active:bg-[rgba(122,18,40,0.10)]

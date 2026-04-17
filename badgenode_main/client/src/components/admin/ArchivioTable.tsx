@@ -88,14 +88,14 @@ export default function ArchivioTable({
                 sortedUtenti.map((utente) => (
                   <tr
                     key={utente.id || `pin-${utente.pin}`}
-                    className="bn-row bn-row-tall align-middle"
+                    className="bn-row bn-row-archivio-compact align-middle"
                   >
                     <td className="bn-cell px-4 text-center">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => onStorico(utente.pin)}
-                        className="p-2 no-default-hover-elevate no-default-active-elevate"
+                        className="p-1 no-default-hover-elevate no-default-active-elevate"
                         title={`Storico di ${utente.nome} ${utente.cognome}`}
                       >
                         <History className="icon-storico" aria-label="Storico" />

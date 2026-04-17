@@ -111,7 +111,7 @@ export default function ModaleModificaDipendente({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div
         ref={modalRef}
-        className="w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl border-2"
+        className="w-full max-w-[25.2rem] max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl border-2"
         style={{
           backgroundColor: '#FFFFFF',
           borderColor: 'rgba(122, 18, 40, 0.25)',

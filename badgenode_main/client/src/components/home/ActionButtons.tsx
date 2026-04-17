@@ -26,11 +26,11 @@ export default function ActionButtons({
             min-h-[56px] px-6
             rounded-full
             font-semibold text-base md:text-lg tracking-wide uppercase
-            text-white bg-green-600
+            text-white bg-emerald-600
             transition-all duration-200
-            hover:bg-green-500 hover:brightness-110
+            hover:bg-emerald-500 hover:brightness-105
             active:scale-98
-            focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-green-400
+            focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-emerald-400
             disabled:opacity-50 disabled:cursor-not-allowed
           "
         >
@@ -44,11 +44,11 @@ export default function ActionButtons({
             min-h-[56px] px-6
             rounded-full
             font-semibold text-base md:text-lg tracking-wide uppercase
-            text-white bg-red-600
+            text-white bg-rose-600
             transition-all duration-200
-            hover:bg-red-500 hover:brightness-110
+            hover:bg-rose-500 hover:brightness-105
             active:scale-98
-            focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-red-400
+            focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-rose-400
             disabled:opacity-50 disabled:cursor-not-allowed
           "
         >
