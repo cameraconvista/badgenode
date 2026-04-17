@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import SettingsModal from '@/components/home/SettingsModal';
+import IntroSplash from '@/components/home/IntroSplash';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeTimbrature } from '@/lib/realtime';
 import { invalidateAfterTimbratura, debounce } from '@/state/timbrature.cache';
@@ -8,6 +9,11 @@ import HomeContainer from './components/HomeContainer';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDateLocal } from '@/lib/time';
 import { createTimbraturaTraceId, logTimbraturaDiag } from '@/lib/timbraturaDiagnostics';
+
+const INTRO_SEEN_KEY = 'badgenode_intro_seen_v1';
+const INTRO_TOTAL_MS = 3500;
+const INTRO_FADE_OUT_START_MS = 2400;
+const HOME_FADE_IN_START_MS = 2600;
 
 export default function Home() {
   const [pin, setPin] = useState('');
@@ -21,6 +27,54 @@ export default function Home() {
   const { user } = useAuth();
   const [lastAllowed, setLastAllowed] = useState<'entrata' | 'uscita' | null>(null);
   const [lastTraceId, setLastTraceId] = useState<string>('');
+  const [showIntroLayer, setShowIntroLayer] = useState(false);
+  const [introVisible, setIntroVisible] = useState(false);
+  const [homeVisible, setHomeVisible] = useState(true);
+
+  useEffect(() => {
+    let tFadeOut: number | null = null;
+    let tHomeIn: number | null = null;
+    let tHideIntro: number | null = null;
+
+    let shouldShowIntro = false;
+    try {
+      shouldShowIntro = localStorage.getItem(INTRO_SEEN_KEY) !== '1';
+      if (shouldShowIntro) {
+        localStorage.setItem(INTRO_SEEN_KEY, '1');
+      }
+    } catch {
+      shouldShowIntro = true;
+    }
+
+    if (!shouldShowIntro) {
+      setHomeVisible(true);
+      setShowIntroLayer(false);
+      setIntroVisible(false);
+      return;
+    }
+
+    setHomeVisible(false);
+    setShowIntroLayer(true);
+    setIntroVisible(true);
+
+    tFadeOut = window.setTimeout(() => {
+      setIntroVisible(false);
+    }, INTRO_FADE_OUT_START_MS);
+
+    tHomeIn = window.setTimeout(() => {
+      setHomeVisible(true);
+    }, HOME_FADE_IN_START_MS);
+
+    tHideIntro = window.setTimeout(() => {
+      setShowIntroLayer(false);
+    }, INTRO_TOTAL_MS);
+
+    return () => {
+      if (tFadeOut) window.clearTimeout(tFadeOut);
+      if (tHomeIn) window.clearTimeout(tHomeIn);
+      if (tHideIntro) window.clearTimeout(tHideIntro);
+    };
+  }, []);
 
   // Realtime subscription per dipendente
   useEffect(() => {
@@ -177,86 +231,93 @@ export default function Home() {
   };
 
   return (
-    <HomeContainer
-      pin={pin}
-      lastPin={lastPinToast}
-      lastTraceId={lastTraceId}
-      disabledEntrata={lastAllowed !== null && lastAllowed !== 'entrata'}
-      disabledUscita={lastAllowed !== null && lastAllowed !== 'uscita'}
-      feedback={feedback}
-      loading={loading}
-      onKeyPress={handleKeyPress}
-      onClear={handleClear}
-      onSettings={handleSettings}
-      onEntrata={async () => {
-        const traceId = createTimbraturaTraceId(pin, 'entrata');
-        setLastTraceId(traceId);
-        logTimbraturaDiag('home.click', {
-          traceId,
-          pin,
-          tipo: 'entrata',
-          source: 'home',
-          lastAllowed,
-        });
-        if (lastAllowed !== null && lastAllowed !== 'entrata') { 
-          logTimbraturaDiag('home.blocked_precheck', {
-            traceId,
-            pin,
-            tipo: 'entrata',
-            source: 'home-precheck',
-            lastAllowed,
-            userMessage: 'Alternanza violata: entrata consecutiva nello stesso giorno logico',
-          });
-          setFeedback({ type: 'error', message: 'Alternanza violata: entrata consecutiva nello stesso giorno logico' }); 
-          return; 
-        }
-        logTimbraturaDiag('home.precheck_passed', {
-          traceId,
-          pin,
-          tipo: 'entrata',
-          source: 'home-precheck',
-          lastAllowed,
-        });
-        setLastPinToast(pin); await handleEntrata(traceId);
-      }}
-      onUscita={async () => {
-        const traceId = createTimbraturaTraceId(pin, 'uscita');
-        setLastTraceId(traceId);
-        logTimbraturaDiag('home.click', {
-          traceId,
-          pin,
-          tipo: 'uscita',
-          source: 'home',
-          lastAllowed,
-        });
-        if (lastAllowed !== null && lastAllowed !== 'uscita') { 
-          logTimbraturaDiag('home.blocked_precheck', {
-            traceId,
-            pin,
-            tipo: 'uscita',
-            source: 'home-precheck',
-            lastAllowed,
-            userMessage: 'Manca ENTRATA di ancoraggio per questa uscita',
-          });
-          setFeedback({ type: 'error', message: 'Manca ENTRATA di ancoraggio per questa uscita' }); 
-          return; 
-        }
-        logTimbraturaDiag('home.precheck_passed', {
-          traceId,
-          pin,
-          tipo: 'uscita',
-          source: 'home-precheck',
-          lastAllowed,
-        });
-        setLastPinToast(pin); await handleUscita(traceId);
-      }}
-      onFeedbackClose={() => setFeedback({ type: null, message: '' })}
-    >
-      <SettingsModal
-        isOpen={showSettingsModal}
-        onClose={() => setShowSettingsModal(false)}
-        onSuccess={handleSettingsSuccess}
-      />
-    </HomeContainer>
+    <>
+      <div className={`transition-opacity duration-700 ${homeVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <HomeContainer
+          pin={pin}
+          lastPin={lastPinToast}
+          lastTraceId={lastTraceId}
+          disabledEntrata={lastAllowed !== null && lastAllowed !== 'entrata'}
+          disabledUscita={lastAllowed !== null && lastAllowed !== 'uscita'}
+          feedback={feedback}
+          loading={loading}
+          onKeyPress={handleKeyPress}
+          onClear={handleClear}
+          onSettings={handleSettings}
+          onEntrata={async () => {
+            const traceId = createTimbraturaTraceId(pin, 'entrata');
+            setLastTraceId(traceId);
+            logTimbraturaDiag('home.click', {
+              traceId,
+              pin,
+              tipo: 'entrata',
+              source: 'home',
+              lastAllowed,
+            });
+            if (lastAllowed !== null && lastAllowed !== 'entrata') {
+              logTimbraturaDiag('home.blocked_precheck', {
+                traceId,
+                pin,
+                tipo: 'entrata',
+                source: 'home-precheck',
+                lastAllowed,
+                userMessage: 'Alternanza violata: entrata consecutiva nello stesso giorno logico',
+              });
+              setFeedback({ type: 'error', message: 'Alternanza violata: entrata consecutiva nello stesso giorno logico' });
+              return;
+            }
+            logTimbraturaDiag('home.precheck_passed', {
+              traceId,
+              pin,
+              tipo: 'entrata',
+              source: 'home-precheck',
+              lastAllowed,
+            });
+            setLastPinToast(pin);
+            await handleEntrata(traceId);
+          }}
+          onUscita={async () => {
+            const traceId = createTimbraturaTraceId(pin, 'uscita');
+            setLastTraceId(traceId);
+            logTimbraturaDiag('home.click', {
+              traceId,
+              pin,
+              tipo: 'uscita',
+              source: 'home',
+              lastAllowed,
+            });
+            if (lastAllowed !== null && lastAllowed !== 'uscita') {
+              logTimbraturaDiag('home.blocked_precheck', {
+                traceId,
+                pin,
+                tipo: 'uscita',
+                source: 'home-precheck',
+                lastAllowed,
+                userMessage: 'Manca ENTRATA di ancoraggio per questa uscita',
+              });
+              setFeedback({ type: 'error', message: 'Manca ENTRATA di ancoraggio per questa uscita' });
+              return;
+            }
+            logTimbraturaDiag('home.precheck_passed', {
+              traceId,
+              pin,
+              tipo: 'uscita',
+              source: 'home-precheck',
+              lastAllowed,
+            });
+            setLastPinToast(pin);
+            await handleUscita(traceId);
+          }}
+          onFeedbackClose={() => setFeedback({ type: null, message: '' })}
+        >
+          <SettingsModal
+            isOpen={showSettingsModal}
+            onClose={() => setShowSettingsModal(false)}
+            onSuccess={handleSettingsSuccess}
+          />
+        </HomeContainer>
+      </div>
+      {showIntroLayer && <IntroSplash visible={introVisible} />}
+    </>
   );
 }
