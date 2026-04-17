@@ -20,6 +20,49 @@ export default defineConfig(({ mode }) => {
       }),
       VitePWA({
         registerType: 'autoUpdate',
+        // Manifest PWA esplicito per evitare fallback default del plugin in produzione
+        manifest: {
+          name: 'BadgeNode',
+          short_name: 'BadgeNode',
+          description: 'Sistema di timbratura con PIN per la gestione delle presenze',
+          start_url: '/',
+          display: 'standalone',
+          background_color: '#0b0b10',
+          theme_color: '#510357',
+          orientation: 'portrait',
+          icons: [
+            {
+              src: '/icons/icon-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'any',
+            },
+            {
+              src: '/icons/icon-256x256.png',
+              sizes: '256x256',
+              type: 'image/png',
+              purpose: 'any',
+            },
+            {
+              src: '/icons/icon-384x384.png',
+              sizes: '384x384',
+              type: 'image/png',
+              purpose: 'any',
+            },
+            {
+              src: '/icons/icon-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any',
+            },
+            {
+              src: '/icons/maskable-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable',
+            },
+          ],
+        },
         workbox: {
           // Escludi librerie pesanti di export dal precache
           // Verranno scaricate on-demand solo quando l'utente esporta
