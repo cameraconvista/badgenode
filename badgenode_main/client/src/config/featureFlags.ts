@@ -26,8 +26,8 @@ function readStringEnv(name: string, defaultValue = ''): string {
 export const FEATURE_OFFLINE_QUEUE = readBoolEnv('VITE_FEATURE_OFFLINE_QUEUE', false);
 export const FEATURE_OFFLINE_BADGE = readBoolEnv('VITE_FEATURE_OFFLINE_BADGE', false);
 export const OFFLINE_DEVICE_WHITELIST = readStringEnv('VITE_OFFLINE_DEVICE_WHITELIST', '');
-export const FEATURE_AUTH_BYPASS = readBoolEnv('VITE_FEATURE_AUTH_BYPASS', true);
-export const FEATURE_AUTH_ROUTE_GUARDS = readBoolEnv('VITE_FEATURE_AUTH_ROUTE_GUARDS', false);
+export const FEATURE_AUTH_BYPASS = readBoolEnv('VITE_FEATURE_AUTH_BYPASS', false);
+export const FEATURE_AUTH_ROUTE_GUARDS = readBoolEnv('VITE_FEATURE_AUTH_ROUTE_GUARDS', true);
 
 // Immutable feature flags object
 export const featureFlags = {

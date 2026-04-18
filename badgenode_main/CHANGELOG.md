@@ -7,6 +7,30 @@ e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.0.2] — 2026-04-18
+
+### 🔐 Security & Runtime Hardening
+
+#### Changed
+- ✅ `VITE_FEATURE_AUTH_BYPASS` default cambiato a `false`
+- ✅ `VITE_FEATURE_AUTH_ROUTE_GUARDS` default cambiato a `true`
+- ✅ validazione PIN client resa stretta (solo interi 1-99, no parse permissivo)
+- ✅ proxy dev `/api` su Vite reso configurabile via `VITE_API_PROXY_TARGET` con fallback `http://localhost:3001`
+
+#### Quality
+- ✅ suite test estesa a `client/src/services/__tests__/**/*.test.ts`
+- ✅ aggiunta compat API `generateDateRange` in `storico.service` per test legacy
+- ✅ gestione offline queue in test mode resa deterministica (`MODE=test` non forza enqueue fallback)
+- ✅ `npm run check`, `npm run test`, `npm run check:ci` tutti OK
+
+#### Dependencies
+- ✅ upgrade sicurezza runtime:
+  - `drizzle-orm` → `0.45.2`
+  - `jspdf` → `4.2.1`
+- ✅ `npm audit --omit=dev` → **0 vulnerabilities**
+
+---
+
 ## [1.0.1] — 2025-11-03
 
 ### 🚀 Performance & Cleanup

@@ -32,6 +32,7 @@ describe('PIN validation (client)', () => {
       expect(isValidPin('0')).toBe(false);
       expect(isValidPin('100')).toBe(false);
       expect(isValidPin('abc')).toBe(false);
+      expect(isValidPin('12abc')).toBe(false);
       expect(isValidPin('')).toBe(false);
     });
   });
@@ -69,11 +70,11 @@ describe('PIN validation (client)', () => {
     });
 
     it('should handle floating point numbers', () => {
-      // Nota: la funzione usa il valore originale per il range check, non parseInt
-      expect(isValidPin(1.5)).toBe(true);   // 1.5 >= 1 && 1.5 <= 99 = true
+      // Per sicurezza accettiamo solo interi
+      expect(isValidPin(1.5)).toBe(false);
       expect(isValidPin(50.0)).toBe(true);  // Integer as float
       expect(isValidPin(0.5)).toBe(false);  // 0.5 < 1 = false
-      expect(isValidPin(99.9)).toBe(false); // 99.9 > 99 = false
+      expect(isValidPin(99.9)).toBe(false);
     });
   });
 });

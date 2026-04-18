@@ -44,6 +44,11 @@ export async function getTimbratureByRange(params: StoricoParams): Promise<Timbr
   return getStoricoByPin(params);
 }
 
+// Legacy compatibilità test/consumer: wrapper esplicito del range inclusivo.
+export function generateDateRange(from: string, to: string): string[] {
+  return expandDaysRange(from, to);
+}
+
 // ===== FUNZIONI DI COMPATIBILITÀ =====
 // Mantenute per non rompere l'UI esistente
 

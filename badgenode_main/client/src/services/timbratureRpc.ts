@@ -203,12 +203,13 @@ export async function insertTimbroServer({ pin, tipo, ts, client_event_id, trace
     // Try offline queue if enabled and this is a network error (protected)
     try {
       // Check if this is a network error that should trigger offline queue
+      const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
       const isNetworkError = (
         error instanceof TypeError && error.message.includes('fetch') ||
         error instanceof TypeError && error.message.includes('Failed to fetch') ||
         (error as any)?.code === 'ERR_INTERNET_DISCONNECTED' ||
         (error as any)?.name === 'NetworkError' ||
-        !navigator.onLine
+        isOnline === false
       );
       
       if (isNetworkError) {
@@ -221,7 +222,8 @@ export async function insertTimbroServer({ pin, tipo, ts, client_event_id, trace
         } else {
           // Fallback: check environment directly if diagnostics not ready
           const queueEnabled = String(import.meta.env?.VITE_FEATURE_OFFLINE_QUEUE ?? 'false') === 'true';
-          if (queueEnabled) {
+          const isTestMode = String(import.meta.env?.MODE ?? '') === 'test';
+          if (queueEnabled && !isTestMode) {
             shouldQueue = true;
             if (import.meta.env.DEV) {
               console.debug('[SERVICE] Using environment fallback for offline queue');

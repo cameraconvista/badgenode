@@ -27,6 +27,8 @@ Permettere timbrature offline su dispositivi tablet aziendali con sincronizzazio
 - tabella `public.timbrature` usa `client_event_id` (indice univoco parziale)
 - nel DB `public` corrente non si assume l'uso operativo di `device_id/client_seq`
 - il device gating resta lato client e non è parte della chiave di idempotenza DB
+- in modalità test (`import.meta.env.MODE === 'test'`) è disattivato il fallback queue forzato da env per evitare falsi positivi in suite unit
+- rilevazione network error hardenizzata (`navigator` opzionale): nessuna classificazione offline errata in ambienti non-browser
 
 ### **Principi Chiave**
 - **Default OFF**: Sistema disabilitato di default, attivabile solo su device whitelisted

@@ -28,11 +28,24 @@ I dettagli puntuali del censimento, dell'audit tecnico, della gap analysis e del
 
 Per ridurre il rischio operativo (no lockout improvviso) il client usa rollout controllato con flag:
 
-- `VITE_FEATURE_AUTH_BYPASS` (default `true`): mantiene il comportamento legacy mock
-- `VITE_FEATURE_AUTH_ROUTE_GUARDS` (default `false`): abilita protezione route solo quando `AUTH_BYPASS=false`
+- `VITE_FEATURE_AUTH_BYPASS` (default `false`): bypass disattivato per default
+- `VITE_FEATURE_AUTH_ROUTE_GUARDS` (default `true`): protezione route attiva per default quando bypass off
 
 Nota: i guard sono volutamente disaccoppiati dal bypass; il codice forza la regola di safety:
 route guards non si attivano mai se bypass e` ancora attivo.
+
+## Delta tecnico post-hardening (2026-04-18 sera)
+
+- validazione PIN client allineata al server:
+  - accetta solo `^\d{1,2}$`, range `1..99`
+  - rifiuta input sporchi (`12abc`) e numeri non interi (`1.5`)
+- estensione matrice test:
+  - inclusi `client/src/services/__tests__/timbratureRpc.test.ts`
+  - inclusi `client/src/services/__tests__/storico.service.test.ts`
+- compatibilità legacy test:
+  - introdotto export `generateDateRange` in `client/src/services/storico.service.ts`
+- sicurezza dipendenze runtime:
+  - audit production (`npm audit --omit=dev`) ora a `0 vulnerabilities`
 
 ## Delta tecnico post-aggiornamento MD (2026-04-18, ciclo enterprise cleanup)
 

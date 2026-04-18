@@ -54,6 +54,21 @@ curl -I https://registry.npmjs.org/
 
 ## 🔧 Environment Setup
 
+### **Aggiornamento Runtime 2026-04-18 (sicurezza default)**
+
+```bash
+# Auth (default sicuri)
+VITE_FEATURE_AUTH_BYPASS=false
+VITE_FEATURE_AUTH_ROUTE_GUARDS=true
+
+# Proxy API frontend dev (opzionale)
+VITE_API_PROXY_TARGET=http://localhost:3001
+```
+
+Note:
+- I route guards sono attivi solo se bypass disattivato.
+- In sviluppo, se il backend gira su porta diversa da `3001`, impostare `VITE_API_PROXY_TARGET`.
+
 ### **.env.sample** - Template Semplificato (NUOVO)
 
 ```bash

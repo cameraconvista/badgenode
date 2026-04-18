@@ -1,8 +1,13 @@
 // PIN validation utilities for client
 export function isValidPin(pin: number | string | null | undefined): boolean {
   if (pin === null || pin === undefined) return false;
-  const pinNum = typeof pin === 'string' ? parseInt(pin, 10) : pin;
-  return !isNaN(pinNum) && pinNum >= 1 && pinNum <= 99;
+  if (typeof pin === 'string') {
+    const normalized = pin.trim();
+    if (!/^\d{1,2}$/.test(normalized)) return false;
+    const pinNum = Number(normalized);
+    return Number.isInteger(pinNum) && pinNum >= 1 && pinNum <= 99;
+  }
+  return Number.isInteger(pin) && pin >= 1 && pin <= 99;
 }
 
 export function validatePinInput(pin: number | string | null | undefined): string | null {

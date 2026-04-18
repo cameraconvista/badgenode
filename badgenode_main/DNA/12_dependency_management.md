@@ -16,6 +16,17 @@
 
 ## 🔍 Audit Strategy
 
+### **Stato sicurezza runtime 2026-04-18**
+
+- Eseguito `npm audit --omit=dev --json`
+- Esito corrente: **0 vulnerabilità production**
+- Upgrade principali applicati:
+  - `drizzle-orm` `0.39.1` → `0.45.2`
+  - `jspdf` `3.0.3` → `4.2.1`
+
+Nota operativa:
+- mantenere l'audit separato tra runtime (`--omit=dev`) e dev-tooling per evitare rumore sui pacchetti non deployati.
+
 ### **Monthly Dependency Review**
 ```bash
 # Audit completo mensile

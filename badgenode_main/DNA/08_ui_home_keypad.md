@@ -17,6 +17,14 @@
 
 ## 🎯 Design Overview
 
+### **Aggiornamento mobile runtime 2026-04-18**
+
+- Ridimensionamento solo base mobile del tastierino (tablet/desktop invariati):
+  - griglia mobile: `max-w` ridotta a `236px`
+  - gap mobile ridotto (`gap-1.5`)
+  - tasti mobile: `56x56` (breakpoint `sm/md/lg` invariati)
+- Obiettivo raggiunto: su telefono il keypad resta identico nel layout funzionale, ma più compatto e stabile nel viewport.
+
 ### **Filosofia Design**
 
 ```

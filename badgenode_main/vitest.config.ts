@@ -7,7 +7,7 @@ export default defineConfig({
     environment: 'node',
     include: [
       'tests/validation/**/*.test.ts',
-      'client/src/services/__tests__/utenti.service.test.ts',
+      'client/src/services/__tests__/**/*.test.ts',
       'server/routes/modules/__tests__/utenti.test.ts',
     ],
     exclude: [
@@ -24,6 +24,8 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       include: [
         'client/src/services/utenti.service.ts',
+        'client/src/services/storico.service.ts',
+        'client/src/services/timbratureRpc.ts',
         'server/routes/modules/utenti.ts',
         'client/src/utils/validation/pin.ts',
         'server/utils/validation/pin.ts',

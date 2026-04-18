@@ -88,7 +88,9 @@ describe('TimbratureRpc Service', () => {
         tipo: 'entrata'
       };
 
-      await expect(callInsertTimbro(params)).rejects.toThrow('PIN non valido');
+      const result = await callInsertTimbro(params);
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('PIN non valido');
     });
 
     it('dovrebbe gestire alternanza entrata/uscita', async () => {
