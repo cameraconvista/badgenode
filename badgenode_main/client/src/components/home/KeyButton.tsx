@@ -16,12 +16,12 @@ export default function KeyButton({ value, onClick, className = '' }: KeyButtonP
       data-testid={`button-key-${value === '⚙' ? 'settings' : value === 'C' ? 'clear' : value}`}
       onClick={handleClick}
       className={`
-        w-[64px] h-[64px]
+        w-[56px] h-[56px]
         sm:w-[68px] sm:h-[68px]
         md:w-[76px] md:h-[76px]
         lg:w-[80px] lg:h-[80px]
         rounded-full
-        text-lg sm:text-xl md:text-2xl font-medium text-[#1C0A10]
+        text-base sm:text-xl md:text-2xl font-medium text-[#1C0A10]
         bg-[#FCF6EE]
         border-2 border-[rgba(122,18,40,0.25)]
         hover:border-[rgba(122,18,40,0.55)]
@@ -35,7 +35,7 @@ export default function KeyButton({ value, onClick, className = '' }: KeyButtonP
         ${className}
       `}
     >
-      {value === '⚙' ? <Settings className="w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6" /> : value}
+      {value === '⚙' ? <Settings className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" /> : value}
     </button>
   );
 }
