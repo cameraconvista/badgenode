@@ -21,7 +21,7 @@ export interface ModaleTimbratureProps {
     oraEntrata: string;
     dataUscita: string;
     oraUscita: string;
-  }) => Promise<any>;
+  }) => Promise<void>;
   onDelete: (params: { giorno: string }) => Promise<void>;
   isLoading?: boolean;
 }

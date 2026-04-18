@@ -5,6 +5,12 @@ import { computeGiornoLogico } from '../../../../shared/time/computeGiornoLogico
 import { computeDateStr, generateRequestId } from '../internal/helpers';
 
 const router = Router();
+type TimbroLiteRow = {
+  pin: number;
+  data_locale: string;
+  ora_locale: string | null;
+  tipo: string | null;
+};
 
 // GET /api/storico - Storico timbrature con filtri
 router.get('/api/storico', async (req, res) => {
@@ -87,8 +93,8 @@ router.get('/api/storico', async (req, res) => {
         return res.status(500).json({ success: false, error: 'Errore durante il recupero dello storico', code: 'QUERY_ERROR', requestId });
       }
       // Ricostruisci righe tipo v_turni_giornalieri per giorno (sweep cronologico cross-day)
-      const events = (timbri ?? [])
-        .map((t: any) => ({
+      const events = (timbri as TimbroLiteRow[] ?? [])
+        .map((t) => ({
           pin: t.pin,
           data: String(t.data_locale),
           ora: String(t.ora_locale ?? '00:00:00'),

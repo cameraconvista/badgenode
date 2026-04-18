@@ -19,8 +19,8 @@ export function useSaveFromModalMutation(pin: number, onSuccess?: () => void) {
     }) => {
       if (process.env.NODE_ENV === 'development') console.log('[HOOK] saveFromModal →', vars);
       
-      const entrataOps: Promise<any>[] = [];
-      const uscitaOps: Promise<any>[] = [];
+      const entrataOps: Promise<unknown>[] = [];
+      const uscitaOps: Promise<unknown>[] = [];
 
       // ENTRATA: create o update (sempre PRIMA)
       if (vars.dataEntrata && vars.oraEntrata) {

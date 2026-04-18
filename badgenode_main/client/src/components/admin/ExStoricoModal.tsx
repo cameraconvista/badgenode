@@ -9,7 +9,7 @@ interface ExStoricoModalProps {
   onClose: () => void;
   utente: { nome: string; cognome: string; pin: number } | null;
   archiviatoIl?: string | null;
-  rawRows: any[];
+  rawRows: Array<{ tipo?: unknown; ora_locale?: unknown; giorno_logico?: unknown; data_locale?: unknown; created_at?: unknown }>;
   isLoading?: boolean;
 }
 
@@ -39,12 +39,12 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
   const giornaliere = useMemo(() => {
     if (!utente) return [] as Array<{ giorno: string; mese_label: string; entrata: string | null; uscita: string | null; ore: number; extra: number }>;
     // Mappa rawRows (timbrature.service) al formato richiesto da aggregate
-    const mapped = (rawRows || []).map((r: any) => ({
+    const mapped = (rawRows || []).map((r) => ({
       pin: utente.pin,
-      tipo: r.tipo as 'entrata' | 'uscita',
-      ore: r.ora_locale || '',
-      giorno_logico: r.giorno_logico || r.data_locale || '',
-      created_at: r.created_at,
+      tipo: String(r.tipo) as 'entrata' | 'uscita',
+      ore: String(r.ora_locale ?? ''),
+      giorno_logico: String(r.giorno_logico ?? r.data_locale ?? ''),
+      created_at: String(r.created_at ?? ''),
       nome: utente.nome,
       cognome: utente.cognome,
     }));

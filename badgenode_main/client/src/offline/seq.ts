@@ -2,6 +2,7 @@
 // Contatore sequenziale locale (single-device) per client_seq
 
 const LS_KEY = 'BADGENODE_OFFLINE_CLIENT_SEQ_V1';
+type SeqGlobal = typeof globalThis & { __BN_SEQ__?: number };
 
 function readSeq(): number {
   try {
@@ -9,7 +10,7 @@ function readSeq(): number {
     const n = v ? parseInt(v, 10) : 0;
     return Number.isFinite(n) && n >= 0 ? n : 0;
   } catch {
-    const g = (globalThis as any);
+    const g = globalThis as SeqGlobal;
     if (typeof g.__BN_SEQ__ !== 'number') g.__BN_SEQ__ = 0;
     return g.__BN_SEQ__;
   }
@@ -19,7 +20,7 @@ function writeSeq(n: number): void {
   try {
     localStorage.setItem(LS_KEY, String(n));
   } catch {
-    (globalThis as any).__BN_SEQ__ = n;
+    (globalThis as SeqGlobal).__BN_SEQ__ = n;
   }
 }
 

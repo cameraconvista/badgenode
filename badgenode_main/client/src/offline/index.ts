@@ -2,9 +2,20 @@
 // Safe offline management with lazy init and no side-effects
 
 import { getDeviceId } from '@/lib/deviceId';
+type DiagOffline = {
+  enabled: boolean;
+  allowed: boolean;
+  deviceId: string;
+  queueCount: () => Promise<number>;
+  peekLast: () => Promise<unknown>;
+  peekClientSeq: () => Promise<number>;
+  getDeviceId: () => string;
+  acceptance: () => { enabled: boolean; allowed: boolean; deviceId: string };
+};
+type DiagGlobal = typeof globalThis & { __BADGENODE_DIAG__?: { featureFlags?: unknown; offline?: DiagOffline } };
 
 // Safe init function - no side effects, pure function
-export async function initOfflineSystem(opts?: { diag?: boolean }): Promise<void> {
+export async function initOfflineSystem(_opts?: { diag?: boolean }): Promise<void> {
   // Early guards - prevent any execution in unsafe environments
   if (typeof window === 'undefined') return;
   if (!('indexedDB' in window)) return;
@@ -119,7 +130,7 @@ function installDiagnostics({ enabled, allowed, deviceId, q, b, wl }: {
   wl: string;
 }) {
   try {
-    const g = globalThis as any;
+    const g = globalThis as DiagGlobal;
     g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
     
     // Feature flags
@@ -171,17 +182,17 @@ function installDiagnostics({ enabled, allowed, deviceId, q, b, wl }: {
 // Safe utility functions
 export function shouldUseOfflineQueue(): boolean {
   try {
-    const offline = (globalThis as any)?.__BADGENODE_DIAG__?.offline;
-    return offline?.enabled && offline?.allowed;
+    const offline = (globalThis as DiagGlobal)?.__BADGENODE_DIAG__?.offline;
+    return Boolean(offline?.enabled && offline?.allowed);
   } catch {
     return false;
   }
 }
 
-export function isOfflineError(error: any): boolean {
+export function isOfflineError(error: unknown): boolean {
   if (!navigator.onLine) return true;
   if (error instanceof TypeError && error.message.includes('fetch')) return true;
-  if (error?.code === 'NETWORK_ERROR') return true;
-  if (error?.name === 'NetworkError') return true;
+  if ((error as { code?: string })?.code === 'NETWORK_ERROR') return true;
+  if ((error as { name?: string })?.name === 'NetworkError') return true;
   return false;
 }

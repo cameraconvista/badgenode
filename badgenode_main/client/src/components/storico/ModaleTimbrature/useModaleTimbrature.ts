@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { formatDataItaliana } from '@/lib/time';
 import { toInputDate } from '@/lib/dateFmt';
 import type { Timbratura } from '@/types/timbrature';
 import { validateTimbratura } from '@/lib/validation';

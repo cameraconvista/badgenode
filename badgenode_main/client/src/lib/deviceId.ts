@@ -3,6 +3,7 @@
 
 const STORAGE_KEY = 'BADGENODE_DEVICE_ID';
 const LEGACY_STORAGE_KEY = 'BN_DEVICE_ID';
+type GlobalDeviceIdStore = typeof globalThis & { __BADGENODE_DEVICE_ID__?: string };
 
 function uuidv4(): string {
   // RFC4122 v4 via Web Crypto se disponibile, altrimenti fallback
@@ -48,10 +49,11 @@ export function getDeviceId(): string {
     return generated;
   } catch {
     // In ambienti senza localStorage
-    let _fallback = (globalThis as any).__BADGENODE_DEVICE_ID__ as string | undefined;
+    const g = globalThis as GlobalDeviceIdStore;
+    let _fallback = g.__BADGENODE_DEVICE_ID__;
     if (!_fallback) {
       _fallback = uuidv4();
-      (globalThis as any).__BADGENODE_DEVICE_ID__ = _fallback;
+      g.__BADGENODE_DEVICE_ID__ = _fallback;
     }
     return _fallback;
   }

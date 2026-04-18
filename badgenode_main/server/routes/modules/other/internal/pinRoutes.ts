@@ -6,6 +6,8 @@ import { log } from '../../../../lib/logger';
 import { FEATURE_LOGGER_ADAPTER } from '../../../../config/featureFlags';
 
 const router = Router();
+type UtentePinRow = { pin: number | string };
+type PgErrorLike = { message?: string; code?: string };
 
 // GET /api/pin/validate — Risolvi PIN → user_id (service-role)
 router.get('/api/pin/validate', async (req, res) => {
@@ -34,8 +36,8 @@ router.get('/api/pin/validate', async (req, res) => {
         .limit(1);
       if (tblErr && process.env.NODE_ENV === 'development') {
         FEATURE_LOGGER_ADAPTER
-          ? log.error({ error: (tblErr as any)?.message || tblErr, route: 'pin:validate' }, 'table_check_error')
-          : console.error('[API][pin.validate] table_check_error:', (tblErr as any)?.message || tblErr);
+          ? log.error({ error: (tblErr as PgErrorLike)?.message || tblErr, route: 'pin:validate' }, 'table_check_error')
+          : console.error('[API][pin.validate] table_check_error:', (tblErr as PgErrorLike)?.message || tblErr);
       }
     } catch (tblEx) {
       if (process.env.NODE_ENV === 'development') {
@@ -46,8 +48,8 @@ router.get('/api/pin/validate', async (req, res) => {
     }
 
     // Schema-agnostic lookup: seleziona solo 'pin'
-    let data: any | null = null;
-    let qErr: any | null = null;
+    let data: UtentePinRow | null = null;
+    let qErr: unknown = null;
     try {
       const resp = await supabaseAdmin
         .from('utenti')
@@ -61,8 +63,8 @@ router.get('/api/pin/validate', async (req, res) => {
       qErr = e;
     }
     if (qErr) {
-      const qMsg = (qErr as any)?.message || '';
-      const qCode = (qErr as any)?.code || '';
+      const qMsg = (qErr as PgErrorLike)?.message || '';
+      const qCode = (qErr as PgErrorLike)?.code || '';
       // PostgREST: no rows for maybeSingle
       if (qCode === 'PGRST116' || /no rows|results contain 0 rows|row not found/i.test(String(qMsg))) {
         if (process.env.NODE_ENV === 'development') {
@@ -87,13 +89,13 @@ router.get('/api/pin/validate', async (req, res) => {
       }
       return res.status(404).json({ success: false, code: 'NOT_FOUND' });
     }
-    const userKey = String((data as any)?.pin);
+    const userKey = String(pinNum);
     if (process.env.NODE_ENV === 'development') {
       FEATURE_LOGGER_ADAPTER
         ? log.info({ traceId, pin: pinNum, route: 'pin:validate' }, 'ok')
         : console.log('[API][pin.validate] ok');
     }
-    return res.json({ success: true, ok: true, user_key: userKey, pin: String((data as any)?.pin ?? pinNum) });
+    return res.json({ success: true, ok: true, user_key: userKey, pin: String(pinNum) });
   } catch (e) {
     FEATURE_LOGGER_ADAPTER
       ? log.error({ traceId: req.header('x-badgenode-trace') || undefined, error: (e as Error).message, route: 'pin:validate' }, 'query_error')

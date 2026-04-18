@@ -4,6 +4,7 @@ import { supabaseAdmin } from '../../../../../lib/supabaseAdmin';
 import { generateRequestId } from '../helpers';
 
 const router = Router();
+type ExUserRow = { pin: number; nome: string; cognome: string };
 
 // POST /api/utenti/:id/restore - Ripristina ex-dipendente assegnando un nuovo PIN
 router.post('/api/utenti/:id/restore', async (req, res) => {
@@ -39,7 +40,7 @@ router.post('/api/utenti/:id/restore', async (req, res) => {
       .from('ex_dipendenti')
       .select('pin, nome, cognome')
       .eq('pin', oldPinNum)
-      .maybeSingle();
+      .maybeSingle<ExUserRow>();
 
     if (exErr || !exUser) {
       return res.status(409).json({ success: false, error: 'Utente non archiviato', code: 'USER_NOT_ARCHIVED' });
@@ -60,11 +61,12 @@ router.post('/api/utenti/:id/restore', async (req, res) => {
 
     // Inserisce nuovamente in utenti con il nuovo PIN
     const now = new Date().toISOString();
+    const insertPayload = [
+      { pin: newPinNum, nome: exUser.nome, cognome: exUser.cognome, created_at: now },
+    ] as never[];
     const { error: insErr } = await supabaseAdmin
       .from('utenti')
-      .insert([
-        { pin: newPinNum, nome: (exUser as any).nome, cognome: (exUser as any).cognome, created_at: now } as any,
-      ] as any);
+      .insert(insertPayload);
     if (insErr) {
       console.error(`[API][restore][${requestId}] Insert utenti failed:`, insErr.message);
       return res.status(500).json({ success: false, error: 'Ripristino non riuscito', code: 'RESTORE_FAILED' });

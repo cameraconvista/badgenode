@@ -8,6 +8,30 @@ import { isOfflineEnabled, isDeviceAllowed } from '@/offline/gating';
 import { getDeviceId } from '@/lib/deviceId';
 import { count } from './queue';
 import { peekClientSeq } from './seq';
+type DiagGlobal = typeof globalThis & {
+  __BADGENODE_DIAG__?: {
+    offline?: {
+      enabled?: boolean;
+      allowed?: boolean;
+      deviceId?: string;
+      queueCount?: () => Promise<number>;
+      peekLast?: () => Promise<unknown>;
+      getDeviceId?: () => string;
+      peekClientSeq?: () => number;
+      acceptance?: () => Promise<{
+        deviceId: string;
+        allowed: boolean;
+        queueCount: number;
+        lastSeq: number;
+        online: boolean;
+        lastSyncAt: string | null;
+        appVersion: string | null;
+      }>;
+      lastSyncAt?: string | null;
+    };
+    featureFlags?: unknown;
+  };
+};
 
 export async function getAcceptanceSnapshot(): Promise<{
   deviceId: string;
@@ -23,13 +47,13 @@ export async function getAcceptanceSnapshot(): Promise<{
   const queueCount = await count();
   const lastSeq = peekClientSeq();
   const online = navigator.onLine === true;
-  const lastSyncAt = (globalThis as any).__BADGENODE_DIAG__?.offline?.lastSyncAt ?? null;
-  const appVersion = ((import.meta as any)?.env?.VITE_APP_VERSION as string | undefined) ?? null;
+  const lastSyncAt = (globalThis as DiagGlobal).__BADGENODE_DIAG__?.offline?.lastSyncAt ?? null;
+  const appVersion = (import.meta as ImportMeta & { env?: { VITE_APP_VERSION?: string } })?.env?.VITE_APP_VERSION ?? null;
   return { deviceId, allowed, queueCount, lastSeq, online, lastSyncAt, appVersion };
 }
 
 export async function installOfflineDiagnostics(): Promise<void> {
-  const g = globalThis as any;
+  const g = globalThis as DiagGlobal;
   const deviceId = getDeviceId();
   const enabled = isOfflineQueueEnabled();
   const allowed = isDeviceAllowed(deviceId);

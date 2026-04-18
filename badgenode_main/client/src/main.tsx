@@ -30,7 +30,16 @@ try {
 // Offline system initialization - immediate fallback, then async init
 (() => {
   // Immediate fallback diagnostics to ensure system works from start
-  const g = globalThis as any;
+  type QueueApi = {
+    enqueuePending?: (ev: { pin: number; tipo: 'entrata' | 'uscita' }) => Promise<unknown>;
+    flushPending?: () => Promise<void>;
+    count?: () => Promise<number>;
+  };
+  type DiagGlobal = typeof globalThis & {
+    __BADGENODE_DIAG__?: { offline?: Record<string, unknown> };
+    __BADGENODE_QUEUE__?: QueueApi;
+  };
+  const g = globalThis as DiagGlobal;
   g.__BADGENODE_DIAG__ = g.__BADGENODE_DIAG__ || {};
   
   // Check environment for immediate availability
@@ -82,7 +91,7 @@ try {
     (async () => {
       try {
         const queueModule = await import('./offline/queue');
-        (globalThis as any).__BADGENODE_QUEUE__ = {
+        g.__BADGENODE_QUEUE__ = {
           enqueuePending: queueModule.enqueuePending,
           flushPending: queueModule.flushPending,
           count: queueModule.count,
@@ -110,8 +119,8 @@ try {
           try {
             const queueModule = await import('./offline/queue');
             flushPending = queueModule.flushPending;
-          } catch (importError) {
-            const globalQueue = (globalThis as any)?.__BADGENODE_QUEUE__;
+          } catch {
+            const globalQueue = g.__BADGENODE_QUEUE__;
             if (globalQueue?.flushPending) {
               flushPending = globalQueue.flushPending;
             } else {
@@ -148,7 +157,7 @@ try {
             const queueModule = await import('./offline/queue');
             count = await queueModule.count();
           } catch {
-            const globalQueue = (globalThis as any)?.__BADGENODE_QUEUE__;
+            const globalQueue = g.__BADGENODE_QUEUE__;
             count = globalQueue?.count ? await globalQueue.count() : 0;
           }
           

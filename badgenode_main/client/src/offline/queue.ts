@@ -4,7 +4,7 @@
 // Coda offline persistente (Step 3): IndexedDB con key client_seq
 // Protetta da feature flag. Nessun side-effect quando OFF.
 
-import { STORE_TIMBRI, idbAdd, idbGetAll, idbPut, idbDelete, idbCount, idbUpdateByKey } from './idb';
+import { STORE_TIMBRI, idbGetAll, idbPut, idbDelete, idbCount } from './idb';
 import type { QueueItem } from './types';
 import { getDeviceId } from '@/lib/deviceId';
 
@@ -87,7 +87,7 @@ export async function flushPending(): Promise<void> {
           if (import.meta.env.DEV) console.debug('[offline:flush] discarded 4xx', item.client_seq);
         }
         // 5xx errors: keep in queue for retry
-      } catch (e) {
+      } catch {
         // Network error: keep in queue for retry
         if (import.meta.env.DEV) console.debug('[offline:flush] network error, keeping', item.client_seq);
       }

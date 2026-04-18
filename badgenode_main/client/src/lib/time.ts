@@ -3,9 +3,7 @@
 
 import type { Timbratura } from '@/types/timbrature';
 import { 
-  computeGiornoLogico as computeGiornoLogicoShared,
-  type ComputeGiornoLogicoParams,
-  type ComputeGiornoLogicoResult 
+  computeGiornoLogico as computeGiornoLogicoShared
 } from '../../../server/shared/time/computeGiornoLogico';
 
 export interface TimbratureGiorno {

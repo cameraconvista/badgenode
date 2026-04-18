@@ -17,7 +17,7 @@ export function useDeleteMutation(pin: number, onSuccess?: () => void) {
       if (process.env.NODE_ENV === 'development') console.log('[HOOK] deleteMutation completed →', { 
         pin, 
         giorno, 
-        deletedCount: isError(result) ? 0 : (result as any)?.deleted_count ?? 0 
+        deletedCount: isError(result) ? 0 : (result as { deleted_count?: number })?.deleted_count ?? 0 
       });
       
       return result;
@@ -30,7 +30,7 @@ export function useDeleteMutation(pin: number, onSuccess?: () => void) {
       
       toast({
         title: 'Timbrature eliminate',
-        description: `${isError(result) ? 0 : (result as any)?.deleted_count ?? 0} timbrature eliminate con successo`,
+        description: `${isError(result) ? 0 : (result as { deleted_count?: number })?.deleted_count ?? 0} timbrature eliminate con successo`,
       });
       
       if (process.env.NODE_ENV === 'development') console.log('[HOOK] delete refetch completed, calling onSuccess');

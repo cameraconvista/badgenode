@@ -3,7 +3,7 @@
 // DB: badgenode_offline, Store: timbri_v1 (keyPath: client_seq)
 
 const DB_NAME = 'badgenode_offline';
-const DB_VERSION = 1;
+const _DB_VERSION = 1;
 export const STORE_TIMBRI = 'timbri_v1' as const;
 
 export type StoreName = typeof STORE_TIMBRI;
@@ -13,7 +13,7 @@ function hasIDB(): boolean {
 }
 
 // In-memory fallback (soft) when IDB is unavailable (e.g., private mode or SSR)
-const memDB: Record<string, any[]> = {
+const memDB: Record<string, unknown[]> = {
   [STORE_TIMBRI]: [],
 };
 
@@ -36,7 +36,7 @@ export async function idbOpen(): Promise<IDBDatabase> {
           os.createIndex('status_idx', 'status', { unique: false });
           os.createIndex('client_seq_idx', 'client_seq', { unique: true });
         }
-      } catch (e) {
+      } catch {
         // swallow upgrade errors, fallback will catch later
       }
     };
@@ -83,7 +83,7 @@ export async function idbPut<T extends { client_seq: number }>(store: StoreName,
 export async function idbDelete(store: StoreName, key: number): Promise<void> {
   if (!hasIDB()) {
     const arr = memDB[store];
-    const i = arr.findIndex((x: any) => x.client_seq === key);
+    const i = arr.findIndex((x) => (x as { client_seq?: number }).client_seq === key);
     if (i >= 0) arr.splice(i, 1);
     return;
   }
@@ -129,10 +129,10 @@ export async function idbCount(store: StoreName): Promise<number> {
   });
 }
 
-export async function idbUpdateByKey<T = any>(store: StoreName, key: IDBValidKey, updater: (current: T | null) => T): Promise<void> {
+export async function idbUpdateByKey<T = unknown>(store: StoreName, key: IDBValidKey, updater: (current: T | null) => T): Promise<void> {
   if (!hasIDB()) {
     const arr = memDB[store] as T[];
-    const i = arr.findIndex((x: any) => x.client_seq === key);
+    const i = arr.findIndex((x) => (x as { client_seq?: IDBValidKey }).client_seq === key);
     if (i >= 0) {
       arr[i] = updater(arr[i]);
     } else {
@@ -149,7 +149,7 @@ export async function idbUpdateByKey<T = any>(store: StoreName, key: IDBValidKey
       getReq.onsuccess = () => {
         try {
           const next = updater((getReq.result ?? null) as T | null);
-          const putReq = st.put(next as any);
+          const putReq = st.put(next as unknown);
           putReq.onsuccess = () => resolve();
           putReq.onerror = () => reject(putReq.error);
         } catch (e) {

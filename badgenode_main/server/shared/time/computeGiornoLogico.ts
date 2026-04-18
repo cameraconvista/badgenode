@@ -111,6 +111,6 @@ export function calcolaDifferenzaOre(
  * Verifica se una durata di turno è entro i limiti accettabili
  * TODO: Funzione deprecata - durate illimitate per richiesta business (STEP A.1)
  */
-export function isValidShiftDuration(ore: number): boolean {
+export function isValidShiftDuration(_ore: number): boolean {
   return true; // Nessun limite di durata per richiesta business
 }

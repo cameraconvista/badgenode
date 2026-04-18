@@ -147,7 +147,7 @@ export class OfflineValidatorService {
 
       // Formato YYYY-MM-DD
       return date.toISOString().split('T')[0];
-    } catch (error) {
+    } catch {
       // Fallback: usa data corrente
       return new Date().toISOString().split('T')[0];
     }

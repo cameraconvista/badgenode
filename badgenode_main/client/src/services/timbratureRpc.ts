@@ -3,7 +3,7 @@
 
 import { safeFetchJsonPost, safeFetchJsonPatch, safeFetchJsonDelete } from '@/lib/safeFetch';
 import { isError, type DeleteResult } from '@/types/api';
-import type { Timbratura, TimbratureUpdate } from '../../../shared/types/database';
+import type { TimbratureUpdate } from '../../../shared/types/database';
 import { logTimbraturaDiag } from '@/lib/timbraturaDiagnostics';
 
 // reserved: api-internal (non rimuovere senza migrazione)
@@ -60,7 +60,7 @@ export async function callInsertTimbro({
       traceId,
     });
     // Considera successo se il server ha restituito un id valido (incluso -1 per offline)
-    const id = (result as any)?.id;
+    const id = (result as { id?: number })?.id;
     if (typeof id === 'number') {
       if (id > 0) {
         logTimbraturaDiag('rpc.callInsertTimbro_result', {
@@ -97,7 +97,7 @@ export async function callInsertTimbro({
     return { success: false, error: 'Nessun id restituito dal server', code: 'NO_ID' };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Errore sconosciuto';
-    const code = (error as any)?.code || extractCodeFromMessage(message);
+    const code = (error as { code?: string })?.code || extractCodeFromMessage(message);
     logTimbraturaDiag('rpc.callInsertTimbro_result', {
       traceId,
       pin,
@@ -167,15 +167,15 @@ export async function insertTimbroServer({ pin, tipo, ts, client_event_id, trace
     });
     
     if (isError(result)) {
-      const err: any = new Error(result.error);
-      if ((result as any).code) err.code = (result as any).code;
+      const err = new Error(result.error) as Error & { code?: string };
+      if ((result as { code?: string }).code) err.code = (result as { code?: string }).code;
       logTimbraturaDiag('rpc.insertTimbroServer_result', {
         traceId,
         pin,
         tipo,
         source: 'timbrature-rpc',
         success: false,
-        code: (result as any).code,
+        code: (result as { code?: string }).code,
         error: result.error,
       });
       throw err;
@@ -197,7 +197,7 @@ export async function insertTimbroServer({ pin, tipo, ts, client_event_id, trace
     return result.data; // Solo i dati, non l'ApiResponse wrapper
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
-    const code = (error as any)?.code;
+    const code = (error as { code?: string })?.code;
     console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg, code });
     
     // Try offline queue if enabled and this is a network error (protected)
@@ -207,14 +207,14 @@ export async function insertTimbroServer({ pin, tipo, ts, client_event_id, trace
       const isNetworkError = (
         error instanceof TypeError && error.message.includes('fetch') ||
         error instanceof TypeError && error.message.includes('Failed to fetch') ||
-        (error as any)?.code === 'ERR_INTERNET_DISCONNECTED' ||
-        (error as any)?.name === 'NetworkError' ||
+        (error as { code?: string })?.code === 'ERR_INTERNET_DISCONNECTED' ||
+        (error as { name?: string })?.name === 'NetworkError' ||
         isOnline === false
       );
       
       if (isNetworkError) {
         // Try diagnostics first, then fallback to environment check
-        const offline = (globalThis as any)?.__BADGENODE_DIAG__?.offline;
+        const offline = (globalThis as { __BADGENODE_DIAG__?: { offline?: { enabled?: boolean; allowed?: boolean } } })?.__BADGENODE_DIAG__?.offline;
         let shouldQueue = false;
         
         if (offline?.enabled && offline?.allowed) {
@@ -238,9 +238,9 @@ export async function insertTimbroServer({ pin, tipo, ts, client_event_id, trace
             try {
               const queueModule = await import('../offline/queue');
               enqueuePending = queueModule.enqueuePending;
-            } catch (importError) {
+            } catch {
               // Fallback: use pre-loaded queue from global diagnostics
-              const globalQueue = (globalThis as any)?.__BADGENODE_QUEUE__;
+              const globalQueue = (globalThis as { __BADGENODE_QUEUE__?: { enqueuePending?: (ev: { pin: number; tipo: 'entrata' | 'uscita' }) => Promise<unknown> } })?.__BADGENODE_QUEUE__;
               if (globalQueue?.enqueuePending) {
                 enqueuePending = globalQueue.enqueuePending;
               } else {
@@ -313,7 +313,7 @@ export async function deleteTimbratureGiornata({ pin, giorno }: { pin: number; g
     console.info('[SERVICE] deleteTimbratureGiornata OK →', { 
       pin, 
       giorno, 
-      deletedCount: (result as any)?.deleted_count ?? 0 
+      deletedCount: (result as { deleted_count?: number })?.deleted_count ?? 0 
     });
     return result; // { success, deleted_count, ids, deleted_records }
   } catch (error) {

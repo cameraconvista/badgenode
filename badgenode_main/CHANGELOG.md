@@ -22,6 +22,9 @@ e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 - ✅ aggiunta compat API `generateDateRange` in `storico.service` per test legacy
 - ✅ gestione offline queue in test mode resa deterministica (`MODE=test` non forza enqueue fallback)
 - ✅ `npm run check`, `npm run test`, `npm run check:ci` tutti OK
+- ✅ allineamento typing enterprise su client/server (rimozione warning lint residui, typecheck strict ripristinato)
+- ✅ hardening type-safe su diagnostica offline, storico ex-dipendenti, validazione PIN, restore ex-dipendenti
+- ✅ validazione finale completa eseguita: `lint`, `check`, `test` (57 test), `check:ci` (build inclusa) tutti verdi
 
 #### Dependencies
 - ✅ upgrade sicurezza runtime:

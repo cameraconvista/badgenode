@@ -19,7 +19,7 @@ export default function ExDipendenti() {
   const [showDelete, setShowDelete] = useState(false);
   const [showStorico, setShowStorico] = useState(false);
   const [storicoLoading, setStoricoLoading] = useState(false);
-  const [storicoRaw, setStoricoRaw] = useState<unknown[]>([]);
+  const [storicoRaw, setStoricoRaw] = useState<Array<{ tipo?: unknown; ora_locale?: unknown; giorno_logico?: unknown; data_locale?: unknown; created_at?: unknown }>>([]);
   
   const { data: exDipendenti = [], isLoading, isError } = useExDipendentiQuery();
 
