@@ -4,20 +4,30 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-// reserved: api-internal (non rimuovere senza migrazione)
-// import { useToast } from '@/hooks/use-toast';
+import { isAuthBypassEnabled } from '@/config/featureFlags';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, _setLoading] = useState(false); void loading;
-  const { user, isAdmin } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { user, isAdmin, login } = useAuth();
   const [, setLocation] = useLocation();
+  const bypassEnabled = isAuthBypassEnabled();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO(BUSINESS): re-enable Auth when backend ready
-    setLocation('/');
+    setError('');
+    setLoading(true);
+    try {
+      await login(email, password);
+      setLocation('/');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Errore di autenticazione';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,6 +52,16 @@ export default function LoginPage() {
           </div>
 
           <h1 className="text-2xl font-bold text-[#1C0A10] text-center mb-8">Accesso BadgeNode</h1>
+          {bypassEnabled && (
+            <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+              Modalita` bypass autenticazione attiva (`VITE_FEATURE_AUTH_BYPASS=true`).
+            </div>
+          )}
+          {!!error && (
+            <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

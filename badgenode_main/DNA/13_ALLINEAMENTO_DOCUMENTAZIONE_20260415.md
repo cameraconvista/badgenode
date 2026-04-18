@@ -24,6 +24,16 @@ Dal confronto tra `DNA/` e codice reale emergono alcuni disallineamenti importan
 
 I dettagli puntuali del censimento, dell'audit tecnico, della gap analysis e della governance sono stati raccolti nella cartella root `REPORT/`, dedicata esclusivamente alla fase di consolidamento enterprise.
 
+## Rollout sicurezza auth (2026-04-18)
+
+Per ridurre il rischio operativo (no lockout improvviso) il client usa rollout controllato con flag:
+
+- `VITE_FEATURE_AUTH_BYPASS` (default `true`): mantiene il comportamento legacy mock
+- `VITE_FEATURE_AUTH_ROUTE_GUARDS` (default `false`): abilita protezione route solo quando `AUTH_BYPASS=false`
+
+Nota: i guard sono volutamente disaccoppiati dal bypass; il codice forza la regola di safety:
+route guards non si attivano mai se bypass e` ancora attivo.
+
 ## Chiusura blocco Supabase
 
 Il blocco di allineamento Supabase a rischio 0 puo` considerarsi chiuso lato:

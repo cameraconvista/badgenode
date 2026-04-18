@@ -26,12 +26,16 @@ function readStringEnv(name: string, defaultValue = ''): string {
 export const FEATURE_OFFLINE_QUEUE = readBoolEnv('VITE_FEATURE_OFFLINE_QUEUE', false);
 export const FEATURE_OFFLINE_BADGE = readBoolEnv('VITE_FEATURE_OFFLINE_BADGE', false);
 export const OFFLINE_DEVICE_WHITELIST = readStringEnv('VITE_OFFLINE_DEVICE_WHITELIST', '');
+export const FEATURE_AUTH_BYPASS = readBoolEnv('VITE_FEATURE_AUTH_BYPASS', true);
+export const FEATURE_AUTH_ROUTE_GUARDS = readBoolEnv('VITE_FEATURE_AUTH_ROUTE_GUARDS', false);
 
 // Immutable feature flags object
 export const featureFlags = {
   queue: FEATURE_OFFLINE_QUEUE,
   badge: FEATURE_OFFLINE_BADGE,
   whitelist: OFFLINE_DEVICE_WHITELIST,
+  authBypass: FEATURE_AUTH_BYPASS,
+  authRouteGuards: FEATURE_AUTH_ROUTE_GUARDS,
 } as const;
 
 export function isOfflineQueueEnabled(): boolean {
@@ -56,4 +60,13 @@ export function getOfflineFlags() {
     badge: isOfflineBadgeEnabled(),
     env: getRuntimeEnv()?.MODE ?? undefined,
   } as const;
+}
+
+export function isAuthBypassEnabled(): boolean {
+  return FEATURE_AUTH_BYPASS === true;
+}
+
+export function isAuthRouteGuardsEnabled(): boolean {
+  // Safety: never enable route guards while bypass mode is active.
+  return FEATURE_AUTH_ROUTE_GUARDS === true && FEATURE_AUTH_BYPASS === false;
 }

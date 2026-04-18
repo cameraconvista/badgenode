@@ -35,7 +35,7 @@ export class AuthService {
     if (error) throw error;
   }
 
-  static async getCurrentUser(): Promise<unknown | null> {
+  static async getCurrentUser(): Promise<Session | null> {
     const {
       data: { session },
     } = await supabase.auth.getSession();

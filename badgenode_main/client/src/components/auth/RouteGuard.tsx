@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLocation } from 'wouter';
 
@@ -8,7 +8,18 @@ interface RouteGuardProps {
 
 export function AdminRoute({ children }: RouteGuardProps) {
   const { isAdmin, loading, session } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!session && location !== '/login') {
+      setLocation('/login');
+      return;
+    }
+    if (session && !isAdmin && location !== '/') {
+      setLocation('/');
+    }
+  }, [loading, session, isAdmin, setLocation, location]);
 
   if (loading) {
     return (
@@ -19,12 +30,10 @@ export function AdminRoute({ children }: RouteGuardProps) {
   }
 
   if (!session) {
-    setLocation('/login');
     return null;
   }
 
   if (!isAdmin) {
-    setLocation('/');
     return null;
   }
 
@@ -33,7 +42,14 @@ export function AdminRoute({ children }: RouteGuardProps) {
 
 export function UserRoute({ children }: RouteGuardProps) {
   const { pin, loading, session } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!session && location !== '/login') {
+      setLocation('/login');
+    }
+  }, [loading, session, setLocation, location]);
 
   if (loading) {
     return (
@@ -44,7 +60,6 @@ export function UserRoute({ children }: RouteGuardProps) {
   }
 
   if (!session) {
-    setLocation('/login');
     return null;
   }
 
