@@ -1,7 +1,7 @@
 # 📅 LOGICA GIORNO LOGICO — BadgeNode
 
-**Data aggiornamento**: 2025-11-02
-**Versione documento**: v5.1 (fix giorno logico cutoff 05:00 + anchor date auto-recovery + client-side UI fix) • **Stato**: Enterprise Stable
+**Data aggiornamento**: 2026-04-18
+**Versione documento**: v5.2 (allineamento schema reale + retention operativa 6 mesi) • **Stato**: Enterprise Stable
 **Autore**: BadgeNode • Revisione tecnica Cascade
 
 **Fix Recenti (Sprint 10)**:
@@ -23,7 +23,7 @@ Il **giorno logico** è l’unità su cui BadgeNode aggrega le timbrature di uno
 
 - Fuso orario **Europe/Rome** obbligatorio in TUTTI i calcoli.
 - È **vietato** usare `.toISOString()` o conversioni UTC che possano spostare la data.
-- La colonna di riferimento per query e aggregazione è **`giornologico`** (tipo `date`).
+- La colonna di riferimento per query e aggregazione è **`giorno_logico`** (tipo `date`).
 
 ---
 
@@ -31,8 +31,8 @@ Il **giorno logico** è l’unità su cui BadgeNode aggrega le timbrature di uno
 
 | Caso                                    | Regola                                   | Esempio                                   |
 | --------------------------------------- | ---------------------------------------- | ----------------------------------------- |
-| Entrata tra **05:00–23:59**             | `giornologico` = **data dell’entrata**   | Entrata 09:00 → 2025‑10‑09                |
-| Entrata tra **00:00–04:59**             | `giornologico` = **giorno precedente**   | Entrata 02:00 del 10/10 → 2025‑10‑09      |
+| Entrata tra **05:00–23:59**             | `giorno_logico` = **data dell’entrata**  | Entrata 09:00 → 2025‑10‑09                |
+| Entrata tra **00:00–04:59**             | `giorno_logico` = **giorno precedente**  | Entrata 02:00 del 10/10 → 2025‑10‑09      |
 | Uscita dopo mezzanotte (entro le 04:59) | resta sul **giorno logico dell’entrata** | Entrata 22:00 → Uscita 02:00 → 2025‑10‑09 |
 
 **Nota:** per semplicità operativa, consideriamo “finestra notturna” **[00:00, 04:59]**. Uscite oltre le 04:59 sono comunque attribuite al **giorno logico di entrata**, ma sono considerate **edge case** e devono rientrare in una durata massima ragionevole di turno (es. ≤ 16h).
@@ -45,13 +45,13 @@ Si legge direttamente dalla tabella **`timbrature`** (NO vista):
 
 - `pin` (int) — identificativo dipendente
 - `tipo` (`entrata` | `uscita`)
-- `data` (date) — data di calendario della timbratura
-- `ore` (time) — orario locale
-- `giornologico` (date) — **chiave** di aggregazione
+- `data_locale` (date) — data di calendario locale della timbratura
+- `ora_locale` (time) — orario locale
+- `giorno_logico` (date) — **chiave** di aggregazione
 - `created_at` (timestamptz)
 - (facoltativi) `nome`, `cognome`
 
-**Filtro periodo:** `giornologico >= dal` **e** `giornologico <= al` (**range inclusivo**).
+**Filtro periodo:** `giorno_logico >= dal` **e** `giorno_logico <= al` (**range inclusivo**).
 Le pagine devono mostrare **tutti i giorni** del periodo, anche senza timbri (righe a `0.00`).
 
 ---
@@ -71,7 +71,7 @@ Un dipendente può **entrare/uscire più volte** nello stesso giorno logico. Ogn
 
 ### Algoritmo di pairing
 
-1. **Raggruppa** record per `giornologico` e **ordina** per (`ore`, `created_at` come tie‑breaker).
+1. **Raggruppa** record per `giorno_logico` e **ordina** per (`ora_locale`, `created_at` come tie‑breaker).
 2. **Scorri** la lista: ad ogni `entrata` associa la **prima `uscita` successiva disponibile**.
 3. Se l’uscita è assente → sessione **aperta** (uscita = “—”) → **esclusa** dai totali.
 4. **Calcola** ore di ogni sessione; somma per ottenere il **totale giornaliero**.
@@ -129,9 +129,20 @@ Un dipendente può **entrare/uscire più volte** nello stesso giorno logico. Ogn
 ## 🔌 Query di riferimento (read‑only)
 
 - Tabella: `timbrature`
-- Campi minimi: `pin, tipo, ore, giornologico, created_at[, nome, cognome]`
-- Filtro: `.eq('pin', pin).gte('giornologico', dal).lte('giornologico', al)`
-- Ordinamento: `.order('giornologico', {{ ascending: true }}).order('ore', {{ ascending: true }})`
+- Campi minimi: `pin, tipo, ora_locale, giorno_logico, created_at[, nome, cognome]`
+- Filtro: `.eq('pin', pin).gte('giorno_logico', dal).lte('giorno_logico', al)`
+- Ordinamento: `.order('giorno_logico', { ascending: true }).order('ora_locale', { ascending: true })`
+
+---
+
+## 🗃️ Retention Operativa
+
+- La retention operativa storica è impostata a **6 mesi**.
+- Al 2026-04-18 i controlli globali riportano:
+  - `fuori_retention_6m = 0`
+  - `future_anomale = 0`
+  - intervallo residuo: `2025-10-18` → `2026-04-17`
+- La retention non è automatizzata via job DB nel perimetro runtime corrente: richiede procedura amministrativa controllata.
 
 ---
 

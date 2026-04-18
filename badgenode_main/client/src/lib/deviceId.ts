@@ -2,6 +2,7 @@
 // Gestione DEVICE_ID persistente (localStorage) - Step 1 (no side effects se non usato)
 
 const STORAGE_KEY = 'BADGENODE_DEVICE_ID';
+const LEGACY_STORAGE_KEY = 'BN_DEVICE_ID';
 
 function uuidv4(): string {
   // RFC4122 v4 via Web Crypto se disponibile, altrimenti fallback
@@ -37,7 +38,12 @@ export function getDeviceId(): string {
   try {
     const existing = localStorage.getItem(STORAGE_KEY);
     if (existing && existing.length > 0) return existing;
-    const generated = uuidv4();
+    const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy && legacy.length > 0) {
+      localStorage.setItem(STORAGE_KEY, legacy);
+      return legacy;
+    }
+    const generated = `BN_DEV_${uuidv4().split('-')[0]}`;
     localStorage.setItem(STORAGE_KEY, generated);
     return generated;
   } catch {

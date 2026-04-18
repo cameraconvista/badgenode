@@ -74,10 +74,9 @@ describe('PIN validation (server)', () => {
         valid: false, 
         error: PIN_VALIDATION_ERROR 
       });
-      // Nota: parseInt('12abc') = 12, quindi è considerato valido
       expect(validatePinParam('12abc')).toEqual({ 
-        valid: true, 
-        pinNum: 12 
+        valid: false, 
+        error: PIN_VALIDATION_ERROR 
       });
     });
 
@@ -91,8 +90,8 @@ describe('PIN validation (server)', () => {
     it('should handle URL parameter edge cases', () => {
       // Simula casi tipici da req.params/req.query
       expect(validatePinParam('01')).toEqual({ valid: true, pinNum: 1 }); // Leading zero
-      expect(validatePinParam('1.0')).toEqual({ valid: true, pinNum: 1 }); // parseInt('1.0') = 1
-      expect(validatePinParam(' 1 ')).toEqual({ valid: true, pinNum: 1 }); // parseInt(' 1 ') = 1
+      expect(validatePinParam('1.0')).toEqual({ valid: false, error: PIN_VALIDATION_ERROR });
+      expect(validatePinParam(' 1 ')).toEqual({ valid: true, pinNum: 1 });
     });
 
     it('should handle boundary values for server context', () => {
@@ -107,10 +106,9 @@ describe('PIN validation (server)', () => {
   describe('security considerations', () => {
     it('should reject potentially malicious inputs', () => {
       // Test per input potenzialmente pericolosi
-      // Nota: parseInt estrae solo i numeri iniziali
       expect(validatePinParam('1; DROP TABLE users;')).toEqual({ 
-        valid: true, 
-        pinNum: 1 
+        valid: false, 
+        error: PIN_VALIDATION_ERROR 
       });
       expect(validatePinParam('<script>alert(1)</script>')).toEqual({ 
         valid: false, 

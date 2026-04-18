@@ -15,6 +15,7 @@ interface TimbratureRequestBody {
   tipo?: 'entrata' | 'uscita';
   ts?: string;
   anchorDate?: string;
+  client_event_id?: string;
 }
 
 /**
@@ -37,13 +38,13 @@ router.post('/', async (req: Request, res: Response) => {
       });
     }
 
-    const { pin, tipo, ts } = req.body as TimbratureRequestBody;
+    const { pin, tipo, ts, client_event_id } = req.body as TimbratureRequestBody;
     let anchorDate = (req.body as TimbratureRequestBody).anchorDate;
     const traceId = req.header('x-badgenode-trace') || undefined;
 
     FEATURE_LOGGER_ADAPTER
-      ? log.info({ traceId, pin, tipo, ts, anchorDate, route: 'timbrature:post' }, 'INSERT timbratura')
-      : console.info('[SERVER] INSERT timbratura →', { pin, tipo, ts, anchorDate });
+      ? log.info({ traceId, pin, tipo, ts, anchorDate, client_event_id: client_event_id ?? null, route: 'timbrature:post' }, 'INSERT timbratura')
+      : console.info('[SERVER] INSERT timbratura →', { pin, tipo, ts, anchorDate, client_event_id });
 
     // Validazione parametri
     if (!pin || !tipo) {
@@ -145,6 +146,7 @@ router.post('/', async (req: Request, res: Response) => {
       giorno_logico: giorno_logico,
       data_locale: dataLocale,
       ora_locale: oraLocale,
+      client_event_id: client_event_id ?? null,
     };
 
     // TODO(ts): replace with exact Supabase types
@@ -158,6 +160,27 @@ router.post('/', async (req: Request, res: Response) => {
     const { data, error } = insertResult;
 
     if (error) {
+      const maybeCode = (error as { code?: string }).code;
+      if (maybeCode === '23505' && client_event_id) {
+        const { data: existing, error: fetchErr } = await supabaseAdmin!
+          .from('timbrature')
+          .select('*')
+          .eq('client_event_id', client_event_id)
+          .limit(1)
+          .maybeSingle();
+
+        if (!fetchErr && existing) {
+          FEATURE_LOGGER_ADAPTER
+            ? log.info({ traceId, pin: pinNum, tipo, client_event_id, id: (existing as Timbratura).id, route: 'timbrature:post' }, 'INSERT idempotent duplicate (return existing)')
+            : console.info('[SERVER] INSERT idempotent duplicate →', { pin: pinNum, tipo, client_event_id, id: (existing as Timbratura).id });
+          return res.json({
+            success: true,
+            data: existing,
+            idempotent: true,
+          });
+        }
+      }
+
       FEATURE_LOGGER_ADAPTER
         ? log.error({ traceId, error: error.message, source: 'server-postTimbratura', route: 'timbrature:post' }, 'INSERT fallito')
         : console.error('[SERVER] INSERT fallito →', { error: error.message });

@@ -47,10 +47,28 @@ router.get('/api/storico', async (req, res) => {
       return res.status(422).json({ success: false, error: 'Formato data al non valido (YYYY-MM-DD)', code: 'INVALID_DATE_TO' });
     }
 
-    // Bypass v_turni_giornalieri (non disponibile) - usa direttamente fallback robusto
-    const error = { message: 'Vista non disponibile - usa fallback' }; // Forza fallback
-    if (error) {
-      console.warn(`${logBase} using fallback (v_turni_giornalieri not available):`, error.message);
+    // Prova prima la view DB (se presente), altrimenti fallback applicativo robusto.
+    let useFallback = true;
+    try {
+      let vQuery = supabaseAdmin
+        .from('v_turni_giornalieri')
+        .select('*')
+        .eq('pin', pinNum);
+      if (dal) vQuery = vQuery.gte('giorno_logico', dal);
+      if (al) vQuery = vQuery.lte('giorno_logico', al);
+      const { data: vRows, error: vErr } = await vQuery.order('giorno_logico', { ascending: false });
+      if (!vErr && Array.isArray(vRows)) {
+        useFallback = false;
+        return res.json({ success: true, data: vRows });
+      }
+      if (vErr) {
+        console.warn(`${logBase} view non disponibile, fallback attivo:`, vErr.message);
+      }
+    } catch (viewErr) {
+      console.warn(`${logBase} errore accesso view, fallback attivo:`, viewErr);
+    }
+
+    if (useFallback) {
       // Ricostruzione da dati base timbrature (metodo principale)
       let tQuery = supabaseAdmin
         .from('timbrature')

@@ -1,8 +1,7 @@
 // client/src/offline/index.ts
 // Safe offline management with lazy init and no side-effects
 
-// Device ID management
-const DEVICE_ID_KEY = 'BN_DEVICE_ID';
+import { getDeviceId } from '@/lib/deviceId';
 
 // Safe init function - no side effects, pure function
 export async function initOfflineSystem(opts?: { diag?: boolean }): Promise<void> {
@@ -16,21 +15,8 @@ export async function initOfflineSystem(opts?: { diag?: boolean }): Promise<void
     const b = String(import.meta.env?.VITE_FEATURE_OFFLINE_BADGE ?? 'false') === 'true';
     const wl = String(import.meta.env?.VITE_OFFLINE_DEVICE_WHITELIST ?? '').trim();
     
-    // Safe device ID management
-    let deviceId: string;
-    try {
-      const stored = localStorage.getItem(DEVICE_ID_KEY);
-      if (stored) {
-        deviceId = stored;
-      } else {
-        // Generate a recognizable device ID with BN_ prefix
-        const uuid = crypto?.randomUUID?.() ?? String(Date.now());
-        deviceId = `BN_DEV_${uuid.substring(0, 8)}`;
-        localStorage.setItem(DEVICE_ID_KEY, deviceId);
-      }
-    } catch {
-      deviceId = `BN_fallback_${Date.now()}`;
-    }
+    // Single source of truth for device ID
+    const deviceId = getDeviceId();
     
     // Gating calculation with flexible device matching
     let allowed = false;

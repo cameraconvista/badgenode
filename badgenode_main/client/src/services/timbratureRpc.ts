@@ -56,6 +56,7 @@ export async function callInsertTimbro({
     const result = await insertTimbroServer({ 
       pin: pin, 
       tipo: tipo.toLowerCase() as 'entrata'|'uscita',
+      client_event_id,
       traceId,
     });
     // Considera successo se il server ha restituito un id valido (incluso -1 per offline)
@@ -150,8 +151,8 @@ export async function createTimbroManual({ pin, tipo, giorno, ora, anchorDate }:
  * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
  * Con fallback offline queue su errori di rete
  */
-export async function insertTimbroServer({ pin, tipo, ts, traceId }: { pin: number; tipo: 'entrata'|'uscita'; ts?: string; traceId?: string }): Promise<{ id: number }> {
-  console.info('[SERVICE] insertTimbroServer →', { pin, tipo, ts });
+export async function insertTimbroServer({ pin, tipo, ts, client_event_id, traceId }: { pin: number; tipo: 'entrata'|'uscita'; ts?: string; client_event_id?: string; traceId?: string }): Promise<{ id: number }> {
+  console.info('[SERVICE] insertTimbroServer →', { pin, tipo, ts, client_event_id });
   logTimbraturaDiag('rpc.insertTimbroServer_start', {
     traceId,
     pin,
@@ -161,7 +162,7 @@ export async function insertTimbroServer({ pin, tipo, ts, traceId }: { pin: numb
   });
   
   try {
-    const result = await safeFetchJsonPost<{ id: number }>('/api/timbrature', { pin, tipo, ts }, {
+    const result = await safeFetchJsonPost<{ id: number }>('/api/timbrature', { pin, tipo, ts, client_event_id }, {
       headers: traceId ? { 'x-badgenode-trace': traceId } : undefined,
     });
     

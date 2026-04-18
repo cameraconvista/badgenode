@@ -1,7 +1,7 @@
 # 09 📱 OFFLINE TIMBRATURE - BadgeNode
 
 **Sistema offline-first per timbrature con sincronizzazione automatica**  
-**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
+**Versione**: 5.1 • **Data**: 2026-04-18 • **Stato**: Enterprise Stable
 
 ---
 
@@ -21,6 +21,12 @@
 
 ### **Obiettivo**
 Permettere timbrature offline su dispositivi tablet aziendali con sincronizzazione automatica quando la connessione torna disponibile, mantenendo idempotenza e zero regressioni UI/UX.
+
+### **Stato reale runtime (2026-04-18)**
+- idempotenza applicativa tracciata con `client_event_id` (UUID client)
+- tabella `public.timbrature` usa `client_event_id` (indice univoco parziale)
+- nel DB `public` corrente non si assume l'uso operativo di `device_id/client_seq`
+- il device gating resta lato client e non è parte della chiave di idempotenza DB
 
 ### **Principi Chiave**
 - **Default OFF**: Sistema disabilitato di default, attivabile solo su device whitelisted

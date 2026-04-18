@@ -263,7 +263,7 @@ router.post('/api/utenti', async (req, res) => {
       });
     }
 
-    if (!Number.isFinite(oreContrattuali) || oreContrattuali <= 0 || oreContrattuali > 24) {
+    if (!Number.isFinite(oreContrattuali) || oreContrattuali < 0.25 || oreContrattuali > 24) {
       return res.status(400).json({
         success: false,
         error: 'Ore contrattuali devono essere tra 0.25 e 24',
@@ -378,7 +378,7 @@ router.put('/api/utenti/:pin', async (req, res) => {
 
     if (ore_contrattuali !== undefined) {
       const oreNum = normalizeOreContrattuali(ore_contrattuali);
-      if (oreNum === undefined || !Number.isFinite(oreNum) || oreNum <= 0 || oreNum > 24) {
+      if (oreNum === undefined || !Number.isFinite(oreNum) || oreNum < 0.25 || oreNum > 24) {
         return res.status(400).json({
           success: false,
           error: 'Ore contrattuali devono essere tra 0.25 e 24',

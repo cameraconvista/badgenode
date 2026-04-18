@@ -1,8 +1,8 @@
 # 01 📊 DATABASE API - BadgeNode
 
 **Descrizione concettuale del modello dati e API endpoints**  
-**Versione**: 5.2 • **Data**: 2026-04-15 • **Stato**: Audit allineato a evidenze reali  
-**Ultima modifica**: Audit read-only schema Supabase reale
+**Versione**: 5.3 • **Data**: 2026-04-18 • **Stato**: Audit allineato a evidenze reali  
+**Ultima modifica**: Audit schema + retention operativa 6 mesi verificata
 
 ---
 
@@ -44,6 +44,20 @@ Nota tipi condivisi:
 - la view `v_turni_giornalieri` non e` piu` rappresentata come view DB reale nei tipi condivisi
 - il tipo `TurnoGiornaliero` resta un contratto applicativo legacy e non una `View` reale del database
 - `ore_contrattuali` resta tipizzato in modo conservativo come numero nei tipi condivisi per non propagare regressioni sul runtime, pur essendo nullable nello schema reale
+
+### Retention Timbrature 2026-04-18 (stato operativo)
+
+`Certo`
+- non esiste nel codice runtime una retention automatica schedulata su `public.timbrature`
+- non esiste nel DB `public` una policy automatica di purge per finestra temporale
+- retention operativa applicata manualmente e verificata: **ultimi 6 mesi**
+- validazione post-cleanup: `fuori_retention_6m = 0`, `future_anomale = 0`
+- range residuo verificato: `prima_data_residua = 2025-10-18`, `ultima_data_residua = 2026-04-17` (contesto data verifica: 2026-04-18)
+
+`Note`
+- i record anomali futuri (PIN 99, gennaio 2099) risultano rimossi dal dataset operativo
+- è stata creata una tabella di backup tecnica `public.timbrature_retention_backup` prima del cleanup
+- la decisione su mantenimento/eliminazione del backup resta scelta operativa e di compliance
 
 ### **utenti** - Dipendenti Attivi
 
@@ -185,7 +199,7 @@ DELETE /api/utenti/:pin
 ```
 POST /api/timbrature
 - Registra entrata/uscita via server con SERVICE_ROLE (bypass RLS)
-- Body: { pin: number, tipo: 'entrata'|'uscita', ts?: string }
+- Body: { pin: number, tipo: 'entrata'|'uscita', ts?: string, client_event_id?: string, anchorDate?: string }
 - Response OK: { success: true, data: { id: number, ... } }
 - Response errore: { success: false, error: string, code?: string }
 - Validazioni: alternanza entrata/uscita, giorno logico, PIN numerico 1-99
