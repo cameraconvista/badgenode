@@ -1,7 +1,7 @@
 # 02 🏗️ STRUTTURA PROGETTO - BadgeNode
 
 **Mappa directory e responsabilità del repository**  
-**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
+**Versione**: 5.1 • **Data**: 2026-04-18 • **Stato**: Enterprise Stable (cleanup allineato)
 
 ---
 
@@ -100,6 +100,7 @@ client/
 │   ├── components/            # Componenti UI organizzati
 │   │   ├── home/             # Tastierino PIN e home
 │   │   ├── admin/            # Gestione utenti admin
+│   │   │   └── dialogs/      # Dialog modulari admin
 │   │   ├── storico/          # Report e storico timbrature
 │   │   ├── theme/            # Provider temi dark/light
 │   │   └── ui/               # Componenti base (Radix UI)
@@ -112,7 +113,10 @@ client/
 │   │   └── Login/            # Autenticazione admin
 │   ├── services/             # Business logic e API
 │   │   ├── timbrature.service.ts
+│   │   ├── timbrature.service.helpers.ts
+│   │   ├── timbrature.validate-pin.ts
 │   │   ├── utenti.service.ts
+│   │   ├── utenti.service.helpers.ts
 │   │   └── storico.service.ts
 │   ├── hooks/                # Custom React hooks
 │   ├── lib/                  # Utility e configurazioni
@@ -126,8 +130,8 @@ client/
 
 ### **Regole Frontend**
 
-- **Componenti**: Max 220 righe (hard limit), warning ≥180
-- **File splitting**: Obbligatorio per file >220 righe
+- **Target runtime funzionale**: max 350 righe per file `.ts/.tsx`
+- **File splitting**: Obbligatorio al superamento soglia
 - **Organizzazione**: Per funzione, non per tipo
 - **Naming**: PascalCase per componenti, camelCase per utility
 - **Import**: Alias `@/` per src/, `@shared/` per shared/
@@ -174,6 +178,10 @@ scripts/
 ├── db/                      # Script database
 │   ├── SEED_GIORNO_LOGICO_V5.sql
 │   └── SEMPLIFICAZIONE_STORICO_V1.sql
+├── sql/                     # SQL operativi/read-only
+│   ├── smoke-test-supabase.sql
+│   ├── verify-retention-6m-per-employee.sql
+│   └── verify-retention-backup-table.sql
 ├── backup.ts                # Sistema backup automatico
 ├── backup-restore.ts        # Ripristino backup
 ├── diagnose.ts             # Diagnosi progetto
@@ -209,9 +217,8 @@ scripts/
 
 ```
 Limiti STRICT (FASE 4/4):
-- ≤220 righe: OK
-- ≥180 righe: WARNING (commit permesso)
-- >220 righe: BLOCK commit (hard limit)
+- target runtime: ≤350 righe per file funzionale
+- oltre soglia: split modulare obbligatorio
 
 Scope:
 - Solo *.ts e *.tsx in client/src/
@@ -330,8 +337,8 @@ components.json       # Radix UI components config
 
 ### **Dimensioni Target**
 
-- File singolo: ≤220 righe (hard limit)
-- Componente: ≤180 righe (warning)
+- File singolo funzionale: ≤350 righe
+- Componente: modulare e con responsabilità singola
 - Build size: ≤626KB gzipped (attuale)
 - Bundle chunks: ottimizzati per lazy loading
 

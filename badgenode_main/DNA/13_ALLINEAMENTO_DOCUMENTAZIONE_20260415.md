@@ -34,6 +34,31 @@ Per ridurre il rischio operativo (no lockout improvviso) il client usa rollout c
 Nota: i guard sono volutamente disaccoppiati dal bypass; il codice forza la regola di safety:
 route guards non si attivano mai se bypass e` ancora attivo.
 
+## Delta tecnico post-aggiornamento MD (2026-04-18, ciclo enterprise cleanup)
+
+Modifiche introdotte dopo l'ultimo aggiornamento documentale:
+
+- modularizzazione componenti dialog admin:
+  - `client/src/components/admin/ConfirmDialogs.tsx` ora file barrel
+  - nuovi file: `dialogs/ArchiviaDialog.tsx`, `dialogs/RestoreDialog.tsx`, `dialogs/DeleteExDialog.tsx`
+- modularizzazione servizi:
+  - `client/src/services/utenti.service.helpers.ts`
+  - `client/src/services/timbrature.service.helpers.ts`
+  - `client/src/services/timbrature.validate-pin.ts`
+- modularizzazione route server utenti:
+  - `server/routes/modules/utenti.helpers.ts`
+- riduzione file oversize lato runtime:
+  - tutti i file `.ts/.tsx` funzionali nel perimetro attivo sono rientrati sotto soglia `<= 350` righe
+- pulizia file obsoleti:
+  - rimossi file `.DS_Store` tracciabili nel repository
+- script SQL read-only aggiunti per audit retention:
+  - `scripts/sql/verify-retention-6m-per-employee.sql`
+  - `scripts/sql/verify-retention-backup-table.sql`
+
+Validazione tecnica post-cleanup:
+- `npm run check:ci` = OK
+- warning lint residui non bloccanti: `81`
+
 ## Chiusura blocco Supabase
 
 Il blocco di allineamento Supabase a rischio 0 puo` considerarsi chiuso lato:

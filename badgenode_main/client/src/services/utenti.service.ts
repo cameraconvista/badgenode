@@ -8,6 +8,14 @@ import { isError, isSuccess } from '@/types/api';
 import { validatePinInput } from '@/utils/validation/pin';
 import type { Utente as DbUtente } from '../../../shared/types/database';
 import { logTimbraturaDiag } from '@/lib/timbraturaDiagnostics';
+import {
+  buildUtentePayload,
+  buildUtenteUpdatePayload,
+  mapCreatedUtente,
+  mapDbUtenteToUi,
+  mapDeleteExError,
+  mapUpdatedUtente,
+} from './utenti.service.helpers';
 
 export interface Utente {
   id: string;
@@ -40,16 +48,6 @@ export interface UtenteInput {
 }
 
 export class UtentiService {
-  private static mapDbUtente(utente: DbUtente): Utente {
-    return {
-      ...utente,
-      id: utente.pin?.toString() || '',
-      email: utente.email || '',
-      telefono: utente.telefono || '',
-      descrizione_contratto: utente.descrizione_contratto ?? null,
-      updated_at: utente.updated_at ?? utente.created_at,
-    };
-  }
   // Ottieni lista utenti attivi
   static async getUtenti(traceId?: string): Promise<Utente[]> {
     try {
@@ -75,7 +73,7 @@ export class UtentiService {
 
       // Trasformo i dati per compatibilità con l'interfaccia Utente
       const utentiCompleti: Utente[] = (response.data || []).map((utente: DbUtente) =>
-        UtentiService.mapDbUtente(utente),
+        mapDbUtenteToUi(utente),
       );
       logTimbraturaDiag('utenti.fetch_result', {
         traceId,
@@ -139,7 +137,7 @@ export class UtentiService {
         return null;
       }
 
-      const match = response.data ? UtentiService.mapDbUtente(response.data as DbUtente) : null;
+      const match = response.data ? mapDbUtenteToUi(response.data as DbUtente) : null;
       logTimbraturaDiag('utenti.by_pin_result', {
         traceId,
         pin,
@@ -175,14 +173,7 @@ export class UtentiService {
       }
 
       // Payload per API
-      const payload = {
-        pin: input.pin,
-        nome: input.nome.trim(),
-        cognome: input.cognome.trim(),
-        ore_contrattuali: input.ore_contrattuali || 8.0,
-        email: input.email?.trim() || null,
-        telefono: input.telefono?.trim() || null,
-      };
+      const payload = buildUtentePayload(input);
 
       const response = await safeFetchJsonPost<DbUtente>('/api/utenti', payload);
 
@@ -195,21 +186,7 @@ export class UtentiService {
       }
 
       // Trasformo per compatibilità con l'interfaccia UI
-      const utenteCompleto: Utente = {
-        id: response.data.pin?.toString() || '',
-        pin: response.data.pin,
-        nome: response.data.nome,
-        cognome: response.data.cognome,
-        email: response.data.email || null,
-        telefono: response.data.telefono || null,
-        ore_contrattuali: response.data.ore_contrattuali || input.ore_contrattuali || 8,
-        note: response.data.note || null,
-        descrizione_contratto: input.descrizione_contratto || null,
-        created_at: response.data.created_at,
-        updated_at: response.data.updated_at || response.data.created_at,
-      };
-
-      return utenteCompleto;
+      return mapCreatedUtente(response.data, input);
     } catch (error) {
       throw asError(error);
     }
@@ -237,12 +214,7 @@ export class UtentiService {
       }
 
       // Payload per API - invia tutti i campi modificabili
-      const payload: Record<string, unknown> = {};
-      if (input.nome !== undefined) payload.nome = input.nome.trim();
-      if (input.cognome !== undefined) payload.cognome = input.cognome.trim();
-      if (input.email !== undefined) payload.email = input.email?.trim() || null;
-      if (input.telefono !== undefined) payload.telefono = input.telefono?.trim() || null;
-      if (input.ore_contrattuali !== undefined) payload.ore_contrattuali = input.ore_contrattuali;
+      const payload = buildUtenteUpdatePayload(input);
 
       const response = await safeFetchJsonPut<DbUtente>(`/api/utenti/${pin}`, payload);
 
@@ -255,21 +227,7 @@ export class UtentiService {
       }
 
       // Trasformo per compatibilità con l'interfaccia UI
-      const utenteCompleto: Utente = {
-        id: response.data.pin?.toString() || '',
-        pin: response.data.pin,
-        nome: response.data.nome,
-        cognome: response.data.cognome,
-        email: response.data.email || null,
-        telefono: response.data.telefono || null,
-        ore_contrattuali: response.data.ore_contrattuali || 8,
-        note: response.data.note || null,
-        descrizione_contratto: response.data.descrizione_contratto || null,
-        created_at: response.data.created_at,
-        updated_at: response.data.updated_at || response.data.created_at,
-      };
-
-      return utenteCompleto;
+      return mapUpdatedUtente(response.data);
     } catch (error) {
       throw asError(error);
     }
@@ -369,12 +327,7 @@ export class UtentiService {
       const response = await safeFetchJsonDelete(`/api/ex-dipendenti/${pin}`);
       if (isError(response)) {
         const code = response.code || 'DELETE_FAILED';
-        const map: Record<string, string> = {
-          USER_NOT_ARCHIVED: 'Utente non archiviato',
-          FK_CONSTRAINT: 'Impossibile eliminare: vincoli attivi',
-          DELETE_FAILED: 'Eliminazione non riuscita. Riprova.',
-        };
-        return { success: false, error: { code, message: map[code] || 'Eliminazione non riuscita. Riprova.' } };
+        return { success: false, error: { code, message: mapDeleteExError(code) } };
       }
       return { success: true };
     } catch {

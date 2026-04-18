@@ -1,7 +1,7 @@
 # 03 🔧 SCRIPTS UTILITÀ - BadgeNode
 
 **Manuale completo degli script di automazione e manutenzione**  
-**Versione**: 5.0 • **Data**: 2025-10-21 • **Stato**: Enterprise Stable
+**Versione**: 5.1 • **Data**: 2026-04-18 • **Stato**: Enterprise Stable (aggiornato)
 
 ---
 
@@ -46,6 +46,16 @@ npm run ensure:dev             # Verifica e avvia se necessario
 ---
 
 ## ✅ Validazione Automatica (FASE 4/4)
+
+### **SQL Read-Only Operativi (Retention/Audit)**
+
+```bash
+# Verifica retention ultimi 6 mesi per dipendente (attivi + ex)
+scripts/sql/verify-retention-6m-per-employee.sql
+
+# Verifica presenza/coerenza tabella backup retention
+scripts/sql/verify-retention-backup-table.sql
+```
 
 ### **scripts/ci/checks.sh** - Validazione Completa
 

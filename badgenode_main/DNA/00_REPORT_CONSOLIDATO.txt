@@ -1,30 +1,40 @@
 # 📚 REPORT CONSOLIDATO DOCUMENTAZIONE - BadgeNode
 
-Generato: 2025-11-02T02:58:00+01:00
-Commit: 0d65e5a
-Sprint: 10 - Enterprise Stable
+Generato: 2026-04-18
+Commit baseline: 5e22172 (pre-cleanup) → aggiornato con ciclo enterprise cleanup corrente
+Stato: Enterprise Stable (runtime invariato, qualità strutturale migliorata)
 
-📁 Documentazione Enterprise — Struttura 2025.11.02
-01_database_api.md         ✅ aggiornato: schema utenti con colonne extra (email, telefono, ore_contrattuali)
-02_struttura_progetto.md   ✅ verificato: struttura client/server, shared types
-03_scripts_utilita.md      ✅ verificato: backup, diagnose, CI scripts
-04_config_sviluppo.md      ✅ verificato: env vars, feature flags
-05_setup_sviluppo.md       ✅ verificato: setup locale, porta 3001
-06_icons_guide.md          ✅ verificato: PWA icons, manifest
-07_logica_giorno_logico.md ✅ aggiornato: fix cutoff 05:00, anchor date auto-recovery
-08_ui_home_keypad.md       ✅ verificato: keypad 3x4, accessibilità
-09_offline.md              ✅ verificato: IndexedDB queue, feature flags
-10_troubleshooting.md      ✅ aggiornato: fix export PDF/Excel, ore contrattuali
-11_asset_optimization.md   ✅ verificato: lazy loading, bundle size
-12_dependency_management.md✅ verificato: deps audit, security
+📁 Documentazione aggiornata nel ciclo corrente
+01_database_api.md         ✅ retention operativa 6 mesi + payload API aggiornato
+02_struttura_progetto.md   ✅ struttura reale allineata (dialogs/helpers/sql)
+03_scripts_utilita.md      ✅ aggiunti script SQL read-only di verifica retention
+07_logica_giorno_logico.md ✅ allineamento colonna reale `giorno_logico`
+09_offline.md              ✅ stato runtime/idempotenza documentato
+13_ALLINEAMENTO_*.md       ✅ delta tecnico post-update + rollout auth sicuro
+
 ────────────────────────────────
-Fix Recenti (Sprint 10):
-✅ Giorno logico: cutoff 05:00 per turni notturni
-✅ Export PDF/Excel: risolto Rules of Hooks violation
-✅ Formato export: ordinamento 1-31, giorno settimana
-✅ Ore contrattuali: migration SQL, campi modificabili
-✅ Form modali: struttura corretta, nessun errore console
+Interventi tecnici completati (senza alterare business logic / UX)
+✅ Auth rollout sicuro a flag (`VITE_FEATURE_AUTH_BYPASS`, `VITE_FEATURE_AUTH_ROUTE_GUARDS`)
+✅ Idempotenza offline end-to-end via `client_event_id`
+✅ Unificazione device ID offline + compat legacy key
+✅ Storico route: fallback non più forzato, solo su errore reale
+✅ Hardening validazione PIN (strict numeric) e ore_contrattuali (>=0.25)
+✅ Modularizzazione file lunghi:
+   - dialog admin separati in `client/src/components/admin/dialogs/*`
+   - helper servizi `utenti/timbrature`
+   - helper route server utenti
+✅ File funzionali `.ts/.tsx` portati sotto soglia <=350 righe
+✅ Rimossi file obsoleti `.DS_Store` tracciabili
+✅ Script SQL audit retention aggiunti:
+   - `scripts/sql/verify-retention-6m-per-employee.sql`
+   - `scripts/sql/verify-retention-backup-table.sql`
 
-Migration DB Pending:
-⚠️  supabase/migrations/20251102_add_utenti_extra_fields.sql
-    (da applicare manualmente su Supabase Dashboard)
+Qualità e stabilità
+✅ npm run check:ci -> OK
+✅ npm run test -> OK (40 test)
+✅ npm run build -> OK
+⚠️ lint warnings residui non bloccanti: 81
+
+Note runtime
+⚠️ `npm run smoke:runtime` può fallire con errore RLS (42501) usando anon key:
+   comportamento atteso in ambiente con policy attive; non impatta endpoint server-side con service role.

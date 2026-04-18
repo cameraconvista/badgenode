@@ -10,10 +10,14 @@ import { OfflineValidatorService } from './offline-validator.service';
 import { getDeviceId } from '@/lib/deviceId';
 // Offline queue now handled internally by callInsertTimbro
 import { asError } from '@/lib/safeError';
-import { safeFetchJson } from '@/lib/safeFetch';
-import { isError, isSuccess } from '@/types/api';
 import type { TimbraturaCanon, TimbratureRangeParams } from '../../../shared/types/timbrature';
 import { logTimbraturaDiag } from '@/lib/timbraturaDiagnostics';
+import { validatePinApi } from './timbrature.validate-pin';
+import {
+  normalizeTimbraResult,
+  sortByCreatedAtDesc,
+  toLegacyTimbratura,
+} from './timbrature.service.helpers';
 
 export interface TimbratureFilters {
   pin: number;
@@ -25,70 +29,7 @@ export interface TimbratureFilters {
 
 export class TimbratureService {
   private static _lastSubmitMs = 0;
-  private static async validatePinApi(pin: number, tipo: 'entrata' | 'uscita', traceId?: string): Promise<boolean> {
-    try {
-      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-        // Offline: non bloccare la coda offline
-        logTimbraturaDiag('pin.validate_service_result', {
-          traceId,
-          pin,
-          tipo,
-          source: 'timbrature-service',
-          result: 'allow-offline',
-        });
-        return true;
-      }
-      const resp = await safeFetchJson<{ ok: boolean }>(`/api/pin/validate?pin=${encodeURIComponent(pin)}`, {
-        cache: 'no-store',
-        headers: traceId ? { 'x-badgenode-trace': traceId } : undefined,
-      });
-      // 4xx: safeFetchJson returns { success:false, code, error }
-      if (isError(resp)) {
-        if (import.meta.env.DEV) {
-          console.debug('[pin] PIN non registrato');
-        }
-        logTimbraturaDiag('pin.validate_service_result', {
-          traceId,
-          pin,
-          tipo,
-          source: 'timbrature-service',
-          result: 'not-valid',
-          code: resp.code,
-          error: resp.error,
-        });
-        return false;
-      }
-      let okValue: boolean | undefined;
-      if (isSuccess(resp)) {
-        okValue = resp.data?.ok;
-      }
-      if (okValue === undefined) {
-        const flat = (resp as unknown as { ok?: unknown }).ok;
-        okValue = typeof flat === 'boolean' ? flat : undefined;
-      }
-      const ok = okValue === true;
-      logTimbraturaDiag('pin.validate_service_result', {
-        traceId,
-        pin,
-        tipo,
-        source: 'timbrature-service',
-        result: ok === true ? 'valid' : 'fallback-invalid',
-      });
-      return ok === true;
-    } catch (e) {
-      // network/304/5xx → non bloccare: lasciare a timbratura gestire fallback
-      if (import.meta.env.DEV) console.debug('[pin] validate error (non-blocking)', (e as Error).message);
-      logTimbraturaDiag('pin.validate_service_result', {
-        traceId,
-        pin,
-        tipo,
-        source: 'timbrature-service',
-        result: 'network-fallback-allow',
-        error: (e as Error).message,
-      });
-      return true;
-    }
-  }
+
   // SEMPLIFICATO - Lettura diretta da tabella public.timbrature
   static async getTimbratureByRange(params: TimbratureRangeParams): Promise<TimbraturaCanon[]> {
     try {
@@ -136,18 +77,7 @@ export class TimbratureService {
       });
 
       // Converti al formato legacy per compatibilità
-      return timbrature.map((t) => ({
-        id: t.id,
-        pin: t.pin,
-        tipo: t.tipo,
-        data_locale: t.data_locale,
-        ora_locale: t.ora_locale,
-        giorno_logico: t.giorno_logico,
-        ts_order: t.ts_order,
-        nome: '',
-        cognome: '',
-        created_at: t.created_at,
-      }));
+      return timbrature.map(toLegacyTimbratura);
     } catch (error) {
       throw error;
     }
@@ -163,18 +93,7 @@ export class TimbratureService {
       });
 
       // Converti al formato legacy per compatibilità
-      return timbrature.map((t) => ({
-        id: t.id,
-        pin: t.pin,
-        tipo: t.tipo,
-        data_locale: t.data_locale,
-        ora_locale: t.ora_locale,
-        giorno_logico: t.giorno_logico,
-        ts_order: t.ts_order,
-        nome: '',
-        cognome: '',
-        created_at: t.created_at,
-      }));
+      return timbrature.map(toLegacyTimbratura);
     } catch (error) {
       throw error;
     }
@@ -214,8 +133,7 @@ export class TimbratureService {
       const timbrature = await this.getTimbratureByRange(params);
 
       // Ordina per created_at desc per compatibilità
-      return timbrature
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      return sortByCreatedAtDesc(timbrature)
         .map((t) => ({
           id: t.id,
           pin: t.pin,
@@ -248,7 +166,7 @@ export class TimbratureService {
     });
     // Pre-validazione PIN lato server senza toccare UI
     const shouldValidate = !(options?.skipValidation ?? false);
-    const isValid = shouldValidate ? await TimbratureService.validatePinApi(pin, tipo, traceId) : true;
+    const isValid = shouldValidate ? await validatePinApi(pin, tipo, traceId) : true;
     if (!isValid) {
       logTimbraturaDiag('service.timbra_blocked_invalid_pin', {
         traceId,
@@ -261,8 +179,7 @@ export class TimbratureService {
     // Feature OFF → comportamento invariato
     if (!isOfflineEnabled(getDeviceId())) {
       const result = await callInsertTimbro({ pin, tipo, traceId });
-      const payload = (result.data ?? {}) as { id?: unknown };
-      const id = typeof payload.id === 'number' ? payload.id : undefined;
+      const { id } = normalizeTimbraResult(result);
       if (result.success && typeof id === 'number') {
         if (id > 0) {
           logTimbraturaDiag('service.timbra_result', {
@@ -353,7 +270,7 @@ export class TimbratureService {
     // Unified flow - callInsertTimbro handles both online and offline fallback
     try {
       const result = await callInsertTimbro({ pin, tipo, traceId });
-      const id = (result as any)?.data?.id as number | undefined;
+      const { id } = normalizeTimbraResult(result);
       if (result.success && typeof id === 'number') {
         if (id > 0) {
           // Success online - aggiorna cache per future validazioni offline
@@ -415,9 +332,7 @@ export class TimbratureService {
       const timbrature = await this.getTimbratureByRange({});
 
       // Ordina per created_at desc per compatibilità
-      return timbrature
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .find((t) => t.id === _id) || null;
+      return sortByCreatedAtDesc(timbrature).find((t) => t.id === _id) || null;
     } catch (error) {
       throw error;
     }
