@@ -16,7 +16,7 @@ export default function KeyButton({ value, onClick, className = '' }: KeyButtonP
       data-testid={`button-key-${value === '⚙' ? 'settings' : value === 'C' ? 'clear' : value}`}
       onClick={handleClick}
       className={`
-        w-[60px] h-[60px]
+        w-[64px] h-[64px]
         sm:w-[68px] sm:h-[68px]
         md:w-[76px] md:h-[76px]
         lg:w-[80px] lg:h-[80px]
