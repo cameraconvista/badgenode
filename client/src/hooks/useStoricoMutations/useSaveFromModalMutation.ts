@@ -114,7 +114,7 @@ export function useSaveFromModalMutation(pin: number, onSuccess?: () => void) {
         description: 'Le modifiche sono state salvate con successo',
       });
       
-      console.log('[HOOK] refetch completed, calling onSuccess');
+      if (process.env.NODE_ENV === 'development') console.log('[HOOK] refetch completed, calling onSuccess');
       onSuccess?.();
     },
     onError: (error) => {

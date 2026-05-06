@@ -2,7 +2,7 @@ import { AlertTriangle, Edit } from "@/lib/icons";
 import { Button } from '@/components/ui/button';
 import ModalKit from '@/components/ui/ModalKit';
 import { formatOre, formatDataEstesa, getMeseItaliano } from '@/lib/time';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   formatTimeOrDash,
   calcolaTotaliV5,
@@ -53,16 +53,6 @@ export default function StoricoTable({
     giorno: string;
     details: string[];
   } | null>(null);
-  
-  // Log quando i props cambiano
-  useEffect(() => {
-    console.log('[TABLE] storicoDatasetV5 props changed:', {
-      length: storicoDatasetV5?.length || 0,
-      isArray: Array.isArray(storicoDatasetV5),
-      timestamp: new Date().toISOString(),
-      sample: storicoDatasetV5?.[0] // Primo elemento per debug
-    });
-  }, [storicoDatasetV5]);
   
   // Calcola totali dal dataset v5 (fonte unica di verità) con protezione
   const list = Array.isArray(storicoDatasetV5) ? storicoDatasetV5 : [];

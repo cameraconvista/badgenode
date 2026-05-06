@@ -108,7 +108,9 @@ export function useModaleTimbrature(
         oraUscita: formData.oraUscita,
       };
 
-      console.log('[MODALE] handleSave →', { saveData, hasEntrata: !!entrata, hasUscita: !!uscita });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[MODALE] handleSave →', { saveData, hasEntrata: !!entrata, hasUscita: !!uscita });
+      }
 
       await onSave(saveData);
       onClose();
@@ -128,7 +130,9 @@ export function useModaleTimbrature(
         return;
       }
       
-      console.log('[MODALE] handleDelete →', { giornoLogico });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[MODALE] handleDelete →', { giornoLogico });
+      }
       await onDelete({ giorno: giornoLogico });
       onClose();
     } catch (error) {
