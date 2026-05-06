@@ -1,5 +1,7 @@
 # Script Archiviati - 2025-11-02
 
+Documento storico locale alla cartella archivio. Non e` documentazione canonica `DNA/`.
+
 **Data archiviazione**: 2025-11-02T03:17:00+01:00  
 **Motivo**: Cleanup script one-time/storici non più necessari  
 **Totale file**: 25  
@@ -41,18 +43,16 @@ Script di test/debug una tantum:
 - test-fix-giorno-logico.ts
 - clean-demo-users.ts
 
-## Ripristino
+## Uso corretto
 
-Se necessario ripristinare:
+Se serve consultare o riusare questi script:
+- trattarli come materiale storico
+- verificare sempre il codice e il DB reale prima di eseguirli
+- non riportarli in `scripts/` attivi senza richiesta esplicita
+
+Se necessario ripristinare temporaneamente per analisi:
 ```bash
 cp scripts/_archive/2025-11-02_cleanup/*.ts scripts/
-```
-
-## Eliminazione Definitiva
-
-Se confermato che non servono più:
-```bash
-rm -rf scripts/_archive/2025-11-02_cleanup/
 ```
 
 ---

@@ -7,6 +7,13 @@ e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [Unreleased]
+
+### Docs
+- nota documentale minima per validazione nuovo deploy Render
+
+---
+
 ## [1.0.2] — 2026-04-18
 
 ### 🔐 Security & Runtime Hardening

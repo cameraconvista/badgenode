@@ -17,6 +17,7 @@
 5. Trattare `DOCS_STORICO/` come secondario.
 6. Aggiornare `DNA/` quando cambia una logica, un vincolo o un workflow reale.
 7. Aggiornare `DNA/SUPABASE_DATABASE.md` solo con dati verificati da codice, migrazioni, script SQL o query SQL Editor.
+8. Valutare periodicamente i `.md` e le cartelle provvisorie fuori da `DNA/`, senza spostarli o rimuoverli per supposizione.
 
 ## Cose da non assumere
 

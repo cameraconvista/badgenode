@@ -12,6 +12,7 @@ Questo repository e` in uso locale attivo. Il codice reale resta la fonte di ver
 2. Aprire solo i file canonici in `DNA/` pertinenti al task.
 3. Verificare sempre il codice reale prima di modificare documentazione, logiche o workflow.
 4. Trattare `DOCS_STORICO/` come materiale secondario.
+5. Valutare i Markdown fuori da `DNA/` prima di duplicarli o spostarli.
 
 ## Documentazione canonica
 
@@ -37,6 +38,8 @@ Questo repository e` in uso locale attivo. Il codice reale resta la fonte di ver
 - In sviluppo gira un solo server Node/Express con Vite montato come middleware.
 - Le variabili sensibili stanno in `.env.local`, gia` gitignored.
 - Alcuni documenti storici descrivono strutture, default auth o flussi offline non piu` perfettamente allineati: usare sempre i file canonici sopra e poi il codice.
+- I Markdown in `.local/` appartengono a tooling locale Codex e non fanno parte della documentazione progetto.
+- I README collocati dentro cartelle archivio o legacy restano nella loro posizione perche` spiegano materiale storico accoppiato a quei file, non perche` siano canonici.
 
 ## File root da considerare operativi
 

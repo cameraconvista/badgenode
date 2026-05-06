@@ -1,42 +1,18 @@
 # Server Legacy Modules
 
-**Status**: DEPRECATED  
-**Created**: STEP B - Server-only consolidation  
-**Purpose**: Archivio moduli non più utilizzati dopo migrazione a `/api` endpoints
+**Status**: HISTORICAL / NON CANONICAL  
+**Purpose**: segnaposto storico per materiale legacy eventualmente riallocato fuori dal runtime attivo
 
-## Contenuto
+## Stato reale
 
-Questa cartella contiene moduli server deprecati dopo il consolidamento server-only:
-
-- Funzioni RPC non più invocate direttamente dal client
-- Adapter e helper sostituiti da endpoint Express
-- Codice di diagnostica Supabase sostituito da `/api/health`
-
-## Migrazione
-
-**Prima del STEP B** (client-server misto):
-```typescript
-// Client chiamava direttamente Supabase
-const { data } = await supabase.from('utenti').select('*');
-const rpcResult = await supabase.rpc('insert_timbro_v2', params);
-```
-
-**Dopo STEP B** (server-only):
-```typescript
-// Client usa solo /api endpoints
-const response = await safeFetchJson('/api/utenti');
-const result = await safeFetchJsonPost('/api/timbrature/manual', params);
-```
+Nel repository corrente non ci sono moduli server attivi in questa cartella. Il runtime reale usa:
+- `server/start.ts`
+- `server/createApp.ts`
+- `server/routes.ts`
+- `server/routes/**`
 
 ## Istruzioni
 
-1. **NON eliminare** questi file fino a verifica completa STEP B
-2. **NON importare** moduli da questa cartella in codice attivo
-3. **Rimuovere definitivamente** dopo test integrazione superati
-
-## Rollback
-
-Per rollback emergenza a client-server misto:
-1. Ripristinare import Supabase nei servizi client
-2. Riattivare chiamate dirette commentate
-3. Impostare `VITE_API_SERVER_ONLY=0` in `.env.local`
+1. Non importare nulla da questa cartella nel codice attivo.
+2. Trattare questo README come nota storica locale, non come documentazione canonica.
+3. Se in futuro questa cartella torna a contenere file, riallineare prima `DNA/` e `README_OPERATIVO.md`.

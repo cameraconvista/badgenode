@@ -274,7 +274,7 @@ npm run smoke:runtime
 
 #### 5. Post-Incident
 
-- [ ] Document incident in `DNA/incidents/YYYY-MM-DD-incident.md`
+- [ ] Document incident in `DOCS_STORICO/diagnosi/` con file datato, se il caso richiede storico persistente
 - [ ] Update runbook if new issue discovered
 - [ ] Schedule post-mortem meeting (if >30min downtime)
 - [ ] Notify stakeholders of resolution
