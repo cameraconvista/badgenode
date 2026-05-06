@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { writeFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import {
   getDocFiles,
@@ -11,7 +11,8 @@ import {
 } from './utils/docs-core';
 
 const DNA_DIR = 'DNA';
-const OUTPUT_FILE = join(DNA_DIR, '00_REPORT_CONSOLIDATO.txt');
+const OUTPUT_DIR = join('DOCS_STORICO', 'report-generici');
+const OUTPUT_FILE = join(OUTPUT_DIR, 'REPORT_CONSOLIDATO_DNA.md');
 
 function generateConsolidatedReport(docFiles: any[]): string {
   const timestamp = new Date().toISOString();
@@ -75,6 +76,9 @@ function main(): void {
   const report = generateConsolidatedReport(docFiles);
 
   try {
+    if (!existsSync(OUTPUT_DIR)) {
+      mkdirSync(OUTPUT_DIR, { recursive: true });
+    }
     writeFileSync(OUTPUT_FILE, report);
     console.log(`✅ Report consolidato creato: ${OUTPUT_FILE}`);
 

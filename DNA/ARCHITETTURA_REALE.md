@@ -1,0 +1,61 @@
+# Architettura Reale
+
+## Perimetro reale
+
+- La root `badgenode` e` il progetto reale.
+- Stack principale: React 18, Vite, Wouter, TanStack Query, Express 4, Supabase, TypeScript, PWA.
+
+## Entry point e runtime
+
+- Server dev/prod: `server/start.ts`
+- Creazione app Express: `server/createApp.ts`
+- Registrazione route: `server/routes.ts`
+- Entry client: `client/src/main.tsx`
+- Router applicativo: `client/src/App.tsx`
+
+In sviluppo non esistono due processi separati client/server: Express avvia Vite come middleware. La porta effettiva e` `PORT`, con default codice `3001`.
+
+## Struttura utile
+
+- `client/src/pages/Home/`: flusso principale di timbratura.
+- `client/src/services/`: servizi client e orchestrazione chiamate.
+- `client/src/offline/`: coda offline, IndexedDB, gating, diagnostica.
+- `server/routes/timbrature/`: scrittura, update e delete timbrature.
+- `server/routes/modules/`: utenti, storico, validazione PIN, system routes.
+- `server/shared/time/`: logica condivisa del giorno logico.
+- `shared/types/`: tipi condivisi runtime.
+- `supabase/migrations/`: SQL applicativo versionato.
+- `scripts/`: utility operative; alcune sono solo diagnostiche, altre toccano DB.
+
+## Routing reale
+
+Client:
+- `/`
+- `/login`
+- `/archivio-dipendenti`
+- `/admin/ex-dipendenti`
+- `/storico-timbrature`
+- `/storico-timbrature/:pin`
+
+Server:
+- `/api/health`, `/api/ready`, `/api/version`
+- `/api/utenti*`
+- `/api/pin/validate`
+- `/api/storico`
+- `/api/timbrature*`
+- `/api/ex-dipendenti*`
+
+## Stato auth reale
+
+Il codice client legge i flag in `client/src/config/featureFlags.ts`. Se non overrideati da env, i default correnti del codice sono:
+
+- `VITE_FEATURE_AUTH_BYPASS=true`
+- `VITE_FEATURE_AUTH_ROUTE_GUARDS=false`
+
+Questo punto e` operativo: non assumere i default descritti in vecchia documentazione o changelog senza ricontrollare il codice e l'env locale.
+
+## Osservabilita`
+
+- `requestIdMiddleware` aggiunge tracciamento richiesta.
+- Sono presenti endpoint health/version.
+- In dev il progetto espone diagnostica minima Supabase/offline su `window.__BADGENODE_DIAG__`.

@@ -430,8 +430,8 @@ services:
 ### Documentation
 
 - **POST_DEPLOY_CHECKLIST.md**: Verifica post-deploy
-- **DNA/10_troubleshooting.md**: Risoluzione problemi comuni
-- **SECURITY.md**: Incident response security
+- **DNA/OPERATIONS.md**: Workflow operativo attivo
+- **DNA/GUARDRAIL.md**: Vincoli e incident safety
 
 ### Tools
 

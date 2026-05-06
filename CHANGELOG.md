@@ -63,10 +63,10 @@ e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 - `client/src/components/home/KeyButton.tsx`: CSS-only hover states
 
 #### Documentation
-- DNA/08_ui_home_keypad.md: aggiunta sezione Performance
-- DNA/02_struttura_progetto.md: aggiunta sezione Cleanup
-- DNA/diagnosi/ANALISI_PERFORMANCE_TASTIERINO.md: analisi dettagliata
-- DNA/diagnosi/FASE1_OTTIMIZZAZIONI_COMPLETATE.md: riepilogo modifiche
+- DOCS_STORICO/legacy-guides/08_ui_home_keypad.md: aggiunta sezione Performance
+- DOCS_STORICO/legacy-guides/02_struttura_progetto.md: aggiunta sezione Cleanup
+- DOCS_STORICO/diagnosi/ANALISI_PERFORMANCE_TASTIERINO.md: analisi dettagliata
+- DOCS_STORICO/diagnosi/FASE1_OTTIMIZZAZIONI_COMPLETATE.md: riepilogo modifiche
 
 ---
 

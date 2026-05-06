@@ -108,6 +108,21 @@ export default [
     },
   },
   {
-    ignores: ['dist', 'coverage', 'node_modules', '.git', 'Backup_Automatico', 'scripts/_archive/**', 'legacy/**', 'server/legacy/**', '**/*.backup', '*.config.*'],
+    ignores: [
+      'dist',
+      'coverage',
+      'node_modules',
+      '.git',
+      '.agents/**',
+      '.config/**',
+      '.local/**',
+      'Backup_Automatico',
+      'DOCS_STORICO/**',
+      'scripts/_archive/**',
+      'legacy/**',
+      'server/legacy/**',
+      '**/*.backup',
+      '*.config.*',
+    ],
   },
 ];

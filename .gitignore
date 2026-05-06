@@ -1,2 +1,21 @@
+node_modules
+dist
+coverage
+build
 .DS_Store
-.local/
+.env
+.env.local
+.env.production
+.env.production.local
+.env.development
+.env.*.local
+.env.*.bak*
+.cache
+/.local
+/Backup_Automatico
+server/public
+vite.config.ts.*
+*.tar.gz
+# Backups
+badgenode/Backup_Automatico/
+Backup_Automatico/

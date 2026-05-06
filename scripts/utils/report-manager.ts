@@ -1,4 +1,4 @@
-// Utility per gestione automatica report in DNA/REPORT_GENERICI/
+// Utility per gestione automatica report storici fuori da DNA canonico.
 
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
@@ -13,13 +13,13 @@ export interface ReportConfig {
 }
 
 /**
- * Salva automaticamente un report nella cartella DNA/REPORT_GENERICI/
+ * Salva automaticamente un report nella cartella DOCS_STORICO/report-generici/
  */
 export function saveReport(config: ReportConfig): string {
   const { type, component, content, date = getCurrentDate() } = config;
 
   // Assicura che la cartella esista
-  const reportDir = join(process.cwd(), 'DNA', 'REPORT_GENERICI');
+  const reportDir = join(process.cwd(), 'DOCS_STORICO', 'report-generici');
   if (!existsSync(reportDir)) {
     mkdirSync(reportDir, { recursive: true });
   }
@@ -31,7 +31,7 @@ export function saveReport(config: ReportConfig): string {
   // Salva il file
   writeFileSync(filePath, content, 'utf8');
 
-  console.log(`📋 Report salvato: DNA/REPORT_GENERICI/${fileName}`);
+  console.log(`📋 Report salvato: DOCS_STORICO/report-generici/${fileName}`);
   return filePath;
 }
 

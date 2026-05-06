@@ -26,8 +26,8 @@ export function getDocFiles(): DocFile[] {
     const filePath = join(DNA_DIR, file);
     const ext = extname(file);
 
-    // Only process markdown files, skip the output file itself
-    if (ext === '.md' && file !== 'REPORT_CONSOLIDATO.txt') {
+    // Only process markdown files, skip generated report files
+    if (ext === '.md' && file !== 'REPORT_CONSOLIDATO_DNA.md') {
       try {
         const stats = statSync(filePath);
         const content = readFileSync(filePath, 'utf8');
@@ -139,13 +139,12 @@ export function analyzeQuality(docFiles: DocFile[]): string {
 
   // Check for missing essential docs
   const essentialDocs = [
-    '01_database_api.md',
-    '02_struttura_progetto.md',
-    '03_scripts_utilita.md',
-    '04_config_sviluppo.md',
-    '05_setup_sviluppo.md',
-    'ICONS_GUIDE.md',
-    'LOGICA_GIORNO_LOGICO.md',
+    'ARCHITETTURA_REALE.md',
+    'LOGICHE_CRITICHE.md',
+    'SUPABASE_DATABASE.md',
+    'INTEGRAZIONI_DATI.md',
+    'OPERATIONS.md',
+    'GUARDRAIL.md',
   ];
 
   const missingDocs = essentialDocs.filter((doc) => !docFiles.some((file) => file.name === doc));
