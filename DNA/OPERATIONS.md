@@ -38,6 +38,7 @@ File env operativi:
 - `npm run e2e`
 
 Nota: il server dev reale e` `server/start.ts`, non `server/index.ts` come riportato in parte della documentazione storica.
+Nota E2E: Playwright usa `playwright.config.ts`, lancia `npm run dev` su `PLAYWRIGHT_PORT || PORT || 5001` e il repository contiene suite attive in `e2e/`.
 
 ## Verifiche rapide
 
