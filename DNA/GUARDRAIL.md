@@ -34,5 +34,6 @@
 - cambiare chiavi/env sensibili senza motivo operativo
 - rimuovere o alterare retention dati
 - cambiare flussi di timbratura, alternanza, offline o storico
+- trasformare indicatori visuali dello storico in logiche persistenti o lato dati senza richiesta esplicita
 - alterare la modalita` di avvio del progetto
 - documentare schema Supabase per deduzione quando non e` verificato

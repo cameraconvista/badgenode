@@ -41,6 +41,12 @@ Punti da ricordare:
 - Il DB reale verificato non ha view operative in `public`.
 - Il pairing e le aggregazioni devono restare coerenti con il giorno logico.
 
+Segnali visivi correnti nello Storico Timbrature:
+- Riga rossa: solo caso `entrata` presente con `uscita` assente nel riepilogo giorno.
+- Alert giallo vicino alla data: solo indicazione UI per orari fuori fascia standard.
+- La modale `Anomalia oraria` e` informativa e non persiste alcuno stato.
+- Questi segnali non devono modificare calcoli ore, export, pairing, giorno logico, mutazioni o dati DB.
+
 ## Validazione PIN
 
 Fonte primaria: `server/routes/modules/other/internal/pinRoutes.ts`.
@@ -72,4 +78,3 @@ Regole correnti:
 - La retention operativa documentata e` ultimi 6 mesi.
 - Non esiste purge automatica nel runtime applicativo corrente.
 - Qualsiasi cleanup dati va trattato come attivita` amministrativa esplicita, non come manutenzione ordinaria dell'agent.
-
