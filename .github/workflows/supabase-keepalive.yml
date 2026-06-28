@@ -1,0 +1,44 @@
+name: Supabase Keepalive
+
+# Mantiene attivo il progetto Supabase Free (pausa dopo ~7 giorni di inattività).
+# Esegue una sola lettura minima con la ANON key (privilegio minimo, read-only).
+# Nessuna scrittura, nessun dato accumulato, consumo trascurabile.
+
+on:
+  schedule:
+    # Ogni 2 giorni alle 06:17 UTC (margine ampio sui 7 giorni di pausa).
+    # Orario non tondo per evitare i picchi di carico del cron condiviso GitHub.
+    - cron: '17 6 */2 * *'
+  workflow_dispatch: {} # permette il run manuale (anche per riattivare dopo 60gg di inattività)
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping Supabase (lettura minima)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+            echo "::error::Secret SUPABASE_URL o SUPABASE_ANON_KEY mancanti"
+            exit 1
+          fi
+          # lettura minima: 1 colonna, 1 riga, payload minimo
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+            "${SUPABASE_URL}/rest/v1/utenti?select=pin&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Range: 0-0")
+          echo "HTTP $code"
+          if [ "$code" = "200" ] || [ "$code" = "206" ]; then
+            echo "✅ Supabase raggiungibile — keepalive ok"
+          else
+            echo "::error::Ping fallito (HTTP $code)"
+            exit 1
+          fi
