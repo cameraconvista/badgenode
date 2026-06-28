@@ -12,6 +12,14 @@ build
 .env.*.bak*
 .cache
 /.local
+.agent/
+.mcp.json
+# Playwright output volatile (i baseline *-snapshots/ restano versionati)
+test-results
+playwright-report
+.playwright
+# Report generati da analyze:* (output volatile di tooling)
+DOCS_STORICO/report-generici/
 /Backup_Automatico
 server/public
 vite.config.ts.*
@@ -19,3 +27,4 @@ vite.config.ts.*
 # Backups
 badgenode/Backup_Automatico/
 Backup_Automatico/
+/BACKUP

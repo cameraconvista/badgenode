@@ -7,6 +7,7 @@ export default defineConfig({
     environment: 'node',
     include: [
       'tests/validation/**/*.test.ts',
+      'tests/storico/**/*.test.ts',
       'client/src/services/__tests__/**/*.test.ts',
       'server/routes/modules/__tests__/utenti.test.ts',
     ],
@@ -29,6 +30,7 @@ export default defineConfig({
         'server/routes/modules/utenti.ts',
         'client/src/utils/validation/pin.ts',
         'server/utils/validation/pin.ts',
+        'client/src/utils/timbrature-pairing.ts',
       ],
       exclude: [
         '**/__tests__/**',

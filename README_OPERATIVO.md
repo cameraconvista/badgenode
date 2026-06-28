@@ -16,13 +16,14 @@ Questo repository e` in uso locale attivo. Il codice reale resta la fonte di ver
 
 ## Documentazione canonica
 
-- [DNA/README.md](DNA/README.md): mappa dei documenti attivi.
-- [DNA/ARCHITETTURA_REALE.md](DNA/ARCHITETTURA_REALE.md): struttura reale, entrypoint, runtime, moduli chiave.
-- [DNA/LOGICHE_CRITICHE.md](DNA/LOGICHE_CRITICHE.md): giorno logico, alternanza, idempotenza, storico, offline.
-- [DNA/SUPABASE_DATABASE.md](DNA/SUPABASE_DATABASE.md): struttura Supabase verificata e punti di contatto col codice.
-- [DNA/INTEGRAZIONI_DATI.md](DNA/INTEGRAZIONI_DATI.md): integrazioni esterne, env, storage locale, GitHub.
-- [DNA/OPERATIONS.md](DNA/OPERATIONS.md): avvio, build, test, script, deploy, workflow operativi.
-- [DNA/GUARDRAIL.md](DNA/GUARDRAIL.md): vincoli non negoziabili e cose da non rompere.
+- [DNA/00_INDICE.md](DNA/00_INDICE.md): indice di ingresso e mappa dei documenti attivi.
+- [DNA/01_GUARDRAIL.md](DNA/01_GUARDRAIL.md): vincoli non negoziabili e cose da non rompere.
+- [DNA/02_ARCHITETTURA_REALE.md](DNA/02_ARCHITETTURA_REALE.md): struttura reale, entrypoint, runtime, moduli chiave.
+- [DNA/03_LOGICHE_CRITICHE.md](DNA/03_LOGICHE_CRITICHE.md): giorno logico, alternanza, idempotenza, storico, offline.
+- [DNA/04_SUPABASE_DATABASE.md](DNA/04_SUPABASE_DATABASE.md): struttura Supabase verificata e punti di contatto col codice.
+- [DNA/05_OPERATIONS.md](DNA/05_OPERATIONS.md): avvio, build, test, script, deploy, workflow operativi.
+- [DNA/06_DECISION_LOG.md](DNA/06_DECISION_LOG.md): decisioni tecniche rilevanti già prese.
+- [DNA/07_INTEGRAZIONI_DATI.md](DNA/07_INTEGRAZIONI_DATI.md): integrazioni esterne, env, storage locale, GitHub.
 
 ## Vincoli non negoziabili
 

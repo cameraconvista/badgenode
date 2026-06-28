@@ -430,8 +430,8 @@ services:
 ### Documentation
 
 - **POST_DEPLOY_CHECKLIST.md**: Verifica post-deploy
-- **DNA/OPERATIONS.md**: Workflow operativo attivo
-- **DNA/GUARDRAIL.md**: Vincoli e incident safety
+- **DNA/05_OPERATIONS.md**: Workflow operativo attivo
+- **DNA/01_GUARDRAIL.md**: Vincoli e incident safety
 
 ### Tools
 

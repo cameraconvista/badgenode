@@ -5,6 +5,7 @@ const appUrl = `http://localhost:${appPort}`;
 
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: '_legacy/**',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -18,6 +19,10 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'mobile',
+      use: { ...devices['Pixel 5'] },
     },
   ],
   webServer: {

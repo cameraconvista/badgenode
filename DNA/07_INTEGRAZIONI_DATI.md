@@ -3,7 +3,7 @@
 ## Supabase
 
 Per la parte schema, RLS, RPC, trigger e punti di lettura/scrittura usare come fonte canonica:
-- [SUPABASE_DATABASE.md](SUPABASE_DATABASE.md)
+- [04_SUPABASE_DATABASE.md](04_SUPABASE_DATABASE.md)
 
 Questo file tiene solo il contesto integrativo attorno a Supabase:
 - env e responsabilita` dei ruoli
