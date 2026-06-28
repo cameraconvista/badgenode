@@ -41,8 +41,9 @@ export async function setupVite(app: Express, server: Server) {
 
   app.use(vite.middlewares);
 
-  // Serve static files from public directory before catch-all
-  const publicPath = path.resolve(import.meta.dirname, '..', 'public');
+  // Serve static files from client/public (stessa sorgente del build Vite) prima del catch-all.
+  // Vite serve gia' la publicDir, questo copre eventuali richieste dirette in dev.
+  const publicPath = path.resolve(import.meta.dirname, '..', 'client', 'public');
   app.use(express.static(publicPath));
 
   app.use('*', async (req, res, next) => {

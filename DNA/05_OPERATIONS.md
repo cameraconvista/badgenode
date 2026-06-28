@@ -110,14 +110,33 @@ Regole operative:
 - non usare `push --force`
 - se il push fallisce, fermarsi e verificare causa e stato locale/remoto prima di nuovi tentativi
 
-## Deploy / monitoraggio
+## Deploy
 
-File root operativi:
-- `POST_DEPLOY_CHECKLIST.md`
-- `ALERT_UPTIME.md`
-- `CHANGELOG.md`
+Hosting: Render, servizio `badgenode` (`srv-d3r9miali9vc73cv7qag`), deploy unico frontend+backend, region Frankfurt, plan starter.
+- URL pubblico: `https://badgenode.onrender.com` · Admin: `/archivio-dipendenti`
+- Build: `npm install; npm run build` · Start: `npm run start` · `NODE_ENV=production`, `PORT=10000`, `healthCheckPath=/api/health`
+- **`NPM_CONFIG_PRODUCTION=false`** è obbligatorio: vite/esbuild/typescript sono devDependencies e servono in build.
+- autoDeploy è impostato su `main`, ma **manca il webhook GitHub→Render**: finché non si ricollega il repo dal dashboard, ogni push richiede un deploy manuale (Render dashboard → Manual Deploy, o API).
 
-Usarli come supporto operativo, non come fonte primaria per descrivere il runtime se divergono dal codice.
+## Post-deploy (verifica rapida)
+
+1. `npm run check:ci` + `npm run test` verdi prima del push.
+2. Backup pre-deploy: `npm run esegui:backup`.
+3. Dopo il deploy, verifica endpoint prod:
+   - `curl -s https://badgenode.onrender.com/api/health` → 200
+   - `curl -s https://badgenode.onrender.com/api/ready` → 200
+   - `curl -s https://badgenode.onrender.com/api/version`
+4. Smoke Supabase: `npm run smoke:runtime`.
+5. Rollback: Render dashboard → Deploys → "Rollback to this deploy", oppure `git revert <sha>` + nuovo deploy.
+
+## Monitoraggio / alert
+
+- Endpoint da monitorare: `/api/health` e `/api/ready` (intervallo 5 min, 2 fallimenti consecutivi = down), home `/` (10 min).
+- Target: uptime >99.5%, response <500ms.
+- Strumento previsto (non ancora attivo): UptimeRobot su `https://badgenode.onrender.com/api/health`. Stato: DA ATTIVARE.
+- Keepalive Supabase Free: workflow `.github/workflows/supabase-keepalive.yml` (ping read-only ogni 2 giorni).
+
+Storico versioni: `CHANGELOG.md` (root).
 
 ## Regola documentale
 

@@ -16,6 +16,7 @@ Leggere in ordine di numero. I primi file sono indispensabili prima di operare; 
 | 05 | [05_OPERATIONS.md](05_OPERATIONS.md) | avvio, build, test, script, backup, CI, deploy, Git |
 | 06 | [06_DECISION_LOG.md](06_DECISION_LOG.md) | decisioni tecniche rilevanti già prese |
 | 07 | [07_INTEGRAZIONI_DATI.md](07_INTEGRAZIONI_DATI.md) | env e ruoli, storage locale, GitHub, integrazioni esterne |
+| 08 | [08_AUDIT_DATABASE.md](08_AUDIT_DATABASE.md) | audit storico del DB, fonte verificata di 04 (consultazione) |
 
 ## Risposte rapide
 
@@ -29,8 +30,7 @@ Leggere in ordine di numero. I primi file sono indispensabili prima di operare; 
 
 ## Materiale fuori da `DNA/`
 
-- File root operativi: `README_OPERATIVO.md`, `CHANGELOG.md`, `POST_DEPLOY_CHECKLIST.md`, `ALERT_UPTIME.md`.
-- Archivio storico non canonico: `DOCS_STORICO/` (validare sempre contro il codice).
+- File root operativi: `README_OPERATIVO.md`, `CHANGELOG.md`.
 - README accoppiati ad archivi: `scripts/_archive/.../README.md`, `server/legacy/README.md`.
 - `.local/`: tooling locale dell'ambiente agente, non documentazione di progetto.
 

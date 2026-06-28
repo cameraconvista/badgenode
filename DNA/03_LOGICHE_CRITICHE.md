@@ -41,6 +41,15 @@ Punti da ricordare:
 - Il DB reale verificato non ha view operative in `public`.
 - Il pairing e le aggregazioni devono restare coerenti con il giorno logico.
 
+Regole di pairing/edge-case (fonte codice: `client/src/utils/timbrature-pairing.ts`, `client/src/lib/storico/pairing.ts`; test in `tests/storico/pairing.test.ts`):
+- Pairing deterministico: a parita` di orario ordinare stabilmente per `created_at`.
+- Sequenze irregolari (entrata-entrata, uscita-uscita): la prima entrata resta aperta, i record fuori coppia non vanno conteggiati nel totale.
+- Sessione aperta (entrata senza uscita): mostrata con uscita "—" e non conteggiata.
+- Multi-sessione nello stesso giorno logico: ogni coppia chiusa somma la sua durata al totale del giorno.
+- Turni > 16h: trattare come anomalia da segnalare nel report, non bloccare.
+- Tutto calcolato lato client: nessun impatto su schema DB. Invalidare la cache storico dopo una timbratura (o subscription su `timbrature`).
+- Comportamenti attesi (riferimento, coperti dai test): diurno 09-17 = 8.00; notturno 22-02 = stesso giorno logico dell'entrata, 4.00; PIN `"01"` ≡ `1`; nessuna deriva ±1 giorno al cambio fuso.
+
 Segnali visivi correnti nello Storico Timbrature:
 - Riga rossa: solo caso `entrata` presente con `uscita` assente nel riepilogo giorno.
 - Alert giallo vicino alla data: solo indicazione UI per orari fuori fascia standard.

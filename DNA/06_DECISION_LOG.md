@@ -2,6 +2,20 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-06-29 — Consolidamento asset grafici su client/public (sorgente unica)
+
+- Esisteva una doppia cartella asset: `public/` root (servita solo dal dev server) e `client/public/` (usata dal build Vite). Disallineamento dev/prod. Consolidato tutto su `client/public/`, eliminata `public/` root.
+- Fix: `logo_intro.svg` (usato da `IntroSplash`) era solo in `public/` root e non entrava nel build → splash usava il fallback PNG in prod. Spostato in `client/public/`, ora presente in `dist/public`.
+- Aggiornati `server/vite.ts` (dev serve da `client/public`) e `scripts/generate-pwa-icons.ts` (sorgente unica). Rimossi asset logo orfani e 4 script SQL obsoleti (viste v5 inesistenti, colonna legacy `giornologico`).
+- **Perché:** una sola sorgente asset elimina incoerenze dev/prod e riduce il peso del repo.
+
+## 2026-06-29 — Consolidamento documentazione: DOCS_STORICO assorbito nel DNA
+
+- Prima di eliminare i file storici, verificato che le logiche aggiornate fossero nel DNA o nel codice. Estratte in `03_LOGICHE_CRITICHE.md` le regole di pairing/edge-case del giorno logico (dal vecchio `legacy-guides/07`), con riferimento al codice come fonte.
+- Eliminati i report diagnosi datati 2025-2026 (snapshot una-tantum) e le legacy-guides superate da codice+DNA.
+- L'audit storico del DB (vecchio `legacy-guides/01_database_api.md`) e` stato spostato in `DNA/08_AUDIT_DATABASE.md`; i riferimenti in `04` aggiornati. La cartella `DOCS_STORICO/` e` stata rimossa: tutta la documentazione canonica vive ora in `DNA/`.
+- **Perché:** ridurre il rumore documentale mantenendo intatte le logiche correnti. Doc da 42 a ~12 file .md, tutto in un unico posto canonico.
+
 ## 2026-06-29 — DNA rinumerato per importanza + indice 00
 
 - Adottata numerazione `00`–`07` per priorità di lettura (sicurezza prima), come richiesto dallo standard `CLAUDE.md`. `00_INDICE.md` sostituisce il vecchio `DNA/README.md`. Aggiunto questo decision-log.

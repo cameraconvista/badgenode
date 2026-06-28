@@ -3,7 +3,8 @@ import sharp from 'sharp';
 import { existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-const PUBLIC_DIR = join(process.cwd(), 'public');
+// Sorgente unica: client/public (stessa cartella usata da Vite per il build).
+const PUBLIC_DIR = join(process.cwd(), 'client', 'public');
 const ICONS_DIR = join(PUBLIC_DIR, 'icons');
 const LOGO_PATH = join(PUBLIC_DIR, 'logo_home.png');
 
@@ -98,30 +99,7 @@ async function main() {
     console.log(`  • ${config.filename}: ${stats.width}x${stats.height} (${size}KB)${config.purpose ? ` [${config.purpose}]` : ''}`);
   }
 
-  // 7. Copia le icone nella cartella client/public per Vite
-  console.log('\n📋 Copying icons to client/public...');
-  const clientIconsDir = join(process.cwd(), 'client/public/icons');
-  
-  if (!existsSync(clientIconsDir)) {
-    mkdirSync(clientIconsDir, { recursive: true });
-  }
-  
-  for (const config of ICON_CONFIGS) {
-    const sourcePath = join(ICONS_DIR, config.filename);
-    const destPath = join(clientIconsDir, config.filename);
-    await sharp(sourcePath).png().toFile(destPath);
-  }
-  
-  // 8. Copia anche il manifest aggiornato
-  const manifestSource = join(PUBLIC_DIR, 'manifest.webmanifest');
-  const manifestDest = join(process.cwd(), 'client/public/manifest.webmanifest');
-  
-  if (existsSync(manifestSource)) {
-    const fs = await import('fs/promises');
-    await fs.copyFile(manifestSource, manifestDest);
-    console.log('  ✅ Copied manifest.webmanifest to client/public/');
-  }
-
+  // Le icone sono gia' generate in client/public/icons (sorgente unica usata da Vite).
   console.log('\n🎉 PWA icons generation completed!');
 }
 

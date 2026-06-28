@@ -4,7 +4,7 @@ Documento canonico Supabase. Contiene solo dati verificati da:
 
 - codice reale del repository
 - migrazioni SQL presenti in `supabase/migrations/`
-- audit storico gia` presente nel repository in `DOCS_STORICO/legacy-guides/01_database_api.md`
+- audit storico gia` presente nel repository in `08_AUDIT_DATABASE.md`
 
 Se in futuro emergono dubbi sul DB reale non risolvibili con queste fonti, serve nuova verifica via Supabase SQL Editor prima di aggiornare questo file.
 
@@ -34,7 +34,7 @@ Nota:
 
 Verificato tramite:
 - `shared/types/database.ts`
-- audit storico `DOCS_STORICO/legacy-guides/01_database_api.md`
+- audit storico `08_AUDIT_DATABASE.md`
 
 Tabelle confermate nel perimetro operativo reale:
 - `utenti`
@@ -54,7 +54,7 @@ Enum confermato:
 Verifiche:
 - `shared/types/database.ts`
 - `supabase/migrations/20251102_add_utenti_extra_fields.sql`
-- audit storico `01_database_api.md`
+- audit storico `08_AUDIT_DATABASE.md`
 
 Colonne verificate:
 - `pin`: integer, chiave primaria reale
@@ -75,7 +75,7 @@ Delicatezze:
 
 Verifiche:
 - `shared/types/database.ts`
-- audit storico `01_database_api.md`
+- audit storico `08_AUDIT_DATABASE.md`
 - codice server/client che legge e scrive questi campi
 
 Colonne verificate nel runtime attivo:
@@ -99,7 +99,7 @@ Delicatezze:
 
 Verifiche:
 - `shared/types/database.ts`
-- audit storico `01_database_api.md`
+- audit storico `08_AUDIT_DATABASE.md`
 - route server che leggono/scrivono archivio
 
 Colonne verificate:
@@ -171,7 +171,7 @@ Nota importante:
 
 ## Policy RLS
 
-Verificate dall'audit storico `01_database_api.md`:
+Verificate dall'audit storico `08_AUDIT_DATABASE.md`:
 
 - `utenti`: RLS attivo, non forzato
   - policy `SELECT` per `anon`, `authenticated`

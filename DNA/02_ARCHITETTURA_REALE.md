@@ -24,6 +24,7 @@ In sviluppo non esistono due processi separati client/server: Express avvia Vite
 - `server/routes/modules/`: utenti, storico, validazione PIN, system routes.
 - `server/shared/time/`: logica condivisa del giorno logico.
 - `shared/types/`: tipi condivisi runtime.
+- `client/public/`: sorgente UNICA degli asset statici (favicon, icone PWA, logo, manifest); Vite la usa per il build e il dev server la serve. Non esiste piu` una `public/` in root.
 - `supabase/migrations/`: SQL applicativo versionato.
 - `scripts/`: utility operative; alcune sono solo diagnostiche, altre toccano DB.
 

@@ -11,8 +11,7 @@ Questo repository e` in uso locale attivo. Il codice reale resta la fonte di ver
 1. Leggere questo file.
 2. Aprire solo i file canonici in `DNA/` pertinenti al task.
 3. Verificare sempre il codice reale prima di modificare documentazione, logiche o workflow.
-4. Trattare `DOCS_STORICO/` come materiale secondario.
-5. Valutare i Markdown fuori da `DNA/` prima di duplicarli o spostarli.
+4. Valutare i Markdown fuori da `DNA/` prima di duplicarli o spostarli.
 
 ## Documentazione canonica
 
@@ -45,5 +44,5 @@ Questo repository e` in uso locale attivo. Il codice reale resta la fonte di ver
 ## File root da considerare operativi
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [POST_DEPLOY_CHECKLIST.md](POST_DEPLOY_CHECKLIST.md)
-- [ALERT_UPTIME.md](ALERT_UPTIME.md)
+
+Deploy, post-deploy checklist e monitoraggio sono ora in [DNA/05_OPERATIONS.md](DNA/05_OPERATIONS.md).

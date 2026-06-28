@@ -1,4 +1,8 @@
-# 01 📊 DATABASE API - BadgeNode
+# 08 📊 Audit Database - BadgeNode
+
+> Audit storico del database (ex `DOCS_STORICO/legacy-guides/01_database_api.md`).
+> È la fonte verificata citata da [04_SUPABASE_DATABASE.md](04_SUPABASE_DATABASE.md).
+> Documento di consultazione: per le regole operative correnti vale `04` e il codice.
 
 **Descrizione concettuale del modello dati e API endpoints**  
 **Versione**: 5.3 • **Data**: 2026-04-18 • **Stato**: Audit allineato a evidenze reali  

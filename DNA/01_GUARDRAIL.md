@@ -14,10 +14,9 @@
 2. Leggere solo i file `DNA/` pertinenti al task.
 3. Verificare sempre il codice reale prima di intervenire.
 4. Trattare `DNA/` come contesto operativo canonico, non come sostituto del codice.
-5. Trattare `DOCS_STORICO/` come secondario.
-6. Aggiornare `DNA/` quando cambia una logica, un vincolo o un workflow reale.
-7. Aggiornare `DNA/04_SUPABASE_DATABASE.md` solo con dati verificati da codice, migrazioni, script SQL o query SQL Editor.
-8. Valutare periodicamente i `.md` e le cartelle provvisorie fuori da `DNA/`, senza spostarli o rimuoverli per supposizione.
+5. Aggiornare `DNA/` quando cambia una logica, un vincolo o un workflow reale.
+6. Aggiornare `DNA/04_SUPABASE_DATABASE.md` solo con dati verificati da codice, migrazioni, script SQL o query SQL Editor.
+7. Valutare periodicamente i `.md` e le cartelle provvisorie fuori da `DNA/`, senza spostarli o rimuoverli per supposizione.
 
 ## Cose da non assumere
 
