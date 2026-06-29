@@ -1,5 +1,6 @@
 // Creazione app Express senza listen() - per evitare ERR_SERVER_ALREADY_LISTEN
 import express, { type Request, Response, NextFunction } from 'express';
+import compression from 'compression';
 import type http from 'http';
 import path from 'path';
 import { log } from './lib/logger';
@@ -15,7 +16,10 @@ import { versionRouter } from './routes/version';
 
 export function createApp() {
   const app = express();
-  
+
+  // Compressione gzip delle risposte (primo middleware): riduce il peso trasferito.
+  app.use(compression());
+
   // Basic middleware
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
@@ -111,7 +115,16 @@ export async function setupStaticFiles(app: express.Express, server?: http.Serve
     await setupVite(app, server);
   } else {
     const distPath = path.resolve(process.cwd(), 'dist', 'public');
-    app.use(express.static(distPath, { maxAge: '1h' }));
+    app.use(express.static(distPath, {
+      // Gli asset con hash nel nome (/assets/*) sono immutabili: cache lunga.
+      // index.html resta senza cache lunga per puntare sempre agli asset aggiornati.
+      maxAge: '1h',
+      setHeaders: (res, filePath) => {
+        if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+      },
+    }));
     app.use('*', (req, res, next) => {
       if (req.path.startsWith('/api/')) return next();
       res.sendFile(path.resolve(distPath, 'index.html'));

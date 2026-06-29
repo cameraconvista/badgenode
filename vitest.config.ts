@@ -8,6 +8,7 @@ export default defineConfig({
     include: [
       'tests/validation/**/*.test.ts',
       'tests/storico/**/*.test.ts',
+      'tests/offline/**/*.test.ts',
       'client/src/services/__tests__/**/*.test.ts',
       'server/routes/modules/__tests__/utenti.test.ts',
     ],

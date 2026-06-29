@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { loadTurniFull, buildStoricoDataset, StoricoDatasetV5 } from '@/services/storico.service';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { loadTurniFull, buildDatasetFromTurni, StoricoDatasetV5 } from '@/services/storico.service';
 import { GiornoLogicoDettagliato } from '@/lib/storico/types';
 import type { TurnoFull } from '@/services/storico/types';
 import { UtentiService } from '@/services/utenti.service';
@@ -72,47 +72,26 @@ export function useStoricoTimbrature(pin: number) {
   if (dipendenteError) {
   }
 
-  // Query per dataset v5 (include tutti i giorni del range)
-  const storicoQueryKey = ['storico-dataset-v5', filters];
-  const {
-    data: storicoDatasetV5 = [],
-    isLoading: isLoadingTimbrature,
-    error: storicoError,
-  } = useQuery({
-    queryKey: storicoQueryKey,
-    queryFn: () => {
-      return buildStoricoDataset({ pin: filters.pin, from: filters.dal, to: filters.al });
-    },
-    enabled: !!dipendente,
-  }) as { data: StoricoDatasetV5[]; isLoading: boolean; error: unknown };
-
-  // Effect per monitoraggio dati in development
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[STORICO][DATA] dataset-v5 updated:', {
-        length: storicoDatasetV5.length,
-        filters,
-        timestamp: new Date().toISOString()
-      });
-    }
-  }, [storicoDatasetV5, filters]);
-
-  if (storicoError) {
-  }
-
-  // Query per turni completi (legacy, per compatibilità componenti)
+  // Query UNICA di base: carica i turni una sola volta dalla rete.
+  // Sia il dataset v5 (tabella) sia i turni giornalieri (export) derivano da qui,
+  // evitando la doppia chiamata a loadTurniFull (prima erano 2 query separate).
   const turniQuery = useQuery({
-    queryKey: ['turni-completi-legacy', filters],
+    queryKey: ['turni-base', filters],
     queryFn: () => loadTurniFull({ pin: filters.pin, from: filters.dal, to: filters.al }),
     enabled: !!dipendente,
+    placeholderData: keepPreviousData,
   });
 
-  const turniGiornalieri = toGiornoLogicoDettagliato(turniQuery.data ?? []);
-  const isLoadingLegacy = turniQuery.isLoading;
-  const turniError = turniQuery.error;
+  const turniBase = turniQuery.data ?? [];
+  const isLoadingTimbrature = turniQuery.isLoading;
 
-  if (turniError) {
-  }
+  // Dataset v5 derivato (trasformazione pura, nessuna seconda chiamata di rete)
+  const storicoDatasetV5 = useMemo<StoricoDatasetV5[]>(
+    () => buildDatasetFromTurni(turniBase, filters.dal, filters.al),
+    [turniBase, filters.dal, filters.al]
+  );
+
+  const turniGiornalieri = toGiornoLogicoDettagliato(turniBase);
 
   // Trasforma dataset v5 in formato StoricoRowData per tabella con sotto-righe
   const storicoDataset = useMemo(() => {
@@ -226,7 +205,7 @@ export function useStoricoTimbrature(pin: number) {
     storicoDataset,
     storicoDatasetV5,
     timbratureGiorno,
-    isLoading: isLoadingTimbrature || isLoadingLegacy,
+    isLoading: isLoadingTimbrature,
     handleFiltersChange,
     handleEditTimbrature,
     handleExportPDF,

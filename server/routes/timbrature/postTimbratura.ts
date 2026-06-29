@@ -69,6 +69,26 @@ router.post('/', async (req: Request, res: Response) => {
       });
     }
 
+    // Difesa in profondita': verifica server-side che il PIN esista in utenti.
+    // La validazione client (validatePinApi) non basta: l'endpoint deve rifiutare
+    // un PIN inesistente anche se chiamato direttamente.
+    const { data: utenteEsiste, error: utenteErr } = await supabaseAdmin!
+      .from('utenti')
+      .select('pin')
+      .eq('pin', pinNum)
+      .limit(1)
+      .maybeSingle();
+    if (utenteErr) {
+      return res.status(500).json({ success: false, error: 'Errore verifica PIN' });
+    }
+    if (!utenteEsiste) {
+      return res.status(404).json({
+        success: false,
+        error: 'PIN non registrato nel sistema',
+        code: 'PIN_NOT_FOUND',
+      });
+    }
+
     // Timestamp server se non fornito - FORZATO Europe/Rome
     const nowUtc = ts ? new Date(ts) : new Date();
     

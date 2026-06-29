@@ -3,8 +3,8 @@ import { QueryClient } from '@tanstack/react-query';
 
 export function logStoricoQueries(qc: QueryClient, context = '') {
   const entries = qc.getQueriesData({ queryKey: ['storico'] });
-  const legacyEntries = qc.getQueriesData({ queryKey: ['turni-completi-legacy'] });
-  const datasetEntries = qc.getQueriesData({ queryKey: ['storico-dataset-v5'] });
+  const legacyEntries = qc.getQueriesData({ queryKey: ['turni-base'] });
+  const datasetEntries = qc.getQueriesData({ queryKey: ['turni-base'] });
   
   if (process.env.NODE_ENV === 'development') {
     console.log(`[RQ-DEBUG] ${context} legacy queries:`, {
@@ -32,10 +32,9 @@ export function logActiveQueries(qc: QueryClient, context = '') {
   const cache = qc.getQueryCache();
   const queries = cache.getAll();
   
-  const storicoQueries = queries.filter(q => 
-    q.queryKey[0] === 'storico' || 
-    q.queryKey[0] === 'turni-completi-legacy' ||
-    q.queryKey[0] === 'storico-dataset-v5'
+  const storicoQueries = queries.filter(q =>
+    q.queryKey[0] === 'storico' ||
+    q.queryKey[0] === 'turni-base'
   );
   
   console.log(`[RQ-DEBUG] ${context} active storico queries:`, 

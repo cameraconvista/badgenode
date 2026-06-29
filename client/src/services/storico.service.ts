@@ -147,24 +147,22 @@ export async function loadTurniFull(params: StoricoParams): Promise<TurnoFull[]>
 /**
  * Costruisce dataset storico con TUTTI i giorni del range (anche senza timbrature)
  */
-export async function buildStoricoDataset(params: StoricoParams): Promise<StoricoDatasetV5[]> {
-  const { from, to } = params;
-  
-  // Usa la funzione importata staticamente
-  
-  // Ottieni tutti i giorni del range
-  const tuttiIGiorni = expandDaysRange(from!, to!);
-  
-  // Ottieni solo i giorni con timbrature
-  const turni = await loadTurniFull(params);
+/**
+ * Trasformazione PURA (no rete) da turni gia' caricati a dataset v5.
+ * Permette di derivare il dataset senza una seconda chiamata a loadTurniFull.
+ */
+export function buildDatasetFromTurni(
+  turni: TurnoFull[],
+  from: string,
+  to: string
+): StoricoDatasetV5[] {
+  const tuttiIGiorni = expandDaysRange(from, to);
   const turniMap = new Map(turni.map(t => [t.giorno, t]));
 
-  // Crea dataset per tutti i giorni
   return tuttiIGiorni.map((giorno) => {
     const turno = turniMap.get(giorno);
-    
+
     if (turno) {
-      // Giorno con timbrature
       return {
         giorno_logico: turno.giorno,
         ore_totali_chiuse: turno.ore,
@@ -179,15 +177,19 @@ export async function buildStoricoDataset(params: StoricoParams): Promise<Storic
           },
         ],
       };
-    } else {
-      // Giorno senza timbrature
-      return {
-        giorno_logico: giorno,
-        ore_totali_chiuse: 0,
-        sessioni: [],
-      };
     }
+    return {
+      giorno_logico: giorno,
+      ore_totali_chiuse: 0,
+      sessioni: [],
+    };
   });
+}
+
+export async function buildStoricoDataset(params: StoricoParams): Promise<StoricoDatasetV5[]> {
+  const { from, to } = params;
+  const turni = await loadTurniFull(params);
+  return buildDatasetFromTurni(turni, from!, to!);
 }
 
 /**

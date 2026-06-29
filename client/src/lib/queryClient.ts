@@ -45,8 +45,11 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: 'throw' }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: 0, // I dati diventano subito "stale" per refetch immediato
-      refetchOnMount: 'always',
+      // Dati considerati freschi 60s: evita refetch (e loader) ad ogni cambio pagina.
+      // Le mutazioni invalidano comunque le query, quindi i dati restano corretti.
+      staleTime: 60_000,
+      gcTime: 5 * 60_000,
+      refetchOnMount: true,
       retry: false,
     },
     mutations: {

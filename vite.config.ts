@@ -109,6 +109,8 @@ export default defineConfig(({ mode }) => {
     },
     root: path.resolve(__dirname, 'client'),
     base: '/',
+    // In produzione rimuove console.* e debugger dal bundle (restano in dev).
+    esbuild: mode === 'production' ? { drop: ['console', 'debugger'] } : {},
     build: {
       outDir: path.resolve(__dirname, 'dist', 'public'),
       emptyOutDir: true,

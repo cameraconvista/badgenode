@@ -18,8 +18,7 @@ export function useRefetchAll(pin: number) {
       // Refetch generici
       qc.refetchQueries({ queryKey: ['storico'], type: 'active' }),
       qc.refetchQueries({ queryKey: ['timbrature'], type: 'active' }),
-      qc.refetchQueries({ queryKey: ['turni-completi-legacy'], type: 'active' }),
-      qc.refetchQueries({ queryKey: ['storico-dataset-v5'], type: 'active' }),
+      qc.refetchQueries({ queryKey: ['turni-base'], type: 'active' }),
       
       // Refetch con PIN specifico
       pin ? qc.refetchQueries({ queryKey: ['storico', pin], type: 'active' }) : Promise.resolve(),
@@ -30,8 +29,7 @@ export function useRefetchAll(pin: number) {
         predicate: (query) => {
           const key = query.queryKey;
           return Boolean(
-            (key[0] === 'storico-dataset-v5' && key[1] && typeof key[1] === 'object') ||
-            (key[0] === 'turni-completi-legacy' && key[1] && typeof key[1] === 'object')
+            key[0] === 'turni-base' && key[1] && typeof key[1] === 'object'
           );
         }
       }),

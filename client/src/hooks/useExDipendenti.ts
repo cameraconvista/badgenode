@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { UtentiService, ExDipendente } from '@/services/utenti.service';
 
 /**
@@ -17,7 +17,8 @@ export function useExDipendentiQuery() {
         return [];
       }
     },
-    staleTime: 30 * 1000, // 30 secondi - conservativo per non stressare la rete
+    staleTime: 60 * 1000, // 60s: allineato al default, evita refetch ad ogni navigazione
+    placeholderData: keepPreviousData, // tiene i dati precedenti durante il refetch (no svuotamento tabella)
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     retry: 1, // Solo un retry per evitare spam
