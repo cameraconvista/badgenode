@@ -2,6 +2,7 @@
 // Funzioni normali (non hook) per evitare violazione Rules of Hooks
 import { Utente } from '@/services/utenti.service';
 import type { TurnoFull } from '@/services/storico/types';
+import type { SessioneTimbratura } from '@/lib/storico/types';
 
 export interface StoricoExportFilters {
   pin?: number;
@@ -9,11 +10,84 @@ export interface StoricoExportFilters {
   al: string;
 }
 
+// Turno con dettaglio sessioni opzionale (per turni spezzati nell'export).
+// Retrocompatibile: se `sessioni` manca, l'export si comporta come prima.
+type TurnoExport = TurnoFull & { sessioni?: SessioneTimbratura[] };
+
 interface ExportParams {
   dipendente: Utente | undefined;
-  timbrature: TurnoFull[];
+  timbrature: TurnoExport[];
   filters: { pin: number; dal: string; al: string };
   toast?: (options: { title: string; description: string; variant?: 'destructive' }) => void;
+}
+
+/**
+ * Tronca un orario a HH:MM (no secondi) per l'export. '—' o vuoto invariati.
+ */
+function hhmm(time: string | null | undefined): string {
+  if (!time || time === '—') return '—';
+  return time.substring(0, 5);
+}
+
+/**
+ * Costruisce le righe tabella per un giorno: la riga-giorno (con totali) e,
+ * se il turno è spezzato, una sotto-riga per ogni sessione dalla 2ª in poi.
+ * `fmt` formatta i valori numerici (string per PDF, number per Excel).
+ */
+function buildRowsForGiorno(
+  t: TurnoExport,
+  fmt: (n: number) => string | number,
+  dash: string | number
+): Array<Array<string | number>> {
+  const rows: Array<Array<string | number>> = [];
+  const sessioni = t.sessioni ?? [];
+  const isSpezzato = sessioni.length > 1;
+
+  if (!isSpezzato) {
+    // Giorno con turno unico: una riga con i totali del giorno (invariato).
+    rows.push([
+      formatDataConGiorno(t.giorno),
+      formatMeseAnno(t.giorno),
+      hhmm(t.entrata),
+      hhmm(t.uscita),
+      fmt(t.ore || 0),
+      t.extra > 0 ? fmt(t.extra) : dash,
+    ]);
+    return rows;
+  }
+
+  // Turno spezzato: "due righe pari" — ogni sessione su una riga, poi il totale.
+  // Riga-giorno = PRIMA sessione (con la data); extra solo sulla riga totale.
+  const prima = sessioni[0];
+  rows.push([
+    formatDataConGiorno(t.giorno),
+    formatMeseAnno(t.giorno),
+    hhmm(prima.entrata),
+    prima.isAperta ? '—' : hhmm(prima.uscita),
+    fmt(prima.ore || 0),
+    dash,
+  ]);
+  // Sessioni successive, stesso livello.
+  sessioni.slice(1).forEach((s) => {
+    rows.push([
+      '',
+      `Sessione #${s.numeroSessione}`,
+      hhmm(s.entrata),
+      s.isAperta ? '—' : hhmm(s.uscita),
+      fmt(s.ore || 0),
+      dash,
+    ]);
+  });
+  // Riga totale del giorno: ore totali + extra calcolato sul TOTALE del giorno.
+  rows.push([
+    '',
+    'Totale giorno',
+    '',
+    '',
+    fmt(t.ore || 0),
+    t.extra > 0 ? fmt(t.extra) : dash,
+  ]);
+  return rows;
 }
 
 /**
@@ -60,15 +134,10 @@ export async function exportPDF({ dipendente, timbrature, filters, toast }: Expo
       // Ordina timbrature per data crescente (1-31)
       const timbratureOrdinate = [...timbrature].sort((a, b) => a.giorno.localeCompare(b.giorno));
       
-      const rows = timbratureOrdinate.map(t => [
-        formatDataConGiorno(t.giorno),  // "01 Lunedì"
-        formatMeseAnno(t.giorno),       // "Ottobre 2025"
-        t.entrata || '—',
-        t.uscita || '—',
-        t.ore?.toFixed(2) || '0.00',
-        t.extra > 0 ? t.extra.toFixed(2) : '—'
-      ]);
-      
+      const rows = timbratureOrdinate.flatMap(t =>
+        buildRowsForGiorno(t, (n) => n.toFixed(2), '—')
+      );
+
       autoTable(doc, {
         startY: 64,
         head: [["Data","Mese","Entrata","Uscita","Ore","Extra"]],
@@ -124,14 +193,9 @@ export async function exportXLS({ dipendente, timbrature, filters, toast }: Expo
       // Ordina timbrature per data crescente (1-31)
       const timbratureOrdinate = [...timbrature].sort((a, b) => a.giorno.localeCompare(b.giorno));
       
-      const data = timbratureOrdinate.map(t => [
-        formatDataConGiorno(t.giorno),  // "01 Lunedì"
-        formatMeseAnno(t.giorno),       // "Ottobre 2025"
-        t.entrata || '—',
-        t.uscita || '—',
-        t.ore || 0,
-        t.extra || 0
-      ]);
+      const data = timbratureOrdinate.flatMap(t =>
+        buildRowsForGiorno(t, (n) => n, 0)
+      );
       
       const totaleOre = timbrature.reduce((sum, t) => sum + (t.ore || 0), 0);
       const totaleExtra = timbrature.reduce((sum, t) => sum + (t.extra || 0), 0);

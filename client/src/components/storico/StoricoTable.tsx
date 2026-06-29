@@ -155,6 +155,8 @@ export default function StoricoTable({
               {storicoDataset.map((row, _index) => {
                 if (row.type === 'giorno') {
                   return renderRigaGiorno(row.giorno!, _index);
+                } else if (row.type === 'totale') {
+                  return renderRigaTotale(row, _index);
                 } else {
                   return renderRigaSessione(row.sessione!, row.giornoParent!, _index);
                 }
@@ -312,39 +314,80 @@ export default function StoricoTable({
     return (
       <tr
         key={`${_giornoParent}-${sessione.numeroSessione}-${sessione.entrata || 'no-entrata'}-${sessione.uscita || 'open'}`}
-        className="bn-table__row--session text-sm"
+        className="bn-row bn-row-dense text-base"
       >
-        {/* Data - vuota */}
+        {/* Data - vuota (la data sta sulla riga-giorno) */}
         <td className="bn-table__cell bn-table__cell--left bn-cell"></td>
 
-        {/* Mese - indicatore sessione (solo dalla #2 in poi) */}
-        <td className="bn-table__cell bn-cell text-xs">
-          <span className="text-gray-400">
-            {sessione.numeroSessione >= 2 ? `#${sessione.numeroSessione}` : ''}
-          </span>
-        </td>
+        {/* Mese → vuoto (nessuna etichetta sessione) */}
+        <td className="bn-table__cell bn-cell text-sm"></td>
 
-        {/* Entrata sessione */}
-        <td className="bn-table__cell bn-cell">
-          <span className="text-white/70">{formatTimeOrDash(sessione.entrata)}</span>
+        {/* Entrata sessione (stesso stile della riga-giorno) */}
+        <td className="bn-table__cell bn-cell text-sm">
+          <span className="font-medium">{formatTimeOrDash(sessione.entrata)}</span>
         </td>
 
         {/* Uscita sessione */}
-        <td className="bn-table__cell bn-cell">
-          <span className="text-white/70">
+        <td className="bn-table__cell bn-cell text-sm">
+          <span className="font-medium">
             {sessione.isAperta ? '—' : formatTimeOrDash(sessione.uscita)}
           </span>
         </td>
 
         {/* Ore sessione */}
-        <td className="bn-table__cell bn-cell tabular-nums">
-          <span className="text-white/70">{formatOre(sessione.ore)}</span>
+        <td className="bn-table__cell bn-cell text-sm tabular-nums">
+          <span className="font-medium">{formatOre(sessione.ore)}</span>
         </td>
 
-        {/* Extra - vuoto per sessioni */}
+        {/* Extra - vuoto per sessioni (è una proprietà del giorno) */}
         <td className="bn-table__cell bn-cell"></td>
 
         {/* Modifica - vuoto per sessioni */}
+        <td className="bn-table__cell bn-cell"></td>
+      </tr>
+    );
+  }
+
+  // Riga riepilogo: totale ore del giorno spezzato (somma delle sessioni).
+  function renderRigaTotale(
+    row: { giornoParent?: string; oreTotali?: number; extraTotale?: number },
+    _index: number
+  ) {
+    void _index;
+    const ore = row.oreTotali ?? 0;
+    const extra = row.extraTotale ?? 0;
+    return (
+      <tr
+        key={`totale-${row.giornoParent}`}
+        className="bn-row bn-row-dense text-sm bg-[#F1E7DD]"
+      >
+        {/* Data - vuota */}
+        <td className="bn-table__cell bn-table__cell--left bn-cell"></td>
+
+        {/* Etichetta totale */}
+        <td className="bn-table__cell bn-cell text-sm">
+          <span className="text-[#7A1228] font-semibold">Totale giorno</span>
+        </td>
+
+        {/* Entrata/Uscita - vuote */}
+        <td className="bn-table__cell bn-cell"></td>
+        <td className="bn-table__cell bn-cell"></td>
+
+        {/* Ore totali giorno */}
+        <td className="bn-table__cell bn-cell text-sm tabular-nums">
+          <span className="text-[#7A1228] font-bold">{formatOre(ore)}</span>
+        </td>
+
+        {/* Extra giorno */}
+        <td className="bn-table__cell bn-cell text-sm tabular-nums">
+          {extra > 0 ? (
+            <span className="text-amber-700 font-bold">{formatOre(extra)}</span>
+          ) : (
+            <span>—</span>
+          )}
+        </td>
+
+        {/* Modifica - vuoto */}
         <td className="bn-table__cell bn-cell"></td>
       </tr>
     );

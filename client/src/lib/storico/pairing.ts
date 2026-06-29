@@ -17,10 +17,14 @@ interface TimbratureRaw {
  * Algoritmo: ogni entrata → prima uscita successiva disponibile
  */
 export function pairSessionsForGiorno(timbrature: TimbratureRaw[]): SessioneTimbratura[] {
-  // 1. Ordina per (ore, created_at tie-breaker)
-  const sorted = timbrature.sort((a, b) => {
-    const oreCompare = a.ore.localeCompare(b.ore);
-    return oreCompare !== 0 ? oreCompare : a.created_at.localeCompare(b.created_at);
+  // 1. Ordina per created_at (ordine cronologico REALE, tie-break su ora locale).
+  //    Nota: NON ordinare per la stringa orario `ore` (HH:MM): un'uscita dopo
+  //    mezzanotte (es. 01:30) verrebbe messa prima di un'entrata serale (22:00),
+  //    spezzando il pairing dei turni a cavallo di mezzanotte. `created_at` è il
+  //    timestamp assoluto e riflette sempre la sequenza effettiva degli eventi.
+  const sorted = [...timbrature].sort((a, b) => {
+    const tsCompare = a.created_at.localeCompare(b.created_at);
+    return tsCompare !== 0 ? tsCompare : a.ore.localeCompare(b.ore);
   });
 
   // 2. Pairing sequenziale

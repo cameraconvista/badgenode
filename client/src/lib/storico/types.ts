@@ -29,11 +29,16 @@ export interface GiornoLogicoDettagliato {
 }
 
 /**
- * Riga dataset per rendering tabella con sotto-righe
+ * Riga dataset per rendering tabella con sotto-righe.
+ * - 'giorno'   : riga principale (prima sessione + data)
+ * - 'sessione' : sessione successiva (turno spezzato), stesso livello
+ * - 'totale'   : riga riepilogo somma del giorno (solo per giorni spezzati)
  */
 export interface StoricoRowData {
-  type: 'giorno' | 'sessione';
+  type: 'giorno' | 'sessione' | 'totale';
   giorno?: GiornoLogicoDettagliato; // Se type='giorno'
   sessione?: SessioneTimbratura; // Se type='sessione'
-  giornoParent?: string; // Se type='sessione', riferimento giorno YYYY-MM-DD
+  giornoParent?: string; // Se type='sessione'|'totale', riferimento giorno YYYY-MM-DD
+  oreTotali?: number; // Se type='totale', ore totali del giorno
+  extraTotale?: number; // Se type='totale', ore extra del giorno
 }
