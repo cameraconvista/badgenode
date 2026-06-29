@@ -2,6 +2,23 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-06-29 — Governance: integrate lacune in CLAUDE.md + AGENTS.md puntatore
+
+- La governance esisteva gia ed era solida (`CLAUDE.md` root, caricato auto da Claude Code). Verificata e **integrata senza duplicare**: aggiunti (1) limite righe **esplicito 300/file** applicato in scrittura, (2) sezione **Checklist pre/post-modifica** vincolante, (3) sezione **Handoff per sessioni future** (ripartenza senza storico), (4) nota **portabilita**. Sezioni gia presenti (Enforcement, Reasoning, Flusso modifiche, DB unica fonte, parita admin/user, segreti, git) lasciate invariate.
+- Creato **`AGENTS.md`** come puntatore canonico per agent non-Claude (Codex/Cursor): non duplica regole, rimanda a `CLAUDE.md` + `DNA/`. File canonico unico = `CLAUDE.md`.
+- Limite 300 scelto sui dati reali (6 file gia >300, max 405 in `StoricoTable.tsx`): trattati come **debito noto** da ridurre quando toccati, non refactor a parte.
+- **Da fare (utente):** allineare anche il prompt `CLAUDE.MD` su App Control, altrimenti un sync futuro potrebbe sovrascrivere le aggiunte locali.
+- **Perché:** garantire che ogni sessione/agent futuro, anche senza storico, applichi automaticamente le stesse regole.
+
+## 2026-06-29 — Sicurezza: attivata RLS su ex_dipendenti (chiuso buco scrittura anon)
+
+- Audit privacy/sicurezza (sola lettura + pentest non distruttivo) ha rilevato che `public.ex_dipendenti` aveva la **RLS DISATTIVATA** (`pg_tables.rowsecurity = false`): una INSERT anonima con la sola chiave pubblica riusciva (HTTP 201). `utenti` e `timbrature` erano invece protette.
+- Fix applicato via migrazione versionata additiva `20260629T0300__rls_ex_dipendenti_block_anon_write.sql` (+ `.down.sql`): `enable row level security` + policy `ex_dipendenti_select_all` (SELECT per anon/authenticated, `using true`), nessuna policy di write. Replica esatta del pattern di `utenti`.
+- Applicata con `psql` in transazione (`--single-transaction`, `ON_ERROR_STOP`). Verifica post: INSERT anon → 401/42501 (bloccata), SELECT anon → 200, app legge l'archivio via backend → 200 (4 record), scrittura service_role → 201 (archiviazione/ripristino OK). Dati reali invariati, zero residui di test.
+- Le scritture dell'app passano dal backend con `SERVICE_ROLE_KEY` (bypassa RLS): nessun impatto funzionale.
+- **NON risolto (segnalato nell'audit):** endpoint backend `/api/utenti`, `/api/ex-dipendenti`, `/api/storico` senza auth; `FEATURE_AUTH_BYPASS=true` default; SELECT anon aperta (PII leggibile con chiave pubblica). Da affrontare in sessione dedicata.
+- **Perché:** chiudere subito l'unico buco di SCRITTURA anonima reale, con intervento minimo, idempotente e reversibile, senza toccare l'app.
+
 ## 2026-06-29 — Storico: visualizzazione turni spezzati ("due righe pari" + totale) + fix pairing mezzanotte
 
 - Lo Storico mostrava per ogni giorno solo prima entrata/ultima uscita: i turni spezzati (es. chef 09-13 + 17-02) apparivano come intervallo compresso fuorviante (09-02), pur con ore totali corrette. Collegata la pipeline multi-sessione già esistente (`aggregateTimbratureByGiornoLogico` → `pairSessionsForGiorno`, usata da `ExStoricoModal`) anche allo storico dei dipendenti attivi (`useStoricoTimbrature.ts`).

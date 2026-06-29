@@ -76,14 +76,37 @@ Fix piccoli (un testo, un colore): esegui diretto. Bug: **riproducilo e isola la
 
 ## 4 · Struttura progetto (standard)
 - Stack base: **React + Vite + TypeScript**, **Supabase** (dati), **Render** (deploy unico), **GitHub**.
-- **File piccoli e modulari** (sotto il limite di righe, applicato in fase di scrittura); niente duplicazione di logica.
+- **Limite righe esplicito: max 300 righe per file** sorgente (`.ts`/`.tsx`/`.js`). Applicato **in fase di scrittura**: se un file che crei o modifichi supera 300 righe, **dividilo PRIMA** di proseguire (estrai funzioni/componenti/hook in moduli coesi). Eccezione: file generati/di config. I pochi file gia oltre soglia sono **debito noto**: vanno ridotti quando li si tocca, non in un refactor a parte.
+- **File piccoli e modulari**, una responsabilita per file, naming coerente; niente duplicazione di logica (cerca prima se esiste).
 - **`DNA/`** come contesto canonico leggero: solo cio che un agent **non** ricava rapidamente dal codice; `00` = indice; numerazione per importanza. Tieni un **decision-log** in `DNA/06_DECISION_LOG.md`.
-- App avviabile in locale e verificabile (porta **5001** quando previsto).
+- **Portabilita:** nessun path assoluto hardcoded, nessuna dipendenza dalla macchina; tutto ricostruibile da repo + `.env` (rigenerato da App Control). App avviabile in locale e verificabile (porta **5001** quando previsto).
 
 ## 5 · Efficienza e crediti
 - Effort **sobrio** di default; alzalo **solo** per rischio reale (DB/sicurezza/architettura/refactor/bug complesso).
 - **Subagent** solo se realmente necessari.
 - Comunica **una azione alla volta**, sintetico, linguaggio semplice.
+
+## 5bis · Checklist pre/post-modifica (vincolante)
+**Prima** di scrivere codice:
+- [ ] Ho letto `DNA/00` e i file DNA pertinenti al task.
+- [ ] Ho cercato se la logica esiste gia (no duplicazioni).
+- [ ] Ho fatto la triage reasoning (§2ter) e dichiarato il piano (§3): file da toccare, impatto DB/API/flussi, rischi.
+- [ ] Se il task tocca DB/auth/deploy/secrets/architettura -> mi fermo e chiedo conferma.
+
+**Dopo** la modifica, prima di chiudere:
+- [ ] Ogni file toccato e <= 300 righe (altrimenti l'ho diviso).
+- [ ] Ho eseguito i controlli reali (typecheck/lint/test/build) — **non dichiaro pass senza averli eseguiti**.
+- [ ] Non ho rotto funzionalita esistenti; non ho toccato aree fuori dalla richiesta.
+- [ ] Ho aggiornato doc/DNA **nello stesso intervento** se ho inciso su architettura/flussi/API/DB/deploy/secrets/governance.
+- [ ] Ho registrato le decisioni tecniche rilevanti in `DNA/06_DECISION_LOG.md`.
+- [ ] `git status` verificato; nessun `.env`/backup/file generato in staging. Commit/push **solo se richiesto esplicitamente**.
+
+## 5ter · Handoff per sessioni future (anche senza storico)
+Questo file + `DNA/` sono l'unica memoria condivisa: una nuova chat/agent/dispositivo, senza storico, deve poter ripartire da qui. Percio:
+- **Lo stato operativo vive in `DNA/`** (architettura, DB, deploy, integrazioni, audit), **le regole vivono qui**. Non duplicare tra i due.
+- Ogni decisione che cambierebbe il comportamento di un agent futuro va nel **decision-log** (`DNA/06_DECISION_LOG.md`), con il **perche**, piu recente in alto.
+- Quando cambi architettura/flussi/DB/deploy, **aggiorna il DNA pertinente nello stesso intervento**: e cosi che la sessione successiva trova lo stato vero.
+- All'avvio segui §0 (protocollo di sessione) e fermati: non avviare lavoro senza richiesta.
 
 ## 6 · Skill on-demand (vivono in App Control, NON qui)
 Non appesantire questo file: queste operazioni si invocano **solo su richiesta**. Quando l'utente le chiede, **recupera il prompt corrispondente da App Control ed eseguilo**:

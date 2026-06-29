@@ -178,10 +178,13 @@ Verificate dall'audit storico `08_AUDIT_DATABASE.md`:
 - `timbrature`: RLS attivo, non forzato
   - policy `SELECT` per `anon`, `authenticated`
   - policy `INSERT` per `authenticated` con check su esistenza `utenti.pin`
-- `ex_dipendenti`: RLS disattivo, nessuna policy verificata
+- `ex_dipendenti`: RLS attivo (migrazione `20260629T0300`), non forzato
+  - policy `SELECT` per `anon`, `authenticated` (`using true`)
+  - nessuna policy di write → INSERT/UPDATE/DELETE anon negati di default (come `utenti`)
+  - prima del 2026-06-29 la RLS era DISATTIVATA: una INSERT anon riusciva (buco chiuso dall'audit)
 
 Ruoli:
-- `service_role` bypassa RLS
+- `service_role` bypassa RLS (tutte le scritture dell'app passano di qui, lato server)
 - `anon` e `authenticated` non hanno bypass RLS
 
 Conseguenza operativa:

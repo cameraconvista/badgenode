@@ -323,12 +323,20 @@ Response GET /api/storico/25?mese=2025-10:
 
 ## 🔐 Security & RLS
 
-### Audit 2026-04-15
+### Aggiornamento 2026-06-29 (audit privacy/sicurezza)
+- `ex_dipendenti`: **RLS ATTIVATA** con migrazione `20260629T0300__rls_ex_dipendenti_block_anon_write`.
+  Ora identica a `utenti`: policy `SELECT` per `anon, authenticated` (`using true`), nessuna policy
+  di write → scritture anon negate (verificato: INSERT anon passa da 201 a 401/42501).
+  Prima era DISATTIVATA (buco: insert anonima riusciva). Letture app via backend invariate.
+- Resta da valutare (segnalato, non risolto): endpoint `/api/utenti`, `/api/ex-dipendenti`,
+  `/api/storico` senza autenticazione lato server; `FEATURE_AUTH_BYPASS=true` di default;
+  SELECT anon aperta su tutte le tabelle (PII leggibile con chiave pubblica).
 
+### Audit 2026-04-15 (storico, pre-fix)
 `Certo`
 - `utenti`: RLS attivo, non forzato, una policy `SELECT` per `anon, authenticated`
 - `timbrature`: RLS attivo, non forzato, policy `SELECT` per `anon, authenticated` e policy `INSERT` per `authenticated`
-- `ex_dipendenti`: RLS disattivo, nessuna policy
+- `ex_dipendenti`: RLS disattivo, nessuna policy  ← corretto il 2026-06-29 (vedi sopra)
 - `service_role` ha `rolbypassrls = true`
 - `anon` e `authenticated` non hanno bypass RLS
 
