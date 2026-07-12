@@ -41,7 +41,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
             </div>
           </SidebarHeader>
 
-          <SidebarContent className="px-2 py-3">
+          <SidebarContent className="px-2 py-3 mt-4">
             <SidebarMenu>
               {ADMIN_NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
@@ -51,7 +51,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
                     <SidebarMenuButton
                       isActive={active}
                       onClick={() => go(item.href)}
-                      className="gap-3 text-[#1C0A10] data-[active=true]:bg-[#7A1228] data-[active=true]:text-white hover:bg-[#F5EBE0] hover:text-[#7A1228]"
+                      className="h-11 gap-3 text-base text-[#1C0A10] data-[active=true]:bg-[#B68787] data-[active=true]:text-white hover:bg-[#F5EBE0] hover:text-[#7A1228]"
                     >
                       <Icon className="h-4 w-4" />
                       <span className="font-medium">{item.label}</span>
@@ -67,7 +67,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => go('/')}
-                  className="gap-3 text-[#7A5A64] hover:bg-[#F5EBE0] hover:text-[#7A1228]"
+                  className="h-11 gap-3 text-base text-[#7A5A64] hover:bg-[#F5EBE0] hover:text-[#7A1228]"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   <span className="font-medium">Timbratore</span>
