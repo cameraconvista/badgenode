@@ -132,10 +132,13 @@
   text-align: left;
 }
 
-/* Scroll area — verticale + orizzontale (mobile: colonne non compresse) */
+/* Scroll area — verticale + orizzontale (mobile: colonne non compresse).
+   overscroll-contain: il "rimbalzo" a fine scroll resta nell'area e non si
+   propaga alla pagina (che deve restare fissa). */
 .bn-table__scroll-area {
   flex: 1;
   overflow: auto;
+  overscroll-behavior: contain;
 }
 
 /* Larghezza minima tabella e totali: mantiene le colonne leggibili e allineate

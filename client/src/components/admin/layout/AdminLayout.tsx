@@ -33,7 +33,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-svh w-full bg-[#F8F3EE]">
+      <div className="flex h-svh w-full overflow-hidden bg-[#F8F3EE]">
         <Sidebar variant="sidebar" collapsible="offcanvas">
           <SidebarHeader className="border-b border-[rgba(122,18,40,0.12)] px-4 py-4">
             <div className="flex items-center justify-center">
@@ -77,7 +77,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
           </SidebarFooter>
         </Sidebar>
 
-        <SidebarInset className="bg-[#F8F3EE]">
+        <SidebarInset className="h-full min-h-0 overflow-hidden bg-[#F8F3EE]">
           {/* Topbar visibile solo su mobile: apre il drawer. */}
           <div className="flex items-center gap-3 border-b border-[rgba(122,18,40,0.12)] bg-white px-4 py-3 md:hidden">
             <SidebarTrigger className="text-[#7A1228]" />
