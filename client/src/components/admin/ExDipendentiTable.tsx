@@ -83,13 +83,13 @@ export default function ExDipendentiTable({
                 <col key="az" style={{ width: "180px" }} />,
               ]}
             </colgroup>
-            <thead className="sticky top-0 z-10 bg-[rgba(255,255,255,0.06)] h-[48px]">
+            <thead className="bn-sticky-head">
               <tr>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Storico</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Nome</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Cognome</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Data Archiviazione</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Azioni</th>
+                <th className="bn-table__header-cell">Storico</th>
+                <th className="bn-table__header-cell">Nome</th>
+                <th className="bn-table__header-cell">Cognome</th>
+                <th className="bn-table__header-cell">Data Archiviazione</th>
+                <th className="bn-table__header-cell">Azioni</th>
               </tr>
             </thead>
             <tbody>

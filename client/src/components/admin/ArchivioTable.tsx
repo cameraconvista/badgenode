@@ -66,15 +66,13 @@ export default function ArchivioTable({
                 <col key="az" style={{ width: "160px" }} />,
               ]}
             </colgroup>
-            <thead className="sticky top-0 z-10 bn-solid-surface h-[48px]">
+            <thead className="bn-sticky-head">
               <tr>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Storico</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">
-                  PIN
-                </th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Nome</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Cognome</th>
-                <th className="px-4 text-center align-middle text-sm font-semibold text-[#1C0A10]">Azioni</th>
+                <th className="bn-table__header-cell">Storico</th>
+                <th className="bn-table__header-cell">PIN</th>
+                <th className="bn-table__header-cell">Nome</th>
+                <th className="bn-table__header-cell">Cognome</th>
+                <th className="bn-table__header-cell">Azioni</th>
               </tr>
             </thead>
             <tbody>

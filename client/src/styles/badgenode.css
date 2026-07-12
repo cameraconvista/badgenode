@@ -207,10 +207,10 @@ img[src*="logo_home"] {
   min-height: 1.82rem !important;
 }
 
-/* Tabella Archivio: testi più grandi */
+/* Tabella Archivio/Ex: testo celle allineato allo standard Storico (1rem) */
 .bn-archivio th,
 .bn-archivio td {
-  font-size: 1.125rem;
+  font-size: 1rem;
 }
 
 /* Separatori verticali sottili tra colonne (Archivio + Ex-Dipendenti) */
@@ -227,9 +227,9 @@ img[src*="logo_home"] {
   border-right: none;
 }
 
-/* Testi specifici nella tabella ancora più grandi */
+/* Testo degli span nelle celle: allineato allo standard Storico (1rem) */
 .bn-archivio .bn-cell span {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 
@@ -273,13 +273,8 @@ img[src*="logo_home"] {
   background: transparent !important;
 }
 
-/* Ex-Dipendenti: allineamento estetico a Archivio Dipendenti */
-.exdip-table thead,
-.exdip-table thead tr,
-.exdip-table thead th {
-  background-color: #F0E8E0 !important;
-}
-
+/* Ex-Dipendenti: header allineato allo standard Storico (bordeaux) tramite
+   .bn-sticky-head/.bn-table__header-cell nel markup — nessun override sfondo qui. */
 .exdip-table tbody tr.bn-row,
 .exdip-table tbody tr {
   background: var(--card) !important;
