@@ -69,7 +69,7 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
 
   return (
     <AdminLayout title="Storico">
-      <div className="flex h-full flex-col gap-4 rounded-2xl border border-[rgba(122,18,40,0.15)] bg-white p-4 shadow-sm md:p-6">
+      <div className="flex h-full flex-col gap-4">
         {/* Header - FISSO */}
         <StoricoHeader
           dipendente={dipendente}

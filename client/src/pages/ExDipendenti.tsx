@@ -84,7 +84,7 @@ export default function ExDipendenti() {
 
   return (
     <AdminLayout title="Ex-Dipendenti">
-      <div className="flex h-full flex-col rounded-2xl border border-[rgba(122,18,40,0.15)] bg-white p-4 shadow-sm">
+      <div className="flex h-full flex-col">
         <div className="mb-4 text-center">
           <h1 className="text-2xl font-bold text-[#1C0A10]">Ex-Dipendenti</h1>
         </div>

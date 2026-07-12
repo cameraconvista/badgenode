@@ -138,7 +138,7 @@ export default function ArchivioDipendenti() {
   };
   return (
     <AdminLayout title="Dipendenti">
-      <div className="flex h-full flex-col rounded-2xl border border-[rgba(122,18,40,0.15)] bg-white p-4 shadow-sm">
+      <div className="flex h-full flex-col">
         <div className="mb-4 text-center">
           <h1 className="mb-1 text-2xl font-bold text-[#1C0A10]">Archivio Dipendenti</h1>
           <p className="text-base font-medium text-[#7A1228] md:text-lg">
