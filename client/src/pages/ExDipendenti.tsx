@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { useLocation } from 'wouter';
-import { ArrowLeft } from "@/lib/icons";
+import AdminLayout from '@/components/admin/layout/AdminLayout';
 import ExDipendentiTable from '@/components/admin/ExDipendentiTable';
 import { useExDipendentiQuery } from '@/hooks/useExDipendenti';
 import { RestoreDialog, DeleteExDialog } from '@/components/admin/ConfirmDialogs';
@@ -11,7 +9,6 @@ import { TimbratureService } from '@/services/timbrature.service';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function ExDipendenti() {
-  const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const [selectedEx, setSelectedEx] = useState<ExDipendente | null>(null);
   const [showRestore, setShowRestore] = useState(false);
@@ -22,10 +19,6 @@ export default function ExDipendenti() {
   const [storicoRaw, setStoricoRaw] = useState<Array<{ tipo?: unknown; ora_locale?: unknown; giorno_logico?: unknown; data_locale?: unknown; created_at?: unknown }>>([]);
   
   const { data: exDipendenti = [], isLoading, isError } = useExDipendentiQuery();
-
-  const handleBackToArchivio = () => {
-    setLocation('/archivio-dipendenti');
-  };
 
   const handleOpenDelete = (exDipendente: ExDipendente) => {
     setSelectedEx(exDipendente);
@@ -90,52 +83,20 @@ export default function ExDipendenti() {
   };
 
   return (
-    <div
-      className="h-screen flex items-center justify-center p-4 overflow-hidden fixed inset-0"
-      style={{
-        background: 'radial-gradient(ellipse at center, #EDE3D9 0%, #E5D8CC 50%, #F8F3EE 100%)',
-        backgroundAttachment: 'fixed',
-      }}
-    >
-      <div className="w-full max-w-[1120px] flex items-center justify-center h-full">
-        <div
-          className="rounded-3xl p-4 shadow-lg border-2 w-full h-[90vh] overflow-hidden relative flex flex-col"
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderColor: 'rgba(122,18,40,0.25)',
-            boxShadow: '0 4px 24px rgba(122,18,40,0.08)',
-          }}
-        >
-          {/* Header con logo centrato */}
-          <div className="flex justify-center mb-4">
-            <img src="/logo_badgenode.png" alt="BADGENODE" className="h-10 w-auto" />
-          </div>
-          
-          <div className="text-center mb-4">
-            <h1 className="text-2xl font-bold text-[#1C0A10] mb-2">Ex-Dipendenti</h1>
-          </div>
-
-          <div className="flex-1 overflow-hidden mb-4">
-            <ExDipendentiTable
-              exDipendenti={exDipendenti}
-              isLoading={isLoading}
-              isError={isError}
-              onStorico={handleStorico}
-              onRipristina={handleOpenRestore}
-              onElimina={handleOpenDelete}
-            />
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3">
-            <Button
-              variant="outline"
-              onClick={handleBackToArchivio}
-              className="flex items-center gap-2 bg-white border-2 border-[#7A1228] text-[#7A1228] hover:bg-[#F8F3EE]"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Archivio
-            </Button>
-          </div>
+    <AdminLayout title="Ex-Dipendenti">
+      <div className="flex h-full flex-col rounded-2xl border border-[rgba(122,18,40,0.15)] bg-white p-4 shadow-sm">
+        <div className="mb-4 text-center">
+          <h1 className="text-2xl font-bold text-[#1C0A10]">Ex-Dipendenti</h1>
+        </div>
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <ExDipendentiTable
+            exDipendenti={exDipendenti}
+            isLoading={isLoading}
+            isError={isError}
+            onStorico={handleStorico}
+            onRipristina={handleOpenRestore}
+            onElimina={handleOpenDelete}
+          />
         </div>
       </div>
       <RestoreDialog
@@ -160,6 +121,6 @@ export default function ExDipendenti() {
         rawRows={storicoRaw}
         isLoading={storicoLoading}
       />
-    </div>
+    </AdminLayout>
   );
 }

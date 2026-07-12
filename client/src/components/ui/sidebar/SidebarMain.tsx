@@ -12,9 +12,9 @@ import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   // SheetDescription,
   // SheetHeader,
-  // SheetTitle,
 } from '@/components/ui/sheet';
 import { useSidebar, SIDEBAR_WIDTH_MOBILE } from './SidebarContext';
 
@@ -78,6 +78,7 @@ function Sidebar({
           }
           side={side}
         >
+          <SheetTitle className="sr-only">Menu di navigazione</SheetTitle>
           <div className={cn(sidebarVariants({ side, variant }), 'h-full w-full', className)}>
             {children}
           </div>

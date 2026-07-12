@@ -1,11 +1,25 @@
 import React from 'react';
 import { User } from "@/lib/icons";
+import AdminLayout from '@/components/admin/layout/AdminLayout';
 import StoricoHeader from '@/components/storico/StoricoHeader';
 import StoricoFilters from '@/components/storico/StoricoFilters';
 import StoricoTable from '@/components/storico/StoricoTable';
 import ModaleTimbrature from '@/components/storico/ModaleTimbrature';
 import { useStoricoTimbrature } from '@/hooks/useStoricoTimbrature';
 import { useStoricoMutations } from '@/hooks/useStoricoMutations';
+
+/** Box messaggio centrato (stati PIN mancante / dipendente non trovato). */
+function StoricoMessage({ title, message }: { title: string; message: string }) {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="rounded-lg border border-[rgba(122,18,40,0.12)] bg-white/70 p-8 text-center">
+        <User className="mx-auto mb-4 h-12 w-12 text-[#7A5A64]" />
+        <h2 className="mb-2 text-xl font-semibold text-[#1C0A10]">{title}</h2>
+        <p className="text-[#7A5A64]">{message}</p>
+      </div>
+    </div>
+  );
+}
 
 interface StoricoTimbratureProps {
   pin?: number; // PIN del dipendente da visualizzare
@@ -15,15 +29,9 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
   // Se non c'è PIN, mostra errore
   if (!pin) {
     return (
-      <div className="min-h-screen bg-[#F8F3EE] p-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white/70 border border-[rgba(122,18,40,0.12)] rounded-lg p-8 text-center">
-            <User className="w-12 h-12 text-[#7A5A64] mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-[#1C0A10] mb-2">PIN richiesto</h2>
-            <p className="text-[#7A5A64]">Specificare un PIN valido per visualizzare lo storico</p>
-          </div>
-        </div>
-      </div>
+      <AdminLayout title="Storico">
+        <StoricoMessage title="PIN richiesto" message="Specificare un PIN valido per visualizzare lo storico" />
+      </AdminLayout>
     );
   }
 
@@ -53,80 +61,60 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
 
   if (!dipendente) {
     return (
-      <div className="min-h-screen bg-[#F8F3EE] p-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-white/70 border border-[rgba(122,18,40,0.12)] rounded-lg p-8 text-center">
-            <User className="w-12 h-12 text-[#7A5A64] mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-[#1C0A10] mb-2">Dipendente non trovato</h2>
-            <p className="text-[#7A5A64]">PIN {pin} non presente nel sistema</p>
-          </div>
-        </div>
-      </div>
+      <AdminLayout title="Storico">
+        <StoricoMessage title="Dipendente non trovato" message={`PIN ${pin} non presente nel sistema`} />
+      </AdminLayout>
     );
   }
 
   return (
-    <div
-      className="h-screen flex items-center justify-center p-4"
-      style={{
-        background: 'linear-gradient(135deg, #F8F3EE 0%, #F0E5DC 50%, #E8D8CC 100%)',
-      }}
-    >
-      <div className="w-full max-w-[1200px] flex items-center justify-center h-full">
-        <div
-          className="rounded-3xl p-6 border-2 w-full h-[95vh] overflow-hidden relative flex flex-col gap-4"
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderColor: 'rgba(122, 18, 40, 0.25)',
-            boxShadow: '0 8px 40px rgba(122, 18, 40, 0.10)',
-          }}
-        >
-          {/* Header - FISSO */}
-          <StoricoHeader
-            dipendente={dipendente}
-            onExportPDF={handleExportPDF}
-            onExportXLS={handleExportXLS}
-          />
+    <AdminLayout title="Storico">
+      <div className="flex h-full flex-col gap-4 rounded-2xl border border-[rgba(122,18,40,0.15)] bg-white p-4 shadow-sm md:p-6">
+        {/* Header - FISSO */}
+        <StoricoHeader
+          dipendente={dipendente}
+          onExportPDF={handleExportPDF}
+          onExportXLS={handleExportXLS}
+        />
 
-          {/* Filtri - FISSO */}
-          <div className="flex-shrink-0">
-            <StoricoFilters
-              filters={{ dal: filters.dal, al: filters.al }}
-              onFiltersChange={handleFiltersChange}
-              isLoading={isLoading}
-            />
-          </div>
-
-          {/* Tabella - SCROLLABILE */}
-          <div className="flex-1 min-h-0">
-            <StoricoTable
-              timbrature={turniGiornalieri}
-              storicoDataset={storicoDataset}
-              storicoDatasetV5={storicoDatasetV5}
-              filters={{ dal: filters.dal, al: filters.al }}
-              oreContrattuali={dipendente.ore_contrattuali}
-              onEditTimbrature={handleEditTimbrature}
-              isLoading={isLoading}
-            />
-          </div>
-
-          {/* Modale Modifica */}
-          <ModaleTimbrature
-            isOpen={!!selectedGiorno}
-            onClose={() => setSelectedGiorno(null)}
-            giorno_logico={selectedGiorno || ''}
-            timbrature={timbratureGiorno}
-            dipendente={dipendente}
-            onSave={async (updates) => {
-              await saveFromModal.mutateAsync(updates);
-            }}
-            onDelete={async (params) => {
-              await deleteMutation.mutateAsync(params);
-            }}
-            isLoading={saveFromModal.isPending || deleteMutation.isPending}
+        {/* Filtri - FISSO */}
+        <div className="flex-shrink-0">
+          <StoricoFilters
+            filters={{ dal: filters.dal, al: filters.al }}
+            onFiltersChange={handleFiltersChange}
+            isLoading={isLoading}
           />
         </div>
+
+        {/* Tabella - SCROLLABILE */}
+        <div className="min-h-0 flex-1">
+          <StoricoTable
+            timbrature={turniGiornalieri}
+            storicoDataset={storicoDataset}
+            storicoDatasetV5={storicoDatasetV5}
+            filters={{ dal: filters.dal, al: filters.al }}
+            oreContrattuali={dipendente.ore_contrattuali}
+            onEditTimbrature={handleEditTimbrature}
+            isLoading={isLoading}
+          />
+        </div>
+
+        {/* Modale Modifica */}
+        <ModaleTimbrature
+          isOpen={!!selectedGiorno}
+          onClose={() => setSelectedGiorno(null)}
+          giorno_logico={selectedGiorno || ''}
+          timbrature={timbratureGiorno}
+          dipendente={dipendente}
+          onSave={async (updates) => {
+            await saveFromModal.mutateAsync(updates);
+          }}
+          onDelete={async (params) => {
+            await deleteMutation.mutateAsync(params);
+          }}
+          isLoading={saveFromModal.isPending || deleteMutation.isPending}
+        />
       </div>
-    </div>
+    </AdminLayout>
   );
 }
