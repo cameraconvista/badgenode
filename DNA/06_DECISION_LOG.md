@@ -2,6 +2,23 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Redesign layout admin: guscio AdminLayout (sidebar/drawer)
+
+- La sezione admin è passata da "card fullscreen con navigazione dentro i pulsanti"
+  a un guscio condiviso `client/src/components/admin/layout/AdminLayout.tsx`:
+  **sidebar laterale persistente su desktop**, **drawer a scomparsa su mobile**
+  (shadcn Sidebar/Sheet). Le 3 pagine admin (`ArchivioDipendenti`, `ExDipendenti`,
+  `StoricoTimbrature`) sono avvolte dal guscio; header/nav duplicati rimossi.
+- Voci sidebar in `adminNavItems.ts`: Dipendenti · Ex-Dipendenti · Storico + Timbratore
+  nel footer. Import della base sidebar da `@/components/ui/sidebar/index` (non lo shim).
+- Tabelle admin: scroll orizzontale su schermo stretto (`overflow-auto` + larghezza
+  minima), header sticky, colonne non compresse. Solo cornice/responsive.
+- Copertura e2e isolata in `e2e/admin-layout.spec.ts` (rete mockata, zero scritture):
+  sidebar in ogni sezione, drawer mobile, rotta `/admin/ex-dipendenti`, scroll-x.
+- **Perché:** layout professionale e coerente desktop+mobile senza toccare logiche,
+  dati o API. Nota tecnica: lo Storico senza pin fa redirect al primo utente
+  (`/storico-timbrature/:pin`) — i test lo montano con pin esplicito per stabilità.
+
 ## 2026-07-13 — Vincolo assoluto anti-push + hook di enforcement
 
 - L'utente ha dichiarato un **vincolo assoluto**: app ONLINE con dati reali, logiche consolidate da non corrompere MAI; `git push` **solo su sua autorizzazione esplicita**, senza richiederlo ogni volta (default = mai push).

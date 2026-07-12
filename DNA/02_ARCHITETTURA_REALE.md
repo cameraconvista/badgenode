@@ -46,6 +46,18 @@ Server:
 - `/api/timbrature*`
 - `/api/ex-dipendenti*`
 
+## Layout admin (guscio)
+
+Le tre pagine admin (`ArchivioDipendenti`, `ExDipendenti`, `StoricoTimbrature`)
+sono avvolte da un guscio condiviso `client/src/components/admin/layout/AdminLayout.tsx`:
+- **desktop**: sidebar laterale persistente sempre visibile;
+- **mobile**: la stessa sidebar diventa un drawer a scomparsa, aperto dal trigger
+  in topbar (shadcn Sidebar/Sheet, base in `client/src/components/ui/sidebar/`).
+- Voci in `adminNavItems.ts`: Dipendenti · Ex-Dipendenti · Storico, più Timbratore
+  (ritorno al keypad) nel footer. Il guscio non contiene logica di business.
+- Le tabelle admin scorrono in orizzontale su schermo stretto (larghezza minima,
+  header sticky) senza comprimere le colonne.
+
 ## Stato auth reale
 
 Il codice client legge i flag in `client/src/config/featureFlags.ts`. Se non overrideati da env, i default correnti del codice sono:
