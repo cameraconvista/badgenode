@@ -26,10 +26,10 @@ App Control e la **cassaforte centrale** delle variabili di ogni progetto (suo S
 
 - **Bootstrap:** file `.agent/app-control.json` nella root (in `.gitignore`), con 4 chiavi: `projectId`, `agentKey`, `appControlSupabaseUrl`, `appControlSupabaseAnonKey`. Lo leggi a inizio sessione.
 - **Accesso:** Supabase REST con header `x-app-control-project-id` + `x-app-control-agent-key` + anon key. **Lettura e scrittura**, limitate al **solo** progetto della chiave.
-- **Flusso:** leggi le variabili da App Control -> **generi tu il `.env`** (l'utente non scrive mai a mano nel `.env`). **Riconciliazione (ogni sync):** confronta le chiavi del `.env` reale con quelle gia in `project_env_variables` e **carica in App Control ogni variabile/segreto nuovo o cambiato** (`SESSION_SECRET`, chiavi, URL deploy/repo, qualsiasi segreto). **Escludi** solo le 7 manuali dell'utente e le derivate `VITE_*`/`SUPABASE_DB_URL`. **Colonne valore:** ogni variabile ha `value_text` (NON sensibili) e `value_ciphertext` (sensibili, `is_sensitive=true`) — MAI `value`; in LETTURA prendi il campo giusto in base a `is_sensitive` (altrimenti le sensibili escono vuote e rompi il `.env`); in SCRITTURA includi `project_id` (UUID dalla SELECT su `projects`, non lo slug, o la RLS nega) e metti il valore in `value_ciphertext`+`is_sensitive=true` se segreto, altrimenti `value_text`+`is_sensitive=false`. Se non ci sono variabili nuove, non scrivere nulla. Le nuove appaiono in App Control sotto **"Gestite da Agent"**.
+- **Flusso:** leggi le variabili da App Control -> **generi tu il `.env`** (l'utente non scrive mai a mano nel `.env`). **Riconciliazione (ogni sync):** confronta le chiavi del `.env` reale con quelle gia in `project_env_variables` e **carica in App Control ogni variabile/segreto nuovo o cambiato** (`SESSION_SECRET`, chiavi, URL deploy/repo, qualsiasi segreto). **Escludi** solo le 9 manuali dell'utente (incluse `LINK_DEPLOY` e `LINK_DEPLOY ADMIN`) e le derivate `VITE_*`/`SUPABASE_DB_URL`. **Colonne valore:** ogni variabile ha `value_text` (NON sensibili) e `value_ciphertext` (sensibili, `is_sensitive=true`) — MAI `value`; in LETTURA prendi il campo giusto in base a `is_sensitive` (altrimenti le sensibili escono vuote e rompi il `.env`); in SCRITTURA includi `project_id` (UUID dalla SELECT su `projects`, non lo slug, o la RLS nega) e metti il valore in `value_ciphertext`+`is_sensitive=true` se segreto, altrimenti `value_text`+`is_sensitive=false`. Se non ci sono variabili nuove, non scrivere nulla. Le nuove appaiono in App Control sotto **"Gestite da Agent"**.
 - **Chi inserisce cosa:**
-  - **UTENTE** (manuale, alla creazione): `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`, `RENDER_API_KEY`.
-  - **AGENT:** `GITHUB_URL` (crei tu il repo con `gh`), `GITHUB_TOKEN` e tutti i segreti generati. **Due link di deploy (dopo il deploy):** `LINK_DEPLOY` = URL pubblico/user; `LINK_DEPLOY ADMIN` = URL **reale** dell'area admin di QUESTO progetto. Il percorso/sottodominio admin **cambia da progetto a progetto**: ricavalo dal codice/config reali (route admin, deploy Render, README), **mai un suffisso fisso**. Se non esiste un'area admin separata, usa l'area di gestione reale del progetto (es. rotta protetta). Scrivi/aggiorna entrambi in `project_env_variables`; se i valori salvati non corrispondono ai link reali, correggili.
+  - **UTENTE** (manuale): `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`, `RENDER_API_KEY`, e i **due link di deploy** `LINK_DEPLOY` (URL pubblico/user) e `LINK_DEPLOY ADMIN` (URL area admin/gestione del progetto): li inserisce a mano nel box "Da inserire manualmente" della sezione Variabili e si mostrano come link sotto al titolo.
+  - **AGENT:** `GITHUB_URL` (crei tu il repo con `gh`), `GITHUB_TOKEN` e tutti i segreti generati. I due link di deploy li **legge** soltanto (per il `.env` se servono): **non li scrive ne li sovrascrive** in `project_env_variables`. Se sono vuoti e conosci i link reali dal deploy, segnalali all'utente perche li inserisca a mano, senza scriverli tu.
 - **Nomi:** usa i nomi **canonici** (non rinominare). Le `VITE_*` non si archiviano: le generi solo nel `.env` per i frontend Vite (stesso valore).
 
 **Regola comunicazione (fondamentale).** Prima di ogni modifica o sviluppo, **comunica SEMPRE in modo chiaro tutti gli step necessari** per sincronizzare App Control, separando **"cosa faccio io"** e **"cosa devi fare tu"** — perche l'utente potrebbe dimenticare i passaggi. Una sola azione alla volta:
@@ -41,8 +41,8 @@ Le regole sono **vincoli, non suggerimenti**: confrontale **prima** di agire; se
 - **DB = unica fonte dei dati.** Niente dati hardcoded/mock/locali nel runtime. **Parita admin/user**: ogni entita gestita da admin e letta lato user dalla stessa fonte DB.
 - **DB mai distruttivo.** Schema solo come **migrazioni versionate additive**; mai `db push`/`--force`/sync diretti su produzione. **RLS attive** su ogni tabella con dati utente.
 - **Segreti:** `.env` sempre in `.gitignore`; **mai stampare** token/password/chiavi/URL con credenziali. Service role solo lato backend, mai nel frontend.
-- **Git:** `git status` prima di toccare/committare; **mai committare** `.env`, backup, cache, file generati. Commit/push **solo se richiesto** e dopo che i controlli passano.
-- **Push = alto rischio.** Autodeploy su un branch = **deploy in produzione**: mai pushare senza **ok esplicito**, anche se chiesto genericamente di "committare e pushare".
+- **Git (commit automatici, push manuale):** `git status` prima di toccare/committare; **mai committare** `.env`, backup, cache, file generati. **COMMIT = automatico**: dopo ogni blocco di lavoro completato e verificato (typecheck/lint/build/test passati) committa da solo, senza chiedere conferma — il commit e un salvataggio locale sicuro e reversibile, e non committare rischia di perdere lavoro. **PUSH = solo su richiesta esplicita** dell'utente ("push"/"pubblica"/"manda online"): mai in automatico.
+- **Push = alto rischio.** Autodeploy su un branch = **deploy in produzione**: mai pushare senza **ok esplicito**, anche se chiesto genericamente di "committare e pushare" (in quel caso committa, ma per il push attendi conferma).
 - **Free tier:** Supabase Free + Render (deploy unico frontend+backend). Mai saturare i limiti; segnala **prima** di avvicinarli.
 - **Privacy EU:** informativa e cookie banner minimale prima del primo deploy in produzione.
 
@@ -70,45 +70,21 @@ Accessorie: se il prompt e ambiguo ma il rischio e alto -> chiedi upgrade; se il
 2. Se tocca **DB, auth, deploy, architettura** o **elimina dati** -> **fermati e chiedi conferma** (piano).
 3. Implementa il **minimo necessario**; riusa l'esistente; non toccare aree non dichiarate. DURANTE la scrittura verifica che ogni file rispetti i limiti di governance (dimensione, modularita, naming): se un file supera il limite, dividilo subito.
 4. Verifica con gli script del progetto (typecheck/lint/build). **Non dichiarare test passati senza eseguirli.**
-5. Chiudi **aggiornando doc/DNA nello stesso intervento**; registra le decisioni tecniche rilevanti nel **decision-log** (`DNA/06_DECISION_LOG.md`).
+5. Chiudi **aggiornando doc/DNA nello stesso intervento**; registra le decisioni tecniche rilevanti nel **decision-log** (`DNA/06_DECISION_LOG.md`). Poi **committa in automatico** il lavoro verificato (§2 · Git).
 
 Fix piccoli (un testo, un colore): esegui diretto. Bug: **riproducilo e isola la causa radice** prima di pianificare.
 
 ## 4 · Struttura progetto (standard)
 - Stack base: **React + Vite + TypeScript**, **Supabase** (dati), **Render** (deploy unico), **GitHub**.
-- **Limite righe esplicito: max 300 righe per file** sorgente (`.ts`/`.tsx`/`.js`). Applicato **in fase di scrittura**: se un file che crei o modifichi supera 300 righe, **dividilo PRIMA** di proseguire (estrai funzioni/componenti/hook in moduli coesi). Eccezione: file generati/di config. I pochi file gia oltre soglia sono **debito noto**: vanno ridotti quando li si tocca, non in un refactor a parte.
-- **File piccoli e modulari**, una responsabilita per file, naming coerente; niente duplicazione di logica (cerca prima se esiste).
+- **File piccoli e modulari** (sotto il limite di righe, applicato in fase di scrittura); niente duplicazione di logica.
 - **`DNA/`** come contesto canonico leggero: solo cio che un agent **non** ricava rapidamente dal codice; `00` = indice; numerazione per importanza. Tieni un **decision-log** in `DNA/06_DECISION_LOG.md`.
-- **Portabilita:** nessun path assoluto hardcoded, nessuna dipendenza dalla macchina; tutto ricostruibile da repo + `.env` (rigenerato da App Control). App avviabile in locale e verificabile (porta **5001** quando previsto).
+- App avviabile in locale e verificabile (porta **5001** quando previsto).
 
 ## 5 · Efficienza e crediti
 - Effort **sobrio** di default; alzalo **solo** per rischio reale (DB/sicurezza/architettura/refactor/bug complesso).
 - **Subagent** solo se realmente necessari.
 - Comunica **una azione alla volta**, sintetico, linguaggio semplice.
 
-## 5bis · Checklist pre/post-modifica (vincolante)
-**Prima** di scrivere codice:
-- [ ] Ho letto `DNA/00` e i file DNA pertinenti al task.
-- [ ] Ho cercato se la logica esiste gia (no duplicazioni).
-- [ ] Ho fatto la triage reasoning (§2ter) e dichiarato il piano (§3): file da toccare, impatto DB/API/flussi, rischi.
-- [ ] Se il task tocca DB/auth/deploy/secrets/architettura -> mi fermo e chiedo conferma.
-
-**Dopo** la modifica, prima di chiudere:
-- [ ] Ogni file toccato e <= 300 righe (altrimenti l'ho diviso).
-- [ ] Ho eseguito i controlli reali (typecheck/lint/test/build) — **non dichiaro pass senza averli eseguiti**.
-- [ ] Non ho rotto funzionalita esistenti; non ho toccato aree fuori dalla richiesta.
-- [ ] Ho aggiornato doc/DNA **nello stesso intervento** se ho inciso su architettura/flussi/API/DB/deploy/secrets/governance.
-- [ ] Ho registrato le decisioni tecniche rilevanti in `DNA/06_DECISION_LOG.md`.
-- [ ] `git status` verificato; nessun `.env`/backup/file generato in staging. Commit/push **solo se richiesto esplicitamente**.
-
-## 5ter · Handoff per sessioni future (anche senza storico)
-Questo file + `DNA/` sono l'unica memoria condivisa: una nuova chat/agent/dispositivo, senza storico, deve poter ripartire da qui. Percio:
-- **Lo stato operativo vive in `DNA/`** (architettura, DB, deploy, integrazioni, audit), **le regole vivono qui**. Non duplicare tra i due.
-- Ogni decisione che cambierebbe il comportamento di un agent futuro va nel **decision-log** (`DNA/06_DECISION_LOG.md`), con il **perche**, piu recente in alto.
-- Quando cambi architettura/flussi/DB/deploy, **aggiorna il DNA pertinente nello stesso intervento**: e cosi che la sessione successiva trova lo stato vero.
-- All'avvio segui §0 (protocollo di sessione) e fermati: non avviare lavoro senza richiesta.
-
 ## 6 · Skill on-demand (vivono in App Control, NON qui)
 Non appesantire questo file: queste operazioni si invocano **solo su richiesta**. Quando l'utente le chiede, **recupera il prompt corrispondente da App Control ed eseguilo**:
 Governance (crea/riallinea regole) · Pulizia e ottimizzazione · Analisi completa (sola diagnosi) · DNA (crea/riallinea) · Aggiorna DNA+Backup+Git · Ottimizzazione navigazione · Responsive mobile nativo · Qualita progetto adattiva · Keepalive Supabase · Testing visivo automatizzato · Fix complesso controllato · Crea/aggiorna `.env` · Refactoring (ripensamento progetto).
-

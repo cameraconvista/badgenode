@@ -2,6 +2,12 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Vincolo assoluto anti-push + hook di enforcement
+
+- L'utente ha dichiarato un **vincolo assoluto**: app ONLINE con dati reali, logiche consolidate da non corrompere MAI; `git push` **solo su sua autorizzazione esplicita**, senza richiederlo ogni volta (default = mai push).
+- Enforcement tecnico: creato **`.claude/settings.json`** con hook `PreToolUse` su `Bash` (filtro `if: Bash(git push*)`) che intercetta ogni comando contenente `git push` (regex `git[[:space:]]+push`, copre `--force`/spazi multipli) e lo **nega** con `permissionDecision: deny`. Non dipende dalla memoria dell'agent: blocca a livello harness. I commit locali restano liberi (sicuri e reversibili).
+- **Perché:** un push su `main` = autodeploy in produzione su dati reali di clienti; il blocco automatico elimina il rischio di push non voluto anche in sessioni future senza storico. Vincolo memorizzato anche in auto-memory (`badgenode-vincolo-assoluto`).
+
 ## 2026-06-29 — Governance: integrate lacune in CLAUDE.md + AGENTS.md puntatore
 
 - La governance esisteva gia ed era solida (`CLAUDE.md` root, caricato auto da Claude Code). Verificata e **integrata senza duplicare**: aggiunti (1) limite righe **esplicito 300/file** applicato in scrittura, (2) sezione **Checklist pre/post-modifica** vincolante, (3) sezione **Handoff per sessioni future** (ripartenza senza storico), (4) nota **portabilita**. Sezioni gia presenti (Enforcement, Reasoning, Flusso modifiche, DB unica fonte, parita admin/user, segreti, git) lasciate invariate.
