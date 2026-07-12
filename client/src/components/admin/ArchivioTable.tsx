@@ -55,8 +55,8 @@ export default function ArchivioTable({
     <div className="h-full flex flex-col">
       {/* Tabella TableKit Standard */}
       <div className="border border-[rgba(122,18,40,0.15)] rounded-lg overflow-hidden bg-white flex-1 flex flex-col">
-        <div className="flex-1 overflow-y-auto">
-          <table className="w-full table-fixed border-collapse bn-archivio bn-nohover archivio-table">
+        <div className="flex-1 overflow-auto">
+          <table className="w-full min-w-[640px] table-fixed border-collapse bn-archivio bn-nohover archivio-table">
             <colgroup>
               {[
                 <col key="st" style={{ width: "88px" }} />,

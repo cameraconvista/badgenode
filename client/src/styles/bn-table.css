@@ -132,10 +132,20 @@
   text-align: left;
 }
 
-/* Scroll area */
+/* Scroll area — verticale + orizzontale (mobile: colonne non compresse) */
 .bn-table__scroll-area {
   flex: 1;
-  overflow-y: auto;
+  overflow: auto;
+}
+
+/* Larghezza minima tabella e totali: mantiene le colonne leggibili e allineate
+   su schermo stretto, dove entrambe scorrono in orizzontale insieme. */
+.bn-table__table,
+.bn-table__totals {
+  min-width: 560px;
+}
+.bn-table__totals {
+  overflow-x: auto;
 }
 
 /* Table base */
