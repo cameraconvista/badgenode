@@ -36,6 +36,17 @@
   --ring: #9B1E35;
   --radius: 0.5rem;
 
+  /* Sidebar (admin layout) — triplette HSL per compatibilità con hsl(var(--sidebar) / <alpha>) in tailwind.config.
+     Sfondo bianco pulito, accenti bordeaux/crema coerenti col brand BadgeNode. */
+  --sidebar: 0 0% 100%;                       /* #FFFFFF */
+  --sidebar-foreground: 340 47% 7%;           /* #1C0A10 */
+  --sidebar-border: 347 74% 27%;              /* bordeaux (usato con alpha) */
+  --sidebar-ring: 349 68% 36%;                /* accent #9B1E35 */
+  --sidebar-primary: 347 74% 27%;             /* bordeaux #7A1228 — item attivo */
+  --sidebar-primary-foreground: 0 0% 100%;    /* testo su item attivo */
+  --sidebar-accent: 31 51% 92%;               /* crema #F5EBE0 — hover item */
+  --sidebar-accent-foreground: 347 74% 27%;   /* testo su hover */
+
   /* Typography */
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-serif: Georgia, serif;
