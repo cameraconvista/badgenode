@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { History, Users, AlertCircle } from "@/lib/icons";
+import { History, Users, AlertCircle, RotateCcw, Trash2 } from "@/lib/icons";
 import { ExDipendente } from '@/services/utenti.service';
 
 interface ExDipendentiTableProps {
@@ -113,14 +113,14 @@ export default function ExDipendentiTable({
                 sortedExDipendenti.map((exDipendente) => (
                   <tr
                     key={String(exDipendente.pin ?? '') || `arch-${exDipendente.archiviato_il}`}
-                    className="bn-row bn-row-tall align-middle"
+                    className="bn-row bn-row-archivio-compact align-middle"
                   >
                     <td className="bn-cell px-4 text-center">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => onStorico(exDipendente.pin)}
-                        className="p-2 no-default-hover-elevate no-default-active-elevate"
+                        className="p-1 no-default-hover-elevate no-default-active-elevate"
                         title={`Storico di ${exDipendente.nome} ${exDipendente.cognome}`}
                       >
                         <History className="icon-storico" aria-label="Storico" />
@@ -138,17 +138,16 @@ export default function ExDipendentiTable({
                       </span>
                     </td>
                     <td className="bn-cell px-4">
-                      <div className="bn-actions flex items-center justify-end gap-3 flex-wrap">
+                      <div className="bn-actions flex items-center justify-center gap-3">
                         {onRipristina && (
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => onRipristina(exDipendente)}
-                            className="p-2 no-default-hover-elevate no-default-active-elevate"
+                            className="p-1 no-default-hover-elevate no-default-active-elevate"
                             title={`Ripristina ${exDipendente.nome} ${exDipendente.cognome}`}
                           >
-                            {/* Riusa icone di sistema, mantenendo stile */}
-                            <span className="text-green-400 text-sm font-semibold">Ripristina</span>
+                            <RotateCcw className="icon-action text-green-600 hover:text-green-700" aria-label="Ripristina" />
                           </Button>
                         )}
                         {onElimina && (
@@ -156,10 +155,10 @@ export default function ExDipendentiTable({
                             variant="ghost"
                             size="sm"
                             onClick={() => onElimina(exDipendente)}
-                            className="p-2 no-default-hover-elevate no-default-active-elevate"
+                            className="p-1 no-default-hover-elevate no-default-active-elevate"
                             title={`Elimina definitivamente ${exDipendente.nome} ${exDipendente.cognome}`}
                           >
-                            <span className="text-red-400 text-sm font-semibold">Elimina</span>
+                            <Trash2 className="icon-action text-red-600 hover:text-red-700" aria-label="Elimina" />
                           </Button>
                         )}
                       </div>

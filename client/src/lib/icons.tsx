@@ -18,6 +18,7 @@ import {
   PanelLeft as PanelLeftBase,
   Pencil as EditBase,
   Plus as PlusBase,
+  RotateCcw as RotateCcwBase,
   Search as SearchBase,
   Settings as SettingsBase,
   Trash2 as Trash2Base,
@@ -59,6 +60,7 @@ export const LogIn = withThinStroke(LogInBase);
 export const LogOut = withThinStroke(LogOutBase);
 export const PanelLeftIcon = withThinStroke(PanelLeftBase);
 export const Plus = withThinStroke(PlusBase);
+export const RotateCcw = withThinStroke(RotateCcwBase);
 export const Search = withThinStroke(SearchBase);
 export const Settings = withThinStroke(SettingsBase);
 export const Trash2 = withThinStroke(Trash2Base);

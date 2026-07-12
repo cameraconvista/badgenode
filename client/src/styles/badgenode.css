@@ -185,25 +185,23 @@ img[src*="logo_home"] {
   background: transparent !important;
 }
 
-/* Densità più alta (righe più alte) per Archivio */
-.bn-row-tall {
-  line-height: 1.5 !important;
-}
-
-/* Archivio Dipendenti: riduzione altezza righe visibile */
-.archivio-table tbody tr.bn-row-archivio-compact > td.bn-cell {
+/* Archivio + Ex-Dipendenti: altezza righe compatta e uniforme (stesso standard) */
+.archivio-table tbody tr.bn-row-archivio-compact > td.bn-cell,
+.exdip-table tbody tr.bn-row-archivio-compact > td.bn-cell {
   padding-top: 10px !important;
   padding-bottom: 10px !important;
   vertical-align: middle !important;
 }
 
 /* Mantiene leggibilità e compatta la riga in modo deterministico */
-.archivio-table tbody tr.bn-row-archivio-compact {
+.archivio-table tbody tr.bn-row-archivio-compact,
+.exdip-table tbody tr.bn-row-archivio-compact {
   line-height: 1.45 !important;
 }
 
 /* Bottone cella compatto (era il vincolo principale che nascondeva la riduzione) */
-.archivio-table tbody tr.bn-row-archivio-compact td.bn-cell button {
+.archivio-table tbody tr.bn-row-archivio-compact td.bn-cell button,
+.exdip-table tbody tr.bn-row-archivio-compact td.bn-cell button {
   min-height: 1.82rem !important;
 }
 
@@ -289,23 +287,9 @@ img[src*="logo_home"] {
   background: var(--card) !important;
 }
 
-/* Stessa densità riga della tabella Archivio Dipendenti */
-.exdip-table tbody tr.bn-row-tall > td.bn-cell {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-  vertical-align: middle !important;
-}
-.exdip-table tbody tr.bn-row-tall {
-  line-height: 1.45 !important;
-}
-.exdip-table tbody tr.bn-row-tall td.bn-cell button {
-  min-height: 1.82rem !important;
-}
-
 /* Azioni centrate come Archivio */
-.exdip-table tbody tr.bn-row-tall td .bn-actions {
+.exdip-table tbody tr td .bn-actions {
   justify-content: center !important;
-  flex-wrap: nowrap !important;
 }
 /* Disabilita overlay elevate nell'area exdip-table */
 .exdip-table .hover-elevate::after,
