@@ -2,6 +2,21 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Rifinitura layout admin (step 4): dedup header Storico + coerenza
+
+- `StoricoHeader.tsx` alleggerito: rimossi **pulsante TORNA**, **logo** e navigazione
+  di ritorno, ora forniti dal guscio `AdminLayout` (sidebar/drawer) → niente più
+  duplicati. Mantenuti nome dipendente selezionato + export PDF/XLS (invariati).
+- Coerenza: raggio dei bottoni export allineato al `lg` standard (0.5625rem, come
+  Tailwind config) invece di 0.75rem. Rimosse dal CSS le classi orfane
+  `.bn-accent-light` e `.bn-back` (non più referenziate da alcun componente).
+- Scelta conservativa su app in produzione: **nessuna** sostituzione dei ~250 hex
+  inline con i token (`--bn-primary`, `--foreground`…) — troppo rischio cromatico.
+  Colori invariati al 100%; toccati solo forma (raggio) e ridondanze.
+- **Perché:** header coerente col nuovo guscio senza duplicazioni, senza toccare
+  colori/logica/dati. La sostituzione hex→token resta un possibile lavoro futuro
+  a parte, da verificare visivamente sezione per sezione.
+
 ## 2026-07-13 — Redesign layout admin: guscio AdminLayout (sidebar/drawer)
 
 - La sezione admin è passata da "card fullscreen con navigazione dentro i pulsanti"

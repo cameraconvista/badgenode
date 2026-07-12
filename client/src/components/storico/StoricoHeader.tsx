@@ -1,5 +1,4 @@
-import { FileSpreadsheet, FileText, ArrowLeft } from "@/lib/icons";
-import { useLocation } from 'wouter';
+import { FileSpreadsheet, FileText } from "@/lib/icons";
 
 interface StoricoHeaderProps {
   dipendente: {
@@ -16,34 +15,20 @@ export default function StoricoHeader({
   onExportPDF,
   onExportXLS,
 }: StoricoHeaderProps) {
-  const [, setLocation] = useLocation();
-
-  const handleTorna = () => {
-    setLocation('/archivio-dipendenti');
-  };
-
+  // Logo, titolo "Storico" e navigazione di ritorno sono forniti dal guscio
+  // AdminLayout (sidebar desktop / drawer mobile): qui restano solo il nome del
+  // dipendente selezionato e le azioni di export, per evitare duplicazioni.
   return (
     <div className="bg-[#F5EBE0] border border-[rgba(122,18,40,0.15)] rounded-lg p-6 flex-shrink-0 relative">
-      {/* Pulsante TORNA in alto a sinistra */}
-      <div className="absolute top-4 left-4">
-        <button 
-          onClick={handleTorna}
-          className="bn-accent-light rounded-xl px-4 py-2 flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4 text-white" />
-          <span className="text-white font-medium">TORNA</span>
-        </button>
-      </div>
-
-      {/* Pulsanti in alto a destra */}
+      {/* Azioni di export in alto a destra */}
       <div className="absolute top-4 right-4 flex gap-3">
-        <button 
+        <button
           onClick={onExportPDF}
           className="bn-export-btn border border-[rgba(122,18,40,0.20)]"
         >
           <FileText className="bn-export-icon text-red-600" aria-label="Esporta PDF" />
         </button>
-        <button 
+        <button
           onClick={onExportXLS}
           className="bn-export-btn border border-[rgba(122,18,40,0.20)]"
         >
@@ -51,11 +36,7 @@ export default function StoricoHeader({
         </button>
       </div>
 
-      {/* Logo centrato */}
-      <div className="flex justify-center mb-4">
-        <img src="/logo_badgenode.png" alt="BADGENODE" className="h-10 w-auto" />
-      </div>
-
+      {/* Nome del dipendente selezionato */}
       <div className="flex flex-col items-center gap-4">
         <div className="text-center">
           <h1 className="text-lg font-normal text-[#7A5A64] mb-3">Storico Timbrature</h1>
