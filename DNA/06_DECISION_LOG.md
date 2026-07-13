@@ -2,6 +2,25 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Consolidamento UI admin (colori, tabelle, modali, sidebar)
+
+- **Standard tabella unico** (rif. Storico): header bar bordeaux #7A1228 + testo
+  bianco, font 1rem, righe compatte uniformi, icone azioni 16px. Dipendenti ed
+  Ex-Dipendenti allineati (Ex: azioni testo→icone RotateCcw/Trash2). Zebra striping
+  righe pari #FAF4EE. Ombra tabelle: wrapper dedicato (rounded-xl + shadow) separato
+  dall'overflow-hidden per non clippare gli angoli.
+- **Colori unificati**: titoli sezione #7A1228; UNICO verde di progetto **#3E7D52**
+  (hover #4A9061) per pulsante Aggiungi, tutti i "Salva" (incl. `.bn-btn-success`),
+  icone Ripristina/Excel, testi Entrata/ripristino — rimossi i vari green-600/700.
+  Sidebar item attivo #B68787 (rosso "NODE" del logo).
+- **Modali admin**: centrati nell'area contenuto (`md:left-[16rem]`, sidebar esclusa
+  su desktop, pieni su mobile); pulsante Aggiungi in alto a destra.
+- **Sidebar**: font/altezza allineati all'header tabella; "Timbratore"→"Torna al Badge".
+- **Storico**: rimosso box container e sottotitolo; nome dipendente come titolo, export
+  senza bordo sulla stessa riga. Data Ex in formato esteso (`formatDataGiornoMeseAnno`).
+- **Perché**: coerenza estetica enterprise dell'area admin. Solo layout/stile: nessuna
+  logica, dato, API o comportamento modificato. Coperto da e2e (50/50).
+
 ## 2026-07-13 — Rifinitura layout admin (step 4): dedup header Storico + coerenza
 
 - `StoricoHeader.tsx` alleggerito: rimossi **pulsante TORNA**, **logo** e navigazione
