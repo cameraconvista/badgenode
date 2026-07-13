@@ -112,7 +112,6 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: {
             react: ['react', 'react-dom'],
-            recharts: ['recharts'],
             radix: [
               '@radix-ui/react-dialog',
               '@radix-ui/react-label',
@@ -120,7 +119,6 @@ export default defineConfig(({ mode }) => {
               '@radix-ui/react-separator',
               '@radix-ui/react-slot',
               '@radix-ui/react-toast',
-              '@radix-ui/react-toggle',
               '@radix-ui/react-tooltip',
             ],
             supabase: ['@supabase/supabase-js'],
