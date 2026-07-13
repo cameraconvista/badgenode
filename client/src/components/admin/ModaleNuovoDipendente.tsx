@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { X } from "@/lib/icons";
 import { UtenteInput, UtentiService } from '@/services/utenti.service';
 import { normalizeUserError } from '@/lib/normalizeError';
 import FormNuovoDipendente from './FormNuovoDipendente';
@@ -153,15 +152,6 @@ export default function ModaleNuovoDipendente({
           <h2 id="modal-title" className="bn-admin-modal__title">
             Aggiungi Nuovo Dipendente
           </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-[#7A1228]"
-            aria-label="Chiudi modale"
-          >
-            <X className="w-5 h-5" />
-          </Button>
         </div>
 
         <form onSubmit={handleSubmit}>

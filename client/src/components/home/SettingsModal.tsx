@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { X } from "@/lib/icons";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -54,9 +53,6 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-[#1C0A10]">Codice Admin</h2>
-          <button onClick={handleCancel} className="text-[#7A5A64] hover:text-[#7A1228] p-1">
-            <X className="w-6 h-6" />
-          </button>
         </div>
 
         <form onSubmit={handleSubmit} autoComplete="off" className="mb-6">
@@ -86,7 +82,7 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
           {error && <p className="text-red-600 text-sm text-center mt-2">PIN non valido</p>}
         </form>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 -mx-6 px-6 pt-4 mt-2 border-t border-[rgba(122,18,40,0.12)]">
           <button
             onClick={handleCancel}
             className="flex-1 px-4 py-3 bg-[#E8DDD5] hover:bg-[#DDD0C5] text-[#1C0A10] font-medium rounded-xl transition-colors"

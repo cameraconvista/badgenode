@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { X, AlertTriangle } from "@/lib/icons";
+import { AlertTriangle } from "@/lib/icons";
 import { Utente } from '@/services/utenti.service';
 
 interface ModaleEliminaDipendenteProps {
@@ -89,15 +89,6 @@ export default function ModaleEliminaDipendente({
           <h2 id="modal-title" className="bn-admin-modal__title">
             {!showConferma ? 'Elimina Dipendente' : 'CONFERMA ELIMINAZIONE'}
           </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-[#7A1228]"
-            aria-label="Chiudi modale"
-          >
-            <X className="w-5 h-5" />
-          </Button>
         </div>
 
         {/* Body */}

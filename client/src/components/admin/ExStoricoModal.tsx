@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { X } from "@/lib/icons";
 import { aggregateTimbratureByGiornoLogico } from '@/lib/storico/aggregate';
 import { formatOre } from '@/lib/time';
 
@@ -91,9 +90,6 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
           <h2 id="modal-title-storico" className="bn-admin-modal__title">
             Storico Timbrature — {utente.nome} {utente.cognome}
           </h2>
-          <Button ref={closeBtnRef} variant="ghost" size="sm" onClick={onClose} className="p-2 hover:bg-white/10 text-[#7A5A64] hover:text-[#1C0A10]" aria-label="Chiudi modale">
-            <X className="w-5 h-5" />
-          </Button>
         </div>
 
         <div className="p-6 space-y-4">
@@ -148,7 +144,7 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
         </div>
 
         <div className="bn-admin-modal__footer">
-          <Button type="button" onClick={onClose} className="bn-modal-btn-cancel">
+          <Button ref={closeBtnRef} type="button" onClick={onClose} className="bn-modal-btn-cancel">
             Chiudi
           </Button>
           <a

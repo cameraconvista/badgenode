@@ -12,6 +12,8 @@ type ModalKitProps = {
   className?: string;
   contentClassName?: string;
   preventDismiss?: boolean;
+  /** Nasconde la X in alto a destra (usare quando c'è già un pulsante di chiusura/annulla). */
+  hideClose?: boolean;
 };
 
 export default function ModalKit({ 
@@ -24,6 +26,7 @@ export default function ModalKit({
   className,
   contentClassName,
   preventDismiss,
+  hideClose,
 }: ModalKitProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -37,12 +40,14 @@ export default function ModalKit({
              centrare il modale nell'area contenuto, non sotto la sidebar. */
           className={cn("bn-modal bn-z-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[96vw] max-w-[880px] max-h-[80vh] overflow-hidden focus:outline-none lg:left-[calc(50%+8rem)]", contentClassName)}
         >
-          <div className="bn-modal-header pr-12">
+          <div className={cn("bn-modal-header", !hideClose && "pr-12")}>
             {title && <Dialog.Title className="text-[#7A1228] text-xl font-bold">{title}</Dialog.Title>}
             {description && <Dialog.Description className="text-[#7A5A64] mt-1 text-sm">{description}</Dialog.Description>}
-            <Dialog.Close className="absolute right-4 top-4 text-[#7A5A64] hover:text-[#7A1228] transition-colors focus:outline-none">
-              <X className="w-5 h-5"/>
-            </Dialog.Close>
+            {!hideClose && (
+              <Dialog.Close className="absolute right-4 top-4 text-[#7A5A64] hover:text-[#7A1228] transition-colors focus:outline-none">
+                <X className="w-5 h-5"/>
+              </Dialog.Close>
+            )}
           </div>
           <div className={cn("bn-modal-body overflow-auto", className)}>
             {children}

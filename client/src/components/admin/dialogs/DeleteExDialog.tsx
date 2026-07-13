@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, X } from '@/lib/icons';
+import { AlertTriangle } from '@/lib/icons';
 
 export interface DeleteExDialogProps {
   isOpen: boolean;
@@ -90,15 +90,6 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
           <h2 id="modal-title-delete-ex" className="bn-admin-modal__title">
             {!showSecondConfirm ? 'Elimina definitivamente' : 'Conferma eliminazione'}
           </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-[#7A1228]"
-            aria-label="Chiudi modale"
-          >
-            <X className="w-5 h-5" />
-          </Button>
         </div>
 
         <div className="p-6 space-y-4">

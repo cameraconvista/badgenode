@@ -43,7 +43,7 @@ export default function ModaleTimbratureView({
     : 'Sconosciuto';
 
   const title = (
-    <div className="-mr-12">
+    <div>
       <span className="block text-center text-[#1C0A10]">Modifica Timbrature</span>
       <span className="block text-center">{fullName}</span>
     </div>
@@ -52,13 +52,14 @@ export default function ModaleTimbratureView({
   // Footer rimosso - pulsanti ora nel body
 
   return (
-    <ModalKit 
+    <ModalKit
       open={isOpen}
       onOpenChange={onClose}
       title={title}
       contentClassName="bn-modal-square"
       className="bn-modal-body-scroll"
       preventDismiss
+      hideClose
     >
       {errors.length > 0 && (
         <Alert variant="destructive" className="mb-6">
@@ -93,7 +94,7 @@ export default function ModaleTimbratureView({
               <TimeSelect
                 value={formData.oraEntrata}
                 onChange={(value) => setFormData({ ...formData, oraEntrata: value })}
-                className=""
+                className="justify-end"
                 disabled={isLoading}
               />
             </div>
@@ -119,7 +120,7 @@ export default function ModaleTimbratureView({
               <TimeSelect
                 value={formData.oraUscita}
                 onChange={(value) => setFormData({ ...formData, oraUscita: value })}
-                className=""
+                className="justify-end"
                 disabled={isLoading}
               />
             </div>
@@ -127,8 +128,10 @@ export default function ModaleTimbratureView({
         </section>
       </div>
 
-      {/* Tutti i pulsanti sulla stessa riga */}
-      <div className="flex items-center justify-between mt-4">
+      {/* Tutti i pulsanti sulla stessa riga — footer con linea orizzontale
+          (border-top esteso ai bordi del body via margini negativi, coerente
+          con bn-admin-modal__footer). */}
+      <div className="flex items-center justify-between mt-4 -mx-5 px-5 pt-4 border-t border-[rgba(122,18,40,0.12)]">
         <button
           type="button"
           className="bn-btn-large bn-btn-danger h-11 px-4 rounded-lg"

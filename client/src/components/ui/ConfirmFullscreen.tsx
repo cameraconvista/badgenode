@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, AlertTriangle } from "@/lib/icons";
+import { AlertTriangle } from "@/lib/icons";
 import { createPortal } from "react-dom";
 import { useId, useRef, useEffect } from "react";
 
@@ -46,13 +46,6 @@ export default function ConfirmFullscreen({
           aria-labelledby={titleId}
           aria-describedby={descId}
         >
-          <button
-            aria-label="Chiudi"
-            className="absolute right-4 top-4 text-white/90 hover:text-white"
-            onClick={onCancel}
-          >
-            <X className="w-5 h-5" />
-          </button>
           <div className="flex items-start gap-3">
             <div className="shrink-0 text-red-400">
               <AlertTriangle className="w-6 h-6" />
@@ -64,7 +57,7 @@ export default function ConfirmFullscreen({
               </Dialog.Description>
             </div>
           </div>
-          <div className="mt-6 flex items-center justify-end gap-3">
+          <div className="mt-6 -mx-6 px-6 pt-4 flex items-center justify-end gap-3 border-t border-[rgba(122,18,40,0.12)]">
             <button
               type="button"
               ref={cancelBtnRef}
