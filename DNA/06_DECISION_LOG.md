@@ -2,6 +2,37 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Pulizia progetto (dead code, deps, hook, split file) + deploy
+
+- **Pulizia in 5 step** (branch dedicati, poi merge su main, tutti i check verdi):
+  - Rimosse **20 dipendenze** non usate (18 radix + phosphor-icons + react-hook-form).
+  - Rimossi **file orfani** verificati a 0 import: `ui/chart*` (9 file), `ui/toggle`,
+    `ui/textarea`, `offline/diagnostic|seq|OfflineBadge`. Rimosso script morto
+    `clean:demo-users`. Aggiornata `active-source-guard.allowlist.json`.
+  - Rimosso **unplugin-icons** (plugin Vite caricato a vuoto: 0 import `~icons/`, nessun
+    @iconify). Le icone usano `client/src/lib/icons.tsx` (lucide).
+  - Allineato `.env.example` al codice reale: tolti `VITE_FEATURE_MONITORING`,
+    `SENTRY_DSN` (0 usi); aggiunti `VITE_FEATURE_LAZY_EXPORT`, `VITE_API_PROXY_TARGET`,
+    `VITE_API_BASE_URL` (usati).
+- **Pre-commit hook riparato + husky reinstallato.** `scripts/ci/checks.sh` cercava
+  `scripts/sql/smoke-test-supabase.sql` (rimosso in un cleanup precedente) → riga tolta.
+  Husky mancava del tutto da node_modules/deps: reinstallato `husky@9` + script `prepare`,
+  `.husky/pre-commit` (v9) esegue `check:ci` (lint+typecheck+test+build+guard) +
+  `file-length-guard`. **Il guardiano pre-commit ora è ATTIVO**: i commit girano i check.
+- **Split file oltre il limite 220** (solo spostamento, zero logica toccata):
+  - `Home/index.tsx` 349→162: estratti hook `useIntroSplash` + `useLastAllowedPrecheck`
+    in `client/src/pages/Home/hooks/`.
+  - `timbratureRpc.ts` 343→199: offline-queue → `timbratureRpc.offline.ts`
+    (`tryEnqueueOffline`, flusso `throw error` invariato); tipi → `timbratureRpc.types.ts`
+    (re-export per compatibilità import); CRUD delete/update → `timbratureRpc.crud.ts`
+    (re-export). Console spostati aggiunti all'allowlist.
+  - **`StoricoTable.tsx` (407) NON toccato** — scelta utente: file più delicato (tabella
+    timbrature, dati reali). Resta sopra 220 finché non lo si modifica.
+- **Deploy Render**: l'auto-deploy da push è **rotto** (webhook GitHub→Render addormentato,
+  nonostante config corretta). Si pubblica con **deploy manuale via API** (`POST
+  /v1/services/srv-d3r9miali9vc73cv7qag/deploys`, key da `.env`). Vedi memory
+  `badgenode-deploy-render`. Non risolto lato Render (uninstall/reinstall o ticket).
+
 ## 2026-07-13 — Selettore dipendente nell'header Storico + rifiniture
 
 - **Il nome dipendente nell'header Storico è un selettore** (Select shadcn con
