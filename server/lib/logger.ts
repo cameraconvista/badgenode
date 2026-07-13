@@ -32,27 +32,28 @@ let pinoContextLogger: ContextLogger | null = null;
 try {
    
   const pino = require('pino');
-  
+
+  // In sviluppo usa pino-pretty via transport (API pino 10: transport
+  // nelle opzioni, non come secondo argomento posizionale). In produzione
+  // nessun transport: output JSON su stdout, catturato da Render.
   const transport =
     process.env.NODE_ENV === 'production'
       ? undefined
       : {
           target: 'pino-pretty',
-          options: { 
-            colorize: true, 
+          options: {
+            colorize: true,
             translateTime: 'SYS:standard',
             ignore: 'pid,hostname',
           },
         };
 
-  const instance = pino(
-    {
-      level: process.env.LOG_LEVEL || 'info',
-      base: { service: 'badgenode' },
-      timestamp: pino.stdTimeFunctions.isoTime,
-    },
-    transport
-  );
+  const instance = pino({
+    level: process.env.LOG_LEVEL || 'info',
+    base: { service: 'badgenode' },
+    timestamp: pino.stdTimeFunctions.isoTime,
+    ...(transport ? { transport } : {}),
+  });
   pinoLogger = instance as unknown as LoggerInterface;
   pinoContextLogger = instance as unknown as ContextLogger;
 } catch {
