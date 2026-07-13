@@ -143,13 +143,16 @@ export default function ArchivioDipendenti() {
           <p className="text-base font-medium text-[#1C0A10] md:text-lg">
             {utenti.length} dipendenti attivi
           </p>
-          {/* Pulsante Nuovo in alto a destra (non altera l'altezza del blocco titolo). */}
+          {/* Pulsante Nuovo in alto a destra (non altera l'altezza del blocco titolo).
+              Su mobile: solo icona "+" tonda per non invadere il titolo.
+              Da sm in su: "+ Nuovo" con testo, come su desktop. */}
           <Button
             onClick={() => setShowModaleNuovo(true)}
-            className="absolute right-0 top-0 flex items-center gap-2 bg-[#3E7D52] text-white hover:bg-[#4A9061]"
+            aria-label="Nuovo dipendente"
+            className="absolute right-0 top-0 flex h-10 w-10 items-center justify-center rounded-full p-0 bg-[#3E7D52] text-white hover:bg-[#4A9061] sm:h-auto sm:w-auto sm:gap-2 sm:rounded-md sm:px-4 sm:py-2"
           >
             <Plus className="h-4 w-4" />
-            Nuovo
+            <span className="hidden sm:inline">Nuovo</span>
           </Button>
         </div>
         <div className="min-h-0 flex-1 p-1">

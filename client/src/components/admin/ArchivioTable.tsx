@@ -51,7 +51,7 @@ export default function ArchivioTable({
       {/* Guscio tabella con ombreggiatura coerente allo Storico (bn-table-shell). */}
       <div className="bn-table-shell">
           <div className="flex-1 overflow-auto overscroll-contain">
-          <table className="w-full min-w-[640px] table-fixed border-collapse bn-archivio bn-nohover archivio-table">
+          <table className="w-full min-w-[400px] sm:min-w-[640px] table-fixed border-collapse bn-archivio bn-nohover archivio-table">
             <colgroup>
               {[
                 <col key="st" style={{ width: "88px" }} />,

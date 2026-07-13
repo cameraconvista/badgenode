@@ -17,7 +17,28 @@ export default function StoricoTotalsBar({
   // Testi corti (solo "Totali" + i due numeri) per non andare mai a capo.
   return (
     <div className="bn-totals-solid bn-border w-full rounded-b-2xl py-2.5">
-      <table className="bn-table__table">
+      {/* Mobile (< sm): riga compatta flex — la tabella scrolla in orizzontale,
+          quindi l'allineamento per-colonna qui sotto si romperebbe. Su telefono
+          mostriamo le 3 info affiancate e centrate. */}
+      <div className="flex sm:hidden items-baseline justify-around gap-1 px-3 text-white">
+        <span className="inline-flex items-baseline gap-1">
+          <span className="text-white/80 font-semibold text-[11px]">Giorni</span>
+          <span className="font-bold text-sm tabular-nums">{giorniLavorati}</span>
+        </span>
+        <span className="inline-flex items-baseline gap-1">
+          <span className="text-white/80 font-semibold text-[11px]">Ore</span>
+          <span className="font-bold text-sm tabular-nums">{formatOre(totaleMensileOre)}</span>
+        </span>
+        <span className="inline-flex items-baseline gap-1">
+          <span className="text-white/80 font-semibold text-[11px]">Extra</span>
+          <span className="font-bold text-sm tabular-nums">
+            {totaleMensileExtra > 0 ? formatOre(totaleMensileExtra) : '0.00'}
+          </span>
+        </span>
+      </div>
+
+      {/* Desktop (>= sm): versione a colonne allineata alla tabella. */}
+      <table className="bn-table__table hidden sm:table">
         <ColGroupStorico />
         <tbody>
           <tr>

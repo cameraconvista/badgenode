@@ -39,14 +39,14 @@ export default function StoricoHeader({
   // attivo) si sceglie un altro dipendente e lo Storico naviga sui suoi dati.
   // Export a sinistra, ravvicinate.
   return (
-    <div className="relative mb-3 flex-shrink-0 text-center">
+    <div className="relative mb-1 sm:mb-3 flex-shrink-0 text-center">
       {selettoreAttivo ? (
         <Select
           value={String(dipendente.pin)}
           onValueChange={(v) => onSelectDipendente?.(Number(v))}
         >
           <SelectTrigger
-            className="mx-auto inline-flex w-auto items-center gap-2 border-0 bg-transparent p-0 text-2xl font-bold text-[#7A1228] shadow-none hover:opacity-80 focus:ring-0"
+            className="mx-auto inline-flex w-auto items-center gap-2 border-0 bg-transparent p-0 text-base sm:text-2xl font-bold text-[#7A1228] shadow-none hover:opacity-80 focus:ring-0"
             aria-label="Seleziona dipendente"
           >
             <span>
@@ -72,13 +72,14 @@ export default function StoricoHeader({
           </SelectContent>
         </Select>
       ) : (
-        <h1 className="text-2xl font-bold text-[#7A1228]">
+        <h1 className="text-base sm:text-2xl font-bold text-[#7A1228]">
           {dipendente.nome} {dipendente.cognome}
         </h1>
       )}
 
-      {/* Azioni di export: a sinistra del nome, sulla stessa riga, ravvicinate. */}
-      <div className="absolute left-0 top-1/2 flex -translate-y-1/2 gap-1.5">
+      {/* Azioni di export: a sinistra del nome, sulla stessa riga, ravvicinate.
+          Su mobile gap azzerato per avvicinare Excel al PDF; da sm il gap torna. */}
+      <div className="absolute left-0 top-1/2 flex -translate-y-1/2 gap-0 sm:gap-1.5">
         <button onClick={onExportPDF} className="bn-export-btn" title="Esporta PDF">
           <FileText className="bn-export-icon text-red-600" aria-label="Esporta PDF" />
         </button>

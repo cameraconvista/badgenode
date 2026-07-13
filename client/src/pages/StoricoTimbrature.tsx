@@ -74,7 +74,7 @@ export default function StoricoTimbrature({ pin, utenti = [] }: StoricoTimbratur
 
   return (
     <AdminLayout title="Storico">
-      <div className="flex h-full flex-col gap-4">
+      <div className="flex h-full flex-col gap-1 md:gap-4">
         {/* Header - FISSO */}
         <StoricoHeader
           dipendente={dipendente}

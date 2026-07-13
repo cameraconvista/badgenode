@@ -654,3 +654,100 @@ img[src*="logo_badgenode"] {
 .bn-nohover .bn-row.bn-row-clickable:focus-within {
   background: rgba(122, 18, 40, 0.05) !important;
 }
+
+/* ============================================================
+   MOBILE ONLY (< 640px): tabelle Archivio/Ex più compatte.
+   Riduce padding celle e stringe le colonne fisse (Storico/PIN/
+   Azioni) per lasciare più spazio a Nome e Cognome. Il desktop
+   (>= 640px) NON è toccato: nessuna regola fuori da questo @media.
+   ============================================================ */
+@media (max-width: 639px) {
+  /* Storico: su telefono niente box attorno al filtro Periodo (sfondo/bordo/
+     padding azzerati) per recuperare spazio verticale. Il menu resta. */
+  .bn-storico-filters {
+    background-color: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Icone export (PDF/Excel) ravvicinate e allineate a sinistra:
+     padding ridotto sui bottoni così le due icone si attaccano. */
+  .bn-export-btn {
+    padding: 0.25rem !important;
+  }
+
+  /* Intestazioni colonne più piccole su telefono (tutte le tabelle:
+     Storico, Archivio, Ex-Dipendenti). */
+  .bn-table__header-cell {
+    font-size: 0.75rem !important;
+  }
+
+  /* Padding celle ridotto: 16px -> 8px per lato */
+  .archivio-table .bn-cell,
+  .archivio-table .bn-table__header-cell,
+  .exdip-table .bn-cell,
+  .exdip-table .bn-table__header-cell {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* Colonne fisse più strette (Storico icona, PIN, Azioni) */
+  .archivio-table col:first-child,
+  .exdip-table col:first-child {
+    width: 56px !important;
+  }
+  .archivio-table col:nth-child(2),
+  .exdip-table col:nth-child(2) {
+    width: 72px !important;
+  }
+  .archivio-table col:last-child,
+  .exdip-table col:last-child {
+    width: 108px !important;
+  }
+
+  /* Nome e Cognome: larghezza fissa in px (non %) così i nomi lunghi,
+     con nowrap, estendono la tabella e attivano lo scroll orizzontale
+     invece di essere troncati. */
+  .archivio-table col:nth-child(3),
+  .archivio-table col:nth-child(4),
+  .exdip-table col:nth-child(3),
+  .exdip-table col:nth-child(4) {
+    width: 132px !important;
+  }
+
+  /* Gap azioni più compatto per far stare le icone in 108px */
+  .archivio-table .bn-actions,
+  .exdip-table .bn-actions {
+    gap: 0.375rem !important;
+  }
+
+  /* Testi celle più piccoli: 1rem -> 0.6875rem (11px) */
+  .bn-archivio th,
+  .bn-archivio td,
+  .bn-archivio .bn-cell span {
+    font-size: 0.6875rem !important;
+  }
+
+  /* Tutti i testi su una riga sola: nomi/cognomi lunghi non vanno a capo.
+     La tabella resta scrollabile orizzontalmente (container overflow-auto). */
+  .archivio-table th,
+  .archivio-table td,
+  .archivio-table .bn-cell span,
+  .exdip-table th,
+  .exdip-table td,
+  .exdip-table .bn-cell span {
+    white-space: nowrap !important;
+  }
+
+  /* Righe più basse: meno padding verticale + line-height ridotto */
+  .archivio-table tbody tr.bn-row-archivio-compact > td.bn-cell,
+  .exdip-table tbody tr.bn-row-archivio-compact > td.bn-cell {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+  .archivio-table tbody tr.bn-row-archivio-compact,
+  .exdip-table tbody tr.bn-row-archivio-compact {
+    line-height: 1.15 !important;
+  }
+}

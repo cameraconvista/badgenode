@@ -25,6 +25,7 @@ export default function StoricoFilters({
   isLoading,
 }: StoricoFiltersProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('corrente');
+  const isCustom = selectedPeriod === 'personalizzato';
 
   // Calcola date per periodi predefiniti
   const getDateRanges = () => {
@@ -79,11 +80,11 @@ export default function StoricoFilters({
   };
 
   return (
-    <div className="bn-solid-surface bn-border rounded-xl px-4 md:px-6 py-3 md:py-4 space-y-4">
+    <div className="bn-storico-filters bn-solid-surface bn-border rounded-xl px-4 md:px-6 py-3 md:py-4 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Periodo Rapido */}
         <div className="space-y-2">
-          <Label className="text-[#7A5A64] text-base">Periodo</Label>
+          <Label className="hidden md:block text-[#7A5A64] text-base">Periodo</Label>
           <Select value={selectedPeriod} onValueChange={handlePeriodChange} disabled={isLoading}>
             <SelectTrigger
               className={
@@ -126,8 +127,9 @@ export default function StoricoFilters({
           </Select>
         </div>
 
-        {/* Data Dal */}
-        <div className="space-y-2">
+        {/* Data Dal — su mobile visibile solo con "Personalizzato" (con i periodi
+            predefiniti le date sono automatiche e ridondanti). Da md sempre visibile. */}
+        <div className={`space-y-2 ${isCustom ? 'block' : 'hidden'} md:block`}>
           <Label htmlFor="dal" className="text-[#7A5A64] text-base">
             Dal
           </Label>
@@ -140,8 +142,8 @@ export default function StoricoFilters({
           />
         </div>
 
-        {/* Data Al */}
-        <div className="space-y-2">
+        {/* Data Al — stessa logica del campo Dal. */}
+        <div className={`space-y-2 ${isCustom ? 'block' : 'hidden'} md:block`}>
           <Label htmlFor="al" className="text-[#7A5A64] text-base">
             Al
           </Label>
