@@ -4,6 +4,7 @@ import {
   AlertTriangle as AlertTriangleBase,
   Archive as ArchiveBase,
   ArrowLeft as ArrowLeftBase,
+  ArrowUpDown as ArrowUpDownBase,
   Calendar as CalendarBase,
   Check as CheckBase,
   CheckCircle as CheckCircleBase,
@@ -47,6 +48,7 @@ export const AlertCircle = withThinStroke(AlertCircleBase);
 export const AlertTriangle = withThinStroke(AlertTriangleBase);
 export const Archive = withThinStroke(ArchiveBase);
 export const ArrowLeft = withThinStroke(ArrowLeftBase);
+export const ArrowUpDown = withThinStroke(ArrowUpDownBase);
 export const Calendar = withThinStroke(CalendarBase);
 export const Check = withThinStroke(CheckBase);
 export const CheckCircle = withThinStroke(CheckCircleBase);

@@ -17,6 +17,13 @@ export interface AdminNavItem {
 
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
   {
+    id: 'timbrature',
+    label: 'Timbrature',
+    href: '/storico-timbrature',
+    icon: History,
+    match: (p) => p.startsWith('/storico-timbrature'),
+  },
+  {
     id: 'dipendenti',
     label: 'Dipendenti',
     href: '/archivio-dipendenti',
@@ -29,12 +36,5 @@ export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
     href: '/admin/ex-dipendenti',
     icon: Archive,
     match: (p) => p.startsWith('/admin/ex-dipendenti'),
-  },
-  {
-    id: 'storico',
-    label: 'Storico',
-    href: '/storico-timbrature',
-    icon: History,
-    match: (p) => p.startsWith('/storico-timbrature'),
   },
 ];

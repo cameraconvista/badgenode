@@ -1,9 +1,15 @@
-import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { History } from "@/lib/icons";
 import { Utente } from '@/services/utenti.service';
 import ArchivioActions from './ArchivioActions';
 import EmptyState from './EmptyState';
+import { useSortableTable, SortableHeader } from './useSortableTable';
+
+type ArchivioSortKey = 'pin' | 'nome' | 'cognome';
+
+// Valore ordinabile per colonna: PIN numerico, nome/cognome come stringa.
+const getArchivioValue = (u: Utente, key: ArchivioSortKey): string | number =>
+  key === 'pin' ? u.pin : (u[key] ?? '');
 
 interface ArchivioTableProps {
   utenti: Utente[];
@@ -22,23 +28,12 @@ export default function ArchivioTable({
   onArchivia,
   onElimina,
 }: ArchivioTableProps) {
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-
-  // Ordina utenti per PIN
-  const sortedUtenti = useMemo(() => {
-    return [...utenti].sort((a, b) => {
-      if (sortOrder === 'asc') {
-        return a.pin - b.pin;
-      } else {
-        return b.pin - a.pin;
-      }
-    });
-  }, [utenti, sortOrder]);
-
-  const _toggleSortOrder = () => {
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-  };
-  void _toggleSortOrder;
+  // Ordinamento condiviso (default: PIN crescente).
+  const { sorted: sortedUtenti, toggle } = useSortableTable<Utente, ArchivioSortKey>(
+    utenti,
+    getArchivioValue,
+    { key: 'pin', direction: 'asc' },
+  );
 
   if (isLoading) {
     return (
@@ -71,9 +66,15 @@ export default function ArchivioTable({
             <thead className="bn-sticky-head">
               <tr>
                 <th className="bn-table__header-cell">Storico</th>
-                <th className="bn-table__header-cell">PIN</th>
-                <th className="bn-table__header-cell">Nome</th>
-                <th className="bn-table__header-cell">Cognome</th>
+                <th className="bn-table__header-cell">
+                  <SortableHeader label="PIN" columnKey="pin" onSort={toggle} />
+                </th>
+                <th className="bn-table__header-cell">
+                  <SortableHeader label="Nome" columnKey="nome" onSort={toggle} />
+                </th>
+                <th className="bn-table__header-cell">
+                  <SortableHeader label="Cognome" columnKey="cognome" onSort={toggle} />
+                </th>
                 <th className="bn-table__header-cell">Azioni</th>
               </tr>
             </thead>

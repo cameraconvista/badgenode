@@ -1,8 +1,14 @@
-import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { History, Users, AlertCircle, RotateCcw, Trash2 } from "@/lib/icons";
 import { ExDipendente } from '@/services/utenti.service';
 import { formatDataGiornoMeseAnno } from '@/lib/time';
+import { useSortableTable, SortableHeader } from './useSortableTable';
+
+type ExSortKey = 'nome' | 'cognome' | 'archiviato_il';
+
+// Valore ordinabile: nome/cognome come stringa, archiviazione come timestamp.
+const getExValue = (u: ExDipendente, key: ExSortKey): string | number =>
+  key === 'archiviato_il' ? new Date(u.archiviato_il).getTime() : (u[key] ?? '');
 
 interface ExDipendentiTableProps {
   exDipendenti: ExDipendente[];
@@ -21,26 +27,12 @@ export default function ExDipendentiTable({
   onRipristina,
   onElimina,
 }: ExDipendentiTableProps) {
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc'); // Più recenti prima
-
-  // Ordina ex-dipendenti per data archiviazione
-  const sortedExDipendenti = useMemo(() => {
-    return [...exDipendenti].sort((a, b) => {
-      const dateA = new Date(a.archiviato_il).getTime();
-      const dateB = new Date(b.archiviato_il).getTime();
-      
-      if (sortOrder === 'asc') {
-        return dateA - dateB;
-      } else {
-        return dateB - dateA;
-      }
-    });
-  }, [exDipendenti, sortOrder]);
-
-  const _toggleSortOrder = () => {
-    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-  };
-  void _toggleSortOrder;
+  // Ordinamento condiviso (default: archiviazione più recente prima).
+  const { sorted: sortedExDipendenti, toggle } = useSortableTable<ExDipendente, ExSortKey>(
+    exDipendenti,
+    getExValue,
+    { key: 'archiviato_il', direction: 'desc' },
+  );
 
   if (isLoading) {
     return (
@@ -88,9 +80,15 @@ export default function ExDipendentiTable({
             <thead className="bn-sticky-head">
               <tr>
                 <th className="bn-table__header-cell">Storico</th>
-                <th className="bn-table__header-cell">Nome</th>
-                <th className="bn-table__header-cell">Cognome</th>
-                <th className="bn-table__header-cell">Archiviazione</th>
+                <th className="bn-table__header-cell">
+                  <SortableHeader label="Nome" columnKey="nome" onSort={toggle} />
+                </th>
+                <th className="bn-table__header-cell">
+                  <SortableHeader label="Cognome" columnKey="cognome" onSort={toggle} />
+                </th>
+                <th className="bn-table__header-cell">
+                  <SortableHeader label="Archiviazione" columnKey="archiviato_il" onSort={toggle} />
+                </th>
                 <th className="bn-table__header-cell">Azioni</th>
               </tr>
             </thead>
