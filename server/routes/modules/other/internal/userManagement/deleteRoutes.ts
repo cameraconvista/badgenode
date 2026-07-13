@@ -1,11 +1,12 @@
 // Delete user routes
 import { Router } from 'express';
 import { supabaseAdmin } from '../../../../../lib/supabaseAdmin';
+import { requireAdminPin } from '../../../../../middleware/requireAdminPin';
 
 const router = Router();
 
 // DELETE /api/utenti/:pin - Elimina utente (richiede SERVICE_ROLE_KEY)
-router.delete('/api/utenti/:pin', async (req, res) => {
+router.delete('/api/utenti/:pin', requireAdminPin, async (req, res) => {
   try {
     if (!supabaseAdmin) {
       return res.status(503).json({

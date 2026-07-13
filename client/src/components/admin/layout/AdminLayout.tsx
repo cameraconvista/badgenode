@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { ArrowLeft, Settings, LogOut } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { APP_UNLOCK_KEY, APP_FORCE_LOCK_KEY } from '@/components/home/AppPinGate';
+import { clearAdminPin } from '@/lib/adminAuth';
 import {
   SidebarProvider,
   Sidebar,
@@ -44,6 +45,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     } catch {
       /* prosegue comunque al reset del gate + redirect */
     }
+    clearAdminPin();
     sessionStorage.removeItem(APP_UNLOCK_KEY);
     sessionStorage.setItem(APP_FORCE_LOCK_KEY, '1');
     window.location.href = '/';

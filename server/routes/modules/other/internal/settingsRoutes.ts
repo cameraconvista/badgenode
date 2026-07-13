@@ -3,6 +3,7 @@ import { Router } from 'express';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '../../../../lib/supabaseAdmin';
 import { generateRequestId } from '../internal/helpers';
+import { requireAdminPin } from '../../../../middleware/requireAdminPin';
 
 const router = Router();
 
@@ -73,7 +74,7 @@ router.get('/api/settings/pin/:scope', async (req, res) => {
 // PUT /api/settings/pin/:scope — aggiorna toggle e/o PIN dello scope (admin|general).
 // Body: { requirePin?: boolean, pin?: string, currentPin?: string }
 //   - se si cambia il PIN (pin presente), currentPin deve combaciare con quello salvato.
-router.put('/api/settings/pin/:scope', async (req, res) => {
+router.put('/api/settings/pin/:scope', requireAdminPin, async (req, res) => {
   const requestId = generateRequestId();
   try {
     if (!supabaseAdmin) return unavailable(res);
@@ -175,7 +176,7 @@ router.get('/api/settings/alert', async (_req, res) => {
 });
 
 // PUT /api/settings/alert — aggiorna config fasce avviso. Scrittura service-role.
-router.put('/api/settings/alert', async (req, res) => {
+router.put('/api/settings/alert', requireAdminPin, async (req, res) => {
   const requestId = generateRequestId();
   try {
     if (!supabaseAdmin) return unavailable(res);

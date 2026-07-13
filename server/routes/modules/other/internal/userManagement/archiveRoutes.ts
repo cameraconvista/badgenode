@@ -1,6 +1,7 @@
 // Archive user routes
 import { Router } from 'express';
 import { log } from '../../../../../lib/logger';
+import { requireAdminPin } from '../../../../../middleware/requireAdminPin';
 import { supabaseAdmin } from '../../../../../lib/supabaseAdmin';
 import { generateRequestId } from '../helpers';
 
@@ -28,7 +29,7 @@ function exDipendentiTable(): ExDipendentiTableAdapter | null {
 }
 
 // POST /api/utenti/:id/archive - Archivia utente con doppia conferma
-router.post('/api/utenti/:id/archive', async (req, res) => {
+router.post('/api/utenti/:id/archive', requireAdminPin, async (req, res) => {
   const requestId = (req.headers['x-request-id'] as string) || generateRequestId();
   const { id } = req.params;
   

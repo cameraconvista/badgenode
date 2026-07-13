@@ -7,6 +7,7 @@ const {
   selectBuilder,
   mutationBuilder,
   fromMock,
+  appSettingsBuilder,
 } = vi.hoisted(() => ({
   selectBuilder: {
     order: vi.fn(),
@@ -19,7 +20,25 @@ const {
     single: vi.fn(),
   },
   fromMock: vi.fn(),
+  // Builder per la lettura di app_settings fatta dal middleware requireAdminPin.
+  appSettingsBuilder: {
+    select: vi.fn(),
+    eq: vi.fn(),
+    maybeSingle: vi.fn(),
+  },
 }));
+
+// Instrada la chiamata di from() del middleware (app_settings) al suo builder,
+// lasciando alle altre tabelle il comportamento configurato dai singoli test.
+function routeFrom(handler: (table: string) => unknown) {
+  fromMock.mockImplementation((table: string) => {
+    if (table === 'app_settings') return appSettingsBuilder;
+    return handler(table);
+  });
+}
+
+// Header con il PIN admin di test: il middleware lo confronta col mock app_settings.
+const ADMIN_HEADER = { 'x-admin-pin': '1909' } as const;
 
 vi.mock('../../../lib/supabaseAdmin', () => ({
   supabaseAdmin: {
@@ -51,6 +70,11 @@ describe('utenti routes', () => {
     selectBuilder.eq.mockReturnValue(selectBuilder);
     mutationBuilder.select.mockReturnValue(mutationBuilder);
     mutationBuilder.eq.mockReturnValue(mutationBuilder);
+
+    // Middleware requireAdminPin: legge app_settings id='admin' -> access_pin '1909'.
+    appSettingsBuilder.select.mockReturnValue(appSettingsBuilder);
+    appSettingsBuilder.eq.mockReturnValue(appSettingsBuilder);
+    appSettingsBuilder.maybeSingle.mockResolvedValue({ data: { access_pin: '1909' }, error: null });
 
     app = express();
     app.use(express.json());
@@ -107,11 +131,11 @@ describe('utenti routes', () => {
     });
 
     const insertMock = vi.fn(() => mutationBuilder);
-    fromMock.mockReturnValue({
+    routeFrom(() => ({
       insert: insertMock,
-    });
+    }));
 
-    const response = await request(app).post('/api/utenti').send({
+    const response = await request(app).post('/api/utenti').set(ADMIN_HEADER).send({
       pin: 11,
       nome: ' Luigi ',
       cognome: ' Verdi ',
@@ -149,11 +173,11 @@ describe('utenti routes', () => {
       },
     });
 
-    fromMock.mockReturnValue({
+    routeFrom(() => ({
       insert: vi.fn(() => mutationBuilder),
-    });
+    }));
 
-    const response = await request(app).post('/api/utenti').send({
+    const response = await request(app).post('/api/utenti').set(ADMIN_HEADER).send({
       pin: 12,
       nome: 'Anna',
       cognome: 'Bianchi',
@@ -180,11 +204,11 @@ describe('utenti routes', () => {
     });
 
     const updateMock = vi.fn(() => mutationBuilder);
-    fromMock.mockReturnValue({
+    routeFrom(() => ({
       update: updateMock,
-    });
+    }));
 
-    const response = await request(app).put('/api/utenti/13').send({
+    const response = await request(app).put('/api/utenti/13').set(ADMIN_HEADER).send({
       nome: ' Carlo ',
       email: ' carlo@test.com ',
       telefono: '   ',

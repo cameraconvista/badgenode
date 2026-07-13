@@ -1,5 +1,6 @@
 // Service client per la configurazione PIN (due scope: admin e general).
 import { safeFetchJson, safeFetchJsonPut } from '@/lib/safeFetch';
+import { adminAuthHeader } from '@/lib/adminAuth';
 import { isError } from '@/types/api';
 
 /** Scope PIN: 'admin' = area amministrazione, 'general' = accesso app. */
@@ -22,7 +23,7 @@ export async function getPinSettings(scope: PinScope): Promise<PinSettings> {
 
 /** Aggiorna il toggle "Richiedi PIN" di uno scope. */
 export async function setRequirePin(scope: PinScope, requirePin: boolean): Promise<void> {
-  const res = await safeFetchJsonPut<{ ok: boolean }>(`/api/settings/pin/${scope}`, { requirePin });
+  const res = await safeFetchJsonPut<{ ok: boolean }>(`/api/settings/pin/${scope}`, { requirePin }, { headers: adminAuthHeader() });
   if (isError(res)) {
     throw new Error(res.error || 'Errore aggiornamento impostazioni');
   }
@@ -36,7 +37,7 @@ export async function changePin(scope: PinScope, currentPin: string, newPin: str
   const res = await safeFetchJsonPut<{ ok: boolean }>(`/api/settings/pin/${scope}`, {
     pin: newPin,
     currentPin,
-  });
+  }, { headers: adminAuthHeader() });
   if (isError(res)) {
     throw new Error(res.error || 'Errore cambio PIN');
   }
@@ -69,7 +70,7 @@ export async function getAlertConfig(): Promise<AlertConfig> {
 
 /** Aggiorna la config avviso (solo i campi passati). */
 export async function updateAlertConfig(patch: Partial<AlertConfig>): Promise<void> {
-  const res = await safeFetchJsonPut<{ ok: boolean }>('/api/settings/alert', patch);
+  const res = await safeFetchJsonPut<{ ok: boolean }>('/api/settings/alert', patch, { headers: adminAuthHeader() });
   if (isError(res)) {
     throw new Error(res.error || 'Errore salvataggio avviso');
   }

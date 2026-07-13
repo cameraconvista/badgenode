@@ -1,12 +1,13 @@
 // Ex-dipendenti delete routes
 import { Router } from 'express';
 import { supabaseAdmin } from '../../../../../lib/supabaseAdmin';
+import { requireAdminPin } from '../../../../../middleware/requireAdminPin';
 import { sendSuccess, sendServiceUnavailable, sendInternalError } from '../helpers';
 
 const router = Router();
 
 // DELETE /api/ex-dipendenti/:pin - Eliminazione definitiva ex-dipendente
-router.delete('/api/ex-dipendenti/:pin', async (req, res) => {
+router.delete('/api/ex-dipendenti/:pin', requireAdminPin, async (req, res) => {
   const { pin } = req.params;
   const pinNum = parseInt(String(pin), 10);
 

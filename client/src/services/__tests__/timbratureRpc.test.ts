@@ -143,7 +143,7 @@ describe('TimbratureRpc Service', () => {
       expect(safeFetchJsonPatch).toHaveBeenCalledWith('/api/timbrature/123', {
         data_locale: '2025-10-21',
         ora_locale: '08:30:00'
-      });
+      }, { headers: {} });
       expect(result.success).toBe(true);
     });
 
@@ -180,7 +180,7 @@ describe('TimbratureRpc Service', () => {
       expect(safeFetchJsonDelete).toHaveBeenCalledWith('/api/timbrature/day', {
         pin: '1', // PIN convertito a string
         giorno: '2025-10-21'
-      });
+      }, { headers: {} });
       expect(result.deleted_count).toBe(2);
       expect(result.deleted_ids).toEqual([123, 124]);
     });

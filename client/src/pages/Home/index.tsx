@@ -4,6 +4,7 @@ import SettingsModal from '@/components/home/SettingsModal';
 import AppPinGate from '@/components/home/AppPinGate';
 import IntroSplash from '@/components/home/IntroSplash';
 import { getPinSettings } from '@/services/settings.service';
+import { setAdminPin } from '@/lib/adminAuth';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeTimbrature } from '@/lib/realtime';
 import { invalidateAfterTimbratura, debounce } from '@/state/timbrature.cache';
@@ -82,6 +83,12 @@ export default function Home() {
   };
 
   const handleSettingsSuccess = () => {
+    // Salva il PIN admin per la sessione: verrà allegato (header x-admin-pin)
+    // alle scritture admin e verificato dal server. Vale sia col gate attivo
+    // (PIN appena inserito) sia col gate disattivato (PIN preso dalla config DB).
+    if (pinSettings?.pin) {
+      setAdminPin(pinSettings.pin);
+    }
     // Navigate to Archivio Dipendenti page
     window.location.href = '/archivio-dipendenti';
   };

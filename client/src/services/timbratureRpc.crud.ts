@@ -2,6 +2,7 @@
 // Comportamento invariato: stesse chiamate endpoint, stessi log, stessi return.
 
 import { safeFetchJsonPatch, safeFetchJsonDelete } from '@/lib/safeFetch';
+import { adminAuthHeader } from '@/lib/adminAuth';
 import { isError, type DeleteResult } from '@/types/api';
 import type { TimbratureUpdate } from '../../../shared/types/database';
 
@@ -16,7 +17,7 @@ export async function deleteTimbratureGiornata({ pin, giorno }: { pin: number; g
     const result = await safeFetchJsonDelete<DeleteResult>('/api/timbrature/day', {
       pin: String(pin),
       giorno
-    });
+    }, { headers: adminAuthHeader() });
 
     if (isError(result)) {
       throw new Error(result.error);
@@ -43,7 +44,7 @@ export async function callUpdateTimbro({ id, updateData }: { id: number; updateD
   console.info('[SERVICE] callUpdateTimbro (ENDPOINT) →', { id, updateData });
 
   try {
-    const result = await safeFetchJsonPatch(`/api/timbrature/${id}`, updateData);
+    const result = await safeFetchJsonPatch(`/api/timbrature/${id}`, updateData, { headers: adminAuthHeader() });
 
     console.info('[SERVICE] update OK →', { id, success: result.success });
     return result; // { success: true, data: { ... } }

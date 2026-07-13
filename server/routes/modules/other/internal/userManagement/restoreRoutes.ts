@@ -1,13 +1,14 @@
 // Restore user routes
 import { Router } from 'express';
 import { supabaseAdmin } from '../../../../../lib/supabaseAdmin';
+import { requireAdminPin } from '../../../../../middleware/requireAdminPin';
 import { generateRequestId } from '../helpers';
 
 const router = Router();
 type ExUserRow = { pin: number; nome: string; cognome: string };
 
 // POST /api/utenti/:id/restore - Ripristina ex-dipendente assegnando un nuovo PIN
-router.post('/api/utenti/:id/restore', async (req, res) => {
+router.post('/api/utenti/:id/restore', requireAdminPin, async (req, res) => {
   const requestId = (req.headers['x-request-id'] as string) || generateRequestId();
   const { id } = req.params; // id = PIN ex-dipendente archiviato
   const { newPin } = req.body as { newPin?: string | number };

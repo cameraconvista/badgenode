@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { log } from '../../lib/logger';
+import { requireAdminPin } from '../../middleware/requireAdminPin';
 import {
   invalidPinResponse,
   isPinTakenError,
@@ -130,7 +131,7 @@ router.get('/api/utenti/pin/:pin', async (req, res) => {
     });
   }
 });
-router.post('/api/utenti', async (req, res) => {
+router.post('/api/utenti', requireAdminPin, async (req, res) => {
   try {
     const utenti = utentiTable();
     if (!utenti) {
@@ -218,7 +219,7 @@ router.post('/api/utenti', async (req, res) => {
     });
   }
 });
-router.put('/api/utenti/:pin', async (req, res) => {
+router.put('/api/utenti/:pin', requireAdminPin, async (req, res) => {
   try {
     const utenti = utentiTable();
     if (!utenti) {

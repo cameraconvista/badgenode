@@ -4,6 +4,7 @@
 import { asError } from '@/lib/safeError';
 import { normalizeError } from '@/lib/normalizeError';
 import { safeFetchJson, safeFetchJsonPost, safeFetchJsonPut, safeFetchJsonDelete } from '@/lib/safeFetch';
+import { adminAuthHeader } from '@/lib/adminAuth';
 import { isError, isSuccess } from '@/types/api';
 import { validatePinInput } from '@/utils/validation/pin';
 import type { Utente as DbUtente } from '../../../shared/types/database';
@@ -175,7 +176,7 @@ export class UtentiService {
       // Payload per API
       const payload = buildUtentePayload(input);
 
-      const response = await safeFetchJsonPost<DbUtente>('/api/utenti', payload);
+      const response = await safeFetchJsonPost<DbUtente>('/api/utenti', payload, { headers: adminAuthHeader() });
 
       if (isError(response)) {
         throw new Error(normalizeError(response.error) || 'Errore durante la creazione utente');
@@ -216,7 +217,7 @@ export class UtentiService {
       // Payload per API - invia tutti i campi modificabili
       const payload = buildUtenteUpdatePayload(input);
 
-      const response = await safeFetchJsonPut<DbUtente>(`/api/utenti/${pin}`, payload);
+      const response = await safeFetchJsonPut<DbUtente>(`/api/utenti/${pin}`, payload, { headers: adminAuthHeader() });
 
       if (isError(response)) {
         throw new Error(normalizeError(response.error) || 'Errore durante l\'aggiornamento utente');
@@ -240,7 +241,7 @@ export class UtentiService {
         throw new Error('PIN non valido');
       }
 
-      const response = await safeFetchJsonDelete<void>(`/api/utenti/${pin}`);
+      const response = await safeFetchJsonDelete<void>(`/api/utenti/${pin}`, undefined, { headers: adminAuthHeader() });
 
       if (isError(response)) {
         throw new Error(normalizeError(response.error) || 'Errore durante eliminazione utente');
@@ -270,7 +271,7 @@ export class UtentiService {
   // Archivia utente con motivo opzionale
   static async archiveUtente(userId: string, payload: { reason?: string }): Promise<{ success: boolean; error?: { code: string; message: string } }> {
     try {
-      const response = await safeFetchJsonPost<{ success: boolean; message: string }>(`/api/utenti/${userId}/archive`, payload);
+      const response = await safeFetchJsonPost<{ success: boolean; message: string }>(`/api/utenti/${userId}/archive`, payload, { headers: adminAuthHeader() });
 
       if (isError(response)) {
         return {
@@ -298,7 +299,7 @@ export class UtentiService {
 
   static async restoreUtente(userId: string, payload: { newPin: string }): Promise<{ success: boolean; error?: { code: string; message: string } }> {
     try {
-      const response = await safeFetchJsonPost<{ success: boolean }>(`/api/utenti/${userId}/restore`, payload);
+      const response = await safeFetchJsonPost<{ success: boolean }>(`/api/utenti/${userId}/restore`, payload, { headers: adminAuthHeader() });
       if (isError(response)) {
         return {
           success: false,
@@ -324,7 +325,7 @@ export class UtentiService {
       if (!pin || pin < 1 || pin > 99) {
         return { success: false, error: { code: 'INVALID_PIN', message: 'PIN non valido' } };
       }
-      const response = await safeFetchJsonDelete(`/api/ex-dipendenti/${pin}`);
+      const response = await safeFetchJsonDelete(`/api/ex-dipendenti/${pin}`, undefined, { headers: adminAuthHeader() });
       if (isError(response)) {
         const code = response.code || 'DELETE_FAILED';
         return { success: false, error: { code, message: mapDeleteExError(code) } };

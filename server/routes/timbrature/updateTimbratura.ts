@@ -1,6 +1,7 @@
 // PATCH /api/timbrature/:id - Aggiorna timbratura esistente
 import { Router, Request, Response } from 'express';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
+import { requireAdminPin } from '../../middleware/requireAdminPin';
 import type { TimbratureUpdateClean } from '../../../shared/types/database';
 
 const router = Router();
@@ -9,7 +10,7 @@ const router = Router();
  * PATCH /api/timbrature/:id - Aggiorna timbratura esistente
  * Bypassa RLS usando SERVICE_ROLE_KEY
  */
-router.patch('/:id', async (req: Request, res: Response) => {
+router.patch('/:id', requireAdminPin, async (req: Request, res: Response) => {
   try {
     // Garantisci sempre Content-Type JSON
     res.setHeader('Content-Type', 'application/json; charset=utf-8');

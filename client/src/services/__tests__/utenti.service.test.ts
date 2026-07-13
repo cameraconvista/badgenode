@@ -219,7 +219,7 @@ describe('UtentiService', () => {
         ore_contrattuali: 8,
         email: 'nuovo@test.com',
         telefono: '987654321'
-      });
+      }, { headers: {} });
       expect(result).toMatchObject({
         id: '50',
         pin: 50,
@@ -262,7 +262,7 @@ describe('UtentiService', () => {
 
       await UtentiService.deleteUtente(99);
 
-      expect(safeFetchJsonDelete).toHaveBeenCalledWith('/api/utenti/99');
+      expect(safeFetchJsonDelete).toHaveBeenCalledWith('/api/utenti/99', undefined, { headers: {} });
       // deleteUtente non restituisce nulla, solo non lancia errori
     });
 

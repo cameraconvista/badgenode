@@ -1,6 +1,7 @@
 // DELETE /api/timbrature/day - Elimina tutte le timbrature di un giorno logico
 import { Router, Request, Response } from 'express';
 import { supabaseAdmin } from '../../lib/supabaseAdmin';
+import { requireAdminPin } from '../../middleware/requireAdminPin';
 import type { Timbratura } from '../../../shared/types/database';
 
 const router = Router();
@@ -9,7 +10,7 @@ const router = Router();
  * DELETE /api/timbrature/day - Elimina tutte le timbrature di un giorno logico
  * Bypassa RLS usando SERVICE_ROLE_KEY
  */
-router.delete('/day', async (req: Request, res: Response) => {
+router.delete('/day', requireAdminPin, async (req: Request, res: Response) => {
   try {
     // Garantisci sempre Content-Type JSON
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
