@@ -122,15 +122,22 @@ export default function DashboardTable({ rows, totali, isLoading, isError }: Das
               </colgroup>
               <tbody>
                 <tr>
-                  <td className="px-4 py-2.5 text-left" colSpan={3}>
+                  {/* PIN + Nome → conteggio dipendenti */}
+                  <td className="px-4 py-2.5 text-left" colSpan={2}>
                     <span className="inline-flex items-baseline gap-2">
                       <span className="text-white/80 font-semibold text-sm">Dipendenti</span>
                       <span className="text-white font-bold text-lg tabular-nums">{rows.length}</span>
                     </span>
                   </td>
+                  {/* Cognome → etichetta "Totali" a ridosso della colonna Ore (come Storico) */}
+                  <td className="px-4 py-2.5 text-right">
+                    <span className="text-white/80 font-semibold text-sm">Totali</span>
+                  </td>
+                  {/* Ore → totale ore */}
                   <td className="px-4 py-2.5 text-center">
                     <span className="text-white font-bold text-lg tabular-nums">{formatOre(totali.totaleOre)}</span>
                   </td>
+                  {/* Extra → totale extra */}
                   <td className="px-4 py-2.5 text-center">
                     <span className="text-white font-bold text-lg tabular-nums">
                       {totali.totaleExtra > 0 ? formatOre(totali.totaleExtra) : '0.00'}
