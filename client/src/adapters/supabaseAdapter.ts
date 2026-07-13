@@ -26,13 +26,6 @@ export function getRuntimeSupabaseConfig() {
   return { url, hasKey: Boolean(key) };
 }
 
-// RPC call wrapper - DEPRECATED in STEP B (server-only)
-// Follow-up: remove after full migration to /api endpoints
-export async function callSupabaseRpc(functionName: string, params?: Record<string, unknown>): Promise<any> {
-  console.warn('[DEPRECATED] callSupabaseRpc - use /api endpoints instead');
-  throw new Error('Direct Supabase RPC calls disabled in server-only mode');
-}
-
 // Diagnostica PROD - any necessario per probe dinamico
 export function setupProdDiagnostics() {
   if (!import.meta.env.PROD) return;

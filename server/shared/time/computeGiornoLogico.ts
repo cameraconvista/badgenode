@@ -89,28 +89,3 @@ function formatDateLocal(date: Date): string {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
-
-/**
- * Calcola differenza in ore tra due timestamp considerando turni notturni
- * TODO: Helper non più utilizzato dopo rimozione limite 20h (STEP A.1)
- */
-export function calcolaDifferenzaOre(
-  dataEntrata: string,
-  oraEntrata: string,
-  dataUscita: string,
-  oraUscita: string
-): number {
-  const tsEntrata = new Date(`${dataEntrata}T${oraEntrata}`);
-  const tsUscita = new Date(`${dataUscita}T${oraUscita}`);
-  
-  const diffMs = tsUscita.getTime() - tsEntrata.getTime();
-  return diffMs / (1000 * 60 * 60); // Ore con decimali
-}
-
-/**
- * Verifica se una durata di turno è entro i limiti accettabili
- * TODO: Funzione deprecata - durate illimitate per richiesta business (STEP A.1)
- */
-export function isValidShiftDuration(_ore: number): boolean {
-  return true; // Nessun limite di durata per richiesta business
-}
