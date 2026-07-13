@@ -20,8 +20,6 @@ Variabili oggi rilevanti:
 - `DATABASE_URL`
 - feature flags client offline/auth
 - `VITE_FEATURE_LOGGER_ADAPTER`
-- `VITE_FEATURE_MONITORING`
-- `SENTRY_DSN`
 
 File env operativi:
 - `.env.local`: segreti locali reali, non committare
