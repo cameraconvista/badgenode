@@ -51,7 +51,7 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
           boxShadow: '0 8px 32px rgba(122,18,40,0.15)',
         }}
       >
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-center items-center mb-6">
           <h2 className="text-xl font-bold text-[#1C0A10]">Codice Admin</h2>
         </div>
 
@@ -85,14 +85,14 @@ export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsMo
         <div className="flex gap-3 -mx-6 px-6 pt-4 mt-2 border-t border-[rgba(122,18,40,0.12)]">
           <button
             onClick={handleCancel}
-            className="flex-1 px-4 py-3 bg-[#E8DDD5] hover:bg-[#DDD0C5] text-[#1C0A10] font-medium rounded-xl transition-colors"
+            className="flex-1 px-4 py-3 bg-white hover:bg-[#F5EBE0] text-[#7A1228] font-medium rounded-xl border-[1.5px] border-[#7A1228] transition-colors"
           >
             Annulla
           </button>
           <button
             onClick={handleSubmit}
             disabled={pin.length === 0}
-            className="flex-1 px-4 py-3 bg-[#7A1228] hover:bg-[#9B1E35] disabled:bg-[rgba(122,18,40,0.25)] disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
+            className="flex-1 px-4 py-3 bg-[#3E7D52] hover:bg-[#4A9061] disabled:bg-[rgba(62,125,82,0.35)] disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
           >
             Conferma
           </button>

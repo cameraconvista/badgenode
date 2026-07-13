@@ -199,7 +199,8 @@ export function getMeseItaliano(data: string): string {
 export function formatDataGiornoMeseAnno(data: string | Date): string {
   const d = typeof data === 'string' ? new Date(data) : data;
   const giorno = d.toLocaleDateString('it-IT', { day: '2-digit' });
-  const mese = d.toLocaleDateString('it-IT', { month: 'long' });
+  // Mese abbreviato a 3 lettere (es. aprile -> apr, luglio -> lug).
+  const mese = d.toLocaleDateString('it-IT', { month: 'short' }).replace('.', '').slice(0, 3);
   const anno = d.toLocaleDateString('it-IT', { year: 'numeric' });
   return `${giorno} ${mese.charAt(0).toUpperCase()}${mese.slice(1)} ${anno}`;
 }

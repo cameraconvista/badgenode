@@ -142,11 +142,11 @@ export default function ModaleTimbratureView({
         </button>
         
         <div className="flex items-center gap-3">
-          <button 
-            type="button" 
+          <button
+            type="button"
             aria-label="Annulla"
-            className="bn-btn-large bn-btn-neutral h-11 px-4 rounded-lg" 
-            onClick={onClose} 
+            className="bn-btn-large bn-modal-btn-cancel h-11 px-4 rounded-lg"
+            onClick={onClose}
             disabled={isLoading}
           >
             Annulla

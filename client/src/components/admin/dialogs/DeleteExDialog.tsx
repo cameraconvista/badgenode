@@ -135,7 +135,7 @@ export function DeleteExDialog({ isOpen, onClose, utente, onConfirm, isLoading }
             disabled={isLoading}
             className="bn-modal-btn-danger"
           >
-            {isLoading ? 'Eliminazione...' : !showSecondConfirm ? 'Continua' : 'Conferma'}
+            {isLoading ? 'Eliminazione...' : !showSecondConfirm ? 'Procedi' : 'Conferma'}
           </Button>
         </div>
       </div>

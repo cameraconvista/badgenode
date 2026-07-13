@@ -157,9 +157,9 @@ export function ArchiviaDialog({ isOpen, onClose, utente, onConfirm, isLoading }
             type="button"
             onClick={handleProcedi}
             disabled={isLoading}
-            className="bn-modal-btn-danger"
+            className="bn-modal-btn-confirm"
           >
-            {isLoading ? 'Archiviazione...' : !showSecondConfirm ? 'Continua' : 'Conferma definitiva'}
+            {isLoading ? 'Archiviazione...' : !showSecondConfirm ? 'Procedi' : 'Conferma'}
           </Button>
         </div>
       </div>

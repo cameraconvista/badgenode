@@ -90,7 +90,7 @@ export default function ExDipendentiTable({
                 <th className="bn-table__header-cell">Storico</th>
                 <th className="bn-table__header-cell">Nome</th>
                 <th className="bn-table__header-cell">Cognome</th>
-                <th className="bn-table__header-cell">Data Archiviazione</th>
+                <th className="bn-table__header-cell">Archiviazione</th>
                 <th className="bn-table__header-cell">Azioni</th>
               </tr>
             </thead>

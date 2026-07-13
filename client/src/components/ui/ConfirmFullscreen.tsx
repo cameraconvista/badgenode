@@ -46,13 +46,13 @@ export default function ConfirmFullscreen({
           aria-labelledby={titleId}
           aria-describedby={descId}
         >
-          <div className="flex items-start gap-3">
+          <div className="flex flex-col items-center gap-3 text-center">
             <div className="shrink-0 text-red-400">
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div>
-              <Dialog.Title id={titleId} className="text-lg font-semibold">{title}</Dialog.Title>
-              <Dialog.Description id={descId} className="mt-1 text-white/80 text-sm">
+              <Dialog.Title id={titleId} className="text-lg font-semibold text-center">{title}</Dialog.Title>
+              <Dialog.Description id={descId} className="mt-1 text-[#7A5A64] text-sm">
                 {safeDescription}
               </Dialog.Description>
             </div>
@@ -61,14 +61,14 @@ export default function ConfirmFullscreen({
             <button
               type="button"
               ref={cancelBtnRef}
-              className="h-10 px-4 rounded-lg bg-white/10 text-white hover:bg-white/20"
+              className="bn-modal-btn-cancel h-10 px-4 rounded-lg"
               onClick={onCancel}
             >
               {cancelText}
             </button>
             <button
               type="button"
-              className="h-10 px-4 rounded-lg bg-red-600 hover:bg-red-700 text-white"
+              className="bn-modal-btn-danger h-10 px-4 rounded-lg"
               onClick={onConfirm}
             >
               {confirmText}

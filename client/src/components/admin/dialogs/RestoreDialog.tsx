@@ -145,7 +145,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
             disabled={isLoading || (showSecondConfirm && !isPinValid())}
             className="bn-modal-btn-confirm"
           >
-            {isLoading ? 'Ripristino...' : !showSecondConfirm ? 'Continua' : 'Conferma'}
+            {isLoading ? 'Ripristino...' : !showSecondConfirm ? 'Procedi' : 'Conferma'}
           </Button>
         </div>
       </div>
