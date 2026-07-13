@@ -41,7 +41,6 @@
     "docs:consolidate": "tsx scripts/consolidate-docs.ts",
     "gen:component": "tsx scripts/template-component.ts",
     "seed:auth": "node scripts/seed-auth.mjs",
-    "clean:demo-users": "tsx scripts/clean-demo-users.ts",
     "check:ci": "bash scripts/ci/checks.sh",
     "icons:generate": "npx tsx scripts/generate-pwa-icons.ts",
     "smoke:runtime": "tsx scripts/ci/smoke-runtime.ts",
