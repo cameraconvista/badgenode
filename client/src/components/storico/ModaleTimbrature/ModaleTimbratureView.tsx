@@ -44,7 +44,8 @@ export default function ModaleTimbratureView({
 
   const title = (
     <>
-      <span className="text-[#1C0A10]">Modifica Timbrature</span> {fullName}
+      <span className="block text-[#1C0A10]">Modifica Timbrature</span>
+      <span className="block">{fullName}</span>
     </>
   );
 

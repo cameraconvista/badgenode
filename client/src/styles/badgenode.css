@@ -494,9 +494,9 @@ img[src*="logo_home"] {
 
 /* Modale quadrato responsive */
 .bn-modal-square {
-  width: min(92vw, 460px) !important;
+  width: min(92vw, 400px) !important;
   height: auto !important;
-  max-width: 460px !important;
+  max-width: 400px !important;
   max-height: var(--modal-max) !important;
 }
 
@@ -515,7 +515,7 @@ img[src*="logo_home"] {
 
 .bn-field-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.15fr 1fr;
   gap: 12px;
 }
 
