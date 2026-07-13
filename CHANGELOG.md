@@ -14,6 +14,23 @@ e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 
 ---
 
+## [1.1.0] — 2026-07-14
+
+### 🔐 Security
+- **RLS `app_settings`**: bloccata la lettura pubblica della tabella impostazioni — il PIN admin non è più esposto tramite chiave anon (migrazione additiva `20260714T0100__rls_app_settings_block_anon_read.sql` + rollback)
+- **Autenticazione admin**: gli endpoint admin di scrittura (crea/modifica/elimina dipendenti, archivia/ripristina ex-dipendenti, cambio PIN, config avvisi, modifica/elimina timbrature) richiedono ora il PIN admin via header `x-admin-pin`, verificato lato server con confronto timing-safe e fail-closed (`server/middleware/requireAdminPin.ts`)
+- le timbrature dei dipendenti e le letture restano libere (nessun impatto sull'uso quotidiano)
+
+### 📱 Mobile
+- ottimizzazione responsive dell'app admin **solo su smartphone**, desktop invariato: tastierino Home più stretto e tasti più grandi, tabelle Archivio/Storico compatte e scrollabili in orizzontale, filtri Storico consolidati su una riga, barra totali allineata su mobile
+
+### 🧹 Cleanup
+- rimossi file sorgente morti, hook e funzioni deprecate senza chiamanti, dipendenze inutilizzate (`recharts`, `@radix-ui/react-toggle`); aggiunta `rimraf` mancante
+- rimossi test server obsoleti mai eseguiti; allineati `DNA/05` e `.env.example` alle variabili reali
+- installato e corretto il logger `pino` (API transport per pino 10)
+
+---
+
 ## [1.0.2] — 2026-04-18
 
 ### 🔐 Security & Runtime Hardening
