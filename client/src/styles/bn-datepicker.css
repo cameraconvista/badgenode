@@ -1,0 +1,102 @@
+/*
+ * BnDatePicker — calendario a comparsa nel tema BadgeNode (bordeaux/crema).
+ * Sovrascrive react-day-picker (v8) e stila trigger + popover. Celle touch-
+ * friendly (>=40px). Aspetto identico su ogni dispositivo/browser.
+ */
+
+/* ── Campo trigger (sostituisce l'aspetto di <input type="date">) ──────────── */
+.bn-datepicker-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(122, 18, 40, 0.20);
+  border-radius: 0.5rem;
+  color: #1C0A10;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.bn-datepicker-trigger:hover:not(:disabled) { border-color: rgba(122, 18, 40, 0.45); }
+.bn-datepicker-trigger:focus-visible {
+  outline: none;
+  border-color: #7A1228;
+  box-shadow: 0 0 0 3px rgba(122, 18, 40, 0.10);
+}
+.bn-datepicker-trigger:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.bn-datepicker-trigger__icon {
+  width: 1rem;
+  height: 1rem;
+  color: #7A5A64;
+  flex-shrink: 0;
+}
+.bn-datepicker-trigger__value { color: #1C0A10; }
+.bn-datepicker-trigger__placeholder { color: rgba(122, 90, 100, 0.6); }
+
+/* ── Popover che contiene il calendario ───────────────────────────────────── */
+.bn-datepicker-popover {
+  background-color: #FFFFFF;
+  border: 1px solid rgba(122, 18, 40, 0.18);
+  border-radius: 0.75rem;
+  box-shadow: 0 12px 40px rgba(122, 18, 40, 0.20);
+  padding: 0.5rem;
+  z-index: 80; /* sopra i modali (bn-z-modal = 70) */
+}
+
+/* ── react-day-picker: tema bordeaux/crema, touch-friendly ────────────────── */
+.bn-datepicker-popover .rdp {
+  --rdp-cell-size: 42px;            /* cella >=40px: tap target comodo */
+  --rdp-accent-color: #7A1228;      /* selezione bordeaux */
+  --rdp-background-color: #F5EBE0;  /* hover crema */
+  --rdp-accent-color-dark: #7A1228;
+  --rdp-background-color-dark: #F5EBE0;
+  --rdp-outline: 2px solid rgba(122, 18, 40, 0.40);
+  --rdp-outline-selected: 2px solid #7A1228;
+  margin: 0.25rem;
+}
+
+/* Intestazione mese + frecce */
+.bn-datepicker-popover .rdp-caption_label {
+  color: #7A1228;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.bn-datepicker-popover .rdp-nav_button {
+  color: #7A1228;
+  width: 36px;
+  height: 36px;
+  border-radius: 0.5rem;
+}
+.bn-datepicker-popover .rdp-nav_button:hover { background-color: #F5EBE0; }
+
+/* Intestazioni giorni settimana (L M M G V S D) */
+.bn-datepicker-popover .rdp-head_cell {
+  color: #7A5A64;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* Celle giorno */
+.bn-datepicker-popover .rdp-day {
+  color: #1C0A10;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+}
+.bn-datepicker-popover .rdp-day:hover:not(.rdp-day_selected) { background-color: #F5EBE0; }
+.bn-datepicker-popover .rdp-day_today {
+  font-weight: 700;
+  color: #7A1228;
+}
+.bn-datepicker-popover .rdp-day_selected,
+.bn-datepicker-popover .rdp-day_selected:hover {
+  background-color: #7A1228 !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+}
+.bn-datepicker-popover .rdp-day_outside { color: rgba(122, 90, 100, 0.45); }

@@ -1,5 +1,4 @@
-import { useState, useRef } from 'react';
-import { Input } from '@/components/ui/input';
+import { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -8,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calendar } from "@/lib/icons";
+import BnDatePicker from '@/components/ui/BnDatePicker';
 import { formatDateLocal } from '@/lib/time';
 
 interface StoricoFiltersProps {
@@ -26,8 +25,6 @@ export default function StoricoFilters({
   isLoading,
 }: StoricoFiltersProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<string>('corrente');
-  const dalInputRef = useRef<HTMLInputElement>(null);
-  const alInputRef = useRef<HTMLInputElement>(null);
 
   // Calcola date per periodi predefiniti
   const getDateRanges = () => {
@@ -81,34 +78,6 @@ export default function StoricoFilters({
     }
   };
 
-  const handleCalendarClick = (field: 'dal' | 'al') => {
-    const inputRef = field === 'dal' ? dalInputRef : alInputRef;
-    if (inputRef.current) {
-      // Prova prima showPicker() se supportato
-      if (typeof inputRef.current.showPicker === 'function') {
-        try {
-          inputRef.current.showPicker();
-        } catch (_error) {
-        void _error;
-          // Fallback: focus e click
-          inputRef.current.focus();
-          inputRef.current.click();
-        }
-      } else {
-        // Fallback per browser che non supportano showPicker
-        inputRef.current.focus();
-        inputRef.current.click();
-
-        // Trigger manuale dell'evento per aprire il picker
-        const event = new MouseEvent('click', {
-          view: window,
-          bubbles: true,
-          cancelable: true,
-        });
-        inputRef.current.dispatchEvent(event);
-      }
-    }
-  };
 
   // const ranges = getDateRanges(); // Commentato per evitare warning unused
 
@@ -165,21 +134,13 @@ export default function StoricoFilters({
           <Label htmlFor="dal" className="text-[#7A5A64] text-base">
             Dal
           </Label>
-          <div className="relative">
-            <Calendar
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#7A5A64] cursor-pointer z-10"
-              onClick={() => handleCalendarClick('dal')}
-            />
-            <Input
-              ref={dalInputRef}
-              id="dal"
-              type="date"
-              value={filters.dal}
-              onChange={(e) => handleDateChange('dal', e.target.value)}
-              className="bg-[#FDFAF8] border-[rgba(122,18,40,0.20)] text-[#1C0A10] focus:border-[#7A1228] text-base cursor-pointer pl-10"
-              disabled={isLoading}
-            />
-          </div>
+          <BnDatePicker
+            id="dal"
+            aria-label="Data dal"
+            value={filters.dal}
+            onChange={(v) => handleDateChange('dal', v)}
+            disabled={isLoading}
+          />
         </div>
 
         {/* Data Al */}
@@ -187,21 +148,13 @@ export default function StoricoFilters({
           <Label htmlFor="al" className="text-[#7A5A64] text-base">
             Al
           </Label>
-          <div className="relative">
-            <Calendar
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#7A5A64] cursor-pointer z-10"
-              onClick={() => handleCalendarClick('al')}
-            />
-            <Input
-              ref={alInputRef}
-              id="al"
-              type="date"
-              value={filters.al}
-              onChange={(e) => handleDateChange('al', e.target.value)}
-              className="bg-[#FDFAF8] border-[rgba(122,18,40,0.20)] text-[#1C0A10] focus:border-[#7A1228] text-base cursor-pointer pl-10"
-              disabled={isLoading}
-            />
-          </div>
+          <BnDatePicker
+            id="al"
+            aria-label="Data al"
+            value={filters.al}
+            onChange={(v) => handleDateChange('al', v)}
+            disabled={isLoading}
+          />
         </div>
       </div>
     </div>

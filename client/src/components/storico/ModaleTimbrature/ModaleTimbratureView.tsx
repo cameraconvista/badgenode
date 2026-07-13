@@ -1,4 +1,5 @@
 import ModalKit from '@/components/ui/ModalKit';
+import BnDatePicker from '@/components/ui/BnDatePicker';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from "@/lib/icons";
 import ConfirmFullscreen from '@/components/ui/ConfirmFullscreen';
@@ -77,11 +78,11 @@ export default function ModaleTimbratureView({
           <div className="bn-field-row">
             <div>
               <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Data</label>
-              <input
-                type="date"
+              <BnDatePicker
+                aria-label="Data entrata"
                 value={toInputDate(formData.dataEntrata)}
-                onChange={(e) => setFormData({ ...formData, dataEntrata: e.target.value || '' })}
-                className="bn-field-input bn-entrata-field w-full"
+                onChange={(v) => setFormData({ ...formData, dataEntrata: v })}
+                className="bn-entrata-field"
                 disabled={isLoading}
               />
             </div>
@@ -103,11 +104,11 @@ export default function ModaleTimbratureView({
           <div className="bn-field-row">
             <div>
               <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Data</label>
-              <input
-                type="date"
+              <BnDatePicker
+                aria-label="Data uscita"
                 value={toInputDate(formData.dataUscita)}
-                onChange={(e) => setFormData({ ...formData, dataUscita: e.target.value || '' })}
-                className="bn-field-input bn-uscita-field w-full"
+                onChange={(v) => setFormData({ ...formData, dataUscita: v })}
+                className="bn-uscita-field"
                 disabled={isLoading}
               />
             </div>

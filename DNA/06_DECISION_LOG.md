@@ -2,6 +2,23 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Date-picker custom nel tema (BnDatePicker)
+
+- Sostituito `<input type="date">` (calendario nativo, aspetto diverso per OS/browser)
+  con `client/src/components/ui/BnDatePicker.tsx`: popover Radix + `react-day-picker`
+  (già in deps) stilizzato bordeaux/crema (`styles/bn-datepicker.css`), locale it,
+  settimana da lunedì, celle 42px touch-friendly. Aspetto identico su ogni device.
+- **Drop-in dell'input**: props `value`/`onChange` su stringhe `YYYY-MM-DD` (come
+  prima) → le logiche a valle NON cambiano. Agganciato a StoricoFilters (Dal/Al) e
+  ModaleTimbratureView (Entrata/Uscita, bordi verde/rosso mantenuti via className).
+- **Apertura controllata a mano** (`onClick` sul button + `Popover.Anchor`, non
+  `Popover.Trigger`): dentro il Dialog Radix del modale Timbrature il Trigger veniva
+  neutralizzato dal focus-trap del Dialog. Popover in Portal con z-index 80 (sopra
+  bn-z-modal=70). **Perché:** calendario coerente e prevedibile, il nativo mostrava
+  layout Chromium/Safari diversi e non tematizzabili.
+- Rimosso da StoricoFilters il codice morto `handleCalendarClick`/`showPicker` e i
+  ref agli input, non più necessari.
+
 ## 2026-07-13 — Responsive tablet + consolidamento modali admin
 
 - **Sidebar a drawer sotto 1024px** (tablet portrait + telefono), fissa da 1024px
