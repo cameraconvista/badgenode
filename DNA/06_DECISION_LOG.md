@@ -2,6 +2,30 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Consolidamento UI modali + ordinamento tabelle + sidebar
+
+- **Modali unificati**: `ModalKit` ha prop `hideClose` (nasconde la X quando c'è già
+  Annulla/Chiudi in fondo). Rimossa la X ridondante da tutti i modali con pulsante di
+  uscita. Titoli centrati (`bn-admin-modal__header` → center). Footer con linea
+  orizzontale (`border-top`) su tutti; pulsanti "Annulla" uniformi
+  (`bn-modal-btn-cancel`), positivi verdi (`bn-modal-btn-confirm`), distruttivi rossi
+  (`bn-modal-btn-danger`). Termini a due step uniformati: 1° "Procedi", 2° "Conferma".
+- **Ordinamento tabelle admin**: hook condiviso `useSortableTable` + componente
+  `SortableHeader` (in `components/admin/`). Dipendenti ordina PIN/Nome/Cognome, Ex
+  ordina Nome/Cognome/Archiviazione. Icona `ArrowUpDown` (due frecce) uguale per tutte
+  le colonne; click alterna asc/desc. Comparatore: numeri per differenza, stringhe con
+  `localeCompare('it', {numeric:true})`.
+- **Sidebar** (`adminNavItems.ts`): ordine = **Timbrature** (ex "Storico", href
+  `/storico-timbrature`), **Dipendenti**, **Ex-Dipendenti**. L'ordine dell'array = ordine
+  mostrato. Voce "Dashboard" NON ancora presente (prevista, in attesa).
+- **Barra totali storico** (`StoricoTotalsBar`): compattata, etichette+valori su una riga,
+  valori Totali allineati sotto le colonne Ore/Extra via `ColGroupStorico`.
+- **Export** (`useStoricoExport`): toast con `duration: 3000`; file splittato in
+  `.shared.ts` + `.xls.ts` per il limite 220. Il browser non notifica la conferma del
+  dialog di sistema "Salva con nome": il toast resta emesso dopo la generazione.
+- **Tabella Ex**: mese abbreviato 3 lettere (`formatDataGiornoMeseAnno`, `month:'short'`),
+  intestazione "Archiviazione".
+
 ## 2026-07-13 — Pulizia progetto (dead code, deps, hook, split file) + deploy
 
 - **Pulizia in 5 step** (branch dedicati, poi merge su main, tutti i check verdi):
