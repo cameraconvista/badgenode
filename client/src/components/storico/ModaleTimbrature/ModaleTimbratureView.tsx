@@ -42,7 +42,11 @@ export default function ModaleTimbratureView({
     ? `${entrata.nome} ${entrata.cognome}` 
     : 'Sconosciuto';
 
-  const title = `Modifica Timbrature ${fullName}`;
+  const title = (
+    <>
+      <span className="text-[#1C0A10]">Modifica Timbrature</span> {fullName}
+    </>
+  );
 
   // Footer rimosso - pulsanti ora nel body
 
