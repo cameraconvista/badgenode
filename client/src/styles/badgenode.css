@@ -494,9 +494,9 @@ img[src*="logo_home"] {
 
 /* Modale quadrato responsive */
 .bn-modal-square {
-  width: min(88vw, 600px) !important;
+  width: min(92vw, 460px) !important;
   height: auto !important;
-  max-width: 600px !important;
+  max-width: 460px !important;
   max-height: var(--modal-max) !important;
 }
 
