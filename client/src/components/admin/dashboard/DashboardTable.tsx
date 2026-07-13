@@ -14,9 +14,11 @@ interface DashboardTableProps {
   totali: { totaleOre: number; totaleExtra: number };
   isLoading: boolean;
   isError?: boolean;
+  /** Click su una riga: apre lo Storico Timbrature del dipendente. */
+  onStorico?: (pin: number) => void;
 }
 
-export default function DashboardTable({ rows, totali, isLoading, isError }: DashboardTableProps) {
+export default function DashboardTable({ rows, totali, isLoading, isError, onStorico }: DashboardTableProps) {
   // Ordinamento condiviso (default: PIN crescente), stesso hook delle altre tabelle.
   const { sorted, toggle } = useSortableTable<DashboardRow, DashSortKey>(rows, getDashValue, {
     key: 'pin',
@@ -36,19 +38,20 @@ export default function DashboardTable({ rows, totali, isLoading, isError }: Das
   }
 
   return (
-    <div className="h-full flex flex-col p-1">
-      {/* Wrapper ombra: rounded + shadow senza overflow-hidden (angoli rispettati). */}
-      <div className="flex-1 flex flex-col rounded-xl shadow-[0_12px_28px_-6px_rgba(122,18,40,0.30)]">
-        <div className="border border-[rgba(122,18,40,0.15)] rounded-xl overflow-hidden bg-white flex-1 flex flex-col">
-          <div className="flex-1 overflow-auto overscroll-contain">
+    <div className="h-full flex flex-col">
+      {/* Guscio tabella con ombreggiatura coerente allo Storico (bn-table-shell).
+          La barra totali è il 2º figlio: min-h-0 sullo scroll-area lascia scrollare
+          solo la lista, tenendo la barra fissa in basso. */}
+      <div className="bn-table-shell">
+          <div className="flex-1 min-h-0 overflow-auto overscroll-contain">
             <table className="w-full min-w-[640px] table-fixed border-collapse bn-archivio bn-nohover archivio-table">
               <colgroup>
                 {[
                   <col key="pin" style={{ width: '96px' }} />,
-                  <col key="nm" style={{ width: '26%' }} />,
-                  <col key="cg" style={{ width: '26%' }} />,
-                  <col key="ore" style={{ width: '20%' }} />,
-                  <col key="ex" style={{ width: '20%' }} />,
+                  <col key="nm" style={{ width: '32%' }} />,
+                  <col key="cg" style={{ width: '34%' }} />,
+                  <col key="ore" style={{ width: '13%' }} />,
+                  <col key="ex" style={{ width: '13%' }} />,
                 ]}
               </colgroup>
               <thead className="bn-sticky-head">
@@ -81,7 +84,26 @@ export default function DashboardTable({ rows, totali, isLoading, isError }: Das
                   </tr>
                 ) : (
                   sorted.map((r) => (
-                    <tr key={`dash-${r.pin}`} className="bn-row bn-row-archivio-compact align-middle">
+                    <tr
+                      key={`dash-${r.pin}`}
+                      className={`bn-row bn-row-archivio-compact align-middle ${
+                        onStorico ? 'bn-row-clickable' : ''
+                      }`}
+                      onClick={onStorico ? () => onStorico(r.pin) : undefined}
+                      role={onStorico ? 'button' : undefined}
+                      tabIndex={onStorico ? 0 : undefined}
+                      onKeyDown={
+                        onStorico
+                          ? (e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                onStorico(r.pin);
+                              }
+                            }
+                          : undefined
+                      }
+                      title={onStorico ? `Apri lo storico di ${r.nome} ${r.cognome}` : undefined}
+                    >
                       <td className="bn-cell px-4 text-center tabular-nums">
                         <span className="font-mono font-medium text-base text-[#7A1228]">
                           {r.pin.toString().padStart(2, '0')}
@@ -108,16 +130,18 @@ export default function DashboardTable({ rows, totali, isLoading, isError }: Das
             </table>
           </div>
 
-          {/* Barra totali: stesse colonne della tabella → i valori cadono sotto Ore/Extra. */}
-          <div className="bn-totals-solid border-t border-[rgba(255,255,255,0.15)]">
+          {/* Barra totali: stesse colonne della tabella → i valori cadono sotto Ore/Extra.
+              rounded-b-lg: angoli inferiori arrotondati come lo Storico, così la barra
+              non sborda oltre il raggio del guscio (niente spigolo vivo negli angoli). */}
+          <div className="bn-totals-solid rounded-b-lg border-t border-[rgba(255,255,255,0.15)]">
             <table className="w-full min-w-[640px] table-fixed border-collapse">
               <colgroup>
                 {[
                   <col key="pin" style={{ width: '96px' }} />,
-                  <col key="nm" style={{ width: '26%' }} />,
-                  <col key="cg" style={{ width: '26%' }} />,
-                  <col key="ore" style={{ width: '20%' }} />,
-                  <col key="ex" style={{ width: '20%' }} />,
+                  <col key="nm" style={{ width: '32%' }} />,
+                  <col key="cg" style={{ width: '34%' }} />,
+                  <col key="ore" style={{ width: '13%' }} />,
+                  <col key="ex" style={{ width: '13%' }} />,
                 ]}
               </colgroup>
               <tbody>
@@ -147,7 +171,6 @@ export default function DashboardTable({ rows, totali, isLoading, isError }: Das
               </tbody>
             </table>
           </div>
-        </div>
       </div>
     </div>
   );

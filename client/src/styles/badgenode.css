@@ -643,3 +643,14 @@ img[src*="logo_home"] {
 .bn-dropdown-item[aria-selected="true"] {
   background: rgba(122, 18, 40, 0.08);
 }
+
+/* Righe cliccabili (Dashboard → Storico): hover visibile anche con bn-nohover.
+   Serve la stessa specificità di .bn-nohover .bn-row:hover per vincere il reset. */
+.bn-nohover .bn-row.bn-row-clickable {
+  cursor: pointer;
+}
+.bn-nohover .bn-row.bn-row-clickable:hover,
+.bn-nohover .bn-row.bn-row-clickable:focus,
+.bn-nohover .bn-row.bn-row-clickable:focus-within {
+  background: rgba(122, 18, 40, 0.05) !important;
+}

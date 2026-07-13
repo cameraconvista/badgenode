@@ -153,7 +153,7 @@ export default function ArchivioDipendenti() {
             Aggiungi
           </Button>
         </div>
-        <div className="min-h-0 flex-1 overflow-hidden">
+        <div className="min-h-0 flex-1 p-1">
           <ArchivioTable
             utenti={utenti}
             isLoading={isLoading}

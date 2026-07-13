@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { FileSpreadsheet, FileText } from '@/lib/icons';
 import AdminLayout from '@/components/admin/layout/AdminLayout';
@@ -21,7 +22,16 @@ function meseCorrente() {
 
 export default function Dashboard() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [filters, setFilters] = useState(meseCorrente);
+
+  // Click su una riga → apre lo Storico Timbrature del dipendente, ereditando il
+  // periodo selezionato in Dashboard (passato in query string): così il dettaglio
+  // mostra esattamente ciò che si stava guardando.
+  const handleStorico = (pin: number) => {
+    const q = new URLSearchParams({ dal: filters.dal, al: filters.al });
+    setLocation(`/storico-timbrature/${pin}?${q.toString()}`);
+  };
 
   // Dipendenti attivi (stessa fonte/chiave delle altre sezioni admin).
   const { data: utenti = [], isLoading: isLoadingUtenti } = useQuery({
@@ -76,8 +86,14 @@ export default function Dashboard() {
         </div>
 
         {/* Tabella riepilogo dipendenti — scrolla SOLO internamente (come le altre sezioni). */}
-        <div className="min-h-0 flex-1 overflow-hidden">
-          <DashboardTable rows={rows} totali={totali} isLoading={isLoading} isError={isError} />
+        <div className="min-h-0 flex-1 p-1">
+          <DashboardTable
+            rows={rows}
+            totali={totali}
+            isLoading={isLoading}
+            isError={isError}
+            onStorico={handleStorico}
+          />
         </div>
       </div>
     </AdminLayout>

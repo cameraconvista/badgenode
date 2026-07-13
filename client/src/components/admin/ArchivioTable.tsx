@@ -47,11 +47,9 @@ export default function ArchivioTable({
   }
 
   return (
-    <div className="h-full flex flex-col p-1">
-      {/* Wrapper ombra: rounded + shadow SENZA overflow-hidden, così l'ombra è
-          visibile e rispetta gli angoli. L'overflow-hidden resta sul figlio. */}
-      <div className="flex-1 flex flex-col rounded-xl shadow-[0_12px_28px_-6px_rgba(122,18,40,0.30)]">
-        <div className="border border-[rgba(122,18,40,0.15)] rounded-xl overflow-hidden bg-white flex-1 flex flex-col">
+    <div className="h-full flex flex-col">
+      {/* Guscio tabella con ombreggiatura coerente allo Storico (bn-table-shell). */}
+      <div className="bn-table-shell">
           <div className="flex-1 overflow-auto overscroll-contain">
           <table className="w-full min-w-[640px] table-fixed border-collapse bn-archivio bn-nohover archivio-table">
             <colgroup>
@@ -129,7 +127,6 @@ export default function ArchivioTable({
             </tbody>
           </table>
           </div>
-        </div>
       </div>
     </div>
   );

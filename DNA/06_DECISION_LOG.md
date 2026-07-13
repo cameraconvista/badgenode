@@ -2,6 +2,28 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Sezione Dashboard + icona attenzione + ombreggiatura tabelle
+
+- **Dashboard** (`/dashboard`, prima voce sidebar, admin-guarded): tabella riepilogo
+  PIN/Nome/Cognome/Ore/Extra per tutti i dipendenti attivi, default mese corrente.
+  Totali per dipendente via endpoint storico esistente, **1 query per PIN in parallelo**
+  (`useDashboardTotals` con `useQueries`, cache condivisa con le chiavi Storico) — zero
+  modifiche a DB/server. Filtri riusano `StoricoFilters`; export PDF/Excel una riga per
+  dipendente (`useDashboardExport` + `.xls`). Ordinamento solo su PIN/Nome/Cognome.
+- **Click su riga Dashboard → Storico del dipendente** ereditando il periodo: `dal`/`al`
+  passati in query string; `computeStoricoInitialFilters` (nuovo file) legge l'URL
+  all'init dei filtri Storico (fallback mese corrente). Cambia solo il valore iniziale,
+  nessun calcolo Storico toccato.
+- **Icona attenzione**: componente condiviso `AttenzioneIcon` (PNG tondo
+  `client/public/icona-attenzione.png`) sostituisce il triangolo SVG del marcatore
+  anomalia oraria e del box "Anomalia oraria" nello Storico. Gli avvisi rosso/verde
+  (elimina/ripristino) e `AlertCircle` (errori) restano invariati: significato diverso.
+- **Ombreggiatura tabelle** (Dipendenti/Ex/Dashboard): classe condivisa `.bn-table-shell`
+  con la STESSA ombra/raggio/overflow del container Storico (`.bn-table__container`),
+  un unico elemento (niente doppio wrapper/border che dava contorno incoerente). La barra
+  totali interna usa `rounded-b-lg` per non sbordare; la pagina avvolge in `p-1` (non
+  `overflow-hidden`, che tagliava l'ombra). Ombra accentuata a `0.40` in entrambi i punti.
+
 ## 2026-07-13 — Consolidamento UI modali + ordinamento tabelle + sidebar
 
 - **Modali unificati**: `ModalKit` ha prop `hideClose` (nasconde la X quando c'è già
@@ -17,7 +39,7 @@ Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in test
   `localeCompare('it', {numeric:true})`.
 - **Sidebar** (`adminNavItems.ts`): ordine = **Timbrature** (ex "Storico", href
   `/storico-timbrature`), **Dipendenti**, **Ex-Dipendenti**. L'ordine dell'array = ordine
-  mostrato. Voce "Dashboard" NON ancora presente (prevista, in attesa).
+  mostrato. (Aggiornamento: "Dashboard" poi aggiunta come PRIMA voce — vedi sopra.)
 - **Barra totali storico** (`StoricoTotalsBar`): compattata, etichette+valori su una riga,
   valori Totali allineati sotto le colonne Ore/Extra via `ColGroupStorico`.
 - **Export** (`useStoricoExport`): toast con `duration: 3000`; file splittato in

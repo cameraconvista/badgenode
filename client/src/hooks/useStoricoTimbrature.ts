@@ -14,21 +14,16 @@ import {
   invalidateTotaliGlobali,
   debounce,
 } from '@/state/timbrature.cache';
-import { formatDateLocal, getMeseItaliano } from '@/lib/time';
+import { getMeseItaliano } from '@/lib/time';
+import { computeStoricoInitialFilters } from '@/hooks/useStoricoInitialFilters';
 import { useToast } from '@/hooks/use-toast';
 
 export function useStoricoTimbrature(pin: number) {
   const { isAdmin } = useAuth();
 
-  // State per filtri
-  const [filters, setFilters] = useState(() => {
-    const today = new Date();
-    return {
-      pin,
-      dal: formatDateLocal(new Date(today.getFullYear(), today.getMonth(), 1)),
-      al: formatDateLocal(new Date(today.getFullYear(), today.getMonth() + 1, 0)),
-    };
-  });
+  // State per filtri (periodo iniziale: eredita ?dal/?al dall'URL, es. dalla
+  // Dashboard, altrimenti mese corrente — vedi computeStoricoInitialFilters).
+  const [filters, setFilters] = useState(() => computeStoricoInitialFilters(pin));
 
   // State per modale modifica
   const [selectedGiorno, setSelectedGiorno] = useState<string | null>(null);

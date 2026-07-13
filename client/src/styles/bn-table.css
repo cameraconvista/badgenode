@@ -12,7 +12,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  box-shadow: 0 12px 28px -6px rgba(122, 18, 40, 0.30);
+  box-shadow: 0 16px 36px -6px rgba(122, 18, 40, 0.40);
 }
 
 /* Header sticky - bordeaux pieno */
@@ -124,7 +124,7 @@
   vertical-align: middle;
   border-right: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 1rem;
   height: 2.75rem;
 }
@@ -140,6 +140,22 @@
   flex: 1;
   overflow: auto;
   overscroll-behavior: contain;
+}
+
+/* Guscio condiviso tabelle admin (Dipendenti/Ex-Dipendenti/Dashboard):
+   stessa ombra, raggio e overflow del container Storico (.bn-table__container),
+   così l'ombreggiatura è coerente ovunque. Un unico elemento porta ombra +
+   raggio + overflow (niente doppio wrapper/doppio raggio che rendeva l'effetto
+   incoerente). */
+.bn-table-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 16px 36px -6px rgba(122, 18, 40, 0.40);
 }
 
 /* Larghezza minima tabella e totali: mantiene le colonne leggibili e allineate

@@ -91,7 +91,7 @@ export default function ExDipendenti() {
         {/* Spaziatura che compensa il sottotitolo assente (presente in Dipendenti),
             così l'header bar della tabella parte alla STESSA altezza di Dipendenti.
             Non tocca il titolo. */}
-        <div className="min-h-0 flex-1 overflow-hidden pt-8">
+        <div className="min-h-0 flex-1 p-1 pt-8">
           <ExDipendentiTable
             exDipendenti={exDipendenti}
             isLoading={isLoading}

@@ -1,6 +1,7 @@
-import { AlertTriangle, Edit } from "@/lib/icons";
+import { Edit } from "@/lib/icons";
 import { Button } from '@/components/ui/button';
 import ModalKit from '@/components/ui/ModalKit';
+import AttenzioneIcon from '@/components/ui/AttenzioneIcon';
 import { formatOre, formatDataEstesa, getMeseItaliano } from '@/lib/time';
 import { useState } from 'react';
 import {
@@ -20,23 +21,6 @@ interface StoricoTableProps {
   oreContrattuali: number;
   onEditTimbrature: (giorno_logico: string) => void;
   isLoading?: boolean;
-}
-
-function AlertMarkerIcon({ className = '' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-      className={className}
-    >
-      <path
-        d="M12 2.7c.52 0 1 .28 1.25.73l9 15.75c.25.44.25.98 0 1.42-.26.45-.73.73-1.25.73H3c-.52 0-1-.28-1.25-.73a1.43 1.43 0 0 1 0-1.42l9-15.75c.25-.45.73-.73 1.25-.73Z"
-        fill="currentColor"
-      />
-      <rect x="10.9" y="7.1" width="2.2" height="7.9" rx="1.1" fill="#111111" />
-      <circle cx="12" cy="18.05" r="1.35" fill="#111111" />
-    </svg>
-  );
 }
 
 export default function StoricoTable({
@@ -197,7 +181,7 @@ export default function StoricoTable({
       >
         <div className="space-y-4 text-sm text-[#1C0A10]">
           <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4">
-            <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600" />
+            <AttenzioneIcon className="mt-0.5 h-5 w-5 flex-shrink-0" />
             <div className="space-y-2">
               <p className="font-medium">La timbratura risulta fuori dagli orari standard previsti.</p>
               <ul className="list-disc pl-5 text-[#7A5A64]">
@@ -246,9 +230,9 @@ export default function StoricoTable({
                 type="button"
                 aria-label={`Segnala anomalia oraria del ${formatDataEstesa(giorno.giorno)}`}
                 onClick={() => setAlertInfo({ giorno: giorno.giorno, details: getOrarioAnomaloDetails(giorno) })}
-                className="inline-flex items-center justify-center rounded-full text-amber-500 transition-colors hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400/60"
+                className="inline-flex items-center justify-center rounded-full transition-opacity hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-amber-400/60"
               >
-                <AlertMarkerIcon className="h-4 w-4 text-amber-400" />
+                <AttenzioneIcon className="h-4 w-4" />
               </button>
             ) : null}
           </div>
