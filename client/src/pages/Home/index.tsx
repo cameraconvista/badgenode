@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import SettingsModal from '@/components/home/SettingsModal';
+import AppPinGate from '@/components/home/AppPinGate';
 import IntroSplash from '@/components/home/IntroSplash';
+import { getPinSettings } from '@/services/settings.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeTimbrature } from '@/lib/realtime';
 import { invalidateAfterTimbratura, debounce } from '@/state/timbrature.cache';
@@ -22,6 +25,14 @@ export default function Home() {
   const { user } = useAuth();
   const [lastTraceId, setLastTraceId] = useState<string>('');
   const { showIntroLayer, introVisible, homeVisible } = useIntroSplash();
+
+  // Config PIN admin (dal DB): decide se il tasto ⚙ chiede il PIN o entra diretto.
+  // Fallback prudente (requirePin:false) se non caricata.
+  const { data: pinSettings } = useQuery({
+    queryKey: ['settings', 'pin', 'admin'],
+    queryFn: () => getPinSettings('admin'),
+    staleTime: 60_000,
+  });
 
   // Realtime subscription per dipendente
   useEffect(() => {
@@ -61,7 +72,13 @@ export default function Home() {
   };
 
   const handleSettings = () => {
-    setShowSettingsModal(true);
+    // Toggle OFF (default) → accesso diretto all'area admin, senza chiedere il PIN.
+    // Toggle ON → mostra il modale che valida il PIN contro quello salvato nel DB.
+    if (pinSettings?.requirePin) {
+      setShowSettingsModal(true);
+    } else {
+      handleSettingsSuccess();
+    }
   };
 
   const handleSettingsSuccess = () => {
@@ -70,7 +87,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <AppPinGate>
       <div className={`transition-opacity duration-700 ${homeVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <HomeContainer
           pin={pin}
@@ -153,10 +170,11 @@ export default function Home() {
             isOpen={showSettingsModal}
             onClose={() => setShowSettingsModal(false)}
             onSuccess={handleSettingsSuccess}
+            expectedPin={pinSettings?.pin}
           />
         </HomeContainer>
       </div>
       {showIntroLayer && <IntroSplash visible={introVisible} />}
-    </>
+    </AppPinGate>
   );
 }

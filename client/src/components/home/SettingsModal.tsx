@@ -4,16 +4,17 @@ interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  /** PIN corretto da confrontare (dal DB). Default '1909' per retrocompatibilità. */
+  expectedPin?: string;
 }
 
-export default function SettingsModal({ isOpen, onClose, onSuccess }: SettingsModalProps) {
+export default function SettingsModal({ isOpen, onClose, onSuccess, expectedPin = '1909' }: SettingsModalProps) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
-  const ADMIN_CODE = '1909';
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (pin === ADMIN_CODE) {
+    if (pin === expectedPin) {
       onSuccess();
       setPin('');
       setError(false);

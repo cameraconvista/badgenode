@@ -107,6 +107,26 @@ export interface Database {
           archiviato_il?: string;
         };
       };
+      app_settings: {
+        Row: {
+          id: string;
+          require_pin: boolean;
+          access_pin: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          require_pin?: boolean;
+          access_pin?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          require_pin?: boolean;
+          access_pin?: string;
+          updated_at?: string;
+        };
+      };
     };
     Views: Record<string, never>;
     Functions: {

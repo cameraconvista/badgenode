@@ -5,6 +5,7 @@ import { pinRoutes } from './internal/pinRoutes';
 import { exDipendentiRoutes } from './internal/exDipendentiRoutes';
 import { storicoRoutes } from './internal/storicoRoutes';
 import { userManagementRoutes } from './internal/userManagementRoutes';
+import { settingsRoutes } from './internal/settingsRoutes';
 
 const router = Router();
 
@@ -13,6 +14,7 @@ router.use(pinRoutes);
 router.use(exDipendentiRoutes);
 router.use(storicoRoutes);
 router.use(userManagementRoutes);
+router.use(settingsRoutes);
 
 // Re-export del router come default per mantenere compatibilità
 export default router;

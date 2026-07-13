@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft } from '@/lib/icons';
+import { ArrowLeft, Settings } from '@/lib/icons';
 import {
   SidebarProvider,
   Sidebar,
@@ -60,6 +60,19 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   </SidebarMenuItem>
                 );
               })}
+              {/* Separatore: stacca Impostazioni dalle sezioni principali. */}
+              <li aria-hidden className="my-2 border-t border-[rgba(122,18,40,0.12)]" />
+              {/* Impostazioni: staccata dalle voci principali da una linea sottile. */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={location.startsWith('/impostazioni')}
+                  onClick={() => go('/impostazioni')}
+                  className="h-11 gap-3 text-base text-[#1C0A10] data-[active=true]:bg-[#B68787] data-[active=true]:text-white hover:bg-[#F5EBE0] hover:text-[#7A1228]"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span className="font-medium">Impostazioni</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
 
