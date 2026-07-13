@@ -1,4 +1,2 @@
-npm run lint
-npm run check
 npm run check:ci
 node scripts/file-length-guard.cjs
