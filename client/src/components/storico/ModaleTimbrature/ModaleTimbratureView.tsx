@@ -3,7 +3,6 @@ import BnDatePicker from '@/components/ui/BnDatePicker';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle } from "@/lib/icons";
 import ConfirmFullscreen from '@/components/ui/ConfirmFullscreen';
-import { formatDataItaliana } from '@/lib/time';
 import { toInputDate } from '@/lib/dateFmt';
 import TimeSelect from './TimeSelect';
 import type { FormData, ModaleTimbratureProps } from './types';
@@ -43,17 +42,15 @@ export default function ModaleTimbratureView({
     ? `${entrata.nome} ${entrata.cognome}` 
     : 'Sconosciuto';
 
-  const title = `Modifica Timbrature — ${formatDataItaliana(giorno_logico)}`;
-  const description = `Dipendente ${fullName} (PIN: ${dipendente?.pin || entrata?.pin || uscita?.pin})`;
+  const title = `Modifica Timbrature ${fullName}`;
 
   // Footer rimosso - pulsanti ora nel body
 
   return (
     <ModalKit 
-      open={isOpen} 
+      open={isOpen}
       onOpenChange={onClose}
       title={title}
-      description={description}
       contentClassName="bn-modal-square"
       className="bn-modal-body-scroll"
       preventDismiss

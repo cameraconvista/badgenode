@@ -14,11 +14,11 @@ export default function StoricoWrapper() {
   const pin = Number(raw);
   const isValidPin = Number.isFinite(pin) && pin > 0;
 
-  // Query per ottenere il primo utente se PIN non specificato o non valido
+  // Lista dipendenti attivi: serve sia per il redirect al primo utente (PIN
+  // assente) sia per il selettore di dipendente nell'header Storico.
   const { data: utenti } = useQuery({
     queryKey: ['utenti'],
     queryFn: () => UtentiService.getUtenti(),
-    enabled: !isValidPin,
   });
 
   // Se PIN non valido, reindirizza al primo utente disponibile
@@ -51,6 +51,9 @@ export default function StoricoWrapper() {
     return null;
   }
 
-  // PIN valido, passa al componente principale
-  return <StoricoTimbrature pin={pin} />;
+  // PIN valido, passa al componente principale.
+  // key={pin}: al cambio dipendente (via selettore header → nuova URL) forza il
+  // remount così TUTTO lo stato interno (filtri inclusi) si reinizializza sul
+  // nuovo PIN — evita che la tabella resti sui dati del dipendente precedente.
+  return <StoricoTimbrature key={pin} pin={pin} utenti={utenti ?? []} />;
 }

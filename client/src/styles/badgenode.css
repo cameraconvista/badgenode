@@ -528,6 +528,16 @@ img[src*="logo_home"] {
   font-size: 14px;
 }
 
+/* Box Ora/Minuti (HH · MM) nel modale timbrature: bianchi e stretti (2 cifre +
+   freccia), non a piena larghezza — non sprecano spazio. Bordo sottile del tema. */
+.bn-time-field {
+  width: 4.25rem;
+  flex: 0 0 auto;
+  padding: 0 8px;
+  background: #FFFFFF !important;
+  border: 1px solid rgba(122, 18, 40, 0.20);
+}
+
 /* Bordi colorati entrata/uscita */
 .bn-entrata-field {
   border: 1px solid rgba(21, 128, 61, 0.7) !important;

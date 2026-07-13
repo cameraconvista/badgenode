@@ -16,7 +16,8 @@ import {
 import { ADMIN_NAV_ITEMS } from './adminNavItems';
 
 interface AdminLayoutProps {
-  /** Titolo mostrato nella topbar mobile (nome sezione corrente). */
+  /** Accettato per compatibilità con i chiamanti; non più mostrato in topbar
+      (la topbar mobile mostra solo il logo centrato). */
   title?: string;
   children: ReactNode;
 }
@@ -26,7 +27,7 @@ interface AdminLayoutProps {
  * desktop, drawer a scomparsa su mobile (via shadcn Sidebar/Sheet).
  * Non contiene logica di business: ospita soltanto la navigazione e le pagine.
  */
-export default function AdminLayout({ title, children }: AdminLayoutProps) {
+export default function AdminLayout({ children }: AdminLayoutProps) {
   const [location, setLocation] = useLocation();
 
   const go = (href: string) => setLocation(href);
@@ -80,16 +81,14 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
         <SidebarInset className="h-full min-h-0 overflow-hidden bg-[#F8F3EE]">
           {/* Topbar visibile su telefono e tablet portrait (<1024px): apre il drawer.
               Sopra 1024px la sidebar è fissa a lato e la topbar sparisce. */}
-          {/* Head bar a 3 zone (standard nativo): logo a sinistra, titolo centrato
-              geometricamente (absolute, indipendente da logo/hamburger), trigger a
-              destra. Il titolo centrato resta tale a prescindere dalle larghezze. */}
+          {/* Head bar mobile: logo centrato geometricamente (absolute), hamburger a
+              destra. Nessun titolo di sezione (rimosso su richiesta). */}
           <div className="relative flex items-center border-b border-[rgba(122,18,40,0.12)] bg-white px-4 py-3 lg:hidden">
-            <img src="/logo_badgenode.png" alt="BADGENODE" className="h-7 w-auto" />
-            {title ? (
-              <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 font-semibold text-[#1C0A10]">
-                {title}
-              </span>
-            ) : null}
+            <img
+              src="/logo_badgenode.png"
+              alt="BADGENODE"
+              className="pointer-events-none absolute left-1/2 h-7 w-auto -translate-x-1/2"
+            />
             {/* Trigger drawer allineato a destra (standard tablet app). */}
             <SidebarTrigger className="ml-auto text-[#7A1228]" />
           </div>

@@ -2,6 +2,28 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Selettore dipendente nell'header Storico + rifiniture
+
+- **Il nome dipendente nell'header Storico è un selettore** (Select shadcn con
+  freccetta ▾): cambia dipendente restando nello Storico, senza tornare in
+  Dipendenti. Implementato via NAVIGAZIONE (URL = source-of-truth del PIN, come già
+  faceva `ArchivioDipendenti.handleStorico` e il redirect "primo utente"):
+  `onValueChange → setLocation('/storico-timbrature/<pin>')`. La lista dipendenti
+  viene dalla query `['utenti']` in StoricoWrapper (tolto il gate `enabled:!isValidPin`
+  così è disponibile anche con PIN valido), passata giù come prop `utenti`.
+- **`key={pin}` su `<StoricoTimbrature>`** in StoricoWrapper: la route non usa key,
+  quindi al cambio PIN wouter riusava la stessa istanza e `filters.pin` (initializer
+  di useState in useStoricoTimbrature) restava bloccato → tabella sul dipendente
+  vecchio. Il remount forzato reinizializza tutto lo stato sul nuovo PIN.
+  Trade-off accettato: il periodo/filtro torna a default al cambio dipendente.
+- **Modale Timbrature**: titolo "Modifica Timbrature <Nome Cognome>" (rimossa la
+  data dal titolo e la riga descrizione "Dipendente … (PIN)"). Box Ora/Minuti
+  (`TimeSelect`) resi bianchi e stretti (classe `.bn-time-field`, ~4.25rem) invece
+  di w-full: non sprecano spazio per 2 cifre.
+- **Topbar mobile**: rimosso il titolo di sezione, logo centrato (prop `title` di
+  AdminLayout resta accettata ma non mostrata). Icone export Storico spostate a
+  sinistra e ravvicinate (gap-1.5).
+
 ## 2026-07-13 — Date-picker custom nel tema (BnDatePicker)
 
 - Sostituito `<input type="date">` (calendario nativo, aspetto diverso per OS/browser)

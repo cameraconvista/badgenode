@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'wouter';
 import { User } from "@/lib/icons";
 import AdminLayout from '@/components/admin/layout/AdminLayout';
 import StoricoHeader from '@/components/storico/StoricoHeader';
@@ -7,6 +8,7 @@ import StoricoTable from '@/components/storico/StoricoTable';
 import ModaleTimbrature from '@/components/storico/ModaleTimbrature';
 import { useStoricoTimbrature } from '@/hooks/useStoricoTimbrature';
 import { useStoricoMutations } from '@/hooks/useStoricoMutations';
+import type { Utente } from '@/services/utenti.service';
 
 /** Box messaggio centrato (stati PIN mancante / dipendente non trovato). */
 function StoricoMessage({ title, message }: { title: string; message: string }) {
@@ -23,9 +25,10 @@ function StoricoMessage({ title, message }: { title: string; message: string }) 
 
 interface StoricoTimbratureProps {
   pin?: number; // PIN del dipendente da visualizzare
+  utenti?: Utente[]; // Dipendenti attivi, per il selettore nell'header
 }
 
-export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
+export default function StoricoTimbrature({ pin, utenti = [] }: StoricoTimbratureProps) {
   // Se non c'è PIN, mostra errore
   if (!pin) {
     return (
@@ -34,6 +37,8 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
       </AdminLayout>
     );
   }
+
+  const [, setLocation] = useLocation();
 
   const {
     dipendente,
@@ -73,6 +78,8 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
         {/* Header - FISSO */}
         <StoricoHeader
           dipendente={dipendente}
+          utenti={utenti}
+          onSelectDipendente={(nuovoPin) => setLocation(`/storico-timbrature/${nuovoPin}`)}
           onExportPDF={handleExportPDF}
           onExportXLS={handleExportXLS}
         />

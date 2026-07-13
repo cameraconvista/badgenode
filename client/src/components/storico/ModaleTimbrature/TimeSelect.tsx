@@ -27,7 +27,7 @@ export default function TimeSelect({ value, onChange, className = "", disabled =
     <div className={`flex gap-2 ${className}`}>
       {/* Selector Hours */}
       <Select.Root value={hours} onValueChange={handleHourChange} disabled={disabled}>
-        <Select.Trigger className="bn-field-input flex items-center justify-between w-full">
+        <Select.Trigger className="bn-field-input bn-time-field flex items-center justify-between">
           <Select.Value placeholder="HH" />
           <Select.Icon>
             <ChevronDown size={16} className="text-[#7A5A64]" />
@@ -57,7 +57,7 @@ export default function TimeSelect({ value, onChange, className = "", disabled =
 
       {/* Selector Minutes */}
       <Select.Root value={minutes} onValueChange={handleMinuteChange} disabled={disabled}>
-        <Select.Trigger className="bn-field-input flex items-center justify-between w-full">
+        <Select.Trigger className="bn-field-input bn-time-field flex items-center justify-between">
           <Select.Value placeholder="MM" />
           <Select.Icon>
             <ChevronDown size={16} className="text-[#7A5A64]" />
