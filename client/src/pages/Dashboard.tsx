@@ -75,8 +75,8 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Tabella riepilogo dipendenti — scrollabile. */}
-        <div className="min-h-0 flex-1">
+        {/* Tabella riepilogo dipendenti — scrolla SOLO internamente (come le altre sezioni). */}
+        <div className="min-h-0 flex-1 overflow-hidden">
           <DashboardTable rows={rows} totali={totali} isLoading={isLoading} isError={isError} />
         </div>
       </div>
