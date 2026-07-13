@@ -20,6 +20,7 @@ function PinField({
   onChange: (v: string) => void;
   revealable?: boolean;
 }) {
+  // Campi rivelabili (PIN attuale): oscurati di default, l'occhio permette di rivelare.
   const [show, setShow] = useState(false);
   return (
     <div className="space-y-2">
