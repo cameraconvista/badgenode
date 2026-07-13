@@ -1,4 +1,4 @@
-import { Users, Archive, History } from '@/lib/icons';
+import { Users, Archive, History, LayoutDashboard } from '@/lib/icons';
 import type { ComponentType } from 'react';
 
 /**
@@ -16,6 +16,13 @@ export interface AdminNavItem {
 }
 
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    href: '/dashboard',
+    icon: LayoutDashboard,
+    match: (p) => p.startsWith('/dashboard'),
+  },
   {
     id: 'timbrature',
     label: 'Timbrature',

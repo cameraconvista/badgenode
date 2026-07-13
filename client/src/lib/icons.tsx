@@ -14,6 +14,7 @@ import {
   FileSpreadsheet as FileSpreadsheetBase,
   FileText as FileTextBase,
   History as HistoryBase,
+  LayoutDashboard as LayoutDashboardBase,
   LogIn as LogInBase,
   LogOut as LogOutBase,
   Menu as MenuBase,
@@ -59,6 +60,7 @@ export const Edit = withThinStroke(EditBase);
 export const FileSpreadsheet = withThinStroke(FileSpreadsheetBase);
 export const FileText = withThinStroke(FileTextBase);
 export const History = withThinStroke(HistoryBase);
+export const LayoutDashboard = withThinStroke(LayoutDashboardBase);
 export const LogIn = withThinStroke(LogInBase);
 export const LogOut = withThinStroke(LogOutBase);
 export const Menu = withThinStroke(MenuBase);

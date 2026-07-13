@@ -10,6 +10,7 @@ import { isAuthRouteGuardsEnabled } from '@/config/featureFlags';
 import Home from '@/pages/Home';
 
 // Lazy loading per pagine non critiche (bundle optimization)
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const ArchivioDipendenti = lazy(() => import('@/pages/ArchivioDipendenti'));
 const ExDipendenti = lazy(() => import('@/pages/ExDipendenti'));
 const StoricoWrapper = lazy(() => import('@/components/storico/StoricoWrapper'));
@@ -27,6 +28,7 @@ function Router() {
     </div>}>
       <Switch>
         <Route path="/login" component={LoginPage} />
+        <Route path="/dashboard">{() => withAdminGuard(<Dashboard />)}</Route>
         <Route path="/archivio-dipendenti">{() => withAdminGuard(<ArchivioDipendenti />)}</Route>
         <Route path="/admin/ex-dipendenti">{() => withAdminGuard(<ExDipendenti />)}</Route>
         <Route path="/storico-timbrature/:pin">
