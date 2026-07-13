@@ -81,19 +81,14 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
   if (!isOpen || !utente) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black backdrop-blur-sm md:left-[16rem]">
+    <div className="bn-overlay fixed inset-0 z-50 flex items-center justify-center p-4 lg:left-[16rem]">
       <div
         ref={modalRef}
-        className="w-full max-w-3xl overflow-hidden rounded-3xl shadow-2xl border-2"
-        style={{
-          backgroundColor: '#FFFFFF',
-          borderColor: 'rgba(122, 18, 40, 0.25)',
-          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.10)'
-        }}
+        className="bn-admin-modal w-full max-w-3xl overflow-hidden"
         role="dialog" aria-modal="true" aria-labelledby="modal-title-storico"
       >
-        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
-          <h2 id="modal-title-storico" className="text-xl font-bold text-[#1C0A10]">
+        <div className="bn-admin-modal__header">
+          <h2 id="modal-title-storico" className="bn-admin-modal__title">
             Storico Timbrature — {utente.nome} {utente.cognome}
           </h2>
           <Button ref={closeBtnRef} variant="ghost" size="sm" onClick={onClose} className="p-2 hover:bg-white/10 text-[#7A5A64] hover:text-[#1C0A10]" aria-label="Chiudi modale">
@@ -115,7 +110,7 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
               <p className="text-[#7A5A64]">Nessuna timbratura registrata</p>
             </div>
           ) : (
-            <div className="border border-[rgba(122,18,40,0.15)] rounded-lg overflow-hidden bg-[#F8F3EE] max-h-[60vh]">
+            <div className="bn-admin-modal__box overflow-hidden max-h-[60vh]">
               <table className="w-full table-fixed border-collapse">
                 <colgroup>
                   <col style={{ width: '120px' }} />
@@ -152,15 +147,15 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
           )}
         </div>
 
-        <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
-          <Button type="button" onClick={onClose} className="bg-white border-2 border-[#7A1228] text-[#7A1228] hover:bg-[#F5EBE0] hover:shadow-md transition-all">
+        <div className="bn-admin-modal__footer">
+          <Button type="button" onClick={onClose} className="bn-modal-btn-cancel">
             Chiudi
           </Button>
           <a
             href={csvBlobUrl || undefined}
             download={fileName}
             onClick={(e) => { if (!csvBlobUrl) e.preventDefault(); }}
-            className={`inline-flex items-center justify-center rounded-md border-2 px-4 py-2 text-sm font-medium ${csvBlobUrl ? 'bg-[#7A1228] border-[#7A1228] text-white hover:bg-[#9B1E35]' : 'bg-[#E8DDD5] border-[#E8DDD5] text-[#7A5A64]/60 cursor-not-allowed'}`}
+            className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium ${csvBlobUrl ? 'bn-modal-btn-confirm' : 'bg-[#E8DDD5] border-2 border-[#E8DDD5] text-[#7A5A64]/60 cursor-not-allowed'}`}
           >
             Esporta CSV
           </a>

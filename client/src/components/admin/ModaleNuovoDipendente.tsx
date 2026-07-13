@@ -140,29 +140,24 @@ export default function ModaleNuovoDipendente({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm md:left-[16rem]">
+    <div className="bn-overlay fixed inset-0 z-50 flex items-center justify-center p-4 lg:left-[16rem]">
       <div
         ref={modalRef}
-        className="w-full max-w-[25.2rem] max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl border-2"
-        style={{
-          backgroundColor: '#FFFFFF',
-          borderColor: 'rgba(122, 18, 40, 0.25)',
-          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.10)',
-        }}
+        className="bn-admin-modal w-full max-w-[25.2rem] max-h-[90vh] overflow-hidden"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
-          <h2 id="modal-title" className="text-xl font-bold text-[#1C0A10]">
+        <div className="bn-admin-modal__header">
+          <h2 id="modal-title" className="bn-admin-modal__title">
             Aggiungi Nuovo Dipendente
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-white/10 text-[#7A5A64] hover:text-white"
+            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-[#7A1228]"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -182,20 +177,20 @@ export default function ModaleNuovoDipendente({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
+          <div className="bn-admin-modal__footer">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
               disabled={isLoading}
-              className="bg-white border-2 border-[#7A1228] text-[#7A1228] hover:bg-[#F5EBE0] hover:shadow-md transition-all"
+              className="bn-modal-btn-cancel"
             >
               Annulla
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-[#3E7D52] hover:bg-[#4A9061] text-white"
+              className="bn-modal-btn-confirm"
             >
               {isLoading ? 'Salvataggio...' : 'Salva'}
             </Button>

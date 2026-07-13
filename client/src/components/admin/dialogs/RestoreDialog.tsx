@@ -69,30 +69,25 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black bn-modal-overlay md:left-[16rem]"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bn-modal-overlay lg:left-[16rem]"
       style={{ backdropFilter: 'none', pointerEvents: 'auto' }}
     >
       <div
         ref={modalRef}
-        className="w-full max-w-lg overflow-hidden rounded-3xl border-2 bn-modal-solid z-[1001]"
-        style={{
-          backgroundColor: '#FFFFFF',
-          borderColor: 'rgba(122, 18, 40, 0.25)',
-          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.08)',
-        }}
+        className="bn-admin-modal w-full max-w-lg overflow-hidden z-[1001]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title-restore"
       >
-        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
-          <h2 id="modal-title-restore" className="text-xl font-bold text-[#1C0A10]">
+        <div className="bn-admin-modal__header">
+          <h2 id="modal-title-restore" className="bn-admin-modal__title">
             {!showSecondConfirm ? 'Ripristina Ex-Dipendente' : 'Conferma Ripristino'}
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-white"
+            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-[#7A1228]"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -101,7 +96,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
 
         <div className="p-6 space-y-4">
           <div className="flex justify-center">
-            <div className="p-3 rounded-full bg-[rgba(122,18,40,0.10)]">
+            <div className="bn-admin-modal__box p-3 !rounded-full">
               <AlertTriangle className="w-8 h-8 text-[#3E7D52]" />
             </div>
           </div>
@@ -142,14 +137,14 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
+        <div className="bn-admin-modal__footer">
           <Button
             ref={cancelButtonRef}
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="bg-white border-2 border-[#7A1228] text-[#7A1228]"
+            className="bn-modal-btn-cancel"
           >
             Annulla
           </Button>
@@ -157,7 +152,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
             type="button"
             onClick={handleProcedi}
             disabled={isLoading || (showSecondConfirm && !isPinValid())}
-            className="bg-[#7A1228] hover:bg-[#9B1E35] text-white border-2 border-[#7A1228]"
+            className="bn-modal-btn-confirm"
           >
             {isLoading ? 'Ripristino...' : !showSecondConfirm ? 'Continua' : 'Conferma'}
           </Button>

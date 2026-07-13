@@ -28,19 +28,19 @@ export default function ModalKit({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="bn-overlay bn-z-modal fixed inset-0 md:left-[16rem]" />
+        <Dialog.Overlay className="bn-overlay bn-z-modal fixed inset-0 lg:left-[16rem]" />
         <Dialog.Content
           onInteractOutside={preventDismiss ? (e) => e.preventDefault() : undefined}
           onPointerDownOutside={preventDismiss ? (e) => e.preventDefault() : undefined}
           onEscapeKeyDown={preventDismiss ? (e) => e.preventDefault() : undefined}
           /* Su desktop il centro è spostato a destra di metà sidebar (8rem) per
              centrare il modale nell'area contenuto, non sotto la sidebar. */
-          className={cn("bn-modal bn-z-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[96vw] max-w-[880px] max-h-[80vh] overflow-hidden focus:outline-none md:left-[calc(50%+8rem)]", contentClassName)}
+          className={cn("bn-modal bn-z-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[96vw] max-w-[880px] max-h-[80vh] overflow-hidden focus:outline-none lg:left-[calc(50%+8rem)]", contentClassName)}
         >
           <div className="bn-modal-header pr-12">
-            {title && <Dialog.Title className="text-[#1C0A10] text-xl font-semibold">{title}</Dialog.Title>}
+            {title && <Dialog.Title className="text-[#7A1228] text-xl font-bold">{title}</Dialog.Title>}
             {description && <Dialog.Description className="text-[#7A5A64] mt-1 text-sm">{description}</Dialog.Description>}
-            <Dialog.Close className="absolute right-4 top-4 text-[#7A5A64] hover:text-[#7A1228] transition-colors">
+            <Dialog.Close className="absolute right-4 top-4 text-[#7A5A64] hover:text-[#7A1228] transition-colors focus:outline-none">
               <X className="w-5 h-5"/>
             </Dialog.Close>
           </div>

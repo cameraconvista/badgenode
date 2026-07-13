@@ -143,10 +143,11 @@
 }
 
 /* Larghezza minima tabella e totali: mantiene le colonne leggibili e allineate
-   su schermo stretto, dove entrambe scorrono in orizzontale insieme. */
+   su schermo stretto, dove entrambe scorrono in orizzontale insieme. Somma
+   colonne colgroup (w-28×2 + w-20×2 + w-16×2 + w-10 = 552px). */
 .bn-table__table,
 .bn-table__totals {
-  min-width: 560px;
+  min-width: 552px;
 }
 .bn-table__totals {
   overflow-x: auto;
@@ -165,4 +166,26 @@
   width: 100%;
   border-collapse: collapse;
   margin: 0;
+}
+
+/* ── Tablet portrait + telefono (<1024px): padding celle ridotto ──────────────
+   Su schermo stretto il padding orizzontale da 1rem faceva sforare l'ultima
+   colonna ("Modifica"), tagliando l'icona matita sul bordo. Sotto 1024px si
+   comprime a 0.5rem: le 7 colonne rientrano senza scroll orizzontale. Il
+   desktop (≥1024px) resta identico. */
+@media (max-width: 1023px) {
+  .bn-table__cell,
+  .bn-table__header-cell {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  /* Le intestazioni non devono MAI far sforare la tabella: con table-fixed il
+     testo header più lungo della colonna (es. "Modifica" su colonna icona)
+     spingeva lo scrollWidth di pochi px, tagliando l'ultima colonna. Clipping
+     dentro la cella: la larghezza resta quella del colgroup, niente overflow. */
+  .bn-table__header-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

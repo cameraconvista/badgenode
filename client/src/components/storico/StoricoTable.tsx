@@ -146,7 +146,9 @@ export default function StoricoTable({
                 <th className="bn-table__header-cell">Uscita</th>
                 <th className="bn-table__header-cell tabular-nums">Ore</th>
                 <th className="bn-table__header-cell tabular-nums">Extra</th>
-                <th className="bn-table__header-cell">Modifica</th>
+                {/* Colonna solo-icona (matita): header senza testo per recuperare
+                    spazio. Etichetta accessibile mantenuta per screen reader. */}
+                <th className="bn-table__header-cell" aria-label="Modifica"></th>
               </tr>
             </thead>
 

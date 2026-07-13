@@ -50,13 +50,19 @@ Server:
 
 Le tre pagine admin (`ArchivioDipendenti`, `ExDipendenti`, `StoricoTimbrature`)
 sono avvolte da un guscio condiviso `client/src/components/admin/layout/AdminLayout.tsx`:
-- **desktop**: sidebar laterale persistente sempre visibile;
-- **mobile**: la stessa sidebar diventa un drawer a scomparsa, aperto dal trigger
-  in topbar (shadcn Sidebar/Sheet, base in `client/src/components/ui/sidebar/`).
-- Voci in `adminNavItems.ts`: Dipendenti · Ex-Dipendenti · Storico, più Timbratore
-  (ritorno al keypad) nel footer. Il guscio non contiene logica di business.
+- **≥1024px** (desktop, tablet landscape): sidebar laterale persistente a sinistra;
+- **<1024px** (tablet portrait, telefono): la stessa sidebar diventa un drawer a
+  scomparsa da destra, aperto dall'hamburger in topbar (shadcn Sidebar/Sheet, base
+  in `client/src/components/ui/sidebar/`). Soglia in `useIsSidebarDrawer()` (1024),
+  distinta da `useIsMobile()` (768) usata altrove.
+- Voci in `adminNavItems.ts`: Dipendenti · Ex-Dipendenti · Storico, più "Torna al
+  Badge" (ritorno al keypad) nel footer. Il guscio non contiene logica di business.
 - Le tabelle admin scorrono in orizzontale su schermo stretto (larghezza minima,
   header sticky) senza comprimere le colonne.
+- **Modali admin**: guscio visivo unico via classi `.bn-admin-modal*` +
+  `.bn-modal-btn-{confirm,danger,cancel}` (in `styles/badgenode.css`) — sfondo crema,
+  campi bianchi, titolo rosso, pulsanti semantici. La struttura/logica di ogni modale
+  resta nel suo componente; le classi danno solo l'aspetto condiviso.
 
 ## Stato auth reale
 

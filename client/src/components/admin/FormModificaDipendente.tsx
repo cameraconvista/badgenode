@@ -1,6 +1,5 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User } from "@/lib/icons";
 import { UtenteInput } from '@/services/utenti.service';
 
 interface FormModificaDipendenteProps {
@@ -21,10 +20,6 @@ export default function FormModificaDipendente({
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-4">
-          <User className="w-5 h-5 text-[#7A1228]" />
-        </div>
-
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="nome" className="text-[#1C0A10]">

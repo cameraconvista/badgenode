@@ -2,6 +2,42 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-13 — Responsive tablet + consolidamento modali admin
+
+- **Sidebar a drawer sotto 1024px** (tablet portrait + telefono), fissa da 1024px
+  (desktop + tablet landscape). Soglia dedicata `useIsSidebarDrawer()` (=1024) in
+  `hooks/use-mobile.tsx`, separata da `useIsMobile()` (=768) che NON è cambiata:
+  così la sidebar diventa drawer su tablet SENZA spostare il confine `md:` del
+  resto della UI. Coerenza classi: SidebarMain `lg:block/lg:flex`, topbar AdminLayout
+  `lg:hidden`. **Perché:** su iPad portrait la sidebar fissa (256px) tagliava le
+  colonne delle tabelle (Dipendenti −104/−170px, Storico "Extra" −56/−70px);
+  liberando la larghezza il taglio sparisce senza toccare le tabelle.
+- **Drawer da destra** (`side="right"` solo sul SheetContent mobile) coerente con
+  l'hamburger in topbar a destra; sidebar fissa desktop resta a sinistra. Icona
+  trigger = hamburger `Menu` (3 linee) 40px touch-friendly. Overlay drawer = classe
+  `bn-overlay` (blur 6px) come i modali.
+- **Head bar mobile a 3 zone**: logo sx, titolo centrato geometricamente (absolute
+  left-1/2), hamburger dx (standard nativo).
+- **Storico**: header ultima colonna "Modifica" svuotato (solo icona matita),
+  `ColGroupStorico` w-12→w-10, `min-width` tabella 560→552px. Media query
+  `max-width:1023px`: padding celle 1rem→0.5rem + header `ellipsis nowrap` per non
+  far sforare le colonne su schermo stretto. Desktop invariato.
+- **Guscio modale admin unico** (`.bn-admin-modal` + `__header/__title/__body/__footer/__box`
+  in badgenode.css): sfondo app crema #F8F3EE, box/campi interni bianchi, titolo
+  rosso #7A1228, testo nero #1C0A10. 3 pulsanti semantici: `.bn-modal-btn-confirm`
+  (verde #3E7D52), `.bn-modal-btn-danger` (rosso #C0392B, per Elimina/Archivia),
+  `.bn-modal-btn-cancel` (bianco bordo rosso). Applicato ai 7 modali admin (Nuovo,
+  Modifica, Elimina, Archivia, Ripristina, Elimina-ex, Storico-ex) toccando SOLO le
+  classi visive — logiche (focus-trap, doppie conferme, submit, mutation) intatte.
+  Corretti bug contrasto residui (testo bianco/red-300 su sfondo chiaro).
+  `.bn-modal` (usato dal modale Timbrature) NON toccato. **Perché:** i modali erano
+  costruiti in 4 modi diversi con colori sparsi (verde/rosso/ambra/bordeaux per lo
+  stesso significato); serviva coerenza senza riscrivere logica critica su DB reale.
+- **Overlay modali centrati su tutto lo schermo sotto 1024px**: il margine sidebar
+  degli overlay cambiato da `md:left-[16rem]` a `lg:left-[16rem]` (8 file). Sotto
+  1024px la sidebar è drawer → l'overlay copre tutto e il modale è centrato pieno;
+  da 1024px resta spostato nell'area contenuto a destra della sidebar fissa.
+
 ## 2026-07-13 — Consolidamento UI admin (colori, tabelle, modali, sidebar)
 
 - **Standard tabella unico** (rif. Storico): header bar bordeaux #7A1228 + testo

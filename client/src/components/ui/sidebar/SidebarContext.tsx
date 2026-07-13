@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsSidebarDrawer } from '@/hooks/use-mobile';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -46,7 +46,9 @@ function SidebarProvider({
   children,
   ...props
 }: SidebarProviderProps) {
-  const isMobile = useIsMobile();
+  // Soglia 1024px: la sidebar è un drawer su tablet portrait + telefono, fissa da
+  // desktop/tablet-landscape. Il nome `isMobile` resta per compatibilità API shadcn.
+  const isMobile = useIsSidebarDrawer();
   const [openMobile, setOpenMobile] = React.useState(false);
 
   // This is the internal state of the sidebar.

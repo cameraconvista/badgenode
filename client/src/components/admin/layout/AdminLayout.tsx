@@ -78,11 +78,20 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
         </Sidebar>
 
         <SidebarInset className="h-full min-h-0 overflow-hidden bg-[#F8F3EE]">
-          {/* Topbar visibile solo su mobile: apre il drawer. */}
-          <div className="flex items-center gap-3 border-b border-[rgba(122,18,40,0.12)] bg-white px-4 py-3 md:hidden">
-            <SidebarTrigger className="text-[#7A1228]" />
+          {/* Topbar visibile su telefono e tablet portrait (<1024px): apre il drawer.
+              Sopra 1024px la sidebar è fissa a lato e la topbar sparisce. */}
+          {/* Head bar a 3 zone (standard nativo): logo a sinistra, titolo centrato
+              geometricamente (absolute, indipendente da logo/hamburger), trigger a
+              destra. Il titolo centrato resta tale a prescindere dalle larghezze. */}
+          <div className="relative flex items-center border-b border-[rgba(122,18,40,0.12)] bg-white px-4 py-3 lg:hidden">
             <img src="/logo_badgenode.png" alt="BADGENODE" className="h-7 w-auto" />
-            {title ? <span className="ml-1 font-semibold text-[#1C0A10]">{title}</span> : null}
+            {title ? (
+              <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 font-semibold text-[#1C0A10]">
+                {title}
+              </span>
+            ) : null}
+            {/* Trigger drawer allineato a destra (standard tablet app). */}
+            <SidebarTrigger className="ml-auto text-[#7A1228]" />
           </div>
 
           <div className="min-h-0 flex-1 overflow-hidden p-3 md:p-4">{children}</div>

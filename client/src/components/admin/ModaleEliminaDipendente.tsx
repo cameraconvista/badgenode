@@ -76,29 +76,24 @@ export default function ModaleEliminaDipendente({
   if (!isOpen || !utente) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm md:left-[16rem]">
+    <div className="bn-overlay fixed inset-0 z-50 flex items-center justify-center p-4 lg:left-[16rem]">
       <div
         ref={modalRef}
-        className="w-full max-w-lg overflow-hidden rounded-3xl shadow-2xl border-2"
-        style={{
-          backgroundColor: '#FFFFFF',
-          borderColor: 'rgba(122, 18, 40, 0.25)',
-          boxShadow: '0 8px 40px rgba(122, 18, 40, 0.10)',
-        }}
+        className="bn-admin-modal w-full max-w-lg overflow-hidden"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[rgba(122,18,40,0.12)]">
-          <h2 id="modal-title" className="text-xl font-bold text-[#1C0A10]">
+        <div className="bn-admin-modal__header">
+          <h2 id="modal-title" className="bn-admin-modal__title">
             {!showConferma ? 'Elimina Dipendente' : 'CONFERMA ELIMINAZIONE'}
           </h2>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="p-2 hover:bg-white/10 text-[#7A5A64] hover:text-white"
+            className="p-2 hover:bg-transparent text-[#7A5A64] hover:text-[#7A1228]"
             aria-label="Chiudi modale"
           >
             <X className="w-5 h-5" />
@@ -135,19 +130,19 @@ export default function ModaleEliminaDipendente({
                 <p className="text-xl font-bold text-[#1C0A10]">
                   {utente.nome} {utente.cognome}
                 </p>
-                <p className="text-red-300">Tutti i dati associati andranno persi.</p>
+                <p className="text-red-600">Tutti i dati associati andranno persi.</p>
               </>
             )}
           </div>
 
           {/* Avviso operazione irreversibile */}
           {!showConferma && (
-            <div className="bg-red-900/30 border border-red-600/50 rounded-lg p-4">
+            <div className="bn-admin-modal__box">
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle className="w-5 h-5 text-red-600" />
                 <p className="font-semibold text-red-600">Operazione irreversibile</p>
               </div>
-              <p className="text-sm text-white">
+              <p className="text-sm text-[#1C0A10]">
                 Tutti i dati associati al dipendente andranno persi definitivamente. Si consiglia di
                 esportare lo storico prima di procedere.
               </p>
@@ -156,14 +151,14 @@ export default function ModaleEliminaDipendente({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 p-6 border-t border-[rgba(122,18,40,0.12)]">
+        <div className="bn-admin-modal__footer">
           <Button
             ref={cancelButtonRef}
             type="button"
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="bg-white border-2 border-[#7A1228] text-[#7A1228] hover:bg-[#F5EBE0] hover:shadow-md transition-all"
+            className="bn-modal-btn-cancel"
           >
             Annulla
           </Button>
@@ -171,7 +166,7 @@ export default function ModaleEliminaDipendente({
             type="button"
             onClick={handleProcedi}
             disabled={isLoading}
-            className="bg-red-600 hover:bg-red-700 text-white border-2 border-red-600"
+            className="bn-modal-btn-danger"
           >
             {isLoading ? 'Eliminazione...' : !showConferma ? 'Procedi' : 'ELIMINA DEFINITIVAMENTE'}
           </Button>

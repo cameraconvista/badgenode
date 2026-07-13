@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cva, VariantProps } from 'class-variance-authority';
-import { PanelLeftIcon } from "@/lib/icons";
+import { Menu } from "@/lib/icons";
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -76,7 +76,9 @@ function Sidebar({
               '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
             } as React.CSSProperties
           }
-          side={side}
+          /* Drawer sempre da destra, coerente con l'hamburger in alto a destra.
+             La sidebar FISSA desktop resta a sinistra (ramo sotto, side invariato). */
+          side="right"
         >
           <SheetTitle className="sr-only">Menu di navigazione</SheetTitle>
           <div className={cn(sidebarVariants({ side, variant }), 'h-full w-full', className)}>
@@ -89,7 +91,7 @@ function Sidebar({
 
   return (
     <div
-      className="group peer hidden md:block text-sidebar-foreground"
+      className="group peer hidden lg:block text-sidebar-foreground"
       data-state={state}
       data-collapsible={state === 'collapsed' ? collapsible : ''}
       data-variant={variant}
@@ -108,7 +110,7 @@ function Sidebar({
       />
       <div
         className={cn(
-          'duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex',
+          'duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear lg:flex',
           side === 'left'
             ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
             : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
@@ -139,14 +141,14 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn('h-7 w-7', className)}
+      className={cn('h-10 w-10 [&_svg]:size-6', className)}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <Menu />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

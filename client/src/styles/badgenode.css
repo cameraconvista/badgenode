@@ -370,7 +370,7 @@ img[src*="logo_home"] {
 .bn-pop-item[data-state="checked"] { background: rgba(122, 18, 40, 0.08); }
 .bn-pop * { background: transparent; }
 
-.bn-modal-overlay { background-color: rgba(28, 10, 16, 0.60) !important; backdrop-filter: none !important; z-index: 60 !important; pointer-events: all !important; }
+.bn-modal-overlay { background-color: rgba(28, 10, 16, 0.50) !important; backdrop-filter: blur(6px) !important; z-index: 60 !important; pointer-events: all !important; }
 .bn-modal-solid { background-color: #FFFFFF !important; box-shadow: none !important; position: relative; z-index: 70 !important; isolation: isolate; mix-blend-mode: normal !important; opacity: 1 !important; }
 /* Neutralizza override globali di hover trasparente dentro i modali */
 .bn-modal-solid *:hover,
@@ -388,11 +388,95 @@ img[src*="logo_home"] {
 .bn-modal-solid *:hover,
 .bn-modal-solid *:focus { opacity: 1 !important; }
 
-.bn-modal       { background: #FFFFFF !important; border: 1.5px solid var(--bn-border) !important; border-radius: 18px !important; box-shadow: var(--bn-shadow) !important; color: #1C0A10; }
-.bn-modal-header{ padding: 18px 22px; border-bottom: 1px solid var(--bn-border); }
+/* Guscio ModalKit (Storico): sfondo app crema, coerente coi modali admin.
+   Le sezioni Entrata=verde/Uscita=rosso e i campi restano colorati (scelta
+   funzionale gestita nei componenti, non qui). */
+.bn-modal       { background: #F8F3EE !important; border: 1.5px solid rgba(122, 18, 40, 0.20) !important; border-radius: 20px !important; box-shadow: 0 20px 60px rgba(122, 18, 40, 0.18) !important; color: #1C0A10; }
+.bn-modal-header{ padding: 18px 22px; border-bottom: 1px solid rgba(122, 18, 40, 0.12); }
 .bn-modal-body  { padding: 18px 22px; }
-.bn-modal-footer{ padding: 16px 22px; border-top: 1px solid var(--bn-border); display:flex; gap:12px; justify-content:flex-end; }
+.bn-modal-footer{ padding: 16px 22px; border-top: 1px solid rgba(122, 18, 40, 0.12); display:flex; gap:12px; justify-content:flex-end; }
 .bn-overlay     { background: rgba(28, 10, 16, 0.50) !important; backdrop-filter: blur(6px); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GUSCIO MODALE ADMIN — standard unico (sfondo app crema, box interni bianchi,
+   titolo rosso, testo nero). Tutti i modali dell'area admin usano queste classi
+   così hanno struttura e colori identici: cambia solo il contenuto. NON tocca
+   `.bn-modal` (usato dal modale Timbrature, che ha uno stile proprio).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Box del modale: sfondo crema come l'app */
+.bn-admin-modal {
+  background-color: #F8F3EE !important;
+  border: 1.5px solid rgba(122, 18, 40, 0.20) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 60px rgba(122, 18, 40, 0.18) !important;
+  color: #1C0A10 !important;
+}
+
+/* Header: titolo rosso + separatore sottile */
+.bn-admin-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(122, 18, 40, 0.12);
+}
+.bn-admin-modal__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #7A1228;
+}
+
+/* Corpo */
+.bn-admin-modal__body { padding: 24px; }
+
+/* Footer: pulsanti a destra, separatore sottile */
+.bn-admin-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid rgba(122, 18, 40, 0.12);
+}
+
+/* Box interni (campi, riquadri informativi, tabelle): sempre bianchi */
+.bn-admin-modal__box {
+  background-color: #FFFFFF !important;
+  border: 1px solid rgba(122, 18, 40, 0.15);
+  border-radius: 12px;
+}
+
+/* Campi input/textarea dentro i modali admin: bianchi */
+.bn-admin-modal input,
+.bn-admin-modal textarea,
+.bn-admin-modal select {
+  background-color: #FFFFFF !important;
+}
+
+/* ── Pulsanti modale: 3 varianti semantiche uniche ──────────────────────────
+   primario/conferma = verde · distruttivo (elimina/archivia) = rosso ·
+   annulla = bianco bordo rosso. Colori dalla palette del progetto. */
+.bn-modal-btn-confirm {
+  background-color: #3E7D52 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #3E7D52 !important;
+}
+.bn-modal-btn-confirm:hover { background-color: #4A9061 !important; border-color: #4A9061 !important; }
+
+.bn-modal-btn-danger {
+  background-color: #C0392B !important;
+  color: #FFFFFF !important;
+  border: 1px solid #C0392B !important;
+}
+.bn-modal-btn-danger:hover { background-color: #A93226 !important; border-color: #A93226 !important; }
+
+.bn-modal-btn-cancel {
+  background-color: #FFFFFF !important;
+  color: #7A1228 !important;
+  border: 1.5px solid #7A1228 !important;
+}
+.bn-modal-btn-cancel:hover { background-color: #F5EBE0 !important; }
 
 .bn-toast       { background: #FFFFFF !important; color: #1C0A10 !important; border: 1px solid var(--bn-border) !important; border-radius: 12px !important; box-shadow: var(--bn-shadow) !important; }
 .bn-toast-title { color: #1C0A10; font-weight: 700; }

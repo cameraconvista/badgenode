@@ -15,6 +15,7 @@ import {
   History as HistoryBase,
   LogIn as LogInBase,
   LogOut as LogOutBase,
+  Menu as MenuBase,
   PanelLeft as PanelLeftBase,
   Pencil as EditBase,
   Plus as PlusBase,
@@ -58,6 +59,7 @@ export const FileText = withThinStroke(FileTextBase);
 export const History = withThinStroke(HistoryBase);
 export const LogIn = withThinStroke(LogInBase);
 export const LogOut = withThinStroke(LogOutBase);
+export const Menu = withThinStroke(MenuBase);
 export const PanelLeftIcon = withThinStroke(PanelLeftBase);
 export const Plus = withThinStroke(PlusBase);
 export const RotateCcw = withThinStroke(RotateCcwBase);
