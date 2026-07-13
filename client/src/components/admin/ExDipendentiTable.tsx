@@ -70,10 +70,11 @@ export default function ExDipendentiTable({
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Tabella TableKit Standard */}
-      <div className="border border-[rgba(122,18,40,0.15)] rounded-lg overflow-hidden bg-white flex-1 flex flex-col shadow-[0_10px_30px_rgba(122,18,40,0.20)]">
-        <div className="flex-1 overflow-auto overscroll-contain">
+    <div className="h-full flex flex-col p-1">
+      {/* Wrapper ombra: rounded + shadow SENZA overflow-hidden (angoli rispettati). */}
+      <div className="flex-1 flex flex-col rounded-xl shadow-[0_12px_28px_-6px_rgba(122,18,40,0.30)]">
+        <div className="border border-[rgba(122,18,40,0.15)] rounded-xl overflow-hidden bg-white flex-1 flex flex-col">
+          <div className="flex-1 overflow-auto overscroll-contain">
           <table className="w-full min-w-[680px] table-fixed border-collapse bn-archivio bn-nohover exdip-table">
             <colgroup>
               {[
@@ -169,6 +170,7 @@ export default function ExDipendentiTable({
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>

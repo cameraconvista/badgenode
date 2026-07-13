@@ -27,10 +27,10 @@ export default function StoricoHeader({
       </h1>
       {/* Azioni di export: stessa riga del nome (centrate verticalmente sul titolo) */}
       <div className="absolute right-0 top-1/2 flex -translate-y-1/2 gap-3">
-        <button onClick={onExportPDF} className="bn-export-btn">
+        <button onClick={onExportPDF} className="bn-export-btn" title="Esporta PDF">
           <FileText className="bn-export-icon text-red-600" aria-label="Esporta PDF" />
         </button>
-        <button onClick={onExportXLS} className="bn-export-btn">
+        <button onClick={onExportXLS} className="bn-export-btn" title="Esporta Excel">
           <FileSpreadsheet className="bn-export-icon text-[#3E7D52]" aria-label="Esporta Excel" />
         </button>
       </div>

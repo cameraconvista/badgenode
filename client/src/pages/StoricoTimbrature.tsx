@@ -87,7 +87,7 @@ export default function StoricoTimbrature({ pin }: StoricoTimbratureProps) {
         </div>
 
         {/* Tabella - SCROLLABILE */}
-        <div className="min-h-0 flex-1">
+        <div className="min-h-0 flex-1 p-1">
           <StoricoTable
             timbrature={turniGiornalieri}
             storicoDataset={storicoDataset}
