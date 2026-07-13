@@ -78,9 +78,6 @@ export default function StoricoFilters({
     }
   };
 
-
-  // const ranges = getDateRanges(); // Commentato per evitare warning unused
-
   return (
     <div className="bn-solid-surface bn-border rounded-xl px-4 md:px-6 py-3 md:py-4 space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

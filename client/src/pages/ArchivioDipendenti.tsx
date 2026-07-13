@@ -69,9 +69,8 @@ export default function ArchivioDipendenti() {
         
         // Invalida cache ex-dipendenti per aggiornamento immediato
         queryClient.invalidateQueries({ queryKey: ['ex-dipendenti'] });
-        
-        // Toast di successo
-        console.log('Dipendente archiviato con successo');
+
+        // TODO(BUSINESS): Implementare toast di successo
       } else {
         // Gestione errori con messaggi specifici
         const errorMessage = getErrorMessage(result.error?.code);

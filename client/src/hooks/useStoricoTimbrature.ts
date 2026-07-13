@@ -5,8 +5,6 @@ import { GiornoLogicoDettagliato } from '@/lib/storico/types';
 import { aggregateTimbratureByGiornoLogico } from '@/lib/storico/aggregate';
 import { UtentiService } from '@/services/utenti.service';
 import { TimbratureService } from '@/services/timbrature.service';
-// Lazy-load condizionale per export (feature flag VITE_FEATURE_LAZY_EXPORT)
-// import { useStoricoExport } from '@/hooks/useStoricoExport';
 import { useAuth } from '@/contexts/AuthContext';
 import { subscribeTimbrature } from '@/lib/realtime';
 import {
@@ -246,9 +244,6 @@ export function useStoricoTimbrature(pin: number) {
       console.error('[useStoricoTimbrature] Export Excel failed:', error);
     }
   }, [normalizedDipendente, turniGiornalieri, filters, toast]);
-
-  // Hook per mutations (deprecato - ora gestito direttamente in StoricoTimbrature)
-  // const { updateMutation, deleteMutation } = useStoricoMutations(...);
 
   const _handleRealtimeChange = useCallback((_payload: unknown) => { void _payload; }, []);
 
