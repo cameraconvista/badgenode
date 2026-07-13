@@ -43,10 +43,10 @@ export default function ModaleTimbratureView({
     : 'Sconosciuto';
 
   const title = (
-    <>
-      <span className="block text-[#1C0A10]">Modifica Timbrature</span>
-      <span className="block">{fullName}</span>
-    </>
+    <div className="-mr-12">
+      <span className="block text-center text-[#1C0A10]">Modifica Timbrature</span>
+      <span className="block text-center">{fullName}</span>
+    </div>
   );
 
   // Footer rimosso - pulsanti ora nel body
