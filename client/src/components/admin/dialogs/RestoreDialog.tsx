@@ -69,7 +69,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black bn-modal-overlay"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black bn-modal-overlay md:left-[16rem]"
       style={{ backdropFilter: 'none', pointerEvents: 'auto' }}
     >
       <div
@@ -102,7 +102,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
         <div className="p-6 space-y-4">
           <div className="flex justify-center">
             <div className="p-3 rounded-full bg-[rgba(122,18,40,0.10)]">
-              <AlertTriangle className="w-8 h-8 text-green-700" />
+              <AlertTriangle className="w-8 h-8 text-[#3E7D52]" />
             </div>
           </div>
 
@@ -119,7 +119,7 @@ export function RestoreDialog({ isOpen, onClose, utente, onConfirm, isLoading }:
               </>
             ) : (
               <>
-                <p className="text-green-700 text-lg font-bold">Confermi il ripristino?</p>
+                <p className="text-[#3E7D52] text-lg font-bold">Confermi il ripristino?</p>
                 <p className="text-sm text-[#7A5A64]">
                   Assegna un <span className="font-semibold">nuovo PIN</span> (1-99):
                 </p>

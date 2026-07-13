@@ -140,7 +140,7 @@ export default function ModaleNuovoDipendente({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm md:left-[16rem]">
       <div
         ref={modalRef}
         className="w-full max-w-[25.2rem] max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl border-2"
@@ -195,7 +195,7 @@ export default function ModaleNuovoDipendente({
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-[#7A1228] hover:bg-[#9B1E35] text-white"
+              className="bg-[#3E7D52] hover:bg-[#4A9061] text-white"
             >
               {isLoading ? 'Salvataggio...' : 'Salva'}
             </Button>

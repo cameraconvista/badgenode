@@ -81,7 +81,7 @@ export default function ExStoricoModal({ isOpen, onClose, utente, archiviatoIl, 
   if (!isOpen || !utente) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black backdrop-blur-sm md:left-[16rem]">
       <div
         ref={modalRef}
         className="w-full max-w-3xl overflow-hidden rounded-3xl shadow-2xl border-2"

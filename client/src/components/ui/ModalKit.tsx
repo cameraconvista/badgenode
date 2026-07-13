@@ -28,12 +28,14 @@ export default function ModalKit({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="bn-overlay bn-z-modal fixed inset-0" />
+        <Dialog.Overlay className="bn-overlay bn-z-modal fixed inset-0 md:left-[16rem]" />
         <Dialog.Content
           onInteractOutside={preventDismiss ? (e) => e.preventDefault() : undefined}
           onPointerDownOutside={preventDismiss ? (e) => e.preventDefault() : undefined}
           onEscapeKeyDown={preventDismiss ? (e) => e.preventDefault() : undefined}
-          className={cn("bn-modal bn-z-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[96vw] max-w-[880px] max-h-[80vh] overflow-hidden focus:outline-none", contentClassName)}
+          /* Su desktop il centro è spostato a destra di metà sidebar (8rem) per
+             centrare il modale nell'area contenuto, non sotto la sidebar. */
+          className={cn("bn-modal bn-z-modal fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[96vw] max-w-[880px] max-h-[80vh] overflow-hidden focus:outline-none md:left-[calc(50%+8rem)]", contentClassName)}
         >
           <div className="bn-modal-header pr-12">
             {title && <Dialog.Title className="text-[#1C0A10] text-xl font-semibold">{title}</Dialog.Title>}

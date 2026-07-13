@@ -193,6 +193,18 @@ export function getMeseItaliano(data: string): string {
 }
 
 /**
+ * Formatta una data (timestamp ISO o Date) come "04 Luglio 2026":
+ * giorno a 2 cifre, mese esteso capitalizzato, anno.
+ */
+export function formatDataGiornoMeseAnno(data: string | Date): string {
+  const d = typeof data === 'string' ? new Date(data) : data;
+  const giorno = d.toLocaleDateString('it-IT', { day: '2-digit' });
+  const mese = d.toLocaleDateString('it-IT', { month: 'long' });
+  const anno = d.toLocaleDateString('it-IT', { year: 'numeric' });
+  return `${giorno} ${mese.charAt(0).toUpperCase()}${mese.slice(1)} ${anno}`;
+}
+
+/**
  * Formatta timestamp created_at per visualizzazione (solo secondi, no millisecondi)
  */
 export function formatCreatedAt(created_at: string): string {

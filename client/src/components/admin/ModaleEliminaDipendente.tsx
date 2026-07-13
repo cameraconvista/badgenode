@@ -76,7 +76,7 @@ export default function ModaleEliminaDipendente({
   if (!isOpen || !utente) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm md:left-[16rem]">
       <div
         ref={modalRef}
         className="w-full max-w-lg overflow-hidden rounded-3xl shadow-2xl border-2"
@@ -147,7 +147,7 @@ export default function ModaleEliminaDipendente({
                 <AlertTriangle className="w-5 h-5 text-red-600" />
                 <p className="font-semibold text-red-600">Operazione irreversibile</p>
               </div>
-              <p className="text-sm text-red-300">
+              <p className="text-sm text-white">
                 Tutti i dati associati al dipendente andranno persi definitivamente. Si consiglia di
                 esportare lo storico prima di procedere.
               </p>

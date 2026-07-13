@@ -12,6 +12,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  box-shadow: 0 10px 30px rgba(122, 18, 40, 0.20);
 }
 
 /* Header sticky - bordeaux pieno */

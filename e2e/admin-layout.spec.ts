@@ -58,8 +58,8 @@ test.describe('Sidebar admin persistente (desktop)', () => {
       for (const label of NAV_LABELS) {
         await expect(page.getByRole('button', { name: label }).first()).toBeVisible();
       }
-      // Voce Timbratore (ritorno al keypad) presente nel footer.
-      await expect(page.getByRole('button', { name: 'Timbratore' }).first()).toBeVisible();
+      // Voce di ritorno al keypad (footer sidebar).
+      await expect(page.getByRole('button', { name: 'Torna al Badge' }).first()).toBeVisible();
     });
   }
 

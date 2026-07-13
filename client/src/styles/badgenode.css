@@ -231,6 +231,11 @@ img[src*="logo_home"] {
   font-weight: 500;
 }
 
+/* Date (es. Data Archiviazione): senza grassetto */
+.bn-archivio .bn-cell span.bn-date-cell {
+  font-weight: 400;
+}
+
 /* Icona "storico" — dimensione allineata allo standard Storico (16px = h-4 w-4).
    Colore bordeaux chiaro mantenuto. */
 .icon-storico {
@@ -285,6 +290,16 @@ img[src*="logo_home"] {
 .exdip-table tbody tr[data-state="hover"],
 .exdip-table tbody tr[data-state="selected"] {
   background: var(--card) !important;
+}
+
+/* Colorazione alternata righe (zebra) — solo Dipendenti ed Ex-Dipendenti.
+   Crema tenue coerente con la palette: sobrio, elegante, non invasivo. */
+.archivio-table tbody tr.bn-row:nth-child(even),
+.archivio-table tbody tr.bn-row:nth-child(even):hover,
+.exdip-table tbody tr:nth-child(even),
+.exdip-table tbody tr.bn-row:nth-child(even),
+.exdip-table tbody tr.bn-row:nth-child(even):hover {
+  background-color: #FAF4EE !important;
 }
 
 /* Azioni centrate come Archivio */
@@ -494,11 +509,11 @@ img[src*="logo_home"] {
 }
 
 .bn-btn-success {
-  background: #7A1228;
+  background: #3E7D52;
   color: #fff;
 }
 .bn-btn-success:hover {
-  background: #9B1E35;
+  background: #4A9061;
 }
 
 /* Modale form fields */

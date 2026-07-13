@@ -73,7 +73,7 @@ export default function ModaleTimbratureView({
       <div className="bn-timbrature-grid">
         {/* ENTRATA */}
         <section>
-          <h3 className="text-green-700 font-semibold mb-3 text-lg">Entrata</h3>
+          <h3 className="text-[#3E7D52] font-semibold mb-3 text-lg">Entrata</h3>
           <div className="bn-field-row">
             <div>
               <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Data</label>

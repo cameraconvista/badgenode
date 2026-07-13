@@ -86,12 +86,12 @@ export default function ExDipendenti() {
     <AdminLayout title="Ex-Dipendenti">
       <div className="flex h-full flex-col">
         <div className="mb-4 text-center">
-          <h1 className="text-2xl font-bold text-[#1C0A10]">Ex-Dipendenti</h1>
+          <h1 className="text-2xl font-bold text-[#7A1228]">Ex-Dipendenti</h1>
         </div>
-        {/* Spaziatura per allineare l'header bar della tabella al pulsante
-            "Ex-Dipendenti" della sidebar, come avviene in Dipendenti (che ha
-            un sottotitolo in più). Non tocca il titolo. */}
-        <div className="min-h-0 flex-1 overflow-hidden pt-20">
+        {/* Spaziatura che compensa il sottotitolo assente (presente in Dipendenti),
+            così l'header bar della tabella parte alla STESSA altezza di Dipendenti.
+            Non tocca il titolo. */}
+        <div className="min-h-0 flex-1 overflow-hidden pt-8">
           <ExDipendentiTable
             exDipendenti={exDipendenti}
             isLoading={isLoading}

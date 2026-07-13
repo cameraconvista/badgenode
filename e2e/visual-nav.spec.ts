@@ -29,9 +29,12 @@ test.describe('Navigazione pagine', () => {
     await expect(page.getByRole('heading', { name: 'Archivio Dipendenti' })).toBeVisible();
   });
 
-  test('storico timbrature carica con intestazione', async ({ page }) => {
+  test('storico timbrature carica nel guscio admin', async ({ page }) => {
     await page.goto('/storico-timbrature');
-    await expect(page.getByRole('heading', { name: 'Storico Timbrature' })).toBeVisible();
+    // L'intestazione "Storico Timbrature" è stata rimossa (ora l'header mostra il
+    // nome del dipendente): verifica invece che la pagina monti nel guscio admin
+    // (logo BADGENODE presente sia su desktop che nella topbar mobile).
+    await expect(page.getByRole('img', { name: 'BADGENODE' }).first()).toBeVisible();
   });
 
   test('rotta inesistente mostra la pagina 404', async ({ page }) => {

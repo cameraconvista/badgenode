@@ -139,13 +139,21 @@ export default function ArchivioDipendenti() {
   return (
     <AdminLayout title="Dipendenti">
       <div className="flex h-full flex-col">
-        <div className="mb-4 text-center">
-          <h1 className="mb-1 text-2xl font-bold text-[#1C0A10]">Archivio Dipendenti</h1>
-          <p className="text-base font-medium text-[#7A1228] md:text-lg">
+        <div className="relative mb-4 text-center">
+          <h1 className="mb-1 text-2xl font-bold text-[#7A1228]">Archivio Dipendenti</h1>
+          <p className="text-base font-medium text-[#1C0A10] md:text-lg">
             {utenti.length} dipendenti attivi
           </p>
+          {/* Pulsante Aggiungi in alto a destra (non altera l'altezza del blocco titolo). */}
+          <Button
+            onClick={() => setShowModaleNuovo(true)}
+            className="absolute right-0 top-0 flex items-center gap-2 bg-[#3E7D52] text-white hover:bg-[#4A9061]"
+          >
+            <Plus className="h-4 w-4" />
+            Aggiungi
+          </Button>
         </div>
-        <div className="mb-4 min-h-0 flex-1 overflow-hidden">
+        <div className="min-h-0 flex-1 overflow-hidden">
           <ArchivioTable
             utenti={utenti}
             isLoading={isLoading}
@@ -154,15 +162,6 @@ export default function ArchivioDipendenti() {
             onArchivia={handleArchivia}
             onElimina={handleEliminaClick}
           />
-        </div>
-        <div className="flex items-center justify-end pt-1">
-          <Button
-            onClick={() => setShowModaleNuovo(true)}
-            className="flex items-center gap-2 bg-[#7A1228] text-white hover:bg-[#9B1E35]"
-          >
-            <Plus className="h-4 w-4" />
-            Aggiungi
-          </Button>
         </div>
       </div>
 

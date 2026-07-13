@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { History, Users, AlertCircle, RotateCcw, Trash2 } from "@/lib/icons";
 import { ExDipendente } from '@/services/utenti.service';
+import { formatDataGiornoMeseAnno } from '@/lib/time';
 
 interface ExDipendentiTableProps {
   exDipendenti: ExDipendente[];
@@ -71,7 +72,7 @@ export default function ExDipendentiTable({
   return (
     <div className="h-full flex flex-col">
       {/* Tabella TableKit Standard */}
-      <div className="border border-[rgba(122,18,40,0.15)] rounded-lg overflow-hidden bg-white flex-1 flex flex-col">
+      <div className="border border-[rgba(122,18,40,0.15)] rounded-lg overflow-hidden bg-white flex-1 flex flex-col shadow-[0_10px_30px_rgba(122,18,40,0.20)]">
         <div className="flex-1 overflow-auto overscroll-contain">
           <table className="w-full min-w-[680px] table-fixed border-collapse bn-archivio bn-nohover exdip-table">
             <colgroup>
@@ -133,8 +134,8 @@ export default function ExDipendentiTable({
                       <span className="font-medium text-base text-[#1C0A10]">{exDipendente.cognome}</span>
                     </td>
                     <td className="bn-cell px-4 text-center">
-                      <span className="font-medium text-sm text-[#7A5A64]">
-                        {new Date(exDipendente.archiviato_il).toLocaleDateString('it-IT')}
+                      <span className="bn-date-cell text-base text-[#7A5A64]">
+                        {formatDataGiornoMeseAnno(exDipendente.archiviato_il)}
                       </span>
                     </td>
                     <td className="bn-cell px-4">
@@ -147,7 +148,7 @@ export default function ExDipendentiTable({
                             className="p-1 no-default-hover-elevate no-default-active-elevate"
                             title={`Ripristina ${exDipendente.nome} ${exDipendente.cognome}`}
                           >
-                            <RotateCcw className="icon-action text-green-600 hover:text-green-700" aria-label="Ripristina" />
+                            <RotateCcw className="icon-action text-[#3E7D52] hover:text-[#4A9061]" aria-label="Ripristina" />
                           </Button>
                         )}
                         {onElimina && (

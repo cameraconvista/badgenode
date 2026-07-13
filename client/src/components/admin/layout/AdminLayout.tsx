@@ -70,7 +70,7 @@ export default function AdminLayout({ title, children }: AdminLayoutProps) {
                   className="h-11 gap-3 text-base text-[#7A5A64] hover:bg-[#F5EBE0] hover:text-[#7A1228]"
                 >
                   <ArrowLeft className="h-4 w-4" />
-                  <span className="font-medium">Timbratore</span>
+                  <span className="font-medium">Torna al Badge</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
