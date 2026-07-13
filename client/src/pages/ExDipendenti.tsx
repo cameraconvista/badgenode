@@ -88,7 +88,10 @@ export default function ExDipendenti() {
         <div className="mb-4 text-center">
           <h1 className="text-2xl font-bold text-[#1C0A10]">Ex-Dipendenti</h1>
         </div>
-        <div className="min-h-0 flex-1 overflow-hidden">
+        {/* Spaziatura per allineare l'header bar della tabella al pulsante
+            "Ex-Dipendenti" della sidebar, come avviene in Dipendenti (che ha
+            un sottotitolo in più). Non tocca il titolo. */}
+        <div className="min-h-0 flex-1 overflow-hidden pt-20">
           <ExDipendentiTable
             exDipendenti={exDipendenti}
             isLoading={isLoading}
