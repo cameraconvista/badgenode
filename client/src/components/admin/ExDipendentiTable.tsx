@@ -132,7 +132,7 @@ export default function ExDipendentiTable({
                       <span className="font-medium text-base text-[#1C0A10]">{exDipendente.cognome}</span>
                     </td>
                     <td className="bn-cell px-4 text-center">
-                      <span className="bn-date-cell text-sm text-[#7A5A64]">
+                      <span className="bn-date-cell text-[#7A5A64]">
                         {formatDataGiornoMeseAnno(exDipendente.archiviato_il)}
                       </span>
                     </td>

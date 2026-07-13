@@ -231,9 +231,12 @@ img[src*="logo_home"] {
   font-weight: 500;
 }
 
-/* Date (es. Data Archiviazione): senza grassetto */
+/* Date (es. Data Archiviazione): senza grassetto e più piccole.
+   font-size qui (più specifico di ".bn-archivio .bn-cell span") perché la
+   classe Tailwind sul markup verrebbe altrimenti sovrascritta. */
 .bn-archivio .bn-cell span.bn-date-cell {
   font-weight: 400;
+  font-size: 0.9375rem;
 }
 
 /* Icona "storico" — dimensione allineata allo standard Storico (16px = h-4 w-4).
