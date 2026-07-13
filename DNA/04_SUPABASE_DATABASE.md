@@ -182,6 +182,10 @@ Verificate dall'audit storico `08_AUDIT_DATABASE.md`:
   - policy `SELECT` per `anon`, `authenticated` (`using true`)
   - nessuna policy di write → INSERT/UPDATE/DELETE anon negati di default (come `utenti`)
   - prima del 2026-06-29 la RLS era DISATTIVATA: una INSERT anon riusciva (buco chiuso dall'audit)
+- `app_settings`: RLS attivo (migrazione `20260714T0100`), **lettura anon BLOCCATA**
+  - nessuna policy `SELECT` per `anon`/`authenticated` → il PIN admin NON è più leggibile con anon key
+  - il frontend legge le impostazioni solo via `/api/settings/*` (service role lato server)
+  - prima del 2026-07-14 esisteva `app_settings_select_all` (`using true`): il PIN admin era esposto in chiaro con anon key (buco chiuso)
 
 Ruoli:
 - `service_role` bypassa RLS (tutte le scritture dell'app passano di qui, lato server)

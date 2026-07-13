@@ -2,6 +2,26 @@
 
 Decisioni tecniche rilevanti già prese, con il loro perché. Aggiungere in testa le nuove (più recente in alto). Registrare solo scelte che cambierebbero il comportamento di un agent futuro.
 
+## 2026-07-14 — Hardening sicurezza: PIN admin nascosto + auth su scritture admin
+
+- **RLS `app_settings`** (migrazione `20260714T0100`): rimossa la policy `app_settings_select_all`
+  (`using true`) che rendeva il PIN admin leggibile da chiunque con anon key. Ora la tabella non
+  ha policy SELECT per anon/authenticated: il PIN si legge solo lato server via service role
+  (`/api/settings/*`). Migrazione additiva con `.down.sql` di rollback.
+- **Autenticazione admin sulle scritture** (`server/middleware/requireAdminPin.ts`): tutti gli
+  endpoint admin di scrittura (crea/modifica/elimina dipendenti, archivia/ripristina ex-dipendenti,
+  cambio PIN, config avvisi, modifica/elimina timbrature) richiedono l'header `x-admin-pin`,
+  confrontato timing-safe col PIN in `app_settings` (fail-closed). Le timbrature dei dipendenti
+  (`POST /api/timbrature`, `postManual`) e tutte le letture restano LIBERE.
+- **Lato client** (`client/src/lib/adminAuth.ts`): il PIN admin è salvato in `sessionStorage`
+  (`bn_admin_pin`) all'ingresso in area admin e allegato via `adminAuthHeader()` alle scritture;
+  il logout lo azzera (`clearAdminPin`).
+- **Perché:** l'app è ONLINE con dati reali; il PIN admin era esposto in lettura e le scritture admin
+  non avevano alcuna verifica server. Chiusi entrambi i buchi senza toccare il flusso utente (timbrature).
+- **Non risolto (scelta consapevole):** lettura anon di `utenti`/`timbrature` ancora aperta — il
+  frontend le legge in diretta, stringere richiede prima di spostare quelle letture dietro il server.
+  È privacy, non un buco critico: rimandato a sessione dedicata.
+
 ## 2026-07-13 — Sezione Dashboard + icona attenzione + ombreggiatura tabelle
 
 - **Dashboard** (`/dashboard`, prima voce sidebar, admin-guarded): tabella riepilogo
