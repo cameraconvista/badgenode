@@ -11,7 +11,6 @@
     "client/src/lib/debugQuery.ts",
     "client/src/lib/timbraturaDiagnostics.ts",
     "client/src/main.tsx",
-    "client/src/offline/diagnostic.ts",
     "client/src/offline/index.ts",
     "client/src/offline/queue.ts",
     "client/src/pages/ArchivioDipendenti.tsx",

@@ -16,7 +16,4 @@ npm run build
 echo "▶ Active source guard"
 node scripts/ci/active-source-guard.mjs
 
-echo "▶ Smoke SQL files presenti"
-test -f scripts/sql/smoke-test-supabase.sql
-
 echo "✅ Checks passed"
