@@ -75,10 +75,10 @@ export default function ModaleTimbratureView({
       <div className="bn-timbrature-grid">
         {/* ENTRATA */}
         <section>
-          <h3 className="text-[#3E7D52] font-semibold mb-3 text-lg">Entrata</h3>
+          <h3 className="text-[#3E7D52] font-semibold mb-2 text-lg">Entrata</h3>
           <div className="bn-field-row">
             <div>
-              <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Data</label>
+              <label className="block text-sm text-[#7A5A64] mb-1 font-medium">Data</label>
               <BnDatePicker
                 aria-label="Data entrata"
                 value={toInputDate(formData.dataEntrata)}
@@ -88,7 +88,7 @@ export default function ModaleTimbratureView({
               />
             </div>
             <div>
-              <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Ora</label>
+              <label className="block text-sm text-[#7A5A64] mb-1 font-medium">Ora</label>
               <TimeSelect
                 value={formData.oraEntrata}
                 onChange={(value) => setFormData({ ...formData, oraEntrata: value })}
@@ -101,10 +101,10 @@ export default function ModaleTimbratureView({
 
         {/* USCITA */}
         <section>
-          <h3 className="text-red-700 font-semibold mb-3 text-lg">Uscita</h3>
+          <h3 className="text-red-700 font-semibold mb-2 text-lg">Uscita</h3>
           <div className="bn-field-row">
             <div>
-              <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Data</label>
+              <label className="block text-sm text-[#7A5A64] mb-1 font-medium">Data</label>
               <BnDatePicker
                 aria-label="Data uscita"
                 value={toInputDate(formData.dataUscita)}
@@ -114,7 +114,7 @@ export default function ModaleTimbratureView({
               />
             </div>
             <div>
-              <label className="block text-sm text-[#7A5A64] mb-2 font-medium">Ora</label>
+              <label className="block text-sm text-[#7A5A64] mb-1 font-medium">Ora</label>
               <TimeSelect
                 value={formData.oraUscita}
                 onChange={(value) => setFormData({ ...formData, oraUscita: value })}
@@ -127,7 +127,7 @@ export default function ModaleTimbratureView({
       </div>
 
       {/* Tutti i pulsanti sulla stessa riga */}
-      <div className="flex items-center justify-between mt-6">
+      <div className="flex items-center justify-between mt-4">
         <button
           type="button"
           className="bn-btn-large bn-btn-danger h-11 px-4 rounded-lg"

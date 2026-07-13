@@ -392,8 +392,8 @@ img[src*="logo_home"] {
    Le sezioni Entrata=verde/Uscita=rosso e i campi restano colorati (scelta
    funzionale gestita nei componenti, non qui). */
 .bn-modal       { background: #F8F3EE !important; border: 1.5px solid rgba(122, 18, 40, 0.20) !important; border-radius: 20px !important; box-shadow: 0 20px 60px rgba(122, 18, 40, 0.18) !important; color: #1C0A10; }
-.bn-modal-header{ padding: 18px 22px; border-bottom: 1px solid rgba(122, 18, 40, 0.12); }
-.bn-modal-body  { padding: 18px 22px; }
+.bn-modal-header{ padding: 12px 20px; border-bottom: 1px solid rgba(122, 18, 40, 0.12); }
+.bn-modal-body  { padding: 14px 20px; }
 .bn-modal-footer{ padding: 16px 22px; border-top: 1px solid rgba(122, 18, 40, 0.12); display:flex; gap:12px; justify-content:flex-end; }
 .bn-overlay     { background: rgba(28, 10, 16, 0.50) !important; backdrop-filter: blur(6px); }
 
@@ -509,8 +509,8 @@ img[src*="logo_home"] {
 .bn-timbrature-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
-  margin-bottom: 20px;
+  gap: 14px;
+  margin-bottom: 12px;
 }
 
 .bn-field-row {
