@@ -12,53 +12,46 @@ export default function StoricoTotalsBar({
   totaleMensileExtra,
   giorniLavorati,
 }: StoricoTotalsBarProps) {
+  // Barra totali: usa le stesse larghezze di colonna della tabella (ColGroupStorico)
+  // così i valori Totali cadono ESATTAMENTE sotto le colonne Ore ed Extra.
+  // Testi corti (solo "Totali" + i due numeri) per non andare mai a capo.
   return (
-    <div className="bn-footer bn-totals-solid bn-border w-full rounded-b-2xl">
-      <div className="bn-footer-inner bn-totals-compact">
-        <table className="bn-table__table">
+    <div className="bn-totals-solid bn-border w-full rounded-b-2xl py-2.5">
+      <table className="bn-table__table">
         <ColGroupStorico />
-        
         <tbody>
           <tr>
-            {/* td[1] Data - Giorni lavorati */}
-            <td className="bn-table__cell bn-table__cell--left bn-cell">
-              <div className="flex items-baseline">
-                <span className="bn-totals-label text-white/80">Giorni lavorati</span>
-                <span className="bn-totals-value text-white">{giorniLavorati}</span>
-              </div>
+            {/* Data → Giorni lavorati */}
+            <td className="bn-table__cell bn-table__cell--left">
+              <span className="inline-flex items-baseline gap-2">
+                <span className="text-white/80 font-semibold text-sm">Giorni lavorati</span>
+                <span className="text-white font-bold text-lg tabular-nums">{giorniLavorati}</span>
+              </span>
             </td>
-
-            {/* td[2] Mese - vuoto */}
-            <td className="bn-table__cell bn-cell"></td>
-
-            {/* td[3] Entrata - vuoto */}
-            <td className="bn-table__cell bn-cell"></td>
-
-            {/* td[4] Uscita - vuoto */}
-            <td className="bn-table__cell bn-cell"></td>
-
-            {/* td[5] Ore - Totale */}
-            <td className="bn-table__cell bn-cell">
-              <div className="text-white/80 font-semibold text-sm mb-1">Totale</div>
-              <div className="text-white font-bold text-base tabular-nums">
+            {/* Mese / Entrata → vuote */}
+            <td className="bn-table__cell"></td>
+            <td className="bn-table__cell"></td>
+            {/* Uscita → etichetta "Totali" a ridosso della colonna Ore */}
+            <td className="bn-table__cell text-right">
+              <span className="text-white/80 font-semibold text-sm">Totali</span>
+            </td>
+            {/* Ore → Totale ore */}
+            <td className="bn-table__cell">
+              <span className="text-white font-bold text-lg tabular-nums">
                 {formatOre(totaleMensileOre)}
-              </div>
+              </span>
             </td>
-
-            {/* td[6] Extra - Totale Extra */}
-            <td className="bn-table__cell bn-cell">
-              <div className="text-white/80 font-semibold text-sm mb-1">Totale Extra</div>
-              <div className="text-white font-bold text-base tabular-nums">
+            {/* Extra → Totale extra */}
+            <td className="bn-table__cell">
+              <span className="text-white font-bold text-lg tabular-nums">
                 {totaleMensileExtra > 0 ? formatOre(totaleMensileExtra) : '0.00'}
-              </div>
+              </span>
             </td>
-
-            {/* td[7] Modifica - vuoto */}
-            <td className="bn-table__cell bn-cell"></td>
+            {/* Modifica → vuota */}
+            <td className="bn-table__cell"></td>
           </tr>
         </tbody>
-        </table>
-      </div>
+      </table>
     </div>
   );
 }
