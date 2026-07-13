@@ -78,7 +78,6 @@ export default defineConfig(({ mode }) => {
         },
         includeAssets: [
           'favicon.ico',
-          'robots.txt', 
           'icons/favicon-16x16-v2.png',
           'icons/favicon-32x32-v2.png',
           'icons/apple-touch-icon-152x152-v2.png',

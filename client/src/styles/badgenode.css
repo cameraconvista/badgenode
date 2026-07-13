@@ -2,10 +2,7 @@
 
 /* Logo: bicolore bordeaux + rosa antico, nessun filtro necessario */
 img[alt="BADGENODE"],
-img[src*="logo_badgenode"],
-img[src*="logo2_app"],
-img[src*="logo_app"],
-img[src*="logo_home"] {
+img[src*="logo_badgenode"] {
   filter: none;
 }
 
