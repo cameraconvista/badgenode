@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Settings, LogOut } from '@/lib/icons';
 import { useAuth } from '@/contexts/AuthContext';
-import { APP_UNLOCK_KEY } from '@/components/home/AppPinGate';
+import { APP_UNLOCK_KEY, APP_FORCE_LOCK_KEY } from '@/components/home/AppPinGate';
 import {
   SidebarProvider,
   Sidebar,
@@ -35,8 +35,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const go = (href: string) => setLocation(href);
 
-  // Logout generale: chiude la sessione auth e ri-blocca l'app (rimuove lo sblocco
-  // del gate PIN), poi torna alla Home — che richiederà di nuovo il PIN se attivo.
+  // Logout generale: chiude la sessione auth e "esce" dall'app riportando alla Home
+  // BLOCCATA — forza la richiesta del PIN app per rientrare, anche se il toggle PIN
+  // app è disattivato (flag force-lock letto da AppPinGate).
   const handleLogout = async () => {
     try {
       await logout();
@@ -44,6 +45,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       /* prosegue comunque al reset del gate + redirect */
     }
     sessionStorage.removeItem(APP_UNLOCK_KEY);
+    sessionStorage.setItem(APP_FORCE_LOCK_KEY, '1');
     window.location.href = '/';
   };
 

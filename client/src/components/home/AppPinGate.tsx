@@ -7,12 +7,15 @@ import { getPinSettings } from '@/services/settings.service';
 
 /** Chiave sessionStorage dello sblocco gate PIN app (condivisa col logout). */
 export const APP_UNLOCK_KEY = 'bn_app_unlocked';
+/** Flag: forza il blocco dell'app dopo un Logout, anche se il PIN app è disattivato. */
+export const APP_FORCE_LOCK_KEY = 'bn_app_force_lock';
 
 /**
- * Gate d'accesso all'app: se il PIN generale è attivo (scope 'general') mostra una
- * schermata col tastierino PRIMA della Home. Superato una volta, lo sblocco resta
- * in sessionStorage per la sessione corrente. Se il PIN è disattivato (default) o
- * la config non è ancora caricata, l'app si apre subito (fallback prudente).
+ * Gate d'accesso all'app: mostra una schermata col tastierino PRIMA della Home
+ * quando il PIN generale è attivo (scope 'general') OPPURE dopo un Logout (flag
+ * force-lock), anche a PIN disattivato. Superato una volta, lo sblocco resta in
+ * sessionStorage per la sessione corrente. Se la config non è ancora caricata,
+ * l'app si apre (fallback prudente: mai bloccare per un semplice caricamento).
  */
 export default function AppPinGate({ children }: { children: ReactNode }) {
   const { data, isLoading } = useQuery({
@@ -27,15 +30,20 @@ export default function AppPinGate({ children }: { children: ReactNode }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
 
-  // Finché non sappiamo lo stato, o se il gate è disattivato, o già sbloccato →
-  // mostra l'app. Non blocchiamo mai l'app per un caricamento config.
-  if (isLoading || !data?.requirePin || unlocked) {
+  const forceLock = typeof window !== 'undefined' && sessionStorage.getItem(APP_FORCE_LOCK_KEY) === '1';
+  // Il gate va mostrato se il PIN app è attivo OPPURE se un Logout ha forzato il blocco.
+  const mustLock = (data?.requirePin ?? false) || forceLock;
+
+  // Finché non sappiamo lo stato, o se non serve bloccare, o già sbloccato → app.
+  if (isLoading || !mustLock || unlocked) {
     return <>{children}</>;
   }
 
+  const expectedPin = data?.pin ?? '0000';
   const submit = (value: string) => {
-    if (value === data.pin) {
+    if (value === expectedPin) {
       sessionStorage.setItem(APP_UNLOCK_KEY, '1');
+      sessionStorage.removeItem(APP_FORCE_LOCK_KEY); // sblocco: rimuove il force-lock del logout
       setUnlocked(true);
       setError(false);
     } else {

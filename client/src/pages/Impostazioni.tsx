@@ -17,7 +17,6 @@ export default function Impostazioni() {
             <SettingsCard
               title="PIN — Accesso app"
               subtitle="Gestisci la richiesta e il PIN per accedere all'app (schermata iniziale)."
-              defaultOpen
             >
               <SecurityPinSection scope="general" targetLabel="all'app" />
             </SettingsCard>

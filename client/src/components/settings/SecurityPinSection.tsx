@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Toggle from '@/components/ui/Toggle';
 import { Eye, EyeOff } from '@/lib/icons';
@@ -76,6 +76,13 @@ export default function SecurityPinSection({ scope, targetLabel }: SecurityPinSe
   const [currentPin, setCurrentPin] = useState('');
   const [newPin, setNewPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
+
+  // Precompila "PIN attuale" col PIN salvato nel DB (oscurato, rivelabile con
+  // l'occhio): così l'utente vede/conferma il PIN corrente. Si aggiorna quando
+  // il valore salvato cambia (es. dopo un cambio PIN andato a buon fine).
+  useEffect(() => {
+    if (data?.pin) setCurrentPin(data.pin);
+  }, [data?.pin]);
 
   const toggleMutation = useMutation({
     mutationFn: (next: boolean) => setRequirePin(scope, next),
