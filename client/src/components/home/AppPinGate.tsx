@@ -65,8 +65,8 @@ export default function AppPinGate({ children }: { children: ReactNode }) {
       <div className="w-full max-w-sm">
         <div className="rounded-3xl border-2 border-[rgba(122,18,40,0.30)] bg-white p-4 shadow-[0_8px_40px_rgba(122,18,40,0.15)] sm:p-6">
           <LogoHeader />
-          <p className="mb-2 text-center text-sm font-medium text-[#7A5A64]">
-            Inserisci il PIN per accedere
+          <p className="mb-3 text-center text-lg font-bold text-[#7A1228]">
+            Inserisci il PIN per accedere a BADGENODE
           </p>
           <PinDisplay pin={pin} />
           {error && (
@@ -74,6 +74,10 @@ export default function AppPinGate({ children }: { children: ReactNode }) {
           )}
           <Keypad onKeyPress={handleKey} onClear={() => setPin('')} onSettings={() => { /* inerte nel gate */ }} />
         </div>
+        {/* Scritta sotto la card, evidente. */}
+        <p className="mt-5 text-center text-base font-semibold text-[#7A1228]">
+          Inserisci il PIN per accedere a BADGENODE
+        </p>
       </div>
     </div>
   );
