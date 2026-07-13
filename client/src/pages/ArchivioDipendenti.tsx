@@ -144,13 +144,13 @@ export default function ArchivioDipendenti() {
           <p className="text-base font-medium text-[#1C0A10] md:text-lg">
             {utenti.length} dipendenti attivi
           </p>
-          {/* Pulsante Aggiungi in alto a destra (non altera l'altezza del blocco titolo). */}
+          {/* Pulsante Nuovo in alto a destra (non altera l'altezza del blocco titolo). */}
           <Button
             onClick={() => setShowModaleNuovo(true)}
             className="absolute right-0 top-0 flex items-center gap-2 bg-[#3E7D52] text-white hover:bg-[#4A9061]"
           >
             <Plus className="h-4 w-4" />
-            Aggiungi
+            Nuovo
           </Button>
         </div>
         <div className="min-h-0 flex-1 p-1">
