@@ -1,6 +1,7 @@
 import AdminLayout from '@/components/admin/layout/AdminLayout';
 import SettingsCard from '@/components/settings/SettingsCard';
 import SecurityPinSection from '@/components/settings/SecurityPinSection';
+import AnomalyAlertSection from '@/components/settings/AnomalyAlertSection';
 
 export default function Impostazioni() {
   return (
@@ -25,6 +26,12 @@ export default function Impostazioni() {
               subtitle="Gestisci la richiesta e il PIN di accesso all'area admin."
             >
               <SecurityPinSection scope="admin" targetLabel="all'area admin" />
+            </SettingsCard>
+            <SettingsCard
+              title="Avviso timbrature anomale"
+              subtitle="Segnala nello Storico le timbrature fuori dagli orari previsti."
+            >
+              <AnomalyAlertSection />
             </SettingsCard>
             {/* Le prossime sezioni si aggiungono qui come altre <SettingsCard>. */}
           </div>

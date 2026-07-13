@@ -41,3 +41,36 @@ export async function changePin(scope: PinScope, currentPin: string, newPin: str
     throw new Error(res.error || 'Errore cambio PIN');
   }
 }
+
+// ===== Avviso timbrature anomale (fasce orarie) =====
+
+/** Config dell'avviso: toggle + fasce entrata (2 finestre) e uscita (sera/notte). */
+export interface AlertConfig {
+  enabled: boolean;
+  e1_start: string; e1_end: string; // 1ª finestra entrata (HH:MM)
+  e2_start: string; e2_end: string; // 2ª finestra entrata
+  u_evening_from: string;           // uscita valida da (sera)
+  u_night_until: string;            // uscita valida fino a (notte)
+}
+
+export const ALERT_DEFAULTS: AlertConfig = {
+  enabled: true,
+  e1_start: '16:45', e1_end: '17:15',
+  e2_start: '19:15', e2_end: '19:45',
+  u_evening_from: '22:45', u_night_until: '03:45',
+};
+
+/** Legge la config avviso. Fallback ai default se l'API fallisce. */
+export async function getAlertConfig(): Promise<AlertConfig> {
+  const res = await safeFetchJson<AlertConfig>('/api/settings/alert');
+  if (isError(res) || !res.data) return ALERT_DEFAULTS;
+  return { ...ALERT_DEFAULTS, ...res.data };
+}
+
+/** Aggiorna la config avviso (solo i campi passati). */
+export async function updateAlertConfig(patch: Partial<AlertConfig>): Promise<void> {
+  const res = await safeFetchJsonPut<{ ok: boolean }>('/api/settings/alert', patch);
+  if (isError(res)) {
+    throw new Error(res.error || 'Errore salvataggio avviso');
+  }
+}

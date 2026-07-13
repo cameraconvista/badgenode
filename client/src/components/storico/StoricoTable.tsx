@@ -4,6 +4,8 @@ import ModalKit from '@/components/ui/ModalKit';
 import AttenzioneIcon from '@/components/ui/AttenzioneIcon';
 import { formatOre, formatDataEstesa, getMeseItaliano } from '@/lib/time';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getAlertConfig, ALERT_DEFAULTS } from '@/services/settings.service';
 import {
   formatTimeOrDash,
   calcolaTotaliV5,
@@ -37,6 +39,15 @@ export default function StoricoTable({
     giorno: string;
     details: string[];
   } | null>(null);
+
+  // Config avviso anomalie dal DB (fasce orarie + on/off). Fallback ai default se
+  // non ancora caricata. L'avviso è retroattivo: ricalcolato ad ogni render con la
+  // config corrente, senza toccare le timbrature.
+  const { data: alertCfg = ALERT_DEFAULTS } = useQuery({
+    queryKey: ['settings', 'alert'],
+    queryFn: getAlertConfig,
+    staleTime: 60_000,
+  });
   
   // Calcola totali dal dataset v5 (fonte unica di verità) con protezione
   const list = Array.isArray(storicoDatasetV5) ? storicoDatasetV5 : [];
@@ -70,19 +81,26 @@ export default function StoricoTable({
     return hours * 60 + minutes;
   }
 
+  // Fasce dalla config (HH:MM → minuti). Il calcolo usa i valori configurabili in
+  // Impostazioni; se la config non è caricata, valgono i default (= vecchi valori).
+  const m = (hhmm: string) => {
+    const min = parseMinutes(hhmm);
+    return min === null ? 0 : min;
+  };
+
   function isEntrataStandard(time: string | null | undefined): boolean {
     const minutes = parseMinutes(time);
     if (minutes === null) return true;
-    const firstWindow = minutes >= (16 * 60 + 45) && minutes <= (17 * 60 + 15);
-    const secondWindow = minutes >= (19 * 60 + 15) && minutes <= (19 * 60 + 45);
+    const firstWindow = minutes >= m(alertCfg.e1_start) && minutes <= m(alertCfg.e1_end);
+    const secondWindow = minutes >= m(alertCfg.e2_start) && minutes <= m(alertCfg.e2_end);
     return firstWindow || secondWindow;
   }
 
   function isUscitaStandard(time: string | null | undefined): boolean {
     const minutes = parseMinutes(time);
     if (minutes === null) return true;
-    const eveningWindow = minutes >= (22 * 60 + 45);
-    const nightWindow = minutes <= (3 * 60 + 45);
+    const eveningWindow = minutes >= m(alertCfg.u_evening_from);
+    const nightWindow = minutes <= m(alertCfg.u_night_until);
     return eveningWindow || nightWindow;
   }
 
@@ -98,6 +116,8 @@ export default function StoricoTable({
   }
 
   function hasAnomaliaOraria(g: GiornoLogicoDettagliato): boolean {
+    // Avviso disattivato in Impostazioni → nessuna segnalazione.
+    if (!alertCfg.enabled) return false;
     if (hasTimbraturaIncompleta(g)) return false;
     return getOrarioAnomaloDetails(g).length > 0;
   }

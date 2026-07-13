@@ -142,4 +142,71 @@ router.put('/api/settings/pin/:scope', async (req, res) => {
   }
 });
 
+// ===== Config avviso timbrature anomale (riga 'alert', colonna config JSON) =====
+
+const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
+const ALERT_TIME_KEYS = ['e1_start', 'e1_end', 'e2_start', 'e2_end', 'u_evening_from', 'u_night_until'] as const;
+const ALERT_DEFAULTS = {
+  enabled: true,
+  e1_start: '16:45', e1_end: '17:15',
+  e2_start: '19:15', e2_end: '19:45',
+  u_evening_from: '22:45', u_night_until: '03:45',
+};
+
+// GET /api/settings/alert — config fasce avviso (per Storico + form admin).
+router.get('/api/settings/alert', async (_req, res) => {
+  const requestId = generateRequestId();
+  try {
+    if (!supabaseAdmin) return unavailable(res);
+    const { data, error } = await db()
+      .from('app_settings')
+      .select('config')
+      .eq('id', 'alert')
+      .maybeSingle();
+    if (error) {
+      console.error(`[API][settings][${requestId}] alert select error:`, error.message);
+      return res.status(500).json({ success: false, error: 'Errore lettura avviso', code: 'QUERY_ERROR', requestId });
+    }
+    return res.json({ success: true, data: { ...ALERT_DEFAULTS, ...(data?.config ?? {}) } });
+  } catch (e) {
+    console.error(`[API][settings][${requestId}] alert exception:`, e);
+    return res.status(500).json({ success: false, error: 'Errore interno', code: 'INTERNAL_ERROR', requestId });
+  }
+});
+
+// PUT /api/settings/alert — aggiorna config fasce avviso. Scrittura service-role.
+router.put('/api/settings/alert', async (req, res) => {
+  const requestId = generateRequestId();
+  try {
+    if (!supabaseAdmin) return unavailable(res);
+    const body = (req.body ?? {}) as Record<string, unknown>;
+
+    // Valida ogni orario presente (HH:MM). enabled dev'essere boolean se presente.
+    for (const k of ALERT_TIME_KEYS) {
+      if (body[k] !== undefined && (typeof body[k] !== 'string' || !HHMM.test(body[k] as string))) {
+        return res.status(422).json({ success: false, error: `Orario "${k}" non valido (usa HH:MM)`, code: 'INVALID_TIME' });
+      }
+    }
+    if (body.enabled !== undefined && typeof body.enabled !== 'boolean') {
+      return res.status(422).json({ success: false, error: 'Campo enabled non valido', code: 'INVALID_ENABLED' });
+    }
+
+    // Merge coi valori attuali (parte dai default) per non perdere chiavi non inviate.
+    const { data: current } = await db().from('app_settings').select('config').eq('id', 'alert').maybeSingle();
+    const merged = { ...ALERT_DEFAULTS, ...(current?.config ?? {}), ...body };
+
+    const { error: upErr } = await db()
+      .from('app_settings')
+      .upsert({ id: 'alert', require_pin: false, access_pin: '0000', config: merged }, { onConflict: 'id' });
+    if (upErr) {
+      console.error(`[API][settings][${requestId}] alert update error:`, upErr.message);
+      return res.status(500).json({ success: false, error: 'Errore salvataggio avviso', code: 'UPDATE_ERROR', requestId });
+    }
+    return res.json({ success: true, data: { ok: true } });
+  } catch (e) {
+    console.error(`[API][settings][${requestId}] alert exception:`, e);
+    return res.status(500).json({ success: false, error: 'Errore interno', code: 'INTERNAL_ERROR', requestId });
+  }
+});
+
 export { router as settingsRoutes };
