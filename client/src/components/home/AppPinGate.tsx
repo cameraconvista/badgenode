@@ -5,7 +5,8 @@ import PinDisplay from '@/components/home/PinDisplay';
 import Keypad from '@/components/home/Keypad';
 import { getPinSettings } from '@/services/settings.service';
 
-const UNLOCK_KEY = 'bn_app_unlocked';
+/** Chiave sessionStorage dello sblocco gate PIN app (condivisa col logout). */
+export const APP_UNLOCK_KEY = 'bn_app_unlocked';
 
 /**
  * Gate d'accesso all'app: se il PIN generale è attivo (scope 'general') mostra una
@@ -21,7 +22,7 @@ export default function AppPinGate({ children }: { children: ReactNode }) {
   });
 
   const [unlocked, setUnlocked] = useState(
-    () => typeof window !== 'undefined' && sessionStorage.getItem(UNLOCK_KEY) === '1',
+    () => typeof window !== 'undefined' && sessionStorage.getItem(APP_UNLOCK_KEY) === '1',
   );
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
@@ -34,7 +35,7 @@ export default function AppPinGate({ children }: { children: ReactNode }) {
 
   const submit = (value: string) => {
     if (value === data.pin) {
-      sessionStorage.setItem(UNLOCK_KEY, '1');
+      sessionStorage.setItem(APP_UNLOCK_KEY, '1');
       setUnlocked(true);
       setError(false);
     } else {

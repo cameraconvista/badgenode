@@ -15,14 +15,14 @@ export default function Impostazioni() {
         <div className="min-h-0 flex-1 overflow-auto">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
             <SettingsCard
-              title="Sicurezza / PIN — Accesso app"
+              title="PIN — Accesso app"
               subtitle="Gestisci la richiesta e il PIN per accedere all'app (schermata iniziale)."
               defaultOpen
             >
               <SecurityPinSection scope="general" targetLabel="all'app" />
             </SettingsCard>
             <SettingsCard
-              title="Sicurezza / PIN — Area amministrazione"
+              title="PIN — Area amministrazione"
               subtitle="Gestisci la richiesta e il PIN di accesso all'area admin."
             >
               <SecurityPinSection scope="admin" targetLabel="all'area admin" />

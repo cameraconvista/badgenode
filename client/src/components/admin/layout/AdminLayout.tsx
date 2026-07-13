@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Settings } from '@/lib/icons';
+import { ArrowLeft, Settings, LogOut } from '@/lib/icons';
+import { useAuth } from '@/contexts/AuthContext';
+import { APP_UNLOCK_KEY } from '@/components/home/AppPinGate';
 import {
   SidebarProvider,
   Sidebar,
@@ -29,8 +31,21 @@ interface AdminLayoutProps {
  */
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [location, setLocation] = useLocation();
+  const { logout } = useAuth();
 
   const go = (href: string) => setLocation(href);
+
+  // Logout generale: chiude la sessione auth e ri-blocca l'app (rimuove lo sblocco
+  // del gate PIN), poi torna alla Home — che richiederà di nuovo il PIN se attivo.
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      /* prosegue comunque al reset del gate + redirect */
+    }
+    sessionStorage.removeItem(APP_UNLOCK_KEY);
+    window.location.href = '/';
+  };
 
   return (
     <SidebarProvider>
@@ -76,7 +91,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </SidebarMenu>
           </SidebarContent>
 
-          <SidebarFooter className="border-t border-[rgba(122,18,40,0.12)] px-2 py-3">
+          <SidebarFooter className="px-2 py-3">
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -85,6 +100,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 >
                   <ArrowLeft className="h-4 w-4" />
                   <span className="font-medium">Torna al Badge</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              {/* Linea separatrice in mezzo ai due pulsanti. */}
+              <li aria-hidden className="my-2 border-t border-[rgba(122,18,40,0.12)]" />
+              {/* Logout generale dall'app: sotto "Torna al Badge". */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={handleLogout}
+                  className="h-11 gap-3 text-base text-[#7A1228] hover:bg-[#F5EBE0] hover:text-[#7A1228]"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span className="font-medium">Logout</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
