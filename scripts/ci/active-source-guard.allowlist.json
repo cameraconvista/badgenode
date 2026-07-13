@@ -18,6 +18,8 @@
     "client/src/services/timbrature-cache.service.ts",
     "client/src/services/timbrature.service.ts",
     "client/src/services/timbratureRpc.ts",
+    "client/src/services/timbratureRpc.crud.ts",
+    "client/src/services/timbratureRpc.offline.ts",
     "server/lib/logger.ts",
     "server/routes/modules/other/internal/pinRoutes.ts",
     "server/routes/timbrature/deleteTimbrature.ts",

@@ -1,38 +1,18 @@
 // Service RPC unico per timbrature BadgeNode
 // Centralizza tutte le chiamate verso insert_timbro_v2
 
-import { safeFetchJsonPost, safeFetchJsonPatch, safeFetchJsonDelete } from '@/lib/safeFetch';
-import { isError, type DeleteResult } from '@/types/api';
-import type { TimbratureUpdate } from '../../../shared/types/database';
+import { safeFetchJsonPost } from '@/lib/safeFetch';
+import { isError } from '@/types/api';
 import { logTimbraturaDiag } from '@/lib/timbraturaDiagnostics';
+import { tryEnqueueOffline } from './timbratureRpc.offline';
 
 // reserved: api-internal (non rimuovere senza migrazione)
 // import type { TimbraturePayload, RpcResult } from '@/types/rpc';
 
-export interface InsertTimbroParams {
-  pin: number;
-  tipo: 'entrata' | 'uscita';
-  client_event_id?: string;
-  traceId?: string;
-}
-
-export interface InsertTimbroResult {
-  success: boolean;
-  data?: unknown;
-  error?: string;
-  code?: string;
-}
-
-export interface UpdateTimbroParams {
-  id: number;
-  updateData: Partial<TimbratureUpdate>;
-}
-
-export interface UpdateTimbroResult {
-  success: boolean;
-  data?: unknown;
-  error?: string;
-}
+// Tipi spostati in timbratureRpc.types.ts: import locale (usati come annotazioni qui)
+// + re-export per compatibilita import esistenti da './timbratureRpc'
+import type { InsertTimbroParams, InsertTimbroResult, UpdateTimbroParams, UpdateTimbroResult } from './timbratureRpc.types';
+export type { InsertTimbroParams, InsertTimbroResult, UpdateTimbroParams, UpdateTimbroResult };
 
 /**
  * Chiamata per inserimento timbrature via endpoint server
@@ -199,90 +179,11 @@ export async function insertTimbroServer({ pin, tipo, ts, client_event_id, trace
     const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
     const code = (error as { code?: string })?.code;
     console.error('[SERVICE] insertTimbroServer ERR →', { pin, tipo, error: errorMsg, code });
-    
-    // Try offline queue if enabled and this is a network error (protected)
-    try {
-      // Check if this is a network error that should trigger offline queue
-      const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
-      const isNetworkError = (
-        error instanceof TypeError && error.message.includes('fetch') ||
-        error instanceof TypeError && error.message.includes('Failed to fetch') ||
-        (error as { code?: string })?.code === 'ERR_INTERNET_DISCONNECTED' ||
-        (error as { name?: string })?.name === 'NetworkError' ||
-        isOnline === false
-      );
-      
-      if (isNetworkError) {
-        // Try diagnostics first, then fallback to environment check
-        const offline = (globalThis as { __BADGENODE_DIAG__?: { offline?: { enabled?: boolean; allowed?: boolean } } })?.__BADGENODE_DIAG__?.offline;
-        let shouldQueue = false;
-        
-        if (offline?.enabled && offline?.allowed) {
-          shouldQueue = true;
-        } else {
-          // Fallback: check environment directly if diagnostics not ready
-          const queueEnabled = String(import.meta.env?.VITE_FEATURE_OFFLINE_QUEUE ?? 'false') === 'true';
-          const isTestMode = String(import.meta.env?.MODE ?? '') === 'test';
-          if (queueEnabled && !isTestMode) {
-            shouldQueue = true;
-            if (import.meta.env.DEV) {
-              console.debug('[SERVICE] Using environment fallback for offline queue');
-            }
-          }
-        }
-        
-        if (shouldQueue) {
-          try {
-            // Try dynamic import first, fallback to global queue if available
-            let enqueuePending;
-            try {
-              const queueModule = await import('../offline/queue');
-              enqueuePending = queueModule.enqueuePending;
-            } catch {
-              // Fallback: use pre-loaded queue from global diagnostics
-              const globalQueue = (globalThis as { __BADGENODE_QUEUE__?: { enqueuePending?: (ev: { pin: number; tipo: 'entrata' | 'uscita' }) => Promise<unknown> } })?.__BADGENODE_QUEUE__;
-              if (globalQueue?.enqueuePending) {
-                enqueuePending = globalQueue.enqueuePending;
-              } else {
-                throw new Error('Queue module not available offline');
-              }
-            }
-            
-            await enqueuePending({ 
-              pin, 
-              tipo
-            });
-            
-            if (import.meta.env.DEV) {
-              console.debug('[SERVICE] insertTimbroServer → queued offline', { pin, tipo });
-            }
-            logTimbraturaDiag('rpc.insertTimbroServer_result', {
-              traceId,
-              pin,
-              tipo,
-              source: 'timbrature-rpc',
-              success: true,
-              id: -1,
-              mode: 'queued-offline',
-            });
-            
-            // Return a synthetic success response for offline queue
-            return { id: -1 }; // Negative ID indicates queued
-          } catch (queueError) {
-            if (import.meta.env.DEV) {
-              console.debug('[SERVICE] queue failed:', (queueError as Error)?.message);
-            }
-            // If queue fails, still return error to user
-            throw error; // Original network error
-          }
-        }
-      }
-    } catch (offlineError) {
-      if (import.meta.env.DEV) {
-        console.debug('[SERVICE] offline queue failed:', (offlineError as Error)?.message);
-      }
+
+    const offlineResult = await tryEnqueueOffline({ pin, tipo, error, traceId });
+    if (offlineResult.queued) {
+      return { id: offlineResult.id };
     }
-    
     throw error;
   }
 }
@@ -293,51 +194,6 @@ function extractCodeFromMessage(msg: string | undefined): string | undefined {
   return m?.[1];
 }
 
-/**
- * Elimina tutte le timbrature di un giorno logico via endpoint server
- * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
- */
-export async function deleteTimbratureGiornata({ pin, giorno }: { pin: number; giorno: string }) {
-  console.info('[SERVICE] deleteTimbratureGiornata →', { pin, giorno });
-  
-  try {
-    const result = await safeFetchJsonDelete<DeleteResult>('/api/timbrature/day', { 
-      pin: String(pin), 
-      giorno 
-    });
-    
-    if (isError(result)) {
-      throw new Error(result.error);
-    }
-    
-    console.info('[SERVICE] deleteTimbratureGiornata OK →', { 
-      pin, 
-      giorno, 
-      deletedCount: (result as { deleted_count?: number })?.deleted_count ?? 0 
-    });
-    return result; // { success, deleted_count, ids, deleted_records }
-  } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
-    console.error('[SERVICE] deleteTimbratureGiornata ERR →', { pin, giorno, error: errorMsg });
-    throw error;
-  }
-}
-
-/**
- * Aggiorna timbratura esistente via endpoint server
- * Usa SERVICE_ROLE_KEY lato server per bypassare RLS
- */
-export async function callUpdateTimbro({ id, updateData }: { id: number; updateData: Partial<TimbratureUpdate> }) {
-  console.info('[SERVICE] callUpdateTimbro (ENDPOINT) →', { id, updateData });
-  
-  try {
-    const result = await safeFetchJsonPatch(`/api/timbrature/${id}`, updateData);
-    
-    console.info('[SERVICE] update OK →', { id, success: result.success });
-    return result; // { success: true, data: { ... } }
-  } catch (error) {
-    const errorMsg = error instanceof Error ? error.message : 'Errore sconosciuto';
-    console.error('[SERVICE] update ERR →', { id, error: errorMsg });
-    throw error;
-  }
-}
+// Funzioni CRUD (delete/update) spostate in timbratureRpc.crud.ts
+// + re-export per compatibilita import esistenti da './timbratureRpc'
+export { deleteTimbratureGiornata, callUpdateTimbro } from './timbratureRpc.crud';
