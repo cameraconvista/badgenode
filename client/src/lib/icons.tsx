@@ -11,6 +11,8 @@ import {
   ChevronDown as ChevronDownBase,
   ChevronUp as ChevronUpBase,
   Clock as ClockBase,
+  Eye as EyeBase,
+  EyeOff as EyeOffBase,
   FileSpreadsheet as FileSpreadsheetBase,
   FileText as FileTextBase,
   History as HistoryBase,
@@ -56,6 +58,8 @@ export const CheckCircle = withThinStroke(CheckCircleBase);
 export const ChevronDown = withThinStroke(ChevronDownBase);
 export const ChevronUp = withThinStroke(ChevronUpBase);
 export const Clock = withThinStroke(ClockBase);
+export const Eye = withThinStroke(EyeBase);
+export const EyeOff = withThinStroke(EyeOffBase);
 export const Edit = withThinStroke(EditBase);
 export const FileSpreadsheet = withThinStroke(FileSpreadsheetBase);
 export const FileText = withThinStroke(FileTextBase);

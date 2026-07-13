@@ -1,37 +1,56 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Toggle from '@/components/ui/Toggle';
+import { Eye, EyeOff } from '@/lib/icons';
 import { useToast } from '@/hooks/use-toast';
 import { getPinSettings, setRequirePin, changePin, type PinScope } from '@/services/settings.service';
 
-/** Campo PIN (numerico, 4 cifre, mascherato) riusato nel form Cambia PIN. */
+/** Campo PIN (numerico, 4 cifre). Con `revealable` mostra l'icona occhio per
+ *  vedere/nascondere il PIN digitato. */
 function PinField({
   id,
   label,
   value,
   onChange,
+  revealable = false,
 }: {
   id: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
+  revealable?: boolean;
 }) {
+  const [show, setShow] = useState(false);
   return (
     <div className="space-y-2">
       <label htmlFor={id} className="block text-sm font-semibold text-[#1C0A10]">
         {label}
       </label>
-      <input
-        id={id}
-        type="password"
-        inputMode="numeric"
-        autoComplete="off"
-        pattern="\d*"
-        maxLength={4}
-        value={value}
-        onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 4))}
-        className="w-full rounded-xl border border-[rgba(122,18,40,0.25)] bg-[#FDFAF8] px-4 py-3 text-[#1C0A10] focus:border-[#7A1228] focus:outline-none focus:ring-2 focus:ring-[#7A1228]/20"
-      />
+      <div className="relative">
+        <input
+          id={id}
+          type={revealable && show ? 'text' : 'password'}
+          inputMode="numeric"
+          autoComplete="off"
+          pattern="\d*"
+          maxLength={4}
+          value={value}
+          onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 4))}
+          className={`w-full rounded-xl border border-[rgba(122,18,40,0.25)] bg-[#FDFAF8] py-3 text-[#1C0A10] focus:border-[#7A1228] focus:outline-none focus:ring-2 focus:ring-[#7A1228]/20 ${
+            revealable ? 'pl-4 pr-11' : 'px-4'
+          }`}
+        />
+        {revealable && (
+          <button
+            type="button"
+            onClick={() => setShow((v) => !v)}
+            aria-label={show ? 'Nascondi PIN' : 'Mostra PIN'}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7A5A64] hover:text-[#7A1228] focus:outline-none"
+          >
+            {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -120,9 +139,9 @@ export default function SecurityPinSection({ scope, targetLabel }: SecurityPinSe
       {/* Sezione cambio PIN */}
       <h2 className="text-xl font-bold text-[#7A1228]">Cambia PIN</h2>
       <form onSubmit={handleChangePin} autoComplete="off" className="mt-4 max-w-md space-y-4">
-        <PinField id="current-pin" label="PIN attuale" value={currentPin} onChange={setCurrentPin} />
-        <PinField id="new-pin" label="Nuovo PIN" value={newPin} onChange={setNewPin} />
-        <PinField id="confirm-pin" label="Conferma nuovo PIN" value={confirmPin} onChange={setConfirmPin} />
+        <PinField id={`${scope}-current-pin`} label="PIN attuale" value={currentPin} onChange={setCurrentPin} revealable />
+        <PinField id={`${scope}-new-pin`} label="Nuovo PIN" value={newPin} onChange={setNewPin} />
+        <PinField id={`${scope}-confirm-pin`} label="Conferma nuovo PIN" value={confirmPin} onChange={setConfirmPin} />
         <button
           type="submit"
           disabled={!canSubmitPin}
